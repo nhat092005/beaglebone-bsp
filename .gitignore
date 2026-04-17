@@ -1,0 +1,74 @@
+# Build outputs
+build/
+out/
+*.o
+*.ko
+*.mod
+*.mod.c
+*.mod.o
+*.symvers
+*.order
+modules.builtin
+modules.builtin.modinfo
+
+# Kernel build artifacts
+linux/.config
+linux/include/config/
+linux/include/generated/
+linux/arch/arm/boot/zImage
+linux/arch/arm/boot/uImage
+linux/arch/arm/boot/dts/*.dtb
+
+# U-Boot build artifacts
+u-boot/u-boot
+u-boot/u-boot.bin
+u-boot/u-boot.img
+u-boot/MLO
+u-boot/spl/
+u-boot/.config
+u-boot/include/config/
+
+# FreeRTOS build
+freertos/build/
+freertos/*.elf
+freertos/*.bin
+freertos/*.map
+
+# Yocto / BitBake
+build/tmp/
+build/cache/
+build/sstate-cache/
+build/downloads/
+build/bitbake.lock
+*.pyc
+__pycache__/
+
+# Cross-toolchain
+toolchain/
+sdk/
+
+# IDE / Editor
+.vscode/settings.json
+.vscode/launch.json
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# AI / Claude Code
+CLAUDE.local.md
+.claude/CLAUDE.local.md
+.claude/settings.local.json
+
+# Logs & Temp
+*.log
+*.tmp
+tmp/
+
+# Vault / RAG
+vault/output/query-results.md
+
+# Docker
+.docker/
+docker-compose.override.yml
