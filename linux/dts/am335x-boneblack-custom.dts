@@ -1,0 +1,209 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * BeagleBone Black — custom device tree overlay
+ *
+ * Extends am335x-boneblack.dts with:
+ *   UART1, UART2, I2C1 (TMP102@0x48), I2C2, SPI0 (disabled),
+ *   EHRPWM1A, GPIO LEDs (custom triggers), GPIO button (P9.12)
+ *
+ * Build:
+ *   dtc -I dts -O dtb \
+ *       -i arch/arm/boot/dts \
+ *       -o am335x-boneblack-custom.dtb \
+ *       linux/dts/am335x-boneblack-custom.dts
+ *
+ * NOTE: requires kernel DTS in include path (-i flag above).
+ *
+ * Pin conflict: SPI0 shares P9.17/18 with I2C1 and P9.21/22 with UART2.
+ * SPI0 is disabled. To enable SPI0, disable I2C1 and UART2 first and
+ * update their pinctrl nodes.
+ */
+
+/include/ "am335x-boneblack.dts"
+
+/*
+ * Pinmux entries
+ *
+ * Pad register format (Control Module base 0x44E10000):
+ *   bits[2:0] = MUXMODE
+ *   bit[3]    = PULLUDDIS  (0 = pull enabled)
+ *   bit[4]    = PULLUP_EN  (1 = pullup, 0 = pulldown)
+ *   bit[5]    = RXACTIVE   (1 = input buffer enabled)
+ *   bit[6]    = SLEWCTRL   (1 = slow slew)
+ */
+&am33xx_pinmux {
+	uart1_pins: pinmux_uart1_pins {
+		pinctrl-single,pins = <
+			0x980 0x30	/* P9.26 uart1_rxd  — INPUT  + PULLUP, MUX_MODE0 */
+			0x984 0x00	/* P9.24 uart1_txd  — OUTPUT, MUX_MODE0 */
+		>;
+	};
+
+	uart2_pins: pinmux_uart2_pins {
+		pinctrl-single,pins = <
+			/* Spec: MUX_MODE1 selects uart2_rxd/txd on spi0_sclk/spi0_d0 pads */
+			0x950 0x31	/* P9.22 spi0_sclk  — INPUT  + PULLUP, MUX_MODE1 = uart2_rxd */
+			0x954 0x01	/* P9.21 spi0_d0    — OUTPUT, MUX_MODE1 = uart2_txd */
+		>;
+	};
+
+	i2c1_pins: pinmux_i2c1_pins {
+		pinctrl-single,pins = <
+			/* SLEWCTRL(slow) + RXACTIVE + PULLUP_EN, MUX_MODE2 = i2c1 */
+			0x958 0x72	/* P9.18 spi0_d1    — I2C1_SDA, MUX_MODE2 */
+			0x95c 0x72	/* P9.17 spi0_cs0   — I2C1_SCL, MUX_MODE2 */
+		>;
+	};
+
+	i2c2_pins: pinmux_i2c2_pins {
+		pinctrl-single,pins = <
+			/* SLEWCTRL(slow) + RXACTIVE + PULLUP_EN, MUX_MODE3 = i2c2 */
+			0x978 0x73	/* P9.20 uart1_ctsn — I2C2_SDA, MUX_MODE3 */
+			0x97c 0x73	/* P9.19 uart1_rtsn — I2C2_SCL, MUX_MODE3 */
+		>;
+	};
+
+	spi0_pins: pinmux_spi0_pins {
+		/* Kept for reference. Conflicts with i2c1_pins + uart2_pins. */
+		/* Enable only after disabling I2C1 and UART2. */
+		pinctrl-single,pins = <
+			0x950 0x00	/* P9.22 spi0_sclk  — OUTPUT, MUX_MODE0 */
+			0x954 0x30	/* P9.21 spi0_d0    — INPUT,  MUX_MODE0 */
+			0x958 0x10	/* P9.18 spi0_d1    — OUTPUT + PULLUP, MUX_MODE0 */
+			0x95c 0x10	/* P9.17 spi0_cs0   — OUTPUT + PULLUP, MUX_MODE0 */
+		>;
+	};
+
+	ehrpwm1_pins: pinmux_ehrpwm1_pins {
+		pinctrl-single,pins = <
+			/* AM335x TRM: gpmc_a2 pad, MUX_MODE6 = ehrpwm1A */
+			0x848 0x06	/* P9.14 gpmc_a2    — EHRPWM1A, MUX_MODE6 */
+		>;
+	};
+
+	gpio_btn_pins: pinmux_gpio_btn_pins {
+		pinctrl-single,pins = <
+			/* INPUT + PULLUP + RXACTIVE, MUX_MODE7 = gpio mode */
+			0x878 0x37	/* P9.12 gpmc_be1n  — GPIO1_28, MUX_MODE7 */
+		>;
+	};
+};
+
+/* ------------------------------------------------------------------ */
+/* UART1 — P9.24 (TX) / P9.26 (RX)                                   */
+/* ------------------------------------------------------------------ */
+&uart1 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart1_pins>;
+};
+
+/* ------------------------------------------------------------------ */
+/* UART2 — P9.21 (TX) / P9.22 (RX)                                   */
+/* ------------------------------------------------------------------ */
+&uart2 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart2_pins>;
+};
+
+/* ------------------------------------------------------------------ */
+/* I2C1 — P9.17 (SCL) / P9.18 (SDA) — 100 kHz                       */
+/* TMP102 temperature sensor at 0x48 (ADD0 = GND)                    */
+/* ------------------------------------------------------------------ */
+&i2c1 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c1_pins>;
+	clock-frequency = <100000>;
+
+	tmp102: sensor@48 {
+		compatible = "ti,tmp102";
+		reg = <0x48>;
+	};
+};
+
+/* ------------------------------------------------------------------ */
+/* I2C2 — P9.19 (SCL) / P9.20 (SDA) — reserved for expansion        */
+/* ------------------------------------------------------------------ */
+&i2c2 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c2_pins>;
+	clock-frequency = <100000>;
+};
+
+/* ------------------------------------------------------------------ */
+/* SPI0 — DISABLED (pin conflict with I2C1 + UART2)                  */
+/* spidev node kept for reference; enable after resolving pin conflict */
+/* ------------------------------------------------------------------ */
+&spi0 {
+	status = "disabled";
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi0_pins>;
+
+	spidev0: spidev@0 {
+		compatible = "rohm,dh2228fv";
+		reg = <0>;
+		spi-max-frequency = <1000000>;
+	};
+};
+
+/* ------------------------------------------------------------------ */
+/* EHRPWM1A — P9.14 (GPIO1_18)                                        */
+/* ------------------------------------------------------------------ */
+&ehrpwm1 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&ehrpwm1_pins>;
+};
+
+/* ------------------------------------------------------------------ */
+/* GPIO LEDs — USR0–USR3 (GPIO1_21–GPIO1_24)                         */
+/* Override upstream triggers from am335x-boneblack.dts               */
+/* ------------------------------------------------------------------ */
+&leds {
+	pinctrl-names = "default";
+
+	led@0 {
+		label = "beaglebone:green:usr0";
+		gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
+		linux,default-trigger = "heartbeat";
+	};
+
+	led@1 {
+		label = "beaglebone:green:usr1";
+		gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>;
+		linux,default-trigger = "mmc0";
+	};
+
+	led@2 {
+		label = "beaglebone:green:usr2";
+		gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>;
+		linux,default-trigger = "cpu0";
+	};
+
+	led@3 {
+		label = "beaglebone:green:usr3";
+		gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>;
+		linux,default-trigger = "default-on";
+	};
+};
+
+/* ------------------------------------------------------------------ */
+/* GPIO button — P9.12 (GPIO1_28), active-low, falling-edge IRQ      */
+/* ------------------------------------------------------------------ */
+/ {
+	gpio_keys: gpio_keys@0 {
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&gpio_btn_pins>;
+
+		button@0 {
+			label = "user-button";
+			linux,code = <KEY_PROG1>;
+			gpios = <&gpio1 28 GPIO_ACTIVE_LOW>;
+			wakeup-source;
+		};
+	};
+};
