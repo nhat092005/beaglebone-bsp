@@ -1,0 +1,34 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/notify.sh",
+            "async": true,
+            "timeout": 5
+          }
+        ],
+        "description": "Play a short beep when Claude finishes a response or asks the user a question.",
+        "id": "stop:notify-beep"
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/notify.sh",
+            "async": true,
+            "timeout": 5
+          }
+        ],
+        "description": "Play a short beep when the Claude session ends.",
+        "id": "session-end:notify-beep"
+      }
+    ]
+  }
+}
