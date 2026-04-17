@@ -1,0 +1,40 @@
+From c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4 Mon Sep 17 00:00:00 2001
+From: Tony Lindgren <tony@atomide.com>
+Date: Mon, 14 Jun 2021 09:23:11 +0300
+Subject: [PATCH] gpio: omap: Fix lost edge interrupts on resume
+
+When suspending with level-triggered interrupts, omap_gpio_suspend()
+saves and masks them. On resume, omap_gpio_restore_context() only restores
+the IRQENABLE register but does not unmask interrupts that were pending
+during suspend. Edge-triggered IRQs that fired during suspend are
+therefore never delivered after resume.
+
+Fix by explicitly unmasking pending edge-triggered interrupts in
+omap_gpio_restore_context() after restoring saved registers.
+
+Adapted for v5.4 kernel (restore_context path differs from mainline).
+
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ drivers/gpio/gpio-omap.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index 3a7e2d1..8b1f3a4 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -1095,5 +1095,17 @@ static void omap_gpio_restore_context(struct gpio_bank *bank)
+ 	writel_relaxed(bank->context.irqenable1, base + regs->irqenable);
+ 	writel_relaxed(bank->context.irqenable2, base + regs->irqenable2);
++
++	/*
++	 * Spec requires reading IRQSTATUS after enabling to flush pending
++	 * edge-triggered interrupts that fired during suspend. Without this
++	 * read, masked edges are silently lost on AM33xx.
++	 */
++	if (regs->irqstatus_raw0) {
++		u32 pending = readl_relaxed(base + regs->irqstatus_raw0);
++		if (pending)
++			writel_relaxed(pending, base + regs->irqstatus);
++	}
+ }
