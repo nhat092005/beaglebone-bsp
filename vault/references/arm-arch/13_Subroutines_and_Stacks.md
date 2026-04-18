@@ -1,5 +1,12 @@
-# Chapter 13: Subroutines and Stacks
+---
+title: ARM Architecture Chapter 13 Subroutines and Stacks
+tags:
+  - arm-arch
+  - reference
+date: 2026-04-18
+---
 
+# Chapter 13: Subroutines and Stacks
 
 ## 13.1 INTRODUCTION
 
@@ -10,7 +17,6 @@ describing it as a sequence of events, worrying about the low-level details when
 ```
 
 write the event itself. For example, you could break a large program that controls a motor into something that looks like
-
 
 ```asm
 main     BL       ConfigurePWM
@@ -30,22 +36,17 @@ they’re used frequently in stack operations. We’ll briefly look at ARM stand
 instructions and define what we mean by a stack.
 ```
 
-
 ## 13.2 THE STACK
 
 Stacks are conceptually Last In-First Out (LIFO) queues that can be used to describe systems from the architectural level down to the hardware level. Stacks can be used for software operations, too. More abstract descriptions of stacks can be used as data types by languages such as Java or Python, and there are even stack-based computer systems. When referring to hardware, generally these are areas in memory that have
-
 
 ```asm
 PUSH           POP
 ```
 
-
 > **FIGURE 13.1**: A hardware stack in memory.
 
-
 a variable length and a fixed starting address. Figure 13.1 shows a description of a hardware stack, with each entry being a fixed number of bytes in memory (for our case, generally these are word-length values). Data is written, or pushed, onto the top of the stack, and also read, or popped, from the top of the stack, where the processor adjusts the stack pointer before or after each operation. ARM processors have a stack pointer, register r13, which holds the address of either the next empty entry or the last filled entry in the queue, depending on what type of stack you have. We’ll see the different types shortly.
-
 
 ### 13.2.1 LDM/STM Instructions
 
@@ -55,7 +56,6 @@ LDM <address-mode> {<cond>} <Rn> {!}, <reg-list> {^}
 
 where {<cond>} is an optional condition code; <address-mode> specifies the addressing mode of the instruction, which tells us how and when we change the base register; <Rn> is the base register for the load operation; and <reg-list> is a
 
-
 comma-delimited list of symbolic register names and register ranges enclosed in braces. We’ll talk more about the “!” and “^” symbols in a moment. On the Cortex-M3/M4, the syntax of the LDM instruction is
 
 LDM <address-mode> {<cond>} <Rn> {!}, <reg-list>
@@ -64,14 +64,11 @@ where {<cond>} is an optional condition code; <address-mode> specifies the addre
 
 EXAMPLE 13.1 Suppose you wanted to load a subset of all registers, for example, registers r0 to r3, from memory, where the data starts at address 0xBEEF0000 and continues upward in memory. The instruction would simply be
 
-
 ```asm
 LDMIA    r9, {r0-r3}
 ```
 
-
 where the base register r9 holds the address 0xBEEF0000. The addressing mode used here is called Increment After, or IA. This says to increment the address after each value has been loaded from memory, which we’ll see shortly. This has the same effect as four separate LDR instructions, or
-
 
 ```asm
 LDR       r0, [r9]
@@ -79,7 +76,6 @@ LDR       r1, [r9, #4]
 LDR       r2, [r9, #8]
 LDR       r3, [r9, #12]
 ```
-
 
 Notice in the example above that at the end of the load sequence, register r9 has not been changed and still holds the value 0xBEEF0000. If you wanted to load data into registers r0 through r3 and r12, you could simply add it to the end of the list, i.e.,
 
@@ -92,7 +88,6 @@ LDMIA r9, {r5, r3, r0-r2, r14}
 and register r0 will be loaded first, followed by registers r1, r2, r3, r5, and r14. Analogous to the load multiple instruction, the store multiple instruction (STM) transfers register data to memory, and for the ARM7TDMI, its syntax is
 
 STM <address-mode> {<cond>} <Rn> {!}, <reg-list> {^}
-
 
 where the options are identical to those for the LDM instruction. The syntax for the Cortex-M3/M4 is
 
@@ -115,16 +110,13 @@ STMxx r10, {r0, r1, r4}               r4
 
 r4 r1 r1 r0 Increasing Base register (Rb) r10 r0 address r4 r1 r4 r0 r1 r0
 
-
 > **FIGURE 13.2**: LDM/STM operations.
-
 
 While the ARM7TDMI supports all four addressing modes, version 7-M processors like the Cortex-M3/M4 have more restrictive options and a few cautions to mind. There are only two addressing modes from which to choose:
 
 IA—Increment After DB—Decrement Before
 
 since the Cortex-M3/M4 supports only one type of stack, which we’ll examine more closely in the next few sections. If an LDM instruction is used to load the Program Counter, ensure that bit 0 of the loaded value is set to a 1; otherwise a fault exception occurs. For both the STM and LDM instructions, the stack pointer should not be included in the register list. Also be aware that if you have an LDM instruction that has the Link Register in the register list, you cannot include the Program Counter in the list. Consult the ARM v7-M Architectural Reference Manual (ARM 2010a) for other restrictions when using LDM and STM instructions.
-
 
 ### 13.2.2 PUSH and POP
 
@@ -148,7 +140,6 @@ PUSH and POP make it very easy to conceptually deal with stacks, since the
 
 instruction implicitly contains the addressing mode. Suppose we have a stack that starts at address 0x20000200 on the Tiva TM4C123GH6ZRB, grows downward in memory (a full descending stack), and has two words pushed onto it with the following code:
 
-
 ```asm
 AREA     Example3, CODE, READONLY
 ENTRY
@@ -165,14 +156,11 @@ PUSH     {r3}
 PUSH     {r4}
 ```
 
-
-> **FIGURE 13.3**: 
-
+> **FIGURE 13.3**:
 
 r3 r4
 
 sp sp BABEFACE BABEFACE sp DEADBEEF PUSH operation
-
 
 ```asm
 sp                           POP operation
@@ -180,9 +168,7 @@ sp                           POP operation
 
 BABEFACE sp BABEFACE BABEFACE r6 sp DEADBEEF DEADBEEF r5 DEADBEEF
 
-
-> **FIGURE 13.4**: 
-
+> **FIGURE 13.4**:
 
 ```asm
 POP       {r5}
@@ -191,17 +177,13 @@ POP       {r6}
 stop B          stop     ; stop program
 ```
 
-
 As we’ll see in the next section, a full descending stack implies that the stack pointer is pointing to the last (full) item stored in the stack (at address 0x20000200) and that the stack items are stored at addresses that decrease with each new entry. Therefore, our stack pointer must be decremented before anything new is placed on the stack. The first word in our program would be stored in memory at address 0x200001FC. The second word would be stored at address 0x200001F8. If you run the code above in a simulator and view a memory window, such as the one in Figure 13.3, you will see the two words stored at successively decreasing addresses. The POP instructions will read the data into whichever registers we choose, so the value 0xDEADBEEF is popped off the top of the stack into register r5. The stack pointer is incremented afterward. The second POP instruction moves the value 0xBABEFACE into register r6, shown in Figure 13.4, returning the stack pointer value to 0x20000200.
-
 
 13.2.3 Full/Empty Ascending/Descending Stacks Stack operations are easy to implement using LDM and STM instructions, since the base register is now just the stack pointer, register r13. Several types of stacks can be built, depending on personal preferences, programming, or hardware requirements.
 
-
-> **TABLE 13.1**: 
+> **TABLE 13.1**:
 
 Stack-Oriented Suffixes Stack Type PUSH POP Full descending STMFD (STMDB) LDMFD (LDMIA) Full ascending STMFA (STMIB) LDMFA (LDMDA) Empty descending STMED (STMDA) LDMED (LDMIB) Empty ascending STMEA (STMIA) LDMEA (LDMDB)
-
 
 Your software tools will probably build a particular type of stack by default. Fortunately, they all use the same instructions—the differences lie with suffixes on those instructions. The options are
 
@@ -216,7 +198,6 @@ ing from a low address and progressing to a higher address (an ascending stack).
 To make it easier for the programmer, stack-oriented suffixes can be used instead of the increment/decrement and before/after suffixes. For example, you can just use the FD suffix to indicate that you’re building a full descending stack; the assembler will translate that into the appropriate instructions. Pushing data onto a full descending stack is done with an STMDB instruction. The stack starts off at a high address and works its way toward a lower address, and full refers to the stack pointer pointing at the last item in the stack, so before moving new data onto it, the instruction has to decrement the pointer beforehand. Popping data off this type of stack requires the opposite operation—an LDMIA instruction. Because the address always points to the last item on the stack, the processor reads the data first, then the address is incremented. Refer to Table 13.1 for a list of stack-oriented suffixes.
 
 EXAMPLE 13.3 Let’s build a full descending stack in memory, using register r13 as the pointer to the stack. Further suppose that this code is part of a routine that will require the Link Register and registers r4 through r7 to be saved on the stack. Assume that the SRAM starts at address 0x20000200 for the Tiva TM4C123GH6ZRB microcontroller. Our code might start something like this:
-
 
 ```asm
 AREA    Test, CODE, READONLY
@@ -257,9 +238,7 @@ LDMIA        sp!, {r4-r7,pc} ;restore registers and return
 END
 ```
 
-
 Recall that full descending stacks can be created by using the STMDB/LDMIA combination, identical to the PUSH/POP combination. Notice that the LDM instruction pops the value of the Link Register into the Program Counter, so if we were to call our stacking routine as part of another function, the return address is moved into the Program Counter automatically and fetching begins from there. This is exactly how subroutines are called, which brings us to our next section.
-
 
 ## 13.3 SUBROUTINES
 
@@ -271,7 +250,6 @@ tic function like a logarithm. A large task can be described more easily this wa
 
 Subroutines also allow programmers to write and test small blocks of code first, building on the knowledge that they’ve been proven to work. Subroutines should follow certain guidelines, and software should be able to interrupt them without causing any errors. A routine that can be interrupted and then called by the interrupting program, or more generally, can be called recursively without any problems, is called reentrant. By following a few simple procedures at the start of your code, you should be able to write reentrant subroutines with few headaches. We’ve already seen a few examples of subroutines in Chapter 6, where the subroutine is called with the BL (branch and link) instruction. This instruction transfers the branch target (the starting address of your subroutine) into the Program Counter and also transfers the return address into the Link Register, r14, so that the subroutine can return back to the calling program. Subroutines can also call other subroutines, but caution must be taken to ensure information is not lost in the process. For example, in Figure 13.5, a main routine calls a subroutine called func1. The subroutine should immediately push the values of any registers it might corrupt, as well as the Link Register, onto the stack. At some point in the code, another subroutine, func2, is called. This subroutine should begin the exact same way, pushing the values of any used registers and the Link Register onto the stack. At the end of func2, a single LDM instruction will restore any corrupted registers to their original values and move the address in the Link Register (that we pushed onto the stack) into the Program Counter. This brings us back to point where we left off in subroutine func1. At the end of func1, registers are restored and the saved Link Register value coming off the stack is moved into the Program Counter, taking us back to the main routine. If func1 doesn’t save the Link Register
 
-
 func1 func2
 
 .. STMFD .. . sp!, {regs, lr} . .. . .. BL func1 BL func2 .. . .. . . LDMFD
@@ -282,12 +260,9 @@ MOV pc, lr
 
 sp!, {regs, pc}
 
-
 > **FIGURE 13.5**: Stacking the Link Register during entry to a subroutine.
 
-
 at the start of its routine, when func2 is called, the Link Register will get overwritten with a new return address, so when func1 finishes and tries to return to the main routine, it has the wrong return address.
-
 
 ## 13.4 PASSING PARAMETERS TO SUBROUTINES
 
@@ -309,9 +284,7 @@ to add another small, positive number to it, such as 9, then the value becomes
 
 0x80000005, which is now a very large negative number. If we were to use saturation arithmetic, the value returned from the addition would be 0x7FFFFFFF, which is the largest positive value you can represent in 32 bits using two’s complement. Similarly, a large negative movement because of subtraction, e.g., 0x80000001 minus 2, would produce 0x80000000, the largest negative number,
 
-
 using saturation arithmetic. Imposing these two limits could be used to prevent an audio or speech waveform from going from the most positive to the most negative value, which introduces high-frequency “clicks” in the signal. Suppose we wish to use saturation arithmetic to perform a logical shift left by m bits. Clearly a number as simple as 0x40000000 already gets us into trouble. This can actually be done on an ARM7TDMI using only four instructions, as described by Symes (Sloss, Symes, and Wright 2004):
-
 
 ```asm
 ; r4 = saturate32(r5 < <m)
@@ -320,7 +293,6 @@ MOV      r4, r5, LSL m
 TEQ      r5, r4, ASR m                  ; if (r5! = (r4 > >m))
 EORNE    r4, r6, r5, ASR #31            ; r4 = 0x7FFFFFFF^sign(r5)
 ```
-
 
 Let’s convert this algorithm into a subroutine, and then pass the parameters through registers. For our example, the parameters are the value to be shifted, the shift count, and the return value. Our target microcontroller can again be the LPC2132 from NXP. The code might look something like the following:
 
@@ -337,7 +309,6 @@ MOV   r1, #2
 ```
 
 BL saturate
-
 
 ```asm
 ; try out a negative case (should not saturate)
@@ -368,9 +339,7 @@ LDMDB sp!,{r6,pc}		                  ; return
 END
 ```
 
-
 There are a few things to note in this example. The first is that we have three parameters to pass between the calling routine and the subroutine: the operand to be shifted, the shift amount, and the result. We can use registers r0, r1, and r2 for these parameters. Note that the subroutine also expects the parameters to be in these specific registers. The second point is that one register, r6, is corrupted in our subroutine, and we should, therefore, stack it to preserve its original value. Our stack pointer, register r13, is loaded with the base address of SRAM on the LPC2132. Our stack starts at this address and goes upward in memory. The Link Register is also stacked so that we ensure our subroutine can be interrupted, if necessary. We exit the subroutine by using only a single LDM instruction, since the last register to be updated is the PC, and this is loaded with the LR value, returning us to the calling routine.
-
 
 13.4.2 Passing Parameters by Reference A better approach to passing parameters is to send a subroutine information to locate the arguments to a function. Memory, such as a block of RAM, could hold the parameters, and then the calling program could pass just the address of the data to the subroutine, known as calling by reference. This allows for changing values, and in fact, is more efficient in terms of register usage for some types of data, e.g., a long string of characters. Rather than trying to pass large blocks of data through registers, the starting address of the data is the only parameter needed.
 
@@ -384,7 +353,6 @@ AREA           Passbymem, CODE, READONLY
 
 ENTRY
 
-
 ```asm
 LDR      sp, =SRAM_BASE       ; stack pointer initialized
 LDR      r3, =SRAM_BASE + 100 ; writable memory for parameters
@@ -397,7 +365,6 @@ STMIA r3, {r1,r2}         ; save off parameters
 
 BL saturate
 
-
 ```asm
 ; try out a negative case (should not saturate)
 MOV    r1, #0xFFFFFFFE
@@ -408,7 +375,6 @@ STMIA r3, {r1,r2}
 BL saturate
 
 stop B stop
-
 
 saturate
 
@@ -437,7 +403,6 @@ LDMDB sp!,{r4-r7,pc}		                     ; return
 END
 ```
 
-
 The operand to be shifted and the shift count are stored in memory starting at address SRAM_BASE + 100, where they are read by the subroutine. The entry to the subroutine does some housekeeping by saving off the registers about to be corrupted to the stack, including the Link Register. This is required by the ARM Application Procedure Call Standard (AAPCS), which is covered shortly. There are two options for returning a value from this subroutine. The first is to just store it back in memory for later reading by some other code. The second option is to return the value in a register, say register r3. In our example, the value is stored back to memory. If you were doing string comparisons, you might call a
 
 ```asm
@@ -446,9 +411,7 @@ subroutine and send the addresses of the two strings to the subroutine, expectin
 
 either a one (they matched) or a zero (they did not match) to be stored in a register as the result.
 
-
 13.4.3 Passing Parameters on the Stack One of the most straightforward ways to pass parameters to a subroutine is to use the stack. This is very similar to passing parameters in memory, only now the subroutine uses a dedicated register for a pointer into memory—the stack pointer, register r13. Data is pushed onto the stack before the subroutine call; the subroutine grabs the data off the stack to be used; and results are then stored back onto the stack to be retrieved by the calling routine. At this point it’s worth mentioning that a programmer should be mindful of which stack pointer he or she is using. Recall from Chapter 2 that the ARM7TDMI has different stack pointers for Supervisor mode, the exception modes, and for User mode, allowing different stacks to be built for the different modes if the programmer wishes to do so. The Cortex-M4 has two stack pointers, a main stack pointer (MSP), which is the default stack pointer, and a process stack pointer (PSP). The choice of stack
-
 
 pointers is controlled through the CONTROL Register, which was mentioned briefly in Chapter 2. We’ll examine these more when dealing with exceptions in Chapter 15.
 
@@ -515,14 +478,11 @@ LDMDB    sp!,{r4-r7,pc}		           ; return
 END
 ```
 
-
 The stack structure is drawn in Figure 13.6. The two parameters are pushed to the bottom of the stack, and then the saved registers are stacked on top of them,
-
 
 .. . sp lr r7 r6 r5 r4 r3 sp-0x1C parameter 2 r7 sp-0x20 parameter 1 r5 .. .
 
 > **FIGURE 13.6**: Stack configuration.
-
 
 ending with the Link Register at the top. Since register r13 now points to the top of the stack, it’s necessary to use the stack pointer with a negative offset to address the parameters. When the result is computed, it must be stored back to the bottom of the stack, again using the stack pointer with a negative offset.
 
@@ -531,7 +491,6 @@ If the example above used full descending stacks, then the PUSH and POP instruct
 EXAMPLE 13.7 Since the object of the example is to compare the stack structures rather than the algorithm itself, the following code shows how to push two values onto the stack, call the subroutine, and then pop two values off the stack. Careful readers will have noticed that if the shift value were fixed, rather than variable as it is in our subroutine, you could save quite a bit of coding by just using the SSAT instruction that we saw in Chapter 7. For this example, the SRAM block begins at address 0x20000000 on the Tiva TM4C123GH6ZRB.
 
 SRAM_BASE EQU 0x20000200
-
 
 ```asm
 LDR       sp, =SRAM_BASE               ; stack pointer initialized
@@ -554,7 +513,6 @@ MOV     r1, #0xFFFFFFFE
 MOV     r2, #8
 PUSH    {r1,r2}
 ```
-
 
 BL saturate
 
@@ -595,9 +553,7 @@ STR       r4, [sp, #0x14]           ; move result to bottom of stack
 POP       {r4-r7,pc}                ; return
 ```
 
-
 Notice at the end of the subroutine that the Link Register value that was pushed onto the stack is now loaded into the Program Counter using the POP instruction, similar to the method used by the ARM7TDMI.
-
 
 ## 13.5 THE ARM APCS
 
@@ -607,7 +563,6 @@ It turns out that there’s a standard called the ARM Application Procedure Call
 
 The standard is also designed to combine the ease, speed, and efficiency of passing parameters through registers with the flexibility and extensibility of passing in the stack. While the document describes procedures for writing code, it also defines
 
-
 Register Arguments into function r0 Result(s) from function r1 Otherwise corruptible r2 (Additional parameters r3 passed on stack)
 
 r4 r5 r6 Register variables r7 must be preserved r8 r9/sb r10/s1 r11
@@ -616,9 +571,7 @@ Scratch register r12 (corruptible)
 
 Stack pointer r13/sp Link Register r14/lr Program Counter r15/pc
 
-
 > **FIGURE 13.7**: The ARM APCS specification for register usage.
-
 
 the use of registers, shown in Figure 13.7. Some parts of the specification include the following:
 
@@ -644,11 +597,9 @@ Stacks must be eight-byte aligned, and the ARM and Thumb C and C++ compilers alw
 
 For floating-point operations, similar rules apply. According to the standard, registers s16-s31 must be preserved across subroutine calls; registers s0-s15 do not need to be preserved, so you could use these for passing arguments to a subroutine. The only status register that may be accessed by conforming code is the FPSCR, and within this register, certain bits must be left unchanged. While it’s important to write code that conforms to the specification, beginning programmers would do well to
 
-
 practice with the specification in mind, and as time permits, rework your code to follow the standard.
 
 EXAMPLE 13.8 Let’s look at a short floating-point routine for the Cortex-M4 that uses a Taylor series expansion to compute the value of sin(x). The subroutine uses registers s0-s10, so no floating-point registers need to be stacked. The input to the routine and the final result are stored in register s0. As we saw in Chapter 7, sometimes divisions can be avoided entirely by calculating constants beforehand and using multiplication operations instead.
-
 
 ```asm
 ;************************************************************
@@ -665,9 +616,7 @@ EXPORT Reset_Handler
 ENTRY
 ```
 
-
 Reset_Handler
-
 
 ```asm
 ; Enable the FPU
@@ -684,13 +633,11 @@ STR     r1, [r0]		              ; wait for store to complete
 
 DSB
 
-
 ```asm
 ; Reset pipeline now that the FPU is enabled
 ```
 
 ISB
-
 
 ```asm
 ;
@@ -748,7 +695,6 @@ SinCalc
 
 VLDR.F32 s1, invfact3 VLDR.F32 s2, invfact5 VLDR.F32 s3, invfact7
 
-
 ```asm
 ;
 VMUL.F32   s4, s0, s1 ; compute xdiv3
@@ -771,7 +717,6 @@ invfact5    DCD        0x3C088888 ; 1/5!
 invfact7    DCD        0x39500CD1 ; 1/7!
 ```
 
-
 ## 13.6 EXERCISES
 
 1. What’s wrong with the following ARM7TDMI instructions?
@@ -782,16 +727,13 @@ b. LDMDA      r2, {}
 c. STMDB      r15!, {r0-r3, r4, lr}
 ```
 
-
 2. On the ARM7TDMI, if register r6 holds the address 0x8000 and you executed the instruction
 
 ```asm
 STMIA r6, {r7, r4, r0, lr}
 ```
 
-
 what address now holds the value in register r0? Register r4? Register r7? The Link Register?
-
 
 3.Assume that memory and ARM7TDMI registers r0 through r3 appear as follows:
 
@@ -803,11 +745,9 @@ Describe the memory and register contents after executing the instruction
 LDMIA r3!, {r0, r1, r2}
 ```
 
-
 4. Suppose that a stack appears as shown in the first diagram below. Give the instruction or instructions that would push or pop data so that memory appears in the order shown. In other words, what instruction would be necessary to go from the original state to that shown in (a), and then (b), and then (c)?
 
 Address 0x8010 0x00000001 0x00000001 0x00000001 0x00000001 0x800C 0xFEEDDEAF 0xFEEDDEAF 0xFEEDDEAF 0xFEEDDEAF 0x8008 0xBABE2222 0xBABE2222 0x8004 0x12340000 0x8000 Original (a) (b) (c)
-
 
 5. Convert the cosine table from Problem 1 in Chapter 12 into a subroutine, using a full descending stack.
 
@@ -824,7 +764,6 @@ Address 0x8010 0x00000001 0x00000001 0x00000001 0x00000001 0x800C 0xFEEDDEAF 0xF
 11. Match the following terms with their definitions:
 
 a. Recursive 1. Subroutine can be interrupted and called by the interrupting routine
-
 
 b. Relocatable 2. A subroutine that calls itself c. Position 3. The subroutine can be placed anywhere in memory independent d. Reentrant 4. All program addresses are calculated relative to the Program Counter
 
@@ -845,9 +784,7 @@ The numbers 16, 3, 2, and 13 would be stored at addresses 0x4000 to 0x4003, resp
 
 15. Another common operation in signal processing and control applications is to compute a dot product, given as N −1 a= ∑c x m=0 m m
 
-
 where the dot product a is a sum of products. The coefficients cm and the input samples xm are stored as arrays in memory. Assume sample data and coefficients are 16-bit, unsigned integers. Write the assembly code to compute a dot product for 20 samples. This will allow you to use the LDM instruction to load registers with coefficients and data efficiently. You probably want to bring in four or five values at a time, looping as needed to
-
 
 exhaust all values. Leave the dot product in a register, and give the register the name DPROD using the RN directive in your code. If you use the newer v7-M SIMD instructions, note that you can perform two multiples on 16-bit values at the same time.
 

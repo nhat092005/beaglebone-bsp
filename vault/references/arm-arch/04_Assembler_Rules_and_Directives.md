@@ -1,15 +1,20 @@
-# Chapter 4: Assembler Rules and Directives
+---
+title: ARM Architecture Chapter 4 Assembler Rules and Directives
+tags:
+  - arm-arch
+  - reference
+date: 2026-04-18
+---
 
+# Chapter 4: Assembler Rules and Directives
 
 ## 4.1 INTRODUCTION
 
 The ARM assembler included with the RealView Microcontroller Development Kit contains an extensive set of features found on most assemblers—essential for experienced programmers, but somewhat unnerving if you are forced to wade through volumes of documentation as a beginner. Code Composer Studio also has a nice assembler with myriad features, but the details in the ARM Assembly Language Tools User’s Guide run on for more than three hundred pages. In an attempt to cut right to the heart of programming, we now look at rules for the assembler, the structure of a program, and directives, which are instructions to the assembler for creating areas of code, aligning data, marking the end of your code, and so forth. These are unlike processor instructions, which tell the processor to add two numbers or jump somewhere in your code, since they never turn into actual machine instructions. Although both the ARM and TI assemblers are easy to learn, be aware that other assemblers have slightly different rules; e.g., gnu tools have directives that are preceded with a period and labels that are followed by a colon. It’s a Catch-22 situation really, as you cannot learn assembly without knowing how to use directives, but it’s that you will use every directive or every assembler option immediately, so for now, we start with what is essential. Read this chapter to get an overview of what’s possible, but don’t panic. As we proceed through more chapters of the book, you may find yourself flipping back to this chapter quite often, which is normal. You can, of course, refer back to the RealView Assembler User’s Guide found in the RVMDK tools or the Code Composer Studio documentation for the complete specifications of the assemblers if you need even more detail.
 
-
 ## 4.2 STRUCTURE OF ASSEMBLY LANGUAGE MODULES
 
 We begin by examining a very simple module as a starting point. Consider the following code:
-
 
 ```asm
 AREA ARMex, CODE, READONLY
@@ -19,13 +24,11 @@ start MOV    r0, #10      ; Set up parameters
 MOV    r1, #3
 ```
 
-
 ```asm
 ADD r0, r0, r1              ; r0 = r0 + r1
 stop     B   stop		                  ; infinite loop
 END			                      ; Mark end of file
 ```
-
 
 While the routine may appear a little cryptic, it only does one thing: it adds the numbers 10 and 3 together. The rest of the code consists of directives for the assem-
 
@@ -45,7 +48,6 @@ directives and pseudo-instructions, but we will cover only a handful throughout 
 
 chapter to get a sense of what is possible. The current ARM/Thumb assembler language, called Unified Assembler Language (UAL), has superseded earlier versions of both the ARM and Thumb assembler languages (we saw a few Thumb instructions in Chapter 3, and we’ll see more throughout the book, particularly in Chapter 17). To give you some idea of the subtle changes involved, compare the two formats for performing a shift operation:
 
-
 ```asm
 Old ARM format                                 UAL format
 ```
@@ -54,9 +56,7 @@ MOV <Rd>, <Rn>, LSL shift LSL <Rd>, <Rn>, shift LDR{cond}SB LDRSB{cond} LDMFD sp
 
 Code written using UAL can be assembled for ARM, Thumb, or Thumb-2, which is an extension of the Thumb instruction set found on the more recent ARM
 
-
-> **TABLE 4.1**: 
-
+> **TABLE 4.1**:
 
 ```asm
 ARM Version 4T Instruction Set
@@ -84,9 +84,7 @@ SUB SWIa SWP SWPB TEQ
 TST            UMLAL           UMULL
 ```
 
-
 a The SWI instruction was deprecated in the latest version of the ARM Architectural Reference Manual (2007c), so while you should use the SVC instruction, you may still see this instruction in some older code.
-
 
 processors, e.g., Cortex-A8. However, you’re likely to find a great a deal of code written using the older format, so be mindful of the changes when you review older programs. Also be aware that a disassembly of your code will show the UAL nota-
 
@@ -98,12 +96,11 @@ more details on UAL formats in the RealView Assembler User’s Guide located in 
 
 - Don’t comment the obvious. If you’re adding one to a register, don’t write “Register r3 + 1.” • Use concise language when describing what registers hold or how a function behaves. • Comment the sections of code where you think another programmer might have a difficult time following your reasoning. Complicated algorithms usually require a deep understanding of the code, and a bug may take days to find without adequate documentation. • In addition to commenting individual instructions, include a short description of functions, subroutines, or long segments of code. • Do not abbreviate, if possible. • Acronyms should be avoided, but this can be difficult sometimes, since peripheral register names tend to be shortened. For example, VIC0_VA7R might not mean much in a comment, so if you use the name in the instruction, describe what the register does.
 
-
 of a comment, unless you have the semicolon inside of a string constant, for example,
 
 abc SETS “This is a semicolon;”
 
-Here, a string is assigned to the variable abc, but since the semicolon lies within quotes, there is no comment on this line. The end of the line is the end of the comment, and a comment can occupy the entire line if you wish. The TI assembler will allow you to place either an asterisk (*) or a semicolon in column 1 to denote a comment, or a semicolon anywhere else on the line. At some point, you will begin using constants in your assembly, and they are allowed in a handful of formats:
+Here, a string is assigned to the variable abc, but since the semicolon lies within quotes, there is no comment on this line. The end of the line is the end of the comment, and a comment can occupy the entire line if you wish. The TI assembler will allow you to place either an asterisk (\*) or a semicolon in column 1 to denote a comment, or a semicolon anywhere else on the line. At some point, you will begin using constants in your assembly, and they are allowed in a handful of formats:
 
 - Decimal, for example, 123 • Hexadecimal, for example, 0x3F • n_xxx (Keil only) where: n is a base between 2 and 9 xxx is a number in that base
 
@@ -121,13 +118,11 @@ which places 8-bit characters in the string into a section of code, but the .str
 
 which both adds the NUL character for you and correctly interprets the \n escape character at the end. Before we move into directives, we need to cover a few housekeeping rules. For the Keil tools, there are case rules associated with your commands, so while you can write the instruction mnemonics, directives, and symbolic register names in either uppercase or lowercase, you cannot mix them. For example ADD or add are acceptable, but not Add. When it comes to mnemonics, the TI assembler is case-insensitive.
 
-
 To make the source file easier to read, the Keil tools allow you to split up a single line into several lines by placing a backslash character (\) at the end of a line. If you had a long string, you might write
 
 ISR_Stack_Size EQU (UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + \ FIQ_Stack_Size + IRQ_Stack_Size)
 
 There must not be any other characters following the backslash, such as a space or a tab. The end-of-line sequence is treated as a white space by the assembler. Using the Keil tools, you may have up to 4095 characters for any given line, including any extensions using backslashes. The TI tools only allow 400 characters per line—anything longer is truncated. For either tool, keep the lines relatively short for easier reading!
-
 
 ## 4.3 PREDEFINED REGISTER NAMES
 
@@ -135,15 +130,13 @@ Most assemblers have a set of register names that can be used interchangeably in
 
 r0-r15 or R0-R15 s0-s31 or S0-S31 a1-a4 (argument, result, or scratch registers, synonyms for r0 to r3) sp or SP (stack pointer, r13) lr or LR (Link Register, r14) pc or PC (Program Counter, r15) cpsr or CPSR (current program status register) spsr or SPSR (saved program status register) apsr or APSR (application program status register)
 
-
 ## 4.4 FREQUENTLY USED DIRECTIVES
 
 A complete description of the assembler directives can be found in Section 4.3 of the RealView Assembler User’s Guide or Chapter 4 of ARM Assembly Language Tools User’s Guide; however, in order to start coding, you only need a few. We’ll examine the more frequently used directives first, shown in Table 4.2, and leave the others as reference material should you require them. Then we’ll move on to macros in the next section.
 
 4.4.1 Defining a Block of Data or Code As you create code, particularly compiled code from C programs, the tools will need to be told how to treat all the different parts of it—data sections, program sections,
 
-
-> **TABLE 4.2**: 
+> **TABLE 4.2**:
 
 Frequently Used Directives Keil Directive CCS Directive Uses AREA .sect Defines a block of code or data RN .asg Can be used to associate a register with a name
 
@@ -164,29 +157,24 @@ LTORG Assigns the starting point of a literal pool
 END                 .end                   Designates the end of a source file
 ```
 
-
 blocks of coefficients, etc. These sections, which are indivisible and named, then get manipulated by the linker and ultimately end up in the correct type of memory in a system. For example, data, which could be read-write information, could get stored in RAM, as opposed to the program code which might end up in Flash memory. Normally you will have separate sections for your program and your data, especially in larger programs. Blocks of coefficients or tables can be placed in a section of their own. Since the two main tool sets that we’ll use throughout the book do things in very different ways, both formats are presented below.
 
 4.4.1.1 Keil Tools You tell the assembler to begin a new code or data section using the AREA directive, which has the following syntax:
-
 
 ```asm
 AREA sectionname{,attr}{,attr}…
 ```
 
-
 where sectionname is the name that the section is to be given. Sections can be given almost any name, but if you start a section name with a digit, it must be enclosed in bars, e.g., |1_DataArea|; otherwise, the assembler reports a missing section name error. There are some names you cannot use, such as |.text|, since this is used by the C compiler (but it would be a rather odd name to pick at random). Your code must have at least one AREA directive in it, which you’ll usually find in the first few lines of a program. Table 4.3 shows some of the attributes that are available, but a full list can be found in the RealView Assembler User Guide in the Keil tools.
 
 EXAMPLE 4.1 The following example defines a read-only code section named Example.
-
 
 ```asm
 AREA Example,CODE,READONLY ; An example code section.
 ; code
 ```
 
-
-> **TABLE 4.3**: 
+> **TABLE 4.3**:
 
 Valid Section Attributes (Keil Tools) ALIGN = expr This aligns a section on a 2expr-byte boundary (note that this is different from the
 
@@ -195,7 +183,6 @@ ALIGN directive); e.g., if expr = 10, then the section is aligned to a 1KB
 ```
 
 boundary. CODE The section is machine code (READONLY is the default) DATA The section is data (READWRITE is the default) READONLY The section can be placed in read-only memory (default for sections of CODE) READWRITE The section can be placed in read-write memory (default for sections of DATA)
-
 
 4.4.1.2 Code Composer Studio Tools It’s often helpful to break up large assembly files into sections, e.g., creating a separate section for large data sets or blocks of coefficients. In fact, the TI assembler has directives to address similar concepts. Table 4.4 shows some of the directives used to create sections. The .sect directive is similar to the AREA directive in that you use it to create an initialized section, to put either your code or some initialized data there. Sections can be made read-only or read-write, just as with Keil tools. You can make as many sections as you like; however, it is usually best to make only as many as needed. An example of a section of data called Coefficients might look like
 
@@ -207,13 +194,11 @@ boundary. CODE The section is machine code (READONLY is the default) DATA The se
 .word 0AAh
 ```
 
-
 The default section is the .text section, which is where your assembly program will normally sit, and in fact, you can create it either by saying
 
 .sect “.text”
 
-
-> **TABLE 4.4**: 
+> **TABLE 4.4**:
 
 TI Assembler Section Directives Directive Use Uninitialized sections .bss Reserves space in the .bss section .usect Reserves space in a specified uninitialized named section Initialized sections .text The default section where the compiler places code
 
@@ -227,17 +212,13 @@ TI Assembler Section Directives Directive Use Uninitialized sections .bss Reserv
 .data sections
 ```
 
-
 or by simply typing
-
 
 ```asm
 .text
 ```
 
-
 Anything after this will be placed in the .text section. As we’ll see in Chapter 5 for both the Keil tools and the Code Composer Studio tools, there is a linker command file and a memory map that determines where all of these sections ultimately end up in memory. As with most silicon vendors, TI ships a default linker command file for their MCUs, so you shouldn’t need to modify anything to get up and running.
-
 
 ### 4.4.2 Register Name Definition
 
@@ -253,7 +234,6 @@ EXAMPLE 4.2 The following registers have been given names that can be used throu
 ; destination matrix
 ```
 
-
 4.4.2.2 Code Composer Studio You can assign names to registers using the .asg directive. The syntax is
 
 .asg “character string”, substitution symbol
@@ -264,9 +244,7 @@ For example, you might say .asg R13, STACKPTR
 ADD      STACKPTR, STACKPTR, #3
 ```
 
-
 4.4.3 Equating a Symbol to a Numeric Constant It is frequently useful to give a symbolic name to a numeric constant, a registerrelative value, or a program-relative value. Such a directive is similar to the use of #define to define a constant in C. Note that the assembler doesn’t actually place
-
 
 anything at a particular memory location. It merely equates a label with an operand, either a value or another label, for example.
 
@@ -278,7 +256,7 @@ where name is the symbolic name to assign to the value, expr is a register-relat
 
 ARM THUMB CODE16 CODE32 DATA
 
-EXAMPLE 4.3 SRAM_BASE EQU 0x04000000 ; assigns SRAM a base address abc EQU 2 ; a ssigns the value 2 to the symbol abc xyz EQU label+8 ;  assigns the address (label+8)
+EXAMPLE 4.3 SRAM_BASE EQU 0x04000000 ; assigns SRAM a base address abc EQU 2 ; a ssigns the value 2 to the symbol abc xyz EQU label+8 ; assigns the address (label+8)
 
 ```asm
 ; to the symbol xyz
@@ -296,7 +274,6 @@ x1C to the symbol fiq, and marks it
 ; as code
 ```
 
-
 4.4.3.2 Code Composer Studio There are two identical (and interchangeable) directives for equating names with
 
 ```asm
@@ -304,7 +281,6 @@ constants and other values: .set and .equ. Notice that registers can be given na
 ```
 
 using these directives as well as values. Their syntax is
-
 
 ```asm
 symbol .set
@@ -316,7 +292,6 @@ value
 symbol .equ  value
 ```
 
-
 EXAMPLE 4.4
 
 ```asm
@@ -325,13 +300,11 @@ OFFSET     .equ     50/2 + 3          ; equate OFFSET to a numeric value
 ADD      r0, AUX_R4,       #OFFSET
 ```
 
-
 4.4.4 Declaring an Entry Point In the Keil tools, the ENTRY directive declares an entry point to a program. The syntax is
 
 ENTRY
 
 Your program must have at least one ENTRY point for a program; otherwise, a warning is generated at link time. If you have a project with multiple source files, not
-
 
 every source file will have an ENTRY directive, and any single source file should only have one ENTRY directive. The assembler will generate an error if more than
 
@@ -339,14 +312,12 @@ every source file will have an ENTRY directive, and any single source file shoul
 one ENTRY exists in a single source file.
 ```
 
-
 EXAMPLE 4.5
 
 ```asm
 AREA ARMex, CODE, READONLY
 ENTRY	    ; Entry point for the application
 ```
-
 
 ### 4.4.5 Allocating Memory and Specifying Contents
 
@@ -362,18 +333,15 @@ EXAMPLE 4.6 Unlike strings in C, ARM assembler strings are not null-terminated. 
 struct a null-terminated string using DCB as follows:
 ```
 
-
 ```asm
 C_string DCB “C_string”,0
 ```
 
-
 If this string started at address 0x4000 in memory, it would look like
 
-Address ASCII equivalent 0x4000 43 C 0x4001 5F _ 0x4002 73 s 0x4003 74 t 0x4004 72 r 0x4005 69 i 0x4006 6E n 0x4007 67 g 0x4008 00
+Address ASCII equivalent 0x4000 43 C 0x4001 5F \_ 0x4002 73 s 0x4003 74 t 0x4004 72 r 0x4005 69 i 0x4006 6E n 0x4007 67 g 0x4008 00
 
 Compare this to the way to that the Code Composer Studio assembler did the same thing using the .cstring directive in Section 4.2.
-
 
 In addition to the directive for allocating memory at the resolution of bytes, there are directives for reserving and defining halfwords and words, with and without alignment. The DCW directive allocates one or more halfwords of memory, aligned on two-byte boundaries (DCWU does the same thing, only without the memory alignment). The syntax for these directives is
 
@@ -392,11 +360,10 @@ coeff DCW       0xFE37, 0x8ECC           ; defines 2 halfwords
 data1 DCD       1,5,20                   ; defines 3 words containing
 ; decimal values 1, 5, and 20
 data2 DCD        mem06 + 4               ; defines 1 word containing 4 +
-; 
+;
 ```
 
 the address of the label mem06
-
 
 ```asm
 AREA         MyData, DATA, READWRITE
@@ -409,7 +376,6 @@ data3 DCDU 1,5,20 ; defines 3 words containing
 ; 1, 5, and 20 not word aligned
 ```
 
-
 4.4.5.2 Code Composer Studio There are similar directives in CCS for initializing memory, each directive specifying the width of the values being used. For placing one or more values into consecutive bytes of the current section, you can use either the .byte or .char directive. The syntax is
 
 {label} .byte value1{,…,valuen}
@@ -418,18 +384,15 @@ where value can either be a string in quotes or some other expression that gets 
 
 EXAMPLE 4.8 If you wanted to place a few constants and some short strings in memory, you could say
 
-
 ```asm
 LAB1     .byte      10, −1, “abc”, ‘a’
 ```
-
 
 and in memory the values would appear as
 
 0A FF 61 62 63 61
 
 For halfword values, there are .half and .short directives which will always align the data to halfword boundaries in the section. For word length values, there are .int, .long, and .word directives, which also align the data to word boundaries in the section. There is even a .float directive (for single-precision floating-point values) and a .double directive (for double-precision floating-point values)!
-
 
 ### 4.4.6 Aligning Data or Code to Appropriate Boundaries
 
@@ -439,14 +402,13 @@ Sometimes you must ensure that your data and code are aligned to appropriate bou
 to align your ARM code, or ALIGN 2 to align Thumb code.
 ```
 
-
 4.4.6.1 Keil Tools The ALIGN directive aligns the current location to a specified boundary by padding with zeros. The syntax is
 
 ALIGN {expr{,offset}}
 
 where expr is a numeric expression evaluating to any power of two from 20 to 231, and offset can be any numeric expression. The current location is aligned to the next address of the form
 
-offset + n * expr
+offset + n \* expr
 
 If expr is not specified, ALIGN sets the current location to the next word (four byte) boundary.
 
@@ -465,21 +427,17 @@ start		 LDR r6, = label1
 
 MOV pc,lr
 
-
 ```asm
 label1		           DCB 1		      ; pc now misaligned
 ALIGN		      ; ensures that subroutine1 addresses
 subroutine1        MOV r5, #0x5 ; the following instruction
 ```
 
-
 4.4.6.2 Code Composer Studio The .align directive can be used to align the section Program Counter to a particular boundary within the current section. The syntax is
-
 
 ```asm
 .align {size in bytes}
 ```
-
 
 If you do not specify a size, the default is one byte. Otherwise, a size of 2 aligns code or data to a halfword boundary, a size of 4 aligns to a word boundary, etc.
 
@@ -498,7 +456,6 @@ AREA MyData, DATA, READWRITE
 data1 SPACE 255 ; defines 255 bytes of zeroed storage
 ```
 
-
 4.4.7.2 Code Composer Studio There are actually two directives that reserve memory—the .space and .bes directives. When a label is used with the .space directive, it points to the first byte reserved in memory, while the .bes points to the last byte reserved. The syntax for the two is
 
 {label} .space size (in bytes) {label} .bes size (in bytes)
@@ -507,13 +464,11 @@ EXAMPLE 4.11 RES_1: .space 100 ; RES_1 points to the first byte RES_2: .bes 30 ;
 
 As an aside, there is also a .bss directive for reserving uninitialized space—­ consult Chapter 4 of ARM Assembly Language Tools User’s Guide for all the details.
 
-
 ### 4.4.8 Assigning Literal Pool Origins
 
 Literal pools are areas of data that the ARM assembler creates for you at the end of every code section, specifically for constants that cannot be created with rotation schemes or that do not fit into an instruction’s supported formats. Chapter 6 discusses literal pools at length, but you should at least see the uses for the LTORG directive here. Situations arise where you might have to give the assembler a bit of help in placing literal pools, since they are placed at the end of code sections, and these ends rely on the AREA directives at the beginning of sections that follow (or the end of your code).
 
 EXAMPLE 4.12 Consider the code below. An LDR pseudo-instruction is used to move the constant 0x55555555 into register r1, which ultimately gets converted into a real LDR instruction with a PC-relative offset. This offset must be calculated by the assembler, but the offset has limits (4 kilobytes). Imagine then that we reserve 4200 bytes of memory just at the end of our code—the literal pool would go after the big, empty block of memory, but this is too far away. An LTORG directive is required to force the assembler to put the literal pool after the MOV instruction instead, allowing an offset to be calculated that is within the 4 kilobyte range. In larger programs, you may find yourself making several literal pools, so place them after unconditional branches or subroutine return instructions. This prevents the processor from executing the constants as instructions.
-
 
 ```asm
 AREA Example, CODE, READONLY
@@ -554,25 +509,19 @@ efault literal pool is empty
 
 Note that the Keil tools permit the use of the LDR pseudo-instruction, but Code Composer Studio does not, so there is no equivalent of the LTORG directive in the CCS assembler.
 
-
 4.4.9 Ending a Source File This is the easiest of the directives—END simply tells the assembler you’re at the end of a source file. The syntax for the Keil tools is
-
 
 ```asm
 END
 ```
 
-
 and for Code Composer Studio, it’s
-
 
 ```asm
 .end
 ```
 
-
 When you terminate your source file, place the directive on a line by itself.
-
 
 ## 4.5 MACROS
 
@@ -594,7 +543,6 @@ MACRO
 
 {$label} macroname{$cond} {$parameter{,$parameter}…}
 
-
 ```asm
 ; code
 ```
@@ -603,11 +551,9 @@ MEND
 
 where $label is a parameter that is substituted with a symbol given when the macro is invoked. The symbol is usually a label. The macro name must not begin with an instruction or directive name. The parameter $cond is a special parameter designed to contain a condition code; however, values other than valid condition codes are permitted. The term $parameter is substituted when the macro is invoked. Within the macro body, parameters such as $label, $parameter, or $cond can be used in the same way as other variables. They are given new values each time the
 
-
 macro is invoked. Parameters must begin with $ to distinguish them from ordinary symbols. Any number of parameters can be used. The $label field is optional, and the macro itself defines the locations of any labels.
 
 EXAMPLE 4.13 Suppose you have a sequence of instructions that appears multiple times in your code—in this case, two ADD instructions followed by a multiplication. You could define a small macro as follows:
-
 
 ```asm
 MACRO
@@ -615,7 +561,6 @@ MACRO
 ;
 ; vara = 8 * (varb + varc + 6)
 ```
-
 
 $Label_1 AddMul $vara, $varb, $varc
 
@@ -628,9 +573,7 @@ LSL $vara, $vara, #3		                   ; multiply by 8
 MEND
 ```
 
-
 In your source code file, you can then instantiate the macro as many times as you like. You might call the sequence as
-
 
 ```asm
 ; invoke the macro
@@ -642,9 +585,7 @@ CSet1 AddMul r0, r1, r2
 ; the rest of your code
 ```
 
-
 and the assembler makes the necessary substitutions, so that the assembly listing actually reads as
-
 
 ```asm
 ; invoke the macro
@@ -655,7 +596,6 @@ CSet1 ADD r0, r1, r2 ADD r0, r0, #6 LSL r0, r0, #3
 ```asm
 ; the rest of your code
 ```
-
 
 ## 4.6 MISCELLANEOUS ASSEMBLER FEATURES
 
@@ -669,9 +609,7 @@ allowable expressions, but we can adopt a few of the most common operations for 
 
 4.6.1 Assembler Operators Primitive operations can be performed on data before it is used in an instruction. Note that these operators apply to the data—they are not part of an instruction.
 
-
 Operators can be used on a single value (unary operators) or two values (binary operators). Unary operators are not that common; however, binary operators prove to be quite handy for shuffling bits across a register or creating masks. Some of the most useful binary operators are
-
 
 Keil Tools Code Composer Studio
 
@@ -684,16 +622,13 @@ Bitwise AND of A and B              A:AND:B                         A&B
 
 Bitwise Exclusive OR of A and B A:EOR:B A^B Bitwise OR of A and B A:OR:B A|B
 
-
 These types of operators creep into macros especially, and should you find yourself writing conditional assembly files, for whatever reason, you may decide to use these types of operators to control the creation of the source code.
 
 EXAMPLE 4.14 To set a particular bit in a register (say if it were a bit to enable/disable the caches, a branch predictor, interrupts, etc.) you might have the control register copied to a general-purpose register first. Then the bit of interest would be modified using an OR operation, and the control register would be stored back. The OR instruction might look like
 
-
 ```asm
 ORR r1, r1, #1:SHL:3   ; set CCREG[3]
 ```
-
 
 Here, a 1 is shifted left three bits. Assuming you like to call register r1 CCREG, you have now set bit 3. The advantage in writing it this way is that you are more likely to understand that you wanted a one in a particular bit location, rather than simply using a logical operation with a value such as 0x8.
 
@@ -703,43 +638,33 @@ DCD (0x8321:SHL:4):OR:2
 
 which could move this two-byte field to the left by four bits, and then set bit 1 of the resulting constant with the use of the OR operator. This might be easier to read, since you may need a two-byte value shifted, and reading the original before the shift may help in understanding what the code does. It is not necessary to do this, but again, it provides some insight into the code’s behavior.
 
-
 To create very specific bit patterns quickly, you can string together many operators in the same field, such as
-
 
 ```asm
 MOV    r0, #((1:SHL:14):OR:(1:SHL:12))
 ```
 
-
 which may look a little odd, but in effect we are putting the constant 0x5000 into register r0 by taking two individual bits, shifting them to the left, and then ORing the two patterns (convince yourself of this). It would look very similar in the Code Composer Studio tools as
-
 
 ```asm
 MOV      r0, #((1 <<14) | (1 <<12))
 ```
 
-
 You may wonder why we’re creating such a strange configuration and not something simpler, such as
-
 
 ```asm
 MOV    r0, #0x5000
 ```
 
-
 which is clearly easier to enter. Again, it depends on the context of the program. The programmer may need to load a configuration register, which often has very specific bit fields for functions, and the former notation will remind the reader that you are enabling two distinct bits in that register.
-
 
 4.6.2 Math Functions in CCS There are a number of built-in functions within Code Composer Studio that make math operations a bit easier. Some of the many included functions are
 
-$$cos(expr) Returns the cosine of expr as a floating-point value $$sin(expr) Returns the sine of expr as a floating-point value $$log(expr) Returns the natural logarithm of expr, where expr > 0 $$max(expr1, expr2) Returns the maximum of two values $$sqrt(expr)	Returns the square root of expr, where expr >= 0, as a floating-point value
+$$cos(expr) Returns the cosine of expr as a floating-point value $$sin(expr) Returns the sine of expr as a floating-point value $$log(expr) Returns the natural logarithm of expr, where expr > 0 $$max(expr1, expr2) Returns the maximum of two values $$sqrt(expr) Returns the square root of expr, where expr >= 0, as a floating-point value
 
 You may never use these in your code; however, for algorithmic development, they often prove useful for quick tests and checks of your own routines.
 
-
 EXAMPLE 4.15 You can build a list of trigonometric values very quickly in a data section by saying something like
-
 
 ```asm
 .float		            $$cos(0.434)
@@ -747,7 +672,6 @@ EXAMPLE 4.15 You can build a list of trigonometric values very quickly in a data
 .float		            $$sin(0.943)
 .float		            $$tan(0.342)
 ```
-
 
 ## 4.7 EXERCISES
 
@@ -764,14 +688,13 @@ start MOV r0, #6 ADD r1, r2, #2
 END
 ```
 
-
 2. What is another way of writing the following line of code?
 
 MOV PC, LR
 
 3. Use a Keil directive to assign register r6 to the name bouncer.
 
-4. Use a Code Composer Studio directive to assign register r2 to the name FIR _ index.
+4. Use a Code Composer Studio directive to assign register r2 to the name FIR \_ index.
 
 5. Fill in the missing Keil directive below: SRAM_BASE 0x2000 MOV r12, #SRAM_BASE STR r6, [r12]
 
@@ -795,17 +718,13 @@ DCD directive? For example,
 MASK DCD 0x5F:ROL:3
 ```
 
-
 a. 0x5F:SHR:2 b. 0x5F:AND:0xFC c. 0x5F:EOR:0xFF d. 0x5F:SHL:12
 
-
 10. What constant would be created if the following operators are used with a .word directive? For example,
-
 
 ```asm
 MASK .word 0x9B < <3
 ```
-
 
 a. 0x9B>>2 b. 0x9B & 0xFC c. 0x9B ^ 0xFF d. 0x9B<<12
 
@@ -817,12 +736,10 @@ a. 0x9B>>2 b. 0x9B & 0xFC c. 0x9B ^ 0xFF d. 0x9B<<12
 words and labeled coeffs.
 ```
 
-
 13. Give the CCS directive to reserve a block of zeroed memory, holding 40
 
 ```asm
 words and labeled coeffs.
 ```
-
 
 14. Explain the difference between Keil’s EQU, DCD, and RN directives. Which, if any, would be used for the following cases? a. Assigning the Abort mode’s bit pattern (0x17) to a new label called Mode_ABT. b. Storing sequential byte-sized numbers in memory to be used for copying to another location in memory. c. Storing the contents of register r12 to memory address 0x40000004. d. Associating a particular microcontroller’s predefined memory-mapped register address with a name from the chip’s documentation, for example, VIC0_VA7R.
