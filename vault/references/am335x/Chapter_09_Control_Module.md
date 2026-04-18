@@ -1,3 +1,11 @@
+---
+title: AM335x Chapter 9 Control Module
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 9 Control Module
 
 ## Chapter 9: Control Module Reference
@@ -26,17 +34,20 @@ The Control Module provides centralized control for device configuration and sta
 ### 9.2.1 Control Module Initialization
 
 **Power-On Reset (POR) Behavior:**
+
 - Reset values define safe state for device
 - Only boot-time modules associated with pads
 - Other module inputs internally tied
 - Output pads turned off
 
 **Post-Reset Configuration:**
+
 - Software configures pad multiplexing
 - Software configures pad electrical characteristics
 - Software sets device-specific configuration
 
 **Boot Configuration:**
+
 - CONTROL_STATUS[7:0] SYS_BOOT reflects sys_boot pins
 - Captured at POR in PRCM module
 - Configuration pins sampled during PORz active period
@@ -49,36 +60,37 @@ The Control Module provides centralized control for device configuration and sta
 ### 9.3.1 Overview
 
 Each configurable pin has its own 32-bit configuration register controlling:
+
 - Pin multiplexing (mode selection)
 - Pull-up/pull-down configuration
 - Slew rate control
 - Input buffer enable
 
-**Register Format (conf_<module>_<pin>):**
+**Register Format (conf*<module>*<pin>):**
 
-| Bits | Field | Description |
-|------|-------|-------------|
-| [31:7] | Reserved | Read returns 0 |
-| [6] | SLEWCTRL | Slew rate control:<br>0 = Fast<br>1 = Slow |
-| [5] | RXACTIVE | Input enable:<br>0 = Receiver disabled (output only)<br>1 = Receiver enabled (input or output) |
-| [4] | PULLTYPESEL | Pull type selection:<br>0 = Pulldown selected<br>1 = Pullup selected |
-| [3] | PULLUDEN | Pull enable:<br>0 = Pullup/pulldown enabled<br>1 = Pullup/pulldown disabled |
-| [2:0] | MUXMODE | Functional signal mux select (0-7) |
+| Bits   | Field       | Description                                                                                    |
+| ------ | ----------- | ---------------------------------------------------------------------------------------------- |
+| [31:7] | Reserved    | Read returns 0                                                                                 |
+| [6]    | SLEWCTRL    | Slew rate control:<br>0 = Fast<br>1 = Slow                                                     |
+| [5]    | RXACTIVE    | Input enable:<br>0 = Receiver disabled (output only)<br>1 = Receiver enabled (input or output) |
+| [4]    | PULLTYPESEL | Pull type selection:<br>0 = Pulldown selected<br>1 = Pullup selected                           |
+| [3]    | PULLUDEN    | Pull enable:<br>0 = Pullup/pulldown enabled<br>1 = Pullup/pulldown disabled                    |
+| [2:0]  | MUXMODE     | Functional signal mux select (0-7)                                                             |
 
 ### 9.3.2 Mode Selection
 
 **MUXMODE Field Values:**
 
-| MUXMODE | Selected Mode | Description |
-|---------|---------------|-------------|
-| 0b000 (0) | Primary Mode | Function corresponds to pin name |
-| 0b001 (1) | Mode 1 | Alternate function 1 |
-| 0b010 (2) | Mode 2 | Alternate function 2 |
-| 0b011 (3) | Mode 3 | Alternate function 3 |
-| 0b100 (4) | Mode 4 | Alternate function 4 |
-| 0b101 (5) | Mode 5 | Alternate function 5 |
-| 0b110 (6) | Mode 6 | Alternate function 6 |
-| 0b111 (7) | Mode 7 | Alternate function 7 / GPIO mode |
+| MUXMODE   | Selected Mode | Description                      |
+| --------- | ------------- | -------------------------------- |
+| 0b000 (0) | Primary Mode  | Function corresponds to pin name |
+| 0b001 (1) | Mode 1        | Alternate function 1             |
+| 0b010 (2) | Mode 2        | Alternate function 2             |
+| 0b011 (3) | Mode 3        | Alternate function 3             |
+| 0b100 (4) | Mode 4        | Alternate function 4             |
+| 0b101 (5) | Mode 5        | Alternate function 5             |
+| 0b110 (6) | Mode 6        | Alternate function 6             |
+| 0b111 (7) | Mode 7        | Alternate function 7 / GPIO mode |
 
 **Reset Value:** Most pads default to MUXMODE = 0b111 (Mode 7), except pads used at boot time.
 
@@ -91,12 +103,12 @@ Each configurable pin has its own 32-bit configuration register controlling:
 
 **Pull Configuration Options:**
 
-| PULLTYPESEL | PULLUDEN | Result |
-|-------------|----------|--------|
-| 0 (Pulldown) | 0 (Enabled) | Pulldown selected and activated |
+| PULLTYPESEL  | PULLUDEN     | Result                              |
+| ------------ | ------------ | ----------------------------------- |
+| 0 (Pulldown) | 0 (Enabled)  | Pulldown selected and activated     |
 | 0 (Pulldown) | 1 (Disabled) | Pulldown selected but not activated |
-| 1 (Pullup) | 0 (Enabled) | Pullup selected and activated |
-| 1 (Pullup) | 1 (Disabled) | Pullup selected but not activated |
+| 1 (Pullup)   | 0 (Enabled)  | Pullup selected and activated       |
+| 1 (Pullup)   | 1 (Disabled) | Pullup selected but not activated   |
 
 **Power Optimization:** No automatic gating of pull resistors when pad configured as output. Recommended to disable internal pull resistors on output-only pads to avoid unnecessary power consumption.
 
@@ -105,10 +117,12 @@ Each configurable pin has its own 32-bit configuration register controlling:
 **Purpose:** Enable/disable input buffer for power management and device isolation.
 
 **Settings:**
+
 - **0:** Receiver disabled - output only mode
 - **1:** Receiver enabled - input or bidirectional mode
 
 **Use Cases:**
+
 - Power leakage reduction
 - Device isolation through I/O
 - Output-only signal configuration
@@ -118,6 +132,7 @@ Each configurable pin has its own 32-bit configuration register controlling:
 **Purpose:** Control signal edge rate to manage EMI and signal integrity.
 
 **Settings:**
+
 - **0:** Fast slew rate - faster edge transitions
 - **1:** Slow slew rate - slower edge transitions, reduced EMI
 
@@ -130,6 +145,7 @@ Each configurable pin has its own 32-bit configuration register controlling:
 ### 9.4.1 Common Pin Configurations
 
 **GPIO Configuration:**
+
 ```
 MUXMODE = 7 (GPIO mode)
 RXACTIVE = 1 (input enabled for reads)
@@ -137,6 +153,7 @@ PULLUDEN = 1 (pull disabled - external pull typically used)
 ```
 
 **UART RX Pin:**
+
 ```
 MUXMODE = 0 (or appropriate UART mode)
 RXACTIVE = 1 (input enabled)
@@ -145,6 +162,7 @@ PULLUDEN = 0 (pullup enabled)
 ```
 
 **UART TX Pin:**
+
 ```
 MUXMODE = 0 (or appropriate UART mode)
 RXACTIVE = 0 (output only)
@@ -152,6 +170,7 @@ PULLUDEN = 1 (pull disabled)
 ```
 
 **I2C Pin (Open-Drain):**
+
 ```
 MUXMODE = 0 (or appropriate I2C mode)
 RXACTIVE = 1 (bidirectional)
@@ -160,6 +179,7 @@ PULLUDEN = 0 (pullup enabled - or use external pullup)
 ```
 
 **SPI MOSI/MISO:**
+
 ```
 MUXMODE = 0 (or appropriate SPI mode)
 RXACTIVE = 1 (bidirectional for MISO, output for MOSI)
@@ -197,6 +217,7 @@ Each DMA channel can be configured to receive events from multiple sources throu
 **CONTROL_STATUS Register:** Reflects system boot and device type configuration
 
 **SYS_BOOT[15:0] Field:**
+
 - Configuration input pins captured at POR
 - Sampled continuously during PORz active period
 - Final value before PORz rising edge latched
@@ -209,6 +230,7 @@ Each DMA channel can be configured to receive events from multiple sources throu
 **Registers:** IPC_MSG_REG0 through IPC_MSG_REG7
 
 **Usage:**
+
 - IPC_MSG_REG0: Command ID and status
 - IPC_MSG_REG1-2: Command parameters
 - IPC_MSG_REG3: Response from CM3
@@ -233,12 +255,12 @@ Each DMA channel can be configured to receive events from multiple sources throu
 
 **Priority Values:**
 
-| Value | Priority Level |
-|-------|---------------|
-| 00 | Low priority |
-| 01 | Medium priority |
-| 10 | Reserved |
-| 11 | High priority |
+| Value | Priority Level  |
+| ----- | --------------- |
+| 00    | Low priority    |
+| 01    | Medium priority |
+| 10    | Reserved        |
+| 11    | High priority   |
 
 **Use Case:** Dynamic priority escalation for time-critical transfers
 
@@ -251,6 +273,7 @@ Each DMA channel can be configured to receive events from multiple sources throu
 **Priority Range:** 000b (highest) to 111b (lowest)
 
 **Configuration:**
+
 - Each master has dedicated priority field
 - Lower numeric value = higher priority
 - Affects DDR access arbitration
@@ -264,18 +287,21 @@ Each DMA channel can be configured to receive events from multiple sources throu
 #### USB_CTRLn Registers
 
 **USB PHY Control:**
+
 - PHY power control
 - OTG settings
 - GPIO mode configuration
 - Charger detection control
 
 **USB Lines as UART:**
+
 - USB_CTRLn.GPIOMODE: Configure USB lines as GPIO
 - Allows USB data lines for UART TX/RX
 
 #### USB_STSn Registers
 
 **USB PHY Status:**
+
 - PHY operational status
 - Connection detection
 - VBUS status
@@ -283,6 +309,7 @@ Each DMA channel can be configured to receive events from multiple sources throu
 ### 9.8.2 USB Charger Detection
 
 **Features:**
+
 - Automatic detection of Charging Downstream Port (CDP)
 - Automatic detection of Dedicated Charging Port (DCP)
 - Compliant with USB Battery Charging Specification v1.1
@@ -292,14 +319,15 @@ Each DMA channel can be configured to receive events from multiple sources throu
 
 **Control Fields (USB_CTRLx):**
 
-| Field | Description |
-|-------|-------------|
-| CDET_EXTCTL | 0 = Automatic detection<br>1 = Manual mode |
+| Field        | Description                                                                     |
+| ------------ | ------------------------------------------------------------------------------- |
+| CDET_EXTCTL  | 0 = Automatic detection<br>1 = Manual mode                                      |
 | CHGDET_RSTRT | Restart charger detection:<br>1→0 = Initiate detection<br>1 = Disable CE output |
-| CHGDET_DIS | 0 = Charger detection enabled<br>1 = Charger detection powered down |
-| CM_PWRDN | 0 = PHY powered up<br>1 = PHY powered down |
+| CHGDET_DIS   | 0 = Charger detection enabled<br>1 = Charger detection powered down             |
+| CM_PWRDN     | 0 = PHY powered up<br>1 = PHY powered down                                      |
 
 **Operation Sequence:**
+
 1. Enable PHY: CM_PWRDN = 0
 2. Enable charger detection: CHGDET_DIS = 0
 3. Enable automatic mode: CDET_EXTCTL = 0
@@ -309,6 +337,7 @@ Each DMA channel can be configured to receive events from multiple sources throu
 7. To disable: Set CHGDET_DIS = 1 or CHGDET_RSTRT = 1
 
 **Detection Steps Performed:**
+
 1. VBUS Detect
 2. Data Contact Detect
 3. Primary Detection
@@ -320,6 +349,7 @@ Each DMA channel can be configured to receive events from multiple sources throu
 **Register:** GMII_SEL
 
 **Configuration Options:**
+
 - MII mode selection
 - RMII mode selection
 - RGMII mode selection
@@ -327,6 +357,7 @@ Each DMA channel can be configured to receive events from multiple sources throu
 - Delay mode configuration
 
 **Modes:**
+
 - MII (Media Independent Interface)
 - RMII (Reduced MII)
 - RGMII (Reduced Gigabit MII)
@@ -338,11 +369,13 @@ Each DMA channel can be configured to receive events from multiple sources throu
 **Purpose:** Allow warm reset without disrupting Ethernet switch traffic
 
 **ISO_CONTROL Field:**
+
 - When enabled: Warm reset blocked to EMAC switch
 - When disabled (default): Warm reset propagates normally
 - Cold/POR resets always propagate
 
 **Protected Registers (when enabled):**
+
 - GMII_SEL
 - CONF_GPMC_A[11:0]
 - Ethernet MII configuration registers
@@ -351,12 +384,14 @@ Each DMA channel can be configured to receive events from multiple sources throu
 ### 9.8.5 Timer/eCAP Event Capture Control
 
 **Registers:**
+
 - TIMER_EVT_CAPTURE: Timer 5, 6, 7 event sources
 - ECAP_EVT_CAPTURE: eCAP 0, 1, 2 event sources
 
 **Purpose:** Select event capture sources for timers and eCAP modules
 
 **Available Sources:**
+
 - Timer I/O pins
 - eCAP I/O pins
 - Internal event sources
@@ -369,6 +404,7 @@ Each DMA channel can be configured to receive events from multiple sources throu
 **Purpose:** Configure ADC analog front-end
 
 **Controls:**
+
 - Input selection
 - Reference voltage selection
 - Analog frontend parameters
@@ -380,6 +416,7 @@ Each DMA channel can be configured to receive events from multiple sources throu
 **Purpose:** Control internal LDO for SRAM retention
 
 **Configuration:**
+
 - LDO enable/disable
 - Auto-ramp enable for retention mode
 - Used in low-power modes (DeepSleep0)
@@ -391,12 +428,14 @@ Each DMA channel can be configured to receive events from multiple sources throu
 ### 9.9.1 Overview
 
 Control Module contains registers for DDR PHY configuration:
+
 - PHY initialization
 - Drive strength control
 - Impedance calibration
 - Delay line configuration
 
 **Registers:**
+
 - DDR_IO_CTRL
 - VTP_CTRL
 - DDR_CKE_CTRL
@@ -410,12 +449,14 @@ Control Module contains registers for DDR PHY configuration:
 **Purpose:** Control impedance calibration for DDR I/O
 
 **Key Fields:**
+
 - ENABLE: Enable VTP calibration
 - READY: Calibration complete status
 - FILTER: Filter control for calibration
 - CLRZ: Clear calibration logic
 
 **Calibration Sequence:**
+
 1. Clear VTP: CLRZ = 0
 2. Enable VTP: ENABLE = 1
 3. Release clear: CLRZ = 1
@@ -431,14 +472,14 @@ Control Module contains registers for DDR PHY configuration:
 
 Boot and device status.
 
-| Bits | Field | Type | Description |
-|------|-------|------|-------------|
-| [31:23] | Reserved | R | - |
-| [22:16] | SYSBOOT1 | R | System boot configuration [15:9] |
-| [15:8] | SYSBOOT0 | R | System boot configuration [8:1] |
-| [7:0] | DEVICETYPE | R | Device type |
+| Bits    | Field      | Type | Description                      |
+| ------- | ---------- | ---- | -------------------------------- |
+| [31:23] | Reserved   | R    | -                                |
+| [22:16] | SYSBOOT1   | R    | System boot configuration [15:9] |
+| [15:8]  | SYSBOOT0   | R    | System boot configuration [8:1]  |
+| [7:0]   | DEVICETYPE | R    | Device type                      |
 
-### 9.10.2 CONF_<MODULE>_<PIN> (Various Offsets)
+### 9.10.2 CONF*<MODULE>*<PIN> (Various Offsets)
 
 Pad control registers. See Section 9.3.1 for field descriptions.
 
@@ -446,24 +487,24 @@ Pad control registers. See Section 9.3.1 for field descriptions.
 
 Interprocessor communication registers.
 
-| Register | Offset | Purpose |
-|----------|--------|---------|
-| IPC_MSG_REG0 | 0x400 | CMD_STAT[15:0], CMD_ID[31:16] |
-| IPC_MSG_REG1 | 0x404 | Command parameter 1 |
-| IPC_MSG_REG2 | 0x408 | Command parameter 2 |
-| IPC_MSG_REG3 | 0x40C | CM3 response |
-| IPC_MSG_REG4 | 0x410 | Reserved |
-| IPC_MSG_REG5 | 0x414 | Reserved |
-| IPC_MSG_REG6 | 0x418 | Reserved |
-| IPC_MSG_REG7 | 0x41C | Customer use |
+| Register     | Offset | Purpose                       |
+| ------------ | ------ | ----------------------------- |
+| IPC_MSG_REG0 | 0x400  | CMD_STAT[15:0], CMD_ID[31:16] |
+| IPC_MSG_REG1 | 0x404  | Command parameter 1           |
+| IPC_MSG_REG2 | 0x408  | Command parameter 2           |
+| IPC_MSG_REG3 | 0x40C  | CM3 response                  |
+| IPC_MSG_REG4 | 0x410  | Reserved                      |
+| IPC_MSG_REG5 | 0x414  | Reserved                      |
+| IPC_MSG_REG6 | 0x418  | Reserved                      |
+| IPC_MSG_REG7 | 0x41C  | Customer use                  |
 
 ### 9.10.4 M3_TXEV_EOI (Offset 0x424)
 
 Cortex-M3 TX event end-of-interrupt.
 
-| Bits | Field | Type | Description |
-|------|-------|------|-------------|
-| [0] | M3_TXEOI_ENABLE | W | Write 1 to clear M3 TX event |
+| Bits | Field           | Type | Description                  |
+| ---- | --------------- | ---- | ---------------------------- |
+| [0]  | M3_TXEOI_ENABLE | W    | Write 1 to clear M3 TX event |
 
 ### 9.10.5 MREQPRIO (Offset 0x4A4)
 
@@ -472,6 +513,7 @@ EMIF master request priority.
 **Format:** Each master has 3-bit priority field
 
 **Masters:**
+
 - MPU
 - PRU
 - Graphics
@@ -484,42 +526,42 @@ EMIF master request priority.
 
 USB PHY control.
 
-| Bits | Field | Type | Description |
-|------|-------|------|-------------|
-| [17] | CM_PWRDN | R/W | PHY power down:<br>0 = Powered up<br>1 = Powered down |
-| [16] | OTG_PWRDN | R/W | OTG comparators power down |
-| [8] | CHGDET_DIS | R/W | Charger detection disable |
-| [7] | CHGDET_RSTRT | R/W | Charger detection restart |
-| [4] | CDET_EXTCTL | R/W | Charger detection external control |
-| [3:2] | GPIOMODE | R/W | GPIO mode selection |
+| Bits  | Field        | Type | Description                                           |
+| ----- | ------------ | ---- | ----------------------------------------------------- |
+| [17]  | CM_PWRDN     | R/W  | PHY power down:<br>0 = Powered up<br>1 = Powered down |
+| [16]  | OTG_PWRDN    | R/W  | OTG comparators power down                            |
+| [8]   | CHGDET_DIS   | R/W  | Charger detection disable                             |
+| [7]   | CHGDET_RSTRT | R/W  | Charger detection restart                             |
+| [4]   | CDET_EXTCTL  | R/W  | Charger detection external control                    |
+| [3:2] | GPIOMODE     | R/W  | GPIO mode selection                                   |
 
 ### 9.10.7 GMII_SEL (Offset 0x650)
 
 Ethernet MII mode selection.
 
-| Bits | Field | Description |
-|------|-------|-------------|
-| [2:1] | GMII1_SEL | Port 1 mode:<br>00 = MII<br>01 = RMII<br>10 = RGMII |
-| [0] | RMII1_IO_CLK_EN | RMII reference clock enable |
+| Bits  | Field           | Description                                         |
+| ----- | --------------- | --------------------------------------------------- |
+| [2:1] | GMII1_SEL       | Port 1 mode:<br>00 = MII<br>01 = RMII<br>10 = RGMII |
+| [0]   | RMII1_IO_CLK_EN | RMII reference clock enable                         |
 
 ### 9.10.8 RESET_ISO (Offset 0x65C)
 
 Reset isolation control.
 
-| Bits | Field | Type | Description |
-|------|-------|------|-------------|
-| [0] | ISO_CONTROL | R/W | Reset isolation:<br>0 = Disabled (warm reset propagates)<br>1 = Enabled (warm reset blocked) |
+| Bits | Field       | Type | Description                                                                                  |
+| ---- | ----------- | ---- | -------------------------------------------------------------------------------------------- |
+| [0]  | ISO_CONTROL | R/W  | Reset isolation:<br>0 = Disabled (warm reset propagates)<br>1 = Enabled (warm reset blocked) |
 
 ### 9.10.9 VTP_CTRL (Offset 0x60C)
 
 DDR VTP calibration control.
 
-| Bits | Field | Type | Description |
-|------|-------|------|-------------|
-| [6] | ENABLE | R/W | VTP enable |
-| [5] | READY | R | Calibration ready (read-only) |
-| [4] | FILTER | R/W | Filter enable |
-| [0] | CLRZ | R/W | Clear calibration logic |
+| Bits | Field  | Type | Description                   |
+| ---- | ------ | ---- | ----------------------------- |
+| [6]  | ENABLE | R/W  | VTP enable                    |
+| [5]  | READY  | R    | Calibration ready (read-only) |
+| [4]  | FILTER | R/W  | Filter enable                 |
+| [0]  | CLRZ   | R/W  | Clear calibration logic       |
 
 ### 9.10.10 DDR_IO_CTRL (Offset 0xE04)
 

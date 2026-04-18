@@ -1,3 +1,11 @@
+---
+title: AM335x Chapter 23 Controller Area Network (CAN)
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 23 Controller Area Network (CAN)
 
 This chapter describes the controller area network for the device.

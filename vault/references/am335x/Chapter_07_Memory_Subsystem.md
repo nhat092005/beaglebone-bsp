@@ -1,8 +1,17 @@
+---
+title: AM335x Chapter 7 Memory Subsystem
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 7 Memory Subsystem
 
 ## Overview
 
 The AM335x Memory Subsystem contains three main components:
+
 - **GPMC (General-Purpose Memory Controller)** - External memory interface
 - **EMIF (External Memory Interface)** - DDR2/DDR3/mDDR SDRAM controller
 - **ELM (Error Location Module)** - BCH error correction for NAND flash
@@ -16,6 +25,7 @@ The AM335x Memory Subsystem contains three main components:
 The EMIF provides interface to external DDR2, DDR3, and mDDR (LPDDR1) SDRAM devices.
 
 **Key Features:**
+
 - Supports DDR2, DDR3, and LPDDR1 (mDDR) SDRAM
 - 16-bit data bus width
 - Maximum DDR3 data rate: 400 MHz (800 MT/s)
@@ -28,6 +38,7 @@ The EMIF provides interface to external DDR2, DDR3, and mDDR (LPDDR1) SDRAM devi
 ## 1.2 Clock Configuration
 
 DDR clock frequency formula:
+
 ```
 DDR_CLK = (DDR PLL input clock × multiplier) / ((pre-divider + 1) × post-divider)
 ```
@@ -35,6 +46,7 @@ DDR_CLK = (DDR PLL input clock × multiplier) / ((pre-divider + 1) × post-divid
 ## 1.3 Architecture Components
 
 **Main Components:**
+
 - DDR2/3/mDDR Memory Controller
 - Command Macro
 - Data Macro (2 macros for 16-bit interface)
@@ -42,6 +54,7 @@ DDR_CLK = (DDR PLL input clock × multiplier) / ((pre-divider + 1) × post-divid
 - DQS Gate IOs
 
 **Controller FIFOs:**
+
 - Command FIFO
 - Write Data FIFO
 - Return Command FIFO
@@ -53,6 +66,7 @@ DDR_CLK = (DDR PLL input clock × multiplier) / ((pre-divider + 1) × post-divid
 The EMIF maps logical addresses to SDRAM row, column, and bank addresses based on configuration fields:
 
 **Configuration Fields:**
+
 - `IBANK` - Number of internal banks (1/2/4/8)
 - `EBANK` - Number of chip selects (1/2)
 - `PAGESIZE` - Column address bits (8/9/10/11 bits)
@@ -63,6 +77,7 @@ The EMIF maps logical addresses to SDRAM row, column, and bank addresses based o
 **Address Mapping Examples:**
 
 When `REG_IBANK_POS=0` and `REG_EBANK_POS=0`:
+
 ```
 [Row Address | Chip Select | Bank Address | Column Address]
 ```
@@ -72,6 +87,7 @@ Maximum interleaving: 16 banks (8 internal × 2 chip selects)
 ## 1.5 Performance Management
 
 **Command Scheduling:**
+
 - Reorders commands for maximum efficiency
 - Maintains data coherency
 - Priority-based arbitration
@@ -80,6 +96,7 @@ Maximum interleaving: 16 banks (8 internal × 2 chip selects)
 **Refresh Scheduling:**
 
 Three urgency levels:
+
 - **Refresh May** - Backlog count > 0
 - **Refresh Release** - Backlog count > 4
 - **Refresh Must** - Backlog count > 7 (highest priority)
@@ -87,6 +104,7 @@ Three urgency levels:
 **Performance Counters:**
 
 Configurable counters to monitor:
+
 - Total SDRAM accesses
 - Total activations
 - Read/write counts
@@ -97,26 +115,31 @@ Configurable counters to monitor:
 ## 1.6 Power Management Modes
 
 **Clock Stop Mode (LPDDR1 only):**
+
 - Stops clocks after idle period
 - Clock automatically restarts on access
 
 **Self-Refresh Mode:**
+
 - SDRAM maintains data with internal refresh
 - Lowest power state while preserving data
 - Programmable entry timer
 
 **Power-Down Mode:**
+
 - Active or precharge power-down
 - Clocks continue running
 - Faster wake-up than self-refresh
 
 **Deep Power-Down Mode (LPDDR1 only):**
+
 - Data lost
 - Requires re-initialization on exit
 
 ## 1.7 SDRAM Initialization Sequences
 
 **DDR2 Initialization Steps:**
+
 1. Drive CKE low
 2. Wait 16 refresh intervals
 3. Issue PRECHARGE all
@@ -127,6 +150,7 @@ Configurable counters to monitor:
 8. Enter idle state
 
 **DDR3 Initialization Steps:**
+
 1. Drive CKE low
 2. Wait 16 refresh intervals
 3. Load mode registers (EMR2, EMR3, EMR1, MR)
@@ -135,6 +159,7 @@ Configurable counters to monitor:
 6. Enter idle state
 
 **LPDDR1 Initialization Steps:**
+
 1. Drive CKE high, issue NOPs
 2. Wait 16 refresh intervals
 3. PRECHARGE all
@@ -145,26 +170,32 @@ Configurable counters to monitor:
 ## 1.8 DDR3 Leveling
 
 **Write Leveling:**
+
 - Aligns DQS with CLK at SDRAM
 - Uses special mode in DDR3
 - Can be triggered by software
 
 **Read DQS Gate Training:**
+
 - Determines when to enable DQS sampling
 - Compensates for board delays
 
 **Read Data Eye Training:**
+
 - Optimizes read data sampling point
 - Maximizes timing margins
 
 **Leveling Modes:**
+
 - **Full Leveling** - Complete calibration (triggered by software)
 - **Incremental Leveling** - Periodic updates during operation
 
 ## 1.9 Key EMIF Registers
 
 #### SDRAM_CONFIG (0x08)
+
 Defines SDRAM type and geometry:
+
 - `SDRAM_TYPE` [31:29] - 0=DDR1, 1=LPDDR1, 2=DDR2, 3=DDR3
 - `IBANK_POS` [28:27] - Internal bank position
 - `DDR_TERM` [26:24] - Termination resistor value
@@ -176,7 +207,9 @@ Defines SDRAM type and geometry:
 - `PAGESIZE` [2:0] - Page size
 
 #### SDRAM_REF_CTRL (0x10)
+
 Controls refresh operation:
+
 - `INITREF_DIS` [31] - Disable init and refresh
 - `SRT` [29] - Self-refresh temperature range
 - `ASR` [28] - Auto self-refresh (DDR3)
@@ -184,7 +217,9 @@ Controls refresh operation:
 - `REFRESH_RATE` [15:0] - Refresh interval
 
 #### SDRAM_TIM_1 (0x18)
+
 Primary timing parameters:
+
 - `T_RP` [28:25] - Precharge to activate/refresh
 - `T_RCD` [24:21] - Activate to read/write
 - `T_WR` [20:17] - Write recovery
@@ -194,7 +229,9 @@ Primary timing parameters:
 - `T_WTR` [2:0] - Write to read
 
 #### SDRAM_TIM_2 (0x20)
+
 Secondary timing parameters:
+
 - `T_XP` [30:28] - Power-down exit timing
 - `T_XSNR` [24:16] - Self-refresh exit to non-read
 - `T_XSRD` [15:6] - Self-refresh exit to read
@@ -202,14 +239,18 @@ Secondary timing parameters:
 - `T_CKE` [2:0] - CKE minimum pulse width
 
 #### SDRAM_TIM_3 (0x28)
+
 Additional timing:
+
 - `T_PDLL_UL` [31:28] - PHY DLL unlock time
 - `ZQ_ZQCS` [20:15] - ZQ calibration short
 - `T_RFC` [12:4] - Refresh to activate/refresh
 - `T_RAS_MAX` [3:0] - Maximum activate to precharge
 
 #### DDR_PHY_CTRL_1 (0xE4)
+
 PHY configuration:
+
 - `PHY_ENABLE_DYNAMIC_PWRDN` [20] - Dynamic power down
 - `PHY_RST_N` [15] - PHY reset
 - `PHY_IDLE_LOCAL_ODT` [13:12] - ODT when idle
@@ -217,7 +258,9 @@ PHY configuration:
 - `READ_LATENCY` [4:0] - Read data latency
 
 #### PWR_MGMT_CTRL (0x38)
+
 Power management:
+
 - `PD_TIM` [15:12] - Power-down timer
 - `DPD_EN` [11] - Deep power-down enable
 - `LP_MODE` [10:8] - Low power mode (1=Clock Stop, 2=Self-Refresh, 4=Power-Down)
@@ -231,16 +274,19 @@ Power management:
 ## 2.1 Command Macros (CMD0/1/2)
 
 **CMD_REG_PHY_CTRL_SLAVE_RATIO_0:**
+
 - Controls address/command launch timing
 - `CMD_SLAVE_RATIO` [9:0] - Delay in 1/256th clock cycle units
 - Default: 0x80 (128/256 = 0.5 cycle)
 
 **CMD_REG_PHY_DLL_LOCK_DIFF_0:**
+
 - DLL lock tolerance
 - Default: 0x4
 - Do not modify
 
 **CMD_REG_PHY_INVERT_CLKOUT_0:**
+
 - `INVERT_CLK_SEL` [0] - Inverts DRAM clock polarity
   - 0 = Normal
   - 1 = Inverted
@@ -248,40 +294,49 @@ Power management:
 ## 2.2 Data Macros (DATA0/1)
 
 **DATA_REG_PHY_RD_DQS_SLAVE_RATIO_0:**
+
 - Read DQS timing
 - `RD_DQS_SLAVE_RATIO_CS0` [9:0]
 - Default: 0x40
 
 **DATA_REG_PHY_WR_DQS_SLAVE_RATIO_0:**
+
 - Write DQS timing
 - `WR_DQS_SLAVE_RATIO_CS0` [9:0]
 
 **DATA_REG_PHY_WRLVL_INIT_RATIO_0:**
+
 - Write leveling initial value
 - Used when `WRLVL_INIT_MODE_SEL` = 1
 
 **DATA_REG_PHY_GATELVL_INIT_RATIO_0:**
+
 - Gate training initial value
 - Used when `GATELVL_INIT_MODE_SEL` = 1
 
 **DATA_REG_PHY_FIFO_WE_SLAVE_RATIO_0:**
+
 - DQS gate timing
 - `FIFO_WE_SLAVE_RATIO_CS0` [9:0]
 
 **DATA_REG_PHY_WR_DATA_SLAVE_RATIO_0:**
+
 - Write data timing relative to DQS
 - Default: 0x40
 
 **DATA_REG_PHY_DQ_OFFSET_0:**
+
 - DQ offset from DQS
 - Default: 0x40 (90 degree shift)
 
 **DATA_REG_PHY_USE_RANK0_DELAYS:**
+
 - `PHY_USE_RANK0_DELAYS_0` [0]
   - 0 = Each rank uses own delays (DDR3)
   - 1 = All ranks use rank 0 delays (DDR2/mDDR)
 
 **DATA_REG_PHY_DLL_LOCK_DIFF_0:**
+
 - DLL lock tolerance
 - Default: 0x4
 
@@ -294,6 +349,7 @@ Power management:
 The ELM performs BCH (Bose-Chaudhuri-Hocquenghem) error location for NAND flash error correction. It works in conjunction with the GPMC which computes syndrome polynomials.
 
 **Key Features:**
+
 - 4-bit, 8-bit, and 16-bit error correction
 - 8 simultaneous processing contexts
 - Page mode and continuous mode operation
@@ -302,11 +358,13 @@ The ELM performs BCH (Bose-Chaudhuri-Hocquenghem) error location for NAND flash 
 ## 3.2 Operation Modes
 
 **Continuous Mode:**
+
 - Each syndrome processed independently
 - Interrupt per syndrome completion
 - Results retrieved individually
 
 **Page Mode:**
+
 - Multiple syndromes grouped as a page
 - Single interrupt when all complete
 - Must process entire page before next
@@ -314,12 +372,14 @@ The ELM performs BCH (Bose-Chaudhuri-Hocquenghem) error location for NAND flash 
 ## 3.3 Processing Flow
 
 **Initialization:**
+
 1. Set error correction level (`ECC_BCH_LEVEL`)
 2. Set buffer size (`ECC_SIZE`)
 3. Configure mode (page or continuous)
 4. Enable appropriate interrupts
 
 **Processing:**
+
 1. Write syndrome fragments 0-5 in any order
 2. Write syndrome fragment 6 last (sets `SYNDROME_VALID`)
 3. ELM processes automatically
@@ -327,6 +387,7 @@ The ELM performs BCH (Bose-Chaudhuri-Hocquenghem) error location for NAND flash 
 5. Read results from status and location registers
 
 **Error Location:**
+
 - Errors reported as bit positions in buffer
 - First error in `ERROR_LOCATION_0`
 - Second error in `ERROR_LOCATION_1`
@@ -335,11 +396,13 @@ The ELM performs BCH (Bose-Chaudhuri-Hocquenghem) error location for NAND flash 
 ## 3.4 Key ELM Registers
 
 #### ELM_SYSCONFIG (0x10)
+
 - `SOFTRESET` [1] - Software reset
 - `SIDLEMODE` [4:3] - Idle mode (0=Force, 1=No, 2=Smart)
 - `AUTOGATING` [0] - Clock gating enable
 
 #### ELM_LOCATION_CONFIG (0x20)
+
 - `ECC_SIZE` [26:16] - Buffer size in nibbles (4-bit units)
 - `ECC_BCH_LEVEL` [1:0] - Error correction level
   - 0 = 4-bit
@@ -347,47 +410,59 @@ The ELM performs BCH (Bose-Chaudhuri-Hocquenghem) error location for NAND flash 
   - 2 = 16-bit
 
 #### ELM_PAGE_CTRL (0x80)
+
 - `SECTOR_[7:0]` - Defines which syndromes are in page
 - All 0 = Continuous mode
 - Any 1 = Page mode
 
 #### ELM_IRQSTATUS (0x18)
+
 - `PAGE_VALID` [8] - Full page complete (page mode)
 - `LOC_VALID_[7:0]` - Individual syndrome complete
 
 #### ELM_IRQENABLE (0x1C)
+
 - `PAGE_MASK` [8] - Enable page interrupt
 - `LOCATION_MASK_[7:0]` - Enable syndrome interrupts
 
-#### ELM_SYNDROME_FRAGMENT_[0-6]_i (0x400+)
+#### ELM*SYNDROME_FRAGMENT*[0-6]\_i (0x400+)
+
 Syndrome polynomial input (i = 0 to 7):
+
 - Fragments 0-5: 32 bits each
 - Fragment 6: Includes `SYNDROME_VALID` [16] bit
 
 #### ELM_LOCATION_STATUS_i (0x800+)
+
 Processing results (i = 0 to 7):
+
 - `ECC_CORRECTABLE` [8] - 1 = success, 0 = too many errors
 - `ECC_NB_ERRORS` [4:0] - Number of errors found
 
-#### ELM_ERROR_LOCATION_[0-15]_i (0x880+)
+#### ELM*ERROR_LOCATION*[0-15]\_i (0x880+)
+
 Error bit positions (i = 0 to 7):
+
 - `ECC_ERROR_LOCATION` [12:0] - Bit address in buffer
 - Read only first `ECC_NB_ERRORS` registers
 
 ## 3.5 BCH Algorithm
 
 **Syndrome Polynomial:**
+
 - Computed by GPMC during NAND read
 - Represents error signature for 512-byte block
 - Non-zero syndrome indicates errors present
 
 **Error Location:**
+
 - ELM solves syndrome equations
 - Outputs bit positions of errors
 - Software must flip indicated bits to correct data
 
 **Buffer Addressing:**
 For 16-bit NAND interface, bit positions are mapped:
+
 - First word at address 0 contains bits 4223-4208
 - Within word: bits ordered [7:0], then [15:8]
 - Must map error location to actual buffer position
@@ -397,20 +472,24 @@ For 16-bit NAND interface, bit positions are mapped:
 **8-bit Correction, Continuous Mode:**
 
 Configuration:
+
 - Buffer size: 528 bytes (512 data + 16 spare)
 - Correction level: 8-bit
 - Mode: Continuous
 
 Syndrome polynomial (from GPMC):
+
 ```
 P = 0x0A16ABE115E44F767BFB0D0980
 ```
 
 Results:
+
 - 4 errors detected
 - Locations: 431, 1062, 1909, 3452 (decimal bit addresses)
 
 Software must:
+
 1. Map bit addresses to byte/bit positions
 2. Read affected bytes
 3. Flip error bits
@@ -436,6 +515,7 @@ Software must:
 **DDR3 Timing Calculation Example:**
 
 For DDR3-1600 (800 MHz, 1.25ns cycle):
+
 ```
 T_RP = ceil(13.75ns / 1.25ns) - 1 = 10
 T_RCD = ceil(13.75ns / 1.25ns) - 1 = 10
@@ -451,11 +531,13 @@ T_WTR = ceil(7.5ns / 1.25ns) - 1 = 5
 **Typical Values for DDR3-800:**
 
 Command Macros:
+
 ```
 CMD_SLAVE_RATIO = 0x80 (default)
 ```
 
 Data Macros:
+
 ```
 RD_DQS_SLAVE_RATIO = 0x40
 WR_DATA_SLAVE_RATIO = 0x80
@@ -504,12 +586,14 @@ FIFO_WE_SLAVE_RATIO = determined by leveling
 ## 4.4 Common Pitfalls
 
 **EMIF:**
+
 - Not waiting for PHY ready before access
 - Incorrect timing calculations for clock frequency
 - Forgetting to enable module clocks in PRCM
 - Using wrong IBANK_POS/EBANK_POS for topology
 
 **ELM:**
+
 - Reading error locations before checking ECC_CORRECTABLE
 - Not clearing syndrome VALID bit before re-use
 - Reading more ERROR_LOCATION registers than ECC_NB_ERRORS
@@ -522,27 +606,32 @@ FIFO_WE_SLAVE_RATIO = determined by leveling
 ## 5.1 Clock Dependencies
 
 **EMIF:**
+
 - Functional clock: DDR PLL output
 - Interface clock: L3 clock
 - Both must be enabled in PRCM
 
 **ELM:**
+
 - Single clock domain: L4_PER
 - Maximum frequency: 100 MHz
 
 ## 5.2 Interrupt Routing
 
 **EMIF:**
+
 - Single interrupt line to MPU
 - Must check IRQSTATUS to determine source
 
 **ELM:**
-- Single interrupt line to MPU  
+
+- Single interrupt line to MPU
 - Multiple sources flagged in IRQSTATUS
 
 ## 5.3 Power Domains
 
 Both EMIF and ELM are in peripheral power domain:
+
 - Can be powered off to save power
 - Must save/restore context if powering off
 - EMIF supports save/restore mode for retention
@@ -550,11 +639,13 @@ Both EMIF and ELM are in peripheral power domain:
 ## 5.4 Boot Considerations
 
 **ROM Code:**
+
 - May configure EMIF for boot from external memory
 - Check existing configuration before modifying
 - Some registers may be locked after boot
 
 **U-Boot/Bootloader:**
+
 - Typically reconfigures EMIF for optimal performance
 - May enable leveling and power management
 - Consider compatibility when making changes
@@ -566,21 +657,25 @@ Both EMIF and ELM are in peripheral power domain:
 ## 6.1 EMIF Optimization
 
 **Bank Interleaving:**
+
 - Use IBANK_POS=0 for maximum interleaving
 - Allows up to 16 banks open simultaneously
 - Best for random access patterns
 
 **Command Scheduling:**
+
 - Use Class of Service to prioritize traffic
 - Set appropriate COS_COUNT values
 - Avoid starvation with PR_OLD_COUNT
 
 **Read/Write Balance:**
+
 - Adjust RD_THRSH and WR_THRSH
 - Lower values = more frequent switching
 - Higher values = better burst efficiency
 
 **Power vs Performance:**
+
 - Self-refresh has highest latency
 - Power-down medium latency
 - Clock stop lowest latency (LPDDR1)
@@ -588,16 +683,19 @@ Both EMIF and ELM are in peripheral power domain:
 ## 6.2 PHY Tuning
 
 **Read Latency:**
+
 - Use minimum value: CL + 2
 - Reduces read latency
 - Must be at least 2 cycles more than CL
 
 **ODT Settings:**
+
 - Match to board impedance
 - Full/half Thevenin termination options
 - Dynamic power-down saves power
 
 **Leveling Intervals:**
+
 - Faster incremental leveling = better tracking
 - More frequent = higher overhead
 - Balance based on temperature variation
@@ -608,43 +706,43 @@ Both EMIF and ELM are in peripheral power domain:
 
 ### EMIF Base Address: 0x4C00_0000
 
-| Offset | Register | Key Fields |
-|--------|----------|-----------|
-| 0x08 | SDRAM_CONFIG | SDRAM_TYPE, CL, ROWSIZE, IBANK, PAGESIZE |
-| 0x10 | SDRAM_REF_CTRL | REFRESH_RATE, PASR, SRT |
-| 0x18 | SDRAM_TIM_1 | T_RP, T_RCD, T_WR, T_RAS, T_RC |
-| 0x20 | SDRAM_TIM_2 | T_XP, T_XSNR, T_XSRD, T_RTP, T_CKE |
-| 0x28 | SDRAM_TIM_3 | T_RFC, ZQ_ZQCS |
-| 0x38 | PWR_MGMT_CTRL | LP_MODE, SR_TIM, PD_TIM |
-| 0xE4 | DDR_PHY_CTRL_1 | READ_LATENCY, PHY_RD_LOCAL_ODT |
-| 0xDC | RDWR_LVL_CTRL | Leveling control |
+| Offset | Register       | Key Fields                               |
+| ------ | -------------- | ---------------------------------------- |
+| 0x08   | SDRAM_CONFIG   | SDRAM_TYPE, CL, ROWSIZE, IBANK, PAGESIZE |
+| 0x10   | SDRAM_REF_CTRL | REFRESH_RATE, PASR, SRT                  |
+| 0x18   | SDRAM_TIM_1    | T_RP, T_RCD, T_WR, T_RAS, T_RC           |
+| 0x20   | SDRAM_TIM_2    | T_XP, T_XSNR, T_XSRD, T_RTP, T_CKE       |
+| 0x28   | SDRAM_TIM_3    | T_RFC, ZQ_ZQCS                           |
+| 0x38   | PWR_MGMT_CTRL  | LP_MODE, SR_TIM, PD_TIM                  |
+| 0xE4   | DDR_PHY_CTRL_1 | READ_LATENCY, PHY_RD_LOCAL_ODT           |
+| 0xDC   | RDWR_LVL_CTRL  | Leveling control                         |
 
 ### DDR PHY Base Address: 0x44E1_2000
 
-| Offset | Register | Purpose |
-|--------|----------|---------|
-| 0x01C | CMD0_SLAVE_RATIO | Command 0 timing |
-| 0x050 | CMD1_SLAVE_RATIO | Command 1 timing |
-| 0x084 | CMD2_SLAVE_RATIO | Command 2 timing |
-| 0x0C8 | DATA0_RD_DQS_RATIO | Data 0 read timing |
-| 0x0DC | DATA0_WR_DQS_RATIO | Data 0 write DQS |
-| 0x108 | DATA0_FIFO_WE_RATIO | Data 0 gate timing |
-| 0x120 | DATA0_WR_DATA_RATIO | Data 0 write data |
-| 0x16C | DATA1_RD_DQS_RATIO | Data 1 read timing |
-| 0x1AC | DATA1_FIFO_WE_RATIO | Data 1 gate timing |
+| Offset | Register            | Purpose            |
+| ------ | ------------------- | ------------------ |
+| 0x01C  | CMD0_SLAVE_RATIO    | Command 0 timing   |
+| 0x050  | CMD1_SLAVE_RATIO    | Command 1 timing   |
+| 0x084  | CMD2_SLAVE_RATIO    | Command 2 timing   |
+| 0x0C8  | DATA0_RD_DQS_RATIO  | Data 0 read timing |
+| 0x0DC  | DATA0_WR_DQS_RATIO  | Data 0 write DQS   |
+| 0x108  | DATA0_FIFO_WE_RATIO | Data 0 gate timing |
+| 0x120  | DATA0_WR_DATA_RATIO | Data 0 write data  |
+| 0x16C  | DATA1_RD_DQS_RATIO  | Data 1 read timing |
+| 0x1AC  | DATA1_FIFO_WE_RATIO | Data 1 gate timing |
 
 ### ELM Base Address: 0x4808_0000
 
-| Offset | Register | Purpose |
-|--------|----------|---------|
-| 0x10 | ELM_SYSCONFIG | Module configuration |
-| 0x18 | ELM_IRQSTATUS | Interrupt status |
-| 0x1C | ELM_IRQENABLE | Interrupt enable |
-| 0x20 | ELM_LOCATION_CONFIG | ECC level, buffer size |
-| 0x80 | ELM_PAGE_CTRL | Page mode definition |
-| 0x400+ | SYNDROME_FRAGMENT | Input syndromes (8 sets) |
-| 0x800+ | LOCATION_STATUS | Results (8 sets) |
-| 0x880+ | ERROR_LOCATION | Error positions (8×16) |
+| Offset | Register            | Purpose                  |
+| ------ | ------------------- | ------------------------ |
+| 0x10   | ELM_SYSCONFIG       | Module configuration     |
+| 0x18   | ELM_IRQSTATUS       | Interrupt status         |
+| 0x1C   | ELM_IRQENABLE       | Interrupt enable         |
+| 0x20   | ELM_LOCATION_CONFIG | ECC level, buffer size   |
+| 0x80   | ELM_PAGE_CTRL       | Page mode definition     |
+| 0x400+ | SYNDROME_FRAGMENT   | Input syndromes (8 sets) |
+| 0x800+ | LOCATION_STATUS     | Results (8 sets)         |
+| 0x880+ | ERROR_LOCATION      | Error positions (8×16)   |
 
 ---
 
@@ -653,18 +751,21 @@ Both EMIF and ELM are in peripheral power domain:
 ## 8.1 EMIF Issues
 
 **No Memory Access:**
+
 - Check PRCM clock enables
 - Verify PHY_DLL_READY status
 - Confirm correct SDRAM_TYPE setting
 - Check pin muxing for DDR signals
 
 **Data Corruption:**
+
 - Verify timing parameters for speed grade
 - Check board trace lengths and impedance
 - Run leveling procedure
 - Verify VTP calibration
 
 **Performance Problems:**
+
 - Check performance counters
 - Look for FIFO full conditions
 - Verify command scheduling settings
@@ -673,18 +774,21 @@ Both EMIF and ELM are in peripheral power domain:
 ## 8.2 ELM Issues
 
 **No Interrupt:**
+
 - Verify SYNDROME_VALID written last
 - Check interrupt enable settings
 - Confirm mode (page vs continuous)
 - Ensure syndrome is non-zero
 
 **Uncorrectable Errors:**
+
 - Check ECC_BCH_LEVEL matches GPMC
 - Verify ECC_SIZE is correct
 - Confirm syndrome polynomial format
 - Check for hardware errors in NAND
 
 **Wrong Error Locations:**
+
 - Verify bit position to address mapping
 - Check byte/word ordering
 - Confirm buffer size calculation
@@ -696,33 +800,33 @@ Both EMIF and ELM are in peripheral power domain:
 
 ### DDR3 AC Timing Parameters (ns)
 
-| Parameter | -800E | -1066F | -1333H | -1600K |
-|-----------|-------|--------|--------|--------|
-| tCK | 2.5 | 1.875 | 1.5 | 1.25 |
-| tRCD | 13.75 | 13.125 | 13.5 | 13.75 |
-| tRP | 13.75 | 13.125 | 13.5 | 13.75 |
-| tRAS | 37.5 | 36 | 36 | 35 |
-| tRC | 50 | 49.125 | 49.5 | 48.75 |
-| tRRD | 10 | 7.5 | 6 | 7.5 |
-| tWR | 15 | 15 | 15 | 15 |
-| tWTR | 7.5 | 7.5 | 7.5 | 7.5 |
-| tRTP | 7.5 | 7.5 | 7.5 | 7.5 |
-| tFAW | 50 | 50 | 45 | 40 |
-| tRFC | varies by density |
+| Parameter | -800E             | -1066F | -1333H | -1600K |
+| --------- | ----------------- | ------ | ------ | ------ |
+| tCK       | 2.5               | 1.875  | 1.5    | 1.25   |
+| tRCD      | 13.75             | 13.125 | 13.5   | 13.75  |
+| tRP       | 13.75             | 13.125 | 13.5   | 13.75  |
+| tRAS      | 37.5              | 36     | 36     | 35     |
+| tRC       | 50                | 49.125 | 49.5   | 48.75  |
+| tRRD      | 10                | 7.5    | 6      | 7.5    |
+| tWR       | 15                | 15     | 15     | 15     |
+| tWTR      | 7.5               | 7.5    | 7.5    | 7.5    |
+| tRTP      | 7.5               | 7.5    | 7.5    | 7.5    |
+| tFAW      | 50                | 50     | 45     | 40     |
+| tRFC      | varies by density |
 
 ### DDR2 AC Timing Parameters (ns)
 
 | Parameter | -533 | -667 | -800 |
-|-----------|------|------|------|
-| tCK | 3.75 | 3.0 | 2.5 |
-| tRCD | 15 | 15 | 15 |
-| tRP | 15 | 15 | 15 |
-| tRAS | 40 | 40 | 45 |
-| tRC | 55 | 55 | 60 |
-| tRRD | 10 | 10 | 10 |
-| tWR | 15 | 15 | 15 |
-| tWTR | 7.5 | 7.5 | 10 |
-| tRTP | 7.5 | 7.5 | 7.5 |
+| --------- | ---- | ---- | ---- |
+| tCK       | 3.75 | 3.0  | 2.5  |
+| tRCD      | 15   | 15   | 15   |
+| tRP       | 15   | 15   | 15   |
+| tRAS      | 40   | 40   | 45   |
+| tRC       | 55   | 55   | 60   |
+| tRRD      | 10   | 10   | 10   |
+| tWR       | 15   | 15   | 15   |
+| tWTR      | 7.5  | 7.5  | 10   |
+| tRTP      | 7.5  | 7.5  | 7.5  |
 
 ---
 
@@ -780,6 +884,7 @@ The ELM module contains 8 processing contexts (0-7), each with identical registe
 **Base Address:** 0x4808_0000
 
 **Register Organization:**
+
 - Configuration registers: 0x000 - 0x0FF
 - Syndrome input registers: 0x400 - 0x5FF (8 contexts × 7 fragments each)
 - Status registers: 0x800 - 0xF00 (8 contexts)
@@ -790,6 +895,7 @@ The ELM module contains 8 processing contexts (0-7), each with identical registe
 Each of the 8 processing contexts has 7 syndrome fragment registers to input the complete 208-bit syndrome polynomial.
 
 **Context 0 Syndrome Fragments:**
+
 - `ELM_SYNDROME_FRAGMENT_0_0` @ 0x400: Bits [31:0]
 - `ELM_SYNDROME_FRAGMENT_1_0` @ 0x404: Bits [63:32]
 - `ELM_SYNDROME_FRAGMENT_2_0` @ 0x408: Bits [95:64]
@@ -799,6 +905,7 @@ Each of the 8 processing contexts has 7 syndrome fragment registers to input the
 - `ELM_SYNDROME_FRAGMENT_6_0` @ 0x418: Bits [207:192] + SYNDROME_VALID
 
 **Context 1-7 Follow Same Pattern:**
+
 - Context 1: Base offset 0x440
 - Context 2: Base offset 0x480
 - Context 3: Base offset 0x4C0
@@ -810,6 +917,7 @@ Each of the 8 processing contexts has 7 syndrome fragment registers to input the
 **Each context adds 0x40 to base offset**
 
 **SYNDROME_FRAGMENT_6_x Special Fields:**
+
 ```
 Bits [31:17] - Reserved
 Bit  [16]    - SYNDROME_VALID (R/W)
@@ -825,6 +933,7 @@ Bits [15:0]  - SYNDROME_6 (syndrome bits 192-207)
 Each context has one status register indicating processing results.
 
 **Register Addresses:**
+
 - `ELM_LOCATION_STATUS_0` @ 0x800 (Context 0)
 - `ELM_LOCATION_STATUS_1` @ 0x900 (Context 1)
 - `ELM_LOCATION_STATUS_2` @ 0xA00 (Context 2)
@@ -835,6 +944,7 @@ Each context has one status register indicating processing results.
 - `ELM_LOCATION_STATUS_7` @ 0xF00 (Context 7)
 
 **Field Definitions:**
+
 ```
 Bits [31:9]  - Reserved
 Bit  [8]     - ECC_CORRECTABLE (Read-only)
@@ -847,6 +957,7 @@ Bits [4:0]   - ECC_NB_ERRORS (Read-only)
 ```
 
 **Usage Flow:**
+
 1. Write syndrome fragments 0-6 (with SYNDROME_VALID=1 in fragment 6)
 2. Wait for interrupt or poll LOCATION_STATUS
 3. Read ECC_CORRECTABLE to verify success
@@ -858,6 +969,7 @@ Bits [4:0]   - ECC_NB_ERRORS (Read-only)
 Each context provides up to 16 error location registers for BCH-16 mode.
 
 **Context 0 Error Locations:**
+
 - `ELM_ERROR_LOCATION_0_0` @ 0x880
 - `ELM_ERROR_LOCATION_1_0` @ 0x884
 - `ELM_ERROR_LOCATION_2_0` @ 0x888
@@ -876,6 +988,7 @@ Each context provides up to 16 error location registers for BCH-16 mode.
 - `ELM_ERROR_LOCATION_15_0` @ 0x8BC
 
 **Context 1-7 Base Offsets:**
+
 - Context 1: 0x980 (spacing +0x100 from context 0)
 - Context 2: 0xA80
 - Context 3: 0xB80
@@ -885,6 +998,7 @@ Each context provides up to 16 error location registers for BCH-16 mode.
 - Context 7: 0xF80
 
 **Register Format (all ERROR_LOCATION registers):**
+
 ```
 Bits [31:13] - Reserved
 Bits [12:0]  - ECC_ERROR_LOCATION
@@ -893,6 +1007,7 @@ Bits [12:0]  - ECC_ERROR_LOCATION
 ```
 
 **Reading Error Locations:**
+
 - Only read up to ECC_NB_ERRORS registers
 - Higher-numbered registers contain invalid data if fewer errors exist
 - Bit position 0 = LSB of first byte in the data buffer
@@ -900,6 +1015,7 @@ Bits [12:0]  - ECC_ERROR_LOCATION
 ## 9.5 Register Access Patterns
 
 **Syndrome Writing (Continuous Mode):**
+
 ```c
 // Context 0 example
 volatile uint32_t *elm_base = 0x48080000;
@@ -920,7 +1036,7 @@ wait_for_elm_interrupt();
 uint32_t status = elm_base[0x800/4];
 if (status & (1 << 8)) { // ECC_CORRECTABLE
     uint32_t num_errors = status & 0x1F;
-    
+
     // Read error locations
     for (int i = 0; i < num_errors; i++) {
         uint32_t error_loc = elm_base[(0x880 + i*4)/4];
@@ -931,6 +1047,7 @@ if (status & (1 << 8)) { // ECC_CORRECTABLE
 ```
 
 **Page Mode Access (8 contexts):**
+
 ```c
 // Configure page mode
 elm_base[0x80/4] |= (1 << 0); // PAGE_CTRL = 1
@@ -954,11 +1071,11 @@ wait_for_page_complete();
 for (int ctx = 0; ctx < 8; ctx++) {
     uint32_t status_addr = 0x800 + (ctx * 0x100);
     uint32_t status = elm_base[status_addr/4];
-    
+
     if (status & (1 << 8)) {
         uint32_t num_errors = status & 0x1F;
         uint32_t error_base = 0x880 + (ctx * 0x100);
-        
+
         for (int i = 0; i < num_errors; i++) {
             uint32_t error_loc = elm_base[(error_base + i*4)/4];
             // Process error at (error_loc & 0x1FFF)
@@ -1011,6 +1128,7 @@ for (int ctx = 0; ctx < 8; ctx++) {
 ## 9.7 Practical Examples
 
 **Example 1: Single Error Correction (BCH-4)**
+
 ```c
 // 512 byte sector with 4-bit correction
 // Syndrome polynomial computed by GPMC ECC engine
@@ -1045,6 +1163,7 @@ if (status & ECC_CORRECTABLE) {
 ```
 
 **Example 2: NAND Page with 8 Sectors (Page Mode)**
+
 ```c
 // Read 4KB NAND page (8 × 512 byte sectors)
 // Each sector has independent BCH-8 ECC
@@ -1090,16 +1209,19 @@ if (uncorrectable) {
 ## 9.8 Timing Considerations
 
 **Processing Time:**
+
 - BCH-4: ~2-4 μs per syndrome
 - BCH-8: ~4-8 μs per syndrome
 - BCH-16: ~8-16 μs per syndrome
 
 **Interrupt Latency:**
+
 - Continuous mode: Interrupt per syndrome completion
 - Page mode: Single interrupt after all 8 contexts complete
 - Use page mode for better throughput with multiple sectors
 
 **Performance Optimization:**
+
 - Pre-compute syndromes in CPU/DMA during read
 - Use page mode for multi-sector NAND pages
 - Pipeline: While ELM processes, start next read
@@ -1107,7 +1229,7 @@ if (uncorrectable) {
 
 ---
 
-*Document Version: 1.1*
-*Based on: AM335x TRM SPRUH73Q*
-*Target: AI Training Reference*
-*Updated: Complete ELM register specifications added*
+_Document Version: 1.1_
+_Based on: AM335x TRM SPRUH73Q_
+_Target: AI Training Reference_
+_Updated: Complete ELM register specifications added_

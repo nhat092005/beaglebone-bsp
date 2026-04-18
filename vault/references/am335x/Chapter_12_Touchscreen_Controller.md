@@ -1,24 +1,32 @@
+---
+title: AM335x Chapter 12 Touchscreen Controller
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 12 Touchscreen Controller
 
 This chapter describes the touchscreen controller of the device.
 
 | 12.1<br>12.2<br>12.3 | Introduction<br>Integration<br>Functional Description | 1828<br>1829<br>1831 |
-|----------------------|-------------------------------------------------------|----------------------|
+| -------------------- | ----------------------------------------------------- | -------------------- |
 | 12.4                 | Operational Modes                                     | 1834                 |
 | 12.5                 | Touchscreen Controller Registers                      | 1838                 |
 
 ## **12.1 Introduction**
 
-The touchscreen controller and analog-to-digital converter subsystem (TSC\_ADC\_SS) is an 8-channel general-purpose analog-to-digital converter (ADC) with optional support for interleaving touchscreen (TS) conversions for a 4-wire, 5-wire, or 8-wire resistive panel. The TSC\_ADC\_SS can be configured for use in one of the following applications:
+The touchscreen controller and analog-to-digital converter subsystem (TSC_ADC_SS) is an 8-channel general-purpose analog-to-digital converter (ADC) with optional support for interleaving touchscreen (TS) conversions for a 4-wire, 5-wire, or 8-wire resistive panel. The TSC_ADC_SS can be configured for use in one of the following applications:
 
 - 8 general-purpose ADC channels
 - 4-wire TSC with 4 general-purpose ADC channels
 - 5-wire TSC with 3 general-purpose ADC channels
 - 8-wire TSC
 
-### *12.1.1 TSC\_ADC Features*
+### _12.1.1 TSC_ADC Features_
 
-The main features of the TSC\_ADC\_SS include:
+The main features of the TSC_ADC_SS include:
 
 - Support for 4-wire, 5-wire, and 8-wire resistive TS panels
 - Support for interleaving TS capture and general-purpose ADC modes
@@ -47,15 +55,15 @@ The main features of the TSC\_ADC\_SS include:
   - Interrupt for FIFO overflow and underflow conditions
   - Status bit to indicate if ADC is busy converting
 
-### *12.1.2 Unsupported TSC\_ADC\_SS Features*
+### _12.1.2 Unsupported TSC_ADC_SS Features_
 
-This device supports all TSC\_ADC\_SS features.
+This device supports all TSC_ADC_SS features.
 
 ## 12.2 Integration
 
-Figure 12-1 shows the integration of the TSC\_ADC module in the device.
+Figure 12-1 shows the integration of the TSC_ADC module in the device.
 
-Figure 12-1. TSC\_ADC Integration
+Figure 12-1. TSC_ADC Integration
 
 ```
 CLK_M_OSC
@@ -118,16 +126,16 @@ L4Wakeup Interconnect <------------>|  +---------------------------+            
                                                +-----+
 ```
 
-pr1\_host\_intr[0:7] corresponds to Host-2 to Host-9 of the PRU-ICSS interrupt controller.
+pr1_host_intr[0:7] corresponds to Host-2 to Host-9 of the PRU-ICSS interrupt controller.
 
-### 12.2.1 TSC\_ADC Connectivity Attributes
+### 12.2.1 TSC_ADC Connectivity Attributes
 
-The general connectivity attributes for the TSC\_ADC module are summarized in Table 12-1.
+The general connectivity attributes for the TSC_ADC module are summarized in Table 12-1.
 
-Table 12-1. TSC\_ADC Connectivity Attributes
+Table 12-1. TSC_ADC Connectivity Attributes
 
 | Attributes          | Type                                                                                |
-|---------------------|-------------------------------------------------------------------------------------|
+| ------------------- | ----------------------------------------------------------------------------------- |
 | Power domain        | Wakeup Domain                                                                       |
 | Clock domain        | PD_WKUP_L4_WKUP_GCLK (OCP) PD_WKUP_ADC_FCLK (Func)                                  |
 | Reset signals       | WKUP_DOM_RST_N                                                                      |
@@ -136,76 +144,76 @@ Table 12-1. TSC\_ADC Connectivity Attributes
 | DMA request         | 2 Events (tsc_adc_FIFO0, tsc_adc_FIFO1)                                             |
 | Physical address    | L3 Slow slave port (DMA)<br>L4 Wkup slave port (MMR)                                |
 
-### *12.2.2 TSC\_ADC Clock and Reset Management*
+### _12.2.2 TSC_ADC Clock and Reset Management_
 
-The TSC\_ADC has two clock domains. The ADC uses the adc\_clk. The bus interfaces, FIFOs, sequencer, and all other lofic use the ocp\_clk.
+The TSC_ADC has two clock domains. The ADC uses the adc_clk. The bus interfaces, FIFOs, sequencer, and all other lofic use the ocp_clk.
 
-#### **Table 12-2. TSC\_ADC Clock Signals**
+#### **Table 12-2. TSC_ADC Clock Signals**
 
 | Clock Signal                      | Max Freq  | Reference / Source | Comments                           |
-|-----------------------------------|-----------|--------------------|------------------------------------|
+| --------------------------------- | --------- | ------------------ | ---------------------------------- |
 | ocp_clk<br>OCP / Functional clock | 100 MHz   | CORE_CLKOUTM4 / 2  | pd_pwkup_l4_wkup_gclk<br>From PRCM |
 | adc_clk<br>ADC clock              | 24 MHz(1) | CLK_M_OSC          | pd_wkup_adc_fclk<br>From PRCM      |
 
-<sup>(1)</sup> When using master input clock frequencies (CLK\_M\_OSC) above 24 MHz (that is, 25 or 26 MHz), the ADC clock must be divided down using the ADC\_CLKDIV register, which will reduce the maximum potential sample rate. The maximum sample rate can only be achieved using a 24-MHz master input clock.
+<sup>(1)</sup> When using master input clock frequencies (CLK_M_OSC) above 24 MHz (that is, 25 or 26 MHz), the ADC clock must be divided down using the ADC_CLKDIV register, which will reduce the maximum potential sample rate. The maximum sample rate can only be achieved using a 24-MHz master input clock.
 
-### *12.2.3 TSC\_ADC Pin List*
+### _12.2.3 TSC_ADC Pin List_
 
-The TSC\_ADC external interface signals are shown in [Table](#page-3-0) 12-3.
+The TSC_ADC external interface signals are shown in [Table](#page-3-0) 12-3.
 
-### **Table 12-3. TSC\_ADC Pin List**
+### **Table 12-3. TSC_ADC Pin List**
 
 | Pin     | Type  | Description                              |
-|---------|-------|------------------------------------------|
+| ------- | ----- | ---------------------------------------- |
 | AN[7:0] | I     | Analog Input                             |
 | VREFN   | Power | Analog Reference Input Negative Terminal |
 | VREFP   | Power | Analog Reference Input Positive Terminal |
 
 ## **12.3 Functional Description**
 
-Before enabling the TSC\_ADC\_SS module, the user must first program the Step Configuration registers in order to configure a channel input to be sampled. There are 16 programmable Step Configuration registers which are used by the sequencer to control which switches to turn on or off (inputs to the AFE), which channel to sample, and which mode to use (hardware-triggered or software-enabled, one-shot or continuous, averaging, where to save the FIFO data, and more).
+Before enabling the TSC_ADC_SS module, the user must first program the Step Configuration registers in order to configure a channel input to be sampled. There are 16 programmable Step Configuration registers which are used by the sequencer to control which switches to turn on or off (inputs to the AFE), which channel to sample, and which mode to use (hardware-triggered or software-enabled, one-shot or continuous, averaging, where to save the FIFO data, and more).
 
-### *12.3.1 Hardware-Synchronized or Software-Enabled*
+### _12.3.1 Hardware-Synchronized or Software-Enabled_
 
 The user can control the start behavior of each step by deciding if a channel should be sampled immediately (software-enabled) after it is enabled, or if the channel should wait for a hardware (HW) event to occur first (a HW event must either be mapped to the touch screen PEN event or mapped to the HW event input signal, but not both). Each step can be configured independently using the STEPCONFIGx register.
 
-### *12.3.2 Open Delay and Sample Delay*
+### _12.3.2 Open Delay and Sample Delay_
 
 The user can program the delay between driving the inputs to the AFE and the time to send the start of conversion signal. This delay can be used to allow the voltages to stabilize on the touch screen panel before sampling. This delay is called "open delay" and can also be programmed to zero. The user also has control of the sampling time (width of the start of conversion signal) to the AFE which is called the "sample delay". The open delay and sample delay for each step can be independently configured using the STEPDELAYx register.
 
-### *12.3.3 Averaging of Samples (1, 2, 4, 8, and 16)*
+### _12.3.3 Averaging of Samples (1, 2, 4, 8, and 16)_
 
 Each step has the capability to average the sampled data. The valid averaging options are 1 (no average), 2, 4, 8, and 16. If averaging is turned on, then the channel is immediately sampled again (up to 16 times) and final averaged sample data is stored in the FIFO. Each step can be independently configured using the STEPCONFIGx registers.
 
-### *12.3.4 One-Shot (Single) or Continuous Mode*
+### _12.3.4 One-Shot (Single) or Continuous Mode_
 
 When the sequencer finishes cycling through all the enabled steps, the user can decide if the sequencer should stop (one-shot), or loop back and schedule the step again (continuous).
 
 If one-shot mode is selected, the sequencer will take care of disabling the step enable bit after the conversion. If continuous mode is selected, it is the software's responsibility to turn off the step enable bit.
 
-### *12.3.5 Interrupts*
+### _12.3.5 Interrupts_
 
 The following interrupts are supported through enable bits and are maskable.
 
-The HW Pen event interrupt, also known as the Pen-down interrupt, is generated when the user presses the touchscreen. This can only occur if the AFE is configured properly (that is, one of the Pen Ctrl bits must be enabled, and also the correct setting for a path to ground in the STEPCONFIGx registers). Although the HW Pen interrupt can be disabled by the software (SW), the event will still trigger the sequencer to start if the step is configured as a HW-synchronized event. The Pen-down interrupt is an asynchronous event and can be used even if the TSC\_ADC\_SS clocks are disabled. The Pen-down interrupt can be used as a wakeup source.
+The HW Pen event interrupt, also known as the Pen-down interrupt, is generated when the user presses the touchscreen. This can only occur if the AFE is configured properly (that is, one of the Pen Ctrl bits must be enabled, and also the correct setting for a path to ground in the STEPCONFIGx registers). Although the HW Pen interrupt can be disabled by the software (SW), the event will still trigger the sequencer to start if the step is configured as a HW-synchronized event. The Pen-down interrupt is an asynchronous event and can be used even if the TSC_ADC_SS clocks are disabled. The Pen-down interrupt can be used as a wakeup source.
 
-An END\_OF\_SEQUENCE interrupt is generated after the sequencer finishes servicing the last enabled step.
+An END_OF_SEQUENCE interrupt is generated after the sequencer finishes servicing the last enabled step.
 
 A Pen-up event interrupt, also known as the Pen-up interrupt, can only be generated when using HW steps with the charge steps enabled. If a Pen-down event caused the HW steps to be scheduled and no Pen-down is present after the sequencer finished servicing the charge step, then a Pen-up interrupt is generated. To detect Pen-up interrupts, the charge step must share the same configuration as the idle step.
 
 Each FIFO has support for generating interrupts when the FIFO word count has reached a programmable threshold level. The user can program the desired word count at which the CPU should be interrupted. Whenever the threshold counter value is reached, it sets the FIFOxTHRESHOLD interrupt flag, and the CPU is interrupted if the FIFOxTHRESHOLD interrupt enable bit is set. The user can clear the interrupt flag, after emptying the FIFO, by writing a '1' to the FIFOxTHRESHOLD interrupt status bit. To determine how many samples are currently in the FIFO at a given moment, the FIFOxCOUNT register can be read by the CPU.
 
-The FIFO can also generate FIFOx\_OVERRUN and FIFOx\_UNDERFLOW interrupts. The user can mask these events by programming the IRQENABLE\_CLR register. To clear a FIFO underflow or FIFO overrun interrupt, the user should write a '1' to the status bit in the IRQSTS register. The TSC\_ADC\_SS does not recover from these conditions automatically. Therefore, the software will need to disable and then again enable the TSC\_ADC\_SS. Before the user can turn the module back on, the user must read the ADCSTAT register to check if the status of the ADC FSM is idle and the current step is the idle step.
+The FIFO can also generate FIFOx_OVERRUN and FIFOx_UNDERFLOW interrupts. The user can mask these events by programming the IRQENABLE_CLR register. To clear a FIFO underflow or FIFO overrun interrupt, the user should write a '1' to the status bit in the IRQSTS register. The TSC_ADC_SS does not recover from these conditions automatically. Therefore, the software will need to disable and then again enable the TSC_ADC_SS. Before the user can turn the module back on, the user must read the ADCSTAT register to check if the status of the ADC FSM is idle and the current step is the idle step.
 
-### *12.3.6 DMA Requests*
+### _12.3.6 DMA Requests_
 
-Each FIFO group can be serviced by either a DMA or by the CPU. To generate DMA requests, the user must set the enable bit in the DMAENABLE\_SET Register. Also, the user can program the desired number of words to generate a DMA request using the DMAxREQ register. When the FIFO level reaches or exceeds that value, a DMA request is generated.
+Each FIFO group can be serviced by either a DMA or by the CPU. To generate DMA requests, the user must set the enable bit in the DMAENABLE_SET Register. Also, the user can program the desired number of words to generate a DMA request using the DMAxREQ register. When the FIFO level reaches or exceeds that value, a DMA request is generated.
 
 The DMA slave port allows for burst reads in order to effectively move the FIFO data. Internally, the OCP DMA address (MSB) is decoded for either FIFO 0 or FIFO 1. The lower bits of the DMA addresses are ignored since the FIFO pointers are incremented internally.
 
-### *12.3.7 Analog Front End (AFE) Functional Block Diagram*
+### _12.3.7 Analog Front End (AFE) Functional Block Diagram_
 
-The AFE features are listed below, and some are controlled by the TSC\_ADC\_SS:
+The AFE features are listed below, and some are controlled by the TSC_ADC_SS:
 
 - 12-bit ADC
 - Sampling rate can be as fast as every 15 ADC clock cycles
@@ -288,12 +296,13 @@ Supplies/pads (blue pins are I/O pads):
 - VSSA, VDDA
 - WPPNSW, YNNSW, YPNSW, XNNSW (bottom switch pins)
 ```
+
 Blue pins are I/O pads
 
 Figure 12-2. Functional Block Diagram
 
 - (1) In the device-specific datasheet:
-- VDDA\_ADC and VSSA\_ADC are referred to as "Internal References"
+- VDDA_ADC and VSSA_ADC are referred to as "Internal References"
 - VREFP and VREFN are referred to as "External References"
 
 ## **12.4 Operational Modes**
@@ -310,7 +319,7 @@ A step requires using these registers:
 
 The sequencer supports a total of 16 programmable steps, a touchscreen charge step, and an idle step. Each step requires using the registers listed above. However, the idle step does not have an enable bit, so it will always be enabled, or a delay register. In addition, the ADC does not actually sample a channel during the idle and touchscreen charge steps.
 
-Assuming all the steps are configured as general-purpose mode (no touchscreen), then the steps would be configured as SW enabled. When the TSC\_ADC\_SS is first enabled, the sequencer will always start in the Idle step and then wait for a STEPENABLE[n] bit to turn on. After a step is enabled, the sequencer will start with the lowest step (1) and continue until step (16). If a step is not enabled, then sequencer will skip to the next step. If all steps are disabled, then the sequencer will remain in the IDLE state and continue to apply the settings in the IDLECONFIG register.
+Assuming all the steps are configured as general-purpose mode (no touchscreen), then the steps would be configured as SW enabled. When the TSC_ADC_SS is first enabled, the sequencer will always start in the Idle step and then wait for a STEPENABLE[n] bit to turn on. After a step is enabled, the sequencer will start with the lowest step (1) and continue until step (16). If a step is not enabled, then sequencer will skip to the next step. If all steps are disabled, then the sequencer will remain in the IDLE state and continue to apply the settings in the IDLECONFIG register.
 
 Assuming a touchscreen-only mode (no general-purpose channels) the steps could be configured as HW synchronized triggered (mapped to the Pen event). The sequencer would wait in the IDLE state until a Pen-down event occurred and then begin the HW step conversions. The charge step, which occurs after the last HW-synchronized step is finished, is designed to charge the capacitance in a touch panel when the appropriate bias transistor is enabled. The purpose of the charge step is to prepare the TSC for the next Pen-down event.
 
@@ -318,23 +327,23 @@ Assuming a mixed mode application (touchscreen and general-purpose channels), th
 
 If a Pen-down event occurs while the sequencer is in the middle of scheduling the SW steps, the user can program the scheduler to allow preemption. If the HW preemption control bit is enabled in the CTRL register, the sequencer will stop the scheduled SW sequence and schedule the HW steps. After the last HW step and charge step are completed, the sequencer will continue from the next SW step (before the preemption occurred). If the HW preemption is disabled, then the touch event will be ignored until the last software step is completed; if the touch event is removed before the last software step is finished, then the touch event will be missed.
 
-Even if a touchscreen is not present, the user can still configure the steps to be HW-synchronized by mapping to the ext\_hw\_event signal shown in [Figure](#page-2-1) 12-1. This HW event input signal can be driven at the SOC from a number of external inputs chosen by the ADC\_EVT\_CAPT register in the Control Module.
+Even if a touchscreen is not present, the user can still configure the steps to be HW-synchronized by mapping to the ext_hw_event signal shown in [Figure](#page-2-1) 12-1. This HW event input signal can be driven at the SOC from a number of external inputs chosen by the ADC_EVT_CAPT register in the Control Module.
 
-When mapping is set for the ext\_hw\_event signal, then the TSC\_ADC\_SS will wait for a rising edge transition (from low to high) before starting. The ext\_hw\_event signal is captured on the internal L4 OCP clock domain. The ext\_hw\_event signal should be held for at least two TSC\_ADC\_SS OCP clocks (L4 frequency).
+When mapping is set for the ext_hw_event signal, then the TSC_ADC_SS will wait for a rising edge transition (from low to high) before starting. The ext_hw_event signal is captured on the internal L4 OCP clock domain. The ext_hw_event signal should be held for at least two TSC_ADC_SS OCP clocks (L4 frequency).
 
-An END\_OF\_SEQUENCE interrupt is generated after the last active step is completed before going back to the IDLE state. The END\_OF\_SEQUENCE interrupt does not mean data is in the FIFO (should use the FIFO interrupts and FIFOxCOUNT register).
+An END_OF_SEQUENCE interrupt is generated after the last active step is completed before going back to the IDLE state. The END_OF_SEQUENCE interrupt does not mean data is in the FIFO (should use the FIFO interrupts and FIFOxCOUNT register).
 
-### *12.4.1 PenCtrl and PenIRQ*
+### _12.4.1 PenCtrl and PenIRQ_
 
-The Pen IRQ can only occur if the correct AFE\_Pen\_Ctrl bits are high in the CTRL register and if the correct ground transistor biasing is set in the STEPCONFIGx and IDLECONFIG registers.
+The Pen IRQ can only occur if the correct AFE_Pen_Ctrl bits are high in the CTRL register and if the correct ground transistor biasing is set in the STEPCONFIGx and IDLECONFIG registers.
 
-Setting the AFE\_Pen\_Ctrl bits in the CTRL register will enable a weak internal pull-up resistor on AIN0 for 4-wire configurations and AIN4 for 5-wire.
+Setting the AFE_Pen_Ctrl bits in the CTRL register will enable a weak internal pull-up resistor on AIN0 for 4-wire configurations and AIN4 for 5-wire.
 
-If a step is configured as HW-synchronized, the sequencer will override the AFE\_Pen\_Ctrl bits set by the software (bits 6:5) once it transitions from the Idle step. The sequencer will automatically mask the AFE\_Pen\_Ctrl bits (override them and turn them off) so that the ADC can get an accurate measurement from the x and y-axes. After the last HW-synchronized step, the sequence will go to the Charge step and the pen override mask is removed and the values set by the software (bits 6:5) will have control. The Pendown events will be temporarily ignored during the Charge step (HW will mask any potential glitches that may occur)
+If a step is configured as HW-synchronized, the sequencer will override the AFE_Pen_Ctrl bits set by the software (bits 6:5) once it transitions from the Idle step. The sequencer will automatically mask the AFE_Pen_Ctrl bits (override them and turn them off) so that the ADC can get an accurate measurement from the x and y-axes. After the last HW-synchronized step, the sequence will go to the Charge step and the pen override mask is removed and the values set by the software (bits 6:5) will have control. The Pendown events will be temporarily ignored during the Charge step (HW will mask any potential glitches that may occur)
 
-If the sequencer is not using the HW synchronized approach, (all the steps are configured as software enabled), then it is the software programmer's responsibility to correctly turn on and off the AFE\_Pen\_Ctrl bits to receive the correct measurements from the touchscreen. The software must enable the Charge step and ignore any potential glitches.
+If the sequencer is not using the HW synchronized approach, (all the steps are configured as software enabled), then it is the software programmer's responsibility to correctly turn on and off the AFE_Pen_Ctrl bits to receive the correct measurements from the touchscreen. The software must enable the Charge step and ignore any potential glitches.
 
-It is also possible to detect the Pen-down event even if all the STEPENABLE[n] bits are off. By setting the appropriate AFE\_Pen\_Ctrl bit to 1, and configuring the IDLECONFIG register to bias the correct transistor to ground, the Pen-down event will generate. The flowchart for the sequencer is shown in [Figure](#page-9-0) 12-3 and an example timing diagram in [Figure](#page-10-0) 12-4.
+It is also possible to detect the Pen-down event even if all the STEPENABLE[n] bits are off. By setting the appropriate AFE_Pen_Ctrl bit to 1, and configuring the IDLECONFIG register to bias the correct transistor to ground, the Pen-down event will generate. The flowchart for the sequencer is shown in [Figure](#page-9-0) 12-3 and an example timing diagram in [Figure](#page-10-0) 12-4.
 
 ```
 Figure 12-3. Sequencer FSM (text)
@@ -422,6 +431,7 @@ Preemption path (center logic):
 - Bottom note:
     If preempt_flag is 1, restore N; else set N to first SW Stepconfig
 ```
+
 <sup>\*</sup> HW event can either be Pen-down or input HW event, but not both
 
 [Figure](#page-9-0) 12-3 does not actually represent clock cycles but instead illustrates how the scheduler will work. However, each shaded box above does represent a FSM state and will use a clock cycle. Using the minimum delay values, the ADC can sample at 15 ADC clocks per sample. Below is an example timing diagram illustrating the states of the sequencer and also the showing when the STEPCONFIGx and the STEPDELAYx registers values are applied. The below example assumes the steps are software controlled, and averaging is turned off.
@@ -449,20 +459,20 @@ Data[11:0]  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|<---- 13 clock cycles ---->|==== Da
 
 The idle step is always enabled and applied when the FSM is in the IDLE state (that is, either waiting for a HW event or waiting for a step to be enabled). The idle step cannot be disabled.
 
-Once the TSC\_ADC\_SS is enabled and assuming at least one step is active, the FSM will transition from the idle state and apply the first active STEPCONFIGx and STEPDELAYx register settings. It is possible for the Open Delay value to be 0, and the FSM will immediately skip to the Sample Delay state, which is a minimum of one clock cycle. The ADC will begin the sampling on the falling edge of the SOC signal. After the ADC is finished converting the channel data (13 cycles later), the EOC signal is sent and the FSM will then apply the next active step.
+Once the TSC_ADC_SS is enabled and assuming at least one step is active, the FSM will transition from the idle state and apply the first active STEPCONFIGx and STEPDELAYx register settings. It is possible for the Open Delay value to be 0, and the FSM will immediately skip to the Sample Delay state, which is a minimum of one clock cycle. The ADC will begin the sampling on the falling edge of the SOC signal. After the ADC is finished converting the channel data (13 cycles later), the EOC signal is sent and the FSM will then apply the next active step.
 
 This process is repeated and continued (from step 1 to step 16) until the last active step is completed.
 
 ## **12.5 Touchscreen Controller Registers**
 
-### *12.5.1 TSC\_ADC\_SS Registers*
+### _12.5.1 TSC_ADC_SS Registers_
 
-[Table](#page-11-1) 12-4 lists the memory-mapped registers for the TSC\_ADC\_SS. All register offset addresses not listed in [Table](#page-11-1) 12-4 should be considered as reserved locations and the register contents should not be modified.
+[Table](#page-11-1) 12-4 lists the memory-mapped registers for the TSC_ADC_SS. All register offset addresses not listed in [Table](#page-11-1) 12-4 should be considered as reserved locations and the register contents should not be modified.
 
-**Table 12-4. TSC\_ADC\_SS Registers**
+**Table 12-4. TSC_ADC_SS Registers**
 
 | Offset | Acronym              | Register Name | Section           |
-|--------|----------------------|---------------|-------------------|
+| ------ | -------------------- | ------------- | ----------------- |
 | 0h     | REVISION             |               | Section 12.5.1.1  |
 | 10h    | SYSCONFIG            |               | Section 12.5.1.2  |
 | 24h    | IRQSTATUS_RAW        |               | Section 12.5.1.3  |
@@ -505,10 +515,10 @@ This process is repeated and continued (from step 1 to step 16) until the last a
 | B8h    | STEPDELAY11          |               | Section 12.5.1.40 |
 | BCh    | STEPCONFIG12         |               | Section 12.5.1.41 |
 
-**Table 12-4. TSC\_ADC\_SS Registers (continued)**
+**Table 12-4. TSC_ADC_SS Registers (continued)**
 
 | Offset | Acronym        | Register Name | Section           |
-|--------|----------------|---------------|-------------------|
+| ------ | -------------- | ------------- | ----------------- |
 | C0h    | STEPDELAY12    |               | Section 12.5.1.42 |
 | C4h    | STEPCONFIG13   |               | Section 12.5.1.43 |
 | C8h    | STEPDELAY13    |               | Section 12.5.1.44 |
@@ -537,33 +547,33 @@ Revision Register
 
 **Figure 12-5. REVISION Register**
 
-| 31     | 30     | 29       | 28     | 27 | 26      | 25      | 24 |  |  |
-|--------|--------|----------|--------|----|---------|---------|----|--|--|
-| SCHEME |        | RESERVED |        |    | FUNC    |         |    |  |  |
-| R-1h   |        | R-0h     |        |    | R-730h  |         |    |  |  |
-| 23     | 22     | 21       | 20     | 19 | 18      | 17      | 16 |  |  |
-|        |        |          | FUNC   |    |         |         |    |  |  |
-|        |        |          | R-730h |    |         |         |    |  |  |
-| 15     | 14     | 13       | 12     | 11 | 10      | 9       | 8  |  |  |
-|        |        | R_RTL    |        |    |         | X_MAJOR |    |  |  |
-|        |        | R-0h     |        |    |         | R-0h    |    |  |  |
-| 7      | 6      | 5        | 4      | 3  | 2       | 1       | 0  |  |  |
-|        | CUSTOM |          |        |    | Y_MINOR |         |    |  |  |
-|        | R-0h   |          |        |    | R-1h    |         |    |  |  |
+| 31     | 30     | 29       | 28     | 27  | 26      | 25      | 24  |     |     |
+| ------ | ------ | -------- | ------ | --- | ------- | ------- | --- | --- | --- |
+| SCHEME |        | RESERVED |        |     | FUNC    |         |     |     |     |
+| R-1h   |        | R-0h     |        |     | R-730h  |         |     |     |     |
+| 23     | 22     | 21       | 20     | 19  | 18      | 17      | 16  |     |     |
+|        |        |          | FUNC   |     |         |         |     |     |     |
+|        |        |          | R-730h |     |         |         |     |     |     |
+| 15     | 14     | 13       | 12     | 11  | 10      | 9       | 8   |     |     |
+|        |        | R_RTL    |        |     |         | X_MAJOR |     |     |     |
+|        |        | R-0h     |        |     |         | R-0h    |     |     |     |
+| 7      | 6      | 5        | 4      | 3   | 2       | 1       | 0   |     |     |
+|        | CUSTOM |          |        |     | Y_MINOR |         |     |     |     |
+|        | R-0h   |          |        |     | R-1h    |         |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 12-5. REVISION Register Field Descriptions**
 
-| Bit   | Field    | Type | Reset | Description                                      |  |  |
-|-------|----------|------|-------|--------------------------------------------------|--|--|
-| 31-30 | SCHEME   | R    | 1h    | HL 0.8 scheme                                    |  |  |
-| 29-28 | RESERVED | R    | 0h    | Always read as 0.<br>Writes have no affect.      |  |  |
-| 27-16 | FUNC     | R    | 730h  | Functional Number                                |  |  |
-| 15-11 | R_RTL    | R    | 0h    | RTL revision.<br>Will vary depending on release. |  |  |
-| 10-8  | X_MAJOR  | R    | 0h    | Major revision.                                  |  |  |
-| 7-6   | CUSTOM   | R    | 0h    | Custom revision.                                 |  |  |
-| 5-0   | Y_MINOR  | R    | 1h    | Minor revision                                   |  |  |
+| Bit   | Field    | Type | Reset | Description                                      |     |     |
+| ----- | -------- | ---- | ----- | ------------------------------------------------ | --- | --- |
+| 31-30 | SCHEME   | R    | 1h    | HL 0.8 scheme                                    |     |     |
+| 29-28 | RESERVED | R    | 0h    | Always read as 0.<br>Writes have no affect.      |     |     |
+| 27-16 | FUNC     | R    | 730h  | Functional Number                                |     |     |
+| 15-11 | R_RTL    | R    | 0h    | RTL revision.<br>Will vary depending on release. |     |     |
+| 10-8  | X_MAJOR  | R    | 0h    | Major revision.                                  |     |     |
+| 7-6   | CUSTOM   | R    | 0h    | Custom revision.                                 |     |     |
+| 5-0   | Y_MINOR  | R    | 1h    | Minor revision                                   |     |     |
 
 #### **12.5.1.2 SYSCONFIG Register (offset = 10h) [reset = 0h]**
 
@@ -575,60 +585,60 @@ SysConfig Register
 
 ### **Figure 12-6. SYSCONFIG Register**
 
-| 31 | 30                               | 29     | 28       | 27 | 26     | 25 | 24     |  |  |  |  |  |
-|----|----------------------------------|--------|----------|----|--------|----|--------|--|--|--|--|--|
-|    | RESERVED                         |        |          |    |        |    |        |  |  |  |  |  |
-|    | R/W-0h                           |        |          |    |        |    |        |  |  |  |  |  |
-| 23 | 22                               | 21     | 20       | 19 | 18     | 17 | 16     |  |  |  |  |  |
-|    | RESERVED                         |        |          |    |        |    |        |  |  |  |  |  |
-|    |                                  |        | R/W-0h   |    |        |    |        |  |  |  |  |  |
-| 15 | 14                               | 13     | 12       | 11 | 10     | 9  | 8      |  |  |  |  |  |
-|    |                                  |        | RESERVED |    |        |    |        |  |  |  |  |  |
-|    |                                  |        | R/W-0h   |    |        |    |        |  |  |  |  |  |
-| 7  | 6                                | 5      | 4        | 3  | 2      | 1  | 0      |  |  |  |  |  |
-|    | RESERVED<br>IdleMode<br>RESERVED |        |          |    |        |    |        |  |  |  |  |  |
-|    |                                  | R/W-0h |          |    | R/W-0h |    | R/W-0h |  |  |  |  |  |
+| 31  | 30                               | 29     | 28       | 27  | 26     | 25  | 24     |     |     |     |     |     |
+| --- | -------------------------------- | ------ | -------- | --- | ------ | --- | ------ | --- | --- | --- | --- | --- |
+|     | RESERVED                         |        |          |     |        |     |        |     |     |     |     |     |
+|     | R/W-0h                           |        |          |     |        |     |        |     |     |     |     |     |
+| 23  | 22                               | 21     | 20       | 19  | 18     | 17  | 16     |     |     |     |     |     |
+|     | RESERVED                         |        |          |     |        |     |        |     |     |     |     |     |
+|     |                                  |        | R/W-0h   |     |        |     |        |     |     |     |     |     |
+| 15  | 14                               | 13     | 12       | 11  | 10     | 9   | 8      |     |     |     |     |     |
+|     |                                  |        | RESERVED |     |        |     |        |     |     |     |     |     |
+|     |                                  |        | R/W-0h   |     |        |     |        |     |     |     |     |     |
+| 7   | 6                                | 5      | 4        | 3   | 2      | 1   | 0      |     |     |     |     |     |
+|     | RESERVED<br>IdleMode<br>RESERVED |        |          |     |        |     |        |     |     |     |     |     |
+|     |                                  | R/W-0h |          |     | R/W-0h |     | R/W-0h |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-6. SYSCONFIG Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                |
-|------|----------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | 31-4 | RESERVED | R/W  | 0h    |                                                                                                                                            |
 | 3-2  | IdleMode | R/W  | 0h    | 00 = Force Idle (always acknowledges).<br>01 = No Idle Mode (never acknowledges).<br>10 = Smart-Idle Mode.<br>11 = Smart Idle with Wakeup. |
 | 1-0  | RESERVED | R/W  | 0h    |                                                                                                                                            |
 
-#### **12.5.1.3 IRQSTATUS\_RAW Register (offset = 24h) [reset = 0h]**
+#### **12.5.1.3 IRQSTATUS_RAW Register (offset = 24h) [reset = 0h]**
 
 Register mask: FFFFFFFFh
 
-IRQSTATUS\_RAW is shown in [Figure](#page-15-1) 12-7 and described in [Table](#page-15-2) 12-7.
+IRQSTATUS_RAW is shown in [Figure](#page-15-1) 12-7 and described in [Table](#page-15-2) 12-7.
 
 IRQ status (unmasked)
 
-**Figure 12-7. IRQSTATUS\_RAW Register**
+**Figure 12-7. IRQSTATUS_RAW Register**
 
-| 31                  | 30            | 29                  | 28                  | 27            | 26                       | 25                  | 24                            |  |  |  |  |  |
-|---------------------|---------------|---------------------|---------------------|---------------|--------------------------|---------------------|-------------------------------|--|--|--|--|--|
-|                     | RESERVED      |                     |                     |               |                          |                     |                               |  |  |  |  |  |
-|                     | R/W-0h        |                     |                     |               |                          |                     |                               |  |  |  |  |  |
-| 23                  | 22            | 21                  | 20                  | 19            | 18                       | 17                  | 16                            |  |  |  |  |  |
-|                     |               |                     |                     | RESERVED      |                          |                     |                               |  |  |  |  |  |
-|                     | R/W-0h        |                     |                     |               |                          |                     |                               |  |  |  |  |  |
-| 15                  | 14            | 13                  | 12                  | 11            | 10                       | 9                   | 8                             |  |  |  |  |  |
-|                     |               | RESERVED            |                     |               | PEN_IRQ_sync<br>hronized | Pen_Up_Event        | Out_of_Range                  |  |  |  |  |  |
-|                     |               | R/W-0h              |                     |               | R/W-0h                   | R/W-0h              | R/W-0h                        |  |  |  |  |  |
-| 7                   | 6             | 5                   | 4                   | 3             | 2                        | 1                   | 0                             |  |  |  |  |  |
-| FIFO1_Underfl<br>ow | FIFO1_Overrun | FIFO1_Thresho<br>ld | FIFO0_Underfl<br>ow | FIFO0_Overrun | FIFO0_Thresho<br>ld      | End_of_Seque<br>nce | HW_Pen_Event<br>_asynchronous |  |  |  |  |  |
-| R/W-0h              | R/W-0h        | R/W-0h              | R/W-0h              | R/W-0h        | R/W-0h                   | R/W-0h              | R/W-0h                        |  |  |  |  |  |
+| 31                  | 30            | 29                  | 28                  | 27            | 26                       | 25                  | 24                             |     |     |     |     |     |
+| ------------------- | ------------- | ------------------- | ------------------- | ------------- | ------------------------ | ------------------- | ------------------------------ | --- | --- | --- | --- | --- |
+|                     | RESERVED      |                     |                     |               |                          |                     |                                |     |     |     |     |     |
+|                     | R/W-0h        |                     |                     |               |                          |                     |                                |     |     |     |     |     |
+| 23                  | 22            | 21                  | 20                  | 19            | 18                       | 17                  | 16                             |     |     |     |     |     |
+|                     |               |                     |                     | RESERVED      |                          |                     |                                |     |     |     |     |     |
+|                     | R/W-0h        |                     |                     |               |                          |                     |                                |     |     |     |     |     |
+| 15                  | 14            | 13                  | 12                  | 11            | 10                       | 9                   | 8                              |     |     |     |     |     |
+|                     |               | RESERVED            |                     |               | PEN_IRQ_sync<br>hronized | Pen_Up_Event        | Out_of_Range                   |     |     |     |     |     |
+|                     |               | R/W-0h              |                     |               | R/W-0h                   | R/W-0h              | R/W-0h                         |     |     |     |     |     |
+| 7                   | 6             | 5                   | 4                   | 3             | 2                        | 1                   | 0                              |     |     |     |     |     |
+| FIFO1_Underfl<br>ow | FIFO1_Overrun | FIFO1_Thresho<br>ld | FIFO0_Underfl<br>ow | FIFO0_Overrun | FIFO0_Thresho<br>ld      | End_of_Seque<br>nce | HW_Pen_Event<br>\_asynchronous |     |     |     |     |     |
+| R/W-0h              | R/W-0h        | R/W-0h              | R/W-0h              | R/W-0h        | R/W-0h                   | R/W-0h              | R/W-0h                         |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 12-7. IRQSTATUS\_RAW Register Field Descriptions**
+#### **Table 12-7. IRQSTATUS_RAW Register Field Descriptions**
 
 | Bit   | Field                | Type | Reset | Description                                                                                                   |
-|-------|----------------------|------|-------|---------------------------------------------------------------------------------------------------------------|
+| ----- | -------------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------- |
 | 31-11 | RESERVED             | R/W  | 0h    |                                                                                                               |
 | 10    | PEN_IRQ_synchronized | R/W  | 0h    | Write 0 = No action.<br>Write 1 = Set event (debug).<br>Read 0 = No event pending.<br>Read 1 = Event pending. |
 | 9     | Pen_Up_Event         | R/W  | 0h    | Write 0 = No action.<br>Write 1 = Set event (debug).<br>Read 0 = No event pending.<br>Read 1 = Event pending. |
@@ -639,10 +649,10 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 4     | FIFO0_Underflow      | R/W  | 0h    | Write 0 = No action.<br>Write 1 = Set event (debug).<br>Read 0 = No event pending.<br>Read 1 = Event pending. |
 | 3     | FIFO0_Overrun        | R/W  | 0h    | Write 0 = No action.<br>Write 1 = Set event (debug).<br>Read 0 = No event pending.<br>Read 1 = Event pending. |
 
-**Table 12-7. IRQSTATUS\_RAW Register Field Descriptions (continued)**
+**Table 12-7. IRQSTATUS_RAW Register Field Descriptions (continued)**
 
 | Bit | Field                         | Type | Reset | Description                                                                                                   |
-|-----|-------------------------------|------|-------|---------------------------------------------------------------------------------------------------------------|
+| --- | ----------------------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------- |
 | 2   | FIFO0_Threshold               | R/W  | 0h    | Write 0 = No action.<br>Write 1 = Set event (debug).<br>Read 0 = No event pending.<br>Read 1 = Event pending. |
 | 1   | End_of_Sequence               | R/W  | 0h    | Write 0 = No action.<br>Write 1 = Set event (debug).<br>Read 0 = No event pending.<br>Read 1 = Event pending. |
 | 0   | HW_Pen_Event_asynchro<br>nous | R/W  | 0h    | Write 0 = No action.<br>Write 1 = Set event (debug).<br>Read 0 = No event pending.<br>Read 1 = Event pending. |
@@ -657,26 +667,26 @@ IRQ status (masked)
 
 **Figure 12-8. IRQSTATUS Register**
 
-| 31                  | 30            | 29                  | 28                  | 27            | 26                           | 25                  | 24                            |  |  |  |  |
-|---------------------|---------------|---------------------|---------------------|---------------|------------------------------|---------------------|-------------------------------|--|--|--|--|
-|                     | RESERVED      |                     |                     |               |                              |                     |                               |  |  |  |  |
-|                     | R/W-0h        |                     |                     |               |                              |                     |                               |  |  |  |  |
-| 23                  | 22            | 21                  | 20                  | 19            | 18                           | 17                  | 16                            |  |  |  |  |
-|                     |               |                     |                     | RESERVED      |                              |                     |                               |  |  |  |  |
-|                     | R/W-0h        |                     |                     |               |                              |                     |                               |  |  |  |  |
-| 15                  | 14            | 13                  | 12                  | 11            | 10                           | 9                   | 8                             |  |  |  |  |
-|                     |               | RESERVED            |                     |               | HW_Pen_Event<br>_synchronous | Pen_Up_event        | Out_of_Range                  |  |  |  |  |
-|                     |               | R/W-0h              |                     |               | R/W-0h                       | R/W-0h              | R/W-0h                        |  |  |  |  |
-| 7                   | 6             | 5                   | 4                   | 3             | 2                            | 1                   | 0                             |  |  |  |  |
-| FIFO1_Underfl<br>ow | FIFO1_Overrun | FIFO1_Thresho<br>ld | FIFO0_Underfl<br>ow | FIFO0_Overrun | FIFO0_Thresho<br>ld          | End_of_Seque<br>nce | HW_Pen_Event<br>_asynchronous |  |  |  |  |
-| R/W-0h              | R/W-0h        | R/W-0h              | R/W-0h              | R/W-0h        | R/W-0h                       | R/W-0h              | R/W-0h                        |  |  |  |  |
+| 31                  | 30            | 29                  | 28                  | 27            | 26                            | 25                  | 24                             |     |     |     |     |
+| ------------------- | ------------- | ------------------- | ------------------- | ------------- | ----------------------------- | ------------------- | ------------------------------ | --- | --- | --- | --- |
+|                     | RESERVED      |                     |                     |               |                               |                     |                                |     |     |     |     |
+|                     | R/W-0h        |                     |                     |               |                               |                     |                                |     |     |     |     |
+| 23                  | 22            | 21                  | 20                  | 19            | 18                            | 17                  | 16                             |     |     |     |     |
+|                     |               |                     |                     | RESERVED      |                               |                     |                                |     |     |     |     |
+|                     | R/W-0h        |                     |                     |               |                               |                     |                                |     |     |     |     |
+| 15                  | 14            | 13                  | 12                  | 11            | 10                            | 9                   | 8                              |     |     |     |     |
+|                     |               | RESERVED            |                     |               | HW_Pen_Event<br>\_synchronous | Pen_Up_event        | Out_of_Range                   |     |     |     |     |
+|                     |               | R/W-0h              |                     |               | R/W-0h                        | R/W-0h              | R/W-0h                         |     |     |     |     |
+| 7                   | 6             | 5                   | 4                   | 3             | 2                             | 1                   | 0                              |     |     |     |     |
+| FIFO1_Underfl<br>ow | FIFO1_Overrun | FIFO1_Thresho<br>ld | FIFO0_Underfl<br>ow | FIFO0_Overrun | FIFO0_Thresho<br>ld           | End_of_Seque<br>nce | HW_Pen_Event<br>\_asynchronous |     |     |     |     |
+| R/W-0h              | R/W-0h        | R/W-0h              | R/W-0h              | R/W-0h        | R/W-0h                        | R/W-0h              | R/W-0h                         |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 12-8. IRQSTATUS Register Field Descriptions**
 
 | Bit   | Field                        | Type | Reset | Description                                                                                                             |
-|-------|------------------------------|------|-------|-------------------------------------------------------------------------------------------------------------------------|
+| ----- | ---------------------------- | ---- | ----- | ----------------------------------------------------------------------------------------------------------------------- |
 | 31-11 | RESERVED                     | R/W  | 0h    |                                                                                                                         |
 | 10    | HW_Pen_Event_synchron<br>ous | R/W  | 0h    | Write 0 = No action.<br>Read 0 = No (enabled) event pending.<br>Read 1 = Event pending.<br>Write 1 = Clear (raw) event. |
 | 9     | Pen_Up_event                 | R/W  | 0h    | Write 0 = No action.<br>Read 0 = No (enabled) event pending.<br>Read 1 = Event pending.<br>Write 1 = Clear (raw) event. |
@@ -690,41 +700,41 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-8. IRQSTATUS Register Field Descriptions (continued)**
 
 | Bit | Field                         | Type | Reset | Description                                                                                                             |
-|-----|-------------------------------|------|-------|-------------------------------------------------------------------------------------------------------------------------|
+| --- | ----------------------------- | ---- | ----- | ----------------------------------------------------------------------------------------------------------------------- |
 | 2   | FIFO0_Threshold               | R/W  | 0h    | Write 0 = No action.<br>Read 0 = No (enabled) event pending.<br>Read 1 = Event pending.<br>Write 1 = Clear (raw) event. |
 | 1   | End_of_Sequence               | R/W  | 0h    | Write 0 = No action.<br>Read 0 = No (enabled) event pending.<br>Read 1 = Event pending.<br>Write 1 = Clear (raw) event. |
 | 0   | HW_Pen_Event_asynchro<br>nous | R/W  | 0h    | Write 0 = No action.<br>Read 0 = No (enabled) event pending.<br>Read 1 = Event pending.<br>Write 1 = Clear (raw) event. |
 
-#### **12.5.1.5 IRQENABLE\_SET Register (offset = 2Ch) [reset = 0h]**
+#### **12.5.1.5 IRQENABLE_SET Register (offset = 2Ch) [reset = 0h]**
 
 Register mask: FFFFFFFFh
 
-IRQENABLE\_SET is shown in [Figure](#page-19-1) 12-9 and described in [Table](#page-19-2) 12-9.
+IRQENABLE_SET is shown in [Figure](#page-19-1) 12-9 and described in [Table](#page-19-2) 12-9.
 
 IRQ enable set bits
 
-### **Figure 12-9. IRQENABLE\_SET Register**
+### **Figure 12-9. IRQENABLE_SET Register**
 
-| 31                  | 30            | 29                  | 28                  | 27            | 26                           | 25                  | 24                            |  |  |
-|---------------------|---------------|---------------------|---------------------|---------------|------------------------------|---------------------|-------------------------------|--|--|
-|                     | RESERVED      |                     |                     |               |                              |                     |                               |  |  |
-|                     | R/W-0h        |                     |                     |               |                              |                     |                               |  |  |
-| 23                  | 22            | 21                  | 20                  | 19            | 18                           | 17                  | 16                            |  |  |
-|                     | RESERVED      |                     |                     |               |                              |                     |                               |  |  |
-|                     | R/W-0h        |                     |                     |               |                              |                     |                               |  |  |
-| 15                  | 14            | 13                  | 12                  | 11            | 10                           | 9                   | 8                             |  |  |
-|                     |               | RESERVED            |                     |               | HW_Pen_Event<br>_synchronous | Pen_Up_event        | Out_of_Range                  |  |  |
-|                     |               | R/W-0h              |                     |               | R/W-0h                       | R/W-0h              | R/W-0h                        |  |  |
-| 7                   | 6             | 5                   | 4                   | 3             | 2                            | 1                   | 0                             |  |  |
-| FIFO1_Underfl<br>ow | FIFO1_Overrun | FIFO1_Thresho<br>ld | FIFO0_Underfl<br>ow | FIFO0_Overrun | FIFO0_Thresho<br>ld          | End_of_Seque<br>nce | HW_Pen_Event<br>_asynchronous |  |  |
-| R/W-0h              | R/W-0h        | R/W-0h              | R/W-0h              | R/W-0h        | R/W-0h                       | R/W-0h              | R/W-0h                        |  |  |
+| 31                  | 30            | 29                  | 28                  | 27            | 26                            | 25                  | 24                             |     |     |
+| ------------------- | ------------- | ------------------- | ------------------- | ------------- | ----------------------------- | ------------------- | ------------------------------ | --- | --- |
+|                     | RESERVED      |                     |                     |               |                               |                     |                                |     |     |
+|                     | R/W-0h        |                     |                     |               |                               |                     |                                |     |     |
+| 23                  | 22            | 21                  | 20                  | 19            | 18                            | 17                  | 16                             |     |     |
+|                     | RESERVED      |                     |                     |               |                               |                     |                                |     |     |
+|                     | R/W-0h        |                     |                     |               |                               |                     |                                |     |     |
+| 15                  | 14            | 13                  | 12                  | 11            | 10                            | 9                   | 8                              |     |     |
+|                     |               | RESERVED            |                     |               | HW_Pen_Event<br>\_synchronous | Pen_Up_event        | Out_of_Range                   |     |     |
+|                     |               | R/W-0h              |                     |               | R/W-0h                        | R/W-0h              | R/W-0h                         |     |     |
+| 7                   | 6             | 5                   | 4                   | 3             | 2                             | 1                   | 0                              |     |     |
+| FIFO1_Underfl<br>ow | FIFO1_Overrun | FIFO1_Thresho<br>ld | FIFO0_Underfl<br>ow | FIFO0_Overrun | FIFO0_Thresho<br>ld           | End_of_Seque<br>nce | HW_Pen_Event<br>\_asynchronous |     |     |
+| R/W-0h              | R/W-0h        | R/W-0h              | R/W-0h              | R/W-0h        | R/W-0h                        | R/W-0h              | R/W-0h                         |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 12-9. IRQENABLE\_SET Register Field Descriptions**
+#### **Table 12-9. IRQENABLE_SET Register Field Descriptions**
 
 | Bit   | Field                        | Type | Reset                                                                                                                             | Description                                                                                                                 |
-|-------|------------------------------|------|-----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| ----- | ---------------------------- | ---- | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | 31-11 | RESERVED                     | R/W  | 0h                                                                                                                                |                                                                                                                             |
 | 10    | HW_Pen_Event_synchron<br>ous | R/W  | 0h<br>Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Enable interrupt. |                                                                                                                             |
 | 9     | Pen_Up_event                 | R/W  | 0h<br>Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Enable interrupt. |                                                                                                                             |
@@ -735,44 +745,44 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 4     | FIFO0_Underflow              | R/W  | 0h                                                                                                                                | Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Enable interrupt. |
 | 3     | FIFO0_Overrun                | R/W  | 0h                                                                                                                                | Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Enable interrupt. |
 
-**Table 12-9. IRQENABLE\_SET Register Field Descriptions (continued)**
+**Table 12-9. IRQENABLE_SET Register Field Descriptions (continued)**
 
 | Bit | Field                         | Type | Reset | Description                                                                                                                 |
-|-----|-------------------------------|------|-------|-----------------------------------------------------------------------------------------------------------------------------|
+| --- | ----------------------------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------- |
 | 2   | FIFO0_Threshold               | R/W  | 0h    | Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Enable interrupt. |
 | 1   | End_of_Sequence               | R/W  | 0h    | Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Enable interrupt. |
 | 0   | HW_Pen_Event_asynchro<br>nous | R/W  | 0h    | Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Enable interrupt. |
 
-#### **12.5.1.6 IRQENABLE\_CLR Register (offset = 30h) [reset = 0h]**
+#### **12.5.1.6 IRQENABLE_CLR Register (offset = 30h) [reset = 0h]**
 
 Register mask: FFFFFFFFh
 
-IRQENABLE\_CLR is shown in [Figure](#page-21-1) 12-10 and described in Table [12-10.](#page-21-2)
+IRQENABLE_CLR is shown in [Figure](#page-21-1) 12-10 and described in Table [12-10.](#page-21-2)
 
 IRQ enable clear bits
 
-**Figure 12-10. IRQENABLE\_CLR Register**
+**Figure 12-10. IRQENABLE_CLR Register**
 
-| 31                  | 30            | 29                  | 28                  | 27            | 26                           | 25                  | 24                            |  |
-|---------------------|---------------|---------------------|---------------------|---------------|------------------------------|---------------------|-------------------------------|--|
-|                     |               |                     |                     | RESERVED      |                              |                     |                               |  |
-|                     | R/W-0h        |                     |                     |               |                              |                     |                               |  |
-| 23                  | 22            | 21                  | 20                  | 19            | 18                           | 17                  | 16                            |  |
-|                     | RESERVED      |                     |                     |               |                              |                     |                               |  |
-|                     | R/W-0h        |                     |                     |               |                              |                     |                               |  |
-| 15                  | 14            | 13                  | 12                  | 11            | 10                           | 9                   | 8                             |  |
-|                     |               | RESERVED            |                     |               | HW_Pen_Event<br>_synchronous | Pen_Up_Event        | Out_of_Range                  |  |
-|                     |               | R/W-0h              |                     |               | R/W-0h                       | R/W-0h              | R/W-0h                        |  |
-| 7                   | 6             | 5                   | 4                   | 3             | 2                            | 1                   | 0                             |  |
-| FIFO1_Underfl<br>ow | FIFO1_Overrun | FIFO1_Thresho<br>ld | FIFO0_Underfl<br>ow | FIFO0_Overrun | FIFO0_Thresho<br>ld          | End_of_Seque<br>nce | HW_Pen_Event<br>_asynchronous |  |
-| R/W-0h              | R/W-0h        | R/W-0h              | R/W-0h              | R/W-0h        | R/W-0h                       | R/W-0h              | R/W-0h                        |  |
+| 31                  | 30            | 29                  | 28                  | 27            | 26                            | 25                  | 24                             |     |
+| ------------------- | ------------- | ------------------- | ------------------- | ------------- | ----------------------------- | ------------------- | ------------------------------ | --- |
+|                     |               |                     |                     | RESERVED      |                               |                     |                                |     |
+|                     | R/W-0h        |                     |                     |               |                               |                     |                                |     |
+| 23                  | 22            | 21                  | 20                  | 19            | 18                            | 17                  | 16                             |     |
+|                     | RESERVED      |                     |                     |               |                               |                     |                                |     |
+|                     | R/W-0h        |                     |                     |               |                               |                     |                                |     |
+| 15                  | 14            | 13                  | 12                  | 11            | 10                            | 9                   | 8                              |     |
+|                     |               | RESERVED            |                     |               | HW_Pen_Event<br>\_synchronous | Pen_Up_Event        | Out_of_Range                   |     |
+|                     |               | R/W-0h              |                     |               | R/W-0h                        | R/W-0h              | R/W-0h                         |     |
+| 7                   | 6             | 5                   | 4                   | 3             | 2                             | 1                   | 0                              |     |
+| FIFO1_Underfl<br>ow | FIFO1_Overrun | FIFO1_Thresho<br>ld | FIFO0_Underfl<br>ow | FIFO0_Overrun | FIFO0_Thresho<br>ld           | End_of_Seque<br>nce | HW_Pen_Event<br>\_asynchronous |     |
+| R/W-0h              | R/W-0h        | R/W-0h              | R/W-0h              | R/W-0h        | R/W-0h                        | R/W-0h              | R/W-0h                         |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 12-10. IRQENABLE\_CLR Register Field Descriptions**
+#### **Table 12-10. IRQENABLE_CLR Register Field Descriptions**
 
 | Bit   | Field                        | Type | Reset                                                                                                                              | Description                                                                                                                  |
-|-------|------------------------------|------|------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ---------------------------- | ---- | ---------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | 31-11 | RESERVED                     | R/W  | 0h                                                                                                                                 |                                                                                                                              |
 | 10    | HW_Pen_Event_synchron<br>ous | R/W  | 0h<br>Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Disable interrupt. |                                                                                                                              |
 | 9     | Pen_Up_Event                 | R/W  | 0h<br>Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Disable interrupt. |                                                                                                                              |
@@ -783,10 +793,10 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 4     | FIFO0_Underflow              | R/W  | 0h                                                                                                                                 | Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Disable interrupt. |
 | 3     | FIFO0_Overrun                | R/W  | 0h                                                                                                                                 | Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Disable interrupt. |
 
-**Table 12-10. IRQENABLE\_CLR Register Field Descriptions (continued)**
+**Table 12-10. IRQENABLE_CLR Register Field Descriptions (continued)**
 
 | Bit | Field                         | Type | Reset | Description                                                                                                                  |
-|-----|-------------------------------|------|-------|------------------------------------------------------------------------------------------------------------------------------|
+| --- | ----------------------------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------- |
 | 2   | FIFO0_Threshold               | R/W  | 0h    | Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Disable interrupt. |
 | 1   | End_of_Sequence               | R/W  | 0h    | Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Disable interrupt. |
 | 0   | HW_Pen_Event_asynchro<br>nous | R/W  | 0h    | Write 0 = No action.<br>Read 0 = Interrupt disabled (masked).<br>Read 1 = Interrupt enabled.<br>Write 1 = Disable interrupt. |
@@ -801,93 +811,93 @@ IRQ wakeup enable
 
 **Figure 12-11. IRQWAKEUP Register**
 
-| 31       | 30       | 29 | 28       | 27       | 26 | 25 | 24      |  |  |  |
-|----------|----------|----|----------|----------|----|----|---------|--|--|--|
-|          | RESERVED |    |          |          |    |    |         |  |  |  |
-| R/W-0h   |          |    |          |          |    |    |         |  |  |  |
-| 23       | 22       | 21 | 20       | 19       | 18 | 17 | 16      |  |  |  |
-| RESERVED |          |    |          |          |    |    |         |  |  |  |
-| R/W-0h   |          |    |          |          |    |    |         |  |  |  |
-| 15       | 14       | 13 | 12       | 11       | 10 | 9  | 8       |  |  |  |
-|          |          |    |          | RESERVED |    |    |         |  |  |  |
-|          |          |    |          | R/W-0h   |    |    |         |  |  |  |
-| 7        | 6        | 5  | 4        | 3        | 2  | 1  | 0       |  |  |  |
-|          |          |    | RESERVED |          |    |    | WAKEEN0 |  |  |  |
-|          | R/W-0h   |    |          |          |    |    |         |  |  |  |
+| 31       | 30       | 29  | 28       | 27       | 26  | 25  | 24      |     |     |     |
+| -------- | -------- | --- | -------- | -------- | --- | --- | ------- | --- | --- | --- |
+|          | RESERVED |     |          |          |     |     |         |     |     |     |
+| R/W-0h   |          |     |          |          |     |     |         |     |     |     |
+| 23       | 22       | 21  | 20       | 19       | 18  | 17  | 16      |     |     |     |
+| RESERVED |          |     |          |          |     |     |         |     |     |     |
+| R/W-0h   |          |     |          |          |     |     |         |     |     |     |
+| 15       | 14       | 13  | 12       | 11       | 10  | 9   | 8       |     |     |     |
+|          |          |     |          | RESERVED |     |     |         |     |     |     |
+|          |          |     |          | R/W-0h   |     |     |         |     |     |     |
+| 7        | 6        | 5   | 4        | 3        | 2   | 1   | 0       |     |     |     |
+|          |          |     | RESERVED |          |     |     | WAKEEN0 |     |     |     |
+|          | R/W-0h   |     |          |          |     |     |         |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 12-11. IRQWAKEUP Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                        |
-|------|----------|------|-------|------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ---------------------------------------------------------------------------------- |
 | 31-1 | RESERVED | R/W  | 0h    |                                                                                    |
 | 0    | WAKEEN0  | R/W  | 0h    | Wakeup generation for HW Pen event.<br>0 = Wakeup disabled.<br>1 = Wakeup enabled. |
 
-#### **12.5.1.8 DMAENABLE\_SET Register (offset = 38h) [reset = 0h]**
+#### **12.5.1.8 DMAENABLE_SET Register (offset = 38h) [reset = 0h]**
 
 Register mask: FFFFFFFFh
 
-DMAENABLE\_SET is shown in [Figure](#page-24-1) 12-12 and described in Table [12-12.](#page-24-2)
+DMAENABLE_SET is shown in [Figure](#page-24-1) 12-12 and described in Table [12-12.](#page-24-2)
 
 Per-Line DMA set
 
-**Figure 12-12. DMAENABLE\_SET Register**
+**Figure 12-12. DMAENABLE_SET Register**
 
-| 31       | 30       | 29       | 28 | 27       | 26 | 25       | 24       |  |  |
-|----------|----------|----------|----|----------|----|----------|----------|--|--|
-|          | RESERVED |          |    |          |    |          |          |  |  |
-|          | R/W-0h   |          |    |          |    |          |          |  |  |
-| 23       | 22       | 21       | 20 | 19       | 18 | 17       | 16       |  |  |
-| RESERVED |          |          |    |          |    |          |          |  |  |
-| R/W-0h   |          |          |    |          |    |          |          |  |  |
-| 15       | 14       | 13       | 12 | 11       | 10 | 9        | 8        |  |  |
-|          |          |          |    | RESERVED |    |          |          |  |  |
-|          |          |          |    | R/W-0h   |    |          |          |  |  |
-| 7        | 6        | 5        | 4  | 3        | 2  | 1        | 0        |  |  |
-|          |          | RESERVED |    |          |    | Enable_1 | Enable_0 |  |  |
-|          | R/W-0h   |          |    |          |    |          | R/W-0h   |  |  |
+| 31       | 30       | 29       | 28  | 27       | 26  | 25       | 24       |     |     |
+| -------- | -------- | -------- | --- | -------- | --- | -------- | -------- | --- | --- |
+|          | RESERVED |          |     |          |     |          |          |     |     |
+|          | R/W-0h   |          |     |          |     |          |          |     |     |
+| 23       | 22       | 21       | 20  | 19       | 18  | 17       | 16       |     |     |
+| RESERVED |          |          |     |          |     |          |          |     |     |
+| R/W-0h   |          |          |     |          |     |          |          |     |     |
+| 15       | 14       | 13       | 12  | 11       | 10  | 9        | 8        |     |     |
+|          |          |          |     | RESERVED |     |          |          |     |     |
+|          |          |          |     | R/W-0h   |     |          |          |     |     |
+| 7        | 6        | 5        | 4   | 3        | 2   | 1        | 0        |     |     |
+|          |          | RESERVED |     |          |     | Enable_1 | Enable_0 |     |     |
+|          | R/W-0h   |          |     |          |     |          | R/W-0h   |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 12-12. DMAENABLE\_SET Register Field Descriptions**
+#### **Table 12-12. DMAENABLE_SET Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                   |
-|------|----------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-2 | RESERVED | R/W  | 0h    |                                                                                                                                               |
 | 1    | Enable_1 | R/W  | 0h    | Enable DMA request FIFO 1.<br>Write 0 = No action.<br>Read 0 = DMA line disabled.<br>Read 1 = DMA line enabled.<br>Write 1 = Enable DMA line. |
 | 0    | Enable_0 | R/W  | 0h    | Enable DMA request FIFO 0.<br>Write 0 = No action.<br>Read 0 = DMA line disabled.<br>Read 1 = DMA line enabled.<br>Write 1 = Enable DMA line. |
 
-#### **12.5.1.9 DMAENABLE\_CLR Register (offset = 3Ch) [reset = 0h]**
+#### **12.5.1.9 DMAENABLE_CLR Register (offset = 3Ch) [reset = 0h]**
 
 Register mask: FFFFFFFFh
 
-DMAENABLE\_CLR is shown in [Figure](#page-25-1) 12-13 and described in Table [12-13](#page-25-2).
+DMAENABLE_CLR is shown in [Figure](#page-25-1) 12-13 and described in Table [12-13](#page-25-2).
 
 Per-Line DMA clr
 
-**Figure 12-13. DMAENABLE\_CLR Register**
+**Figure 12-13. DMAENABLE_CLR Register**
 
-| 31     | 30                 | 29 | 28       | 27       | 26 | 25 | 24     |  |  |
-|--------|--------------------|----|----------|----------|----|----|--------|--|--|
-|        | RESERVED           |    |          |          |    |    |        |  |  |
-|        | R/W-0h             |    |          |          |    |    |        |  |  |
-| 23     | 22                 | 21 | 20       | 19       | 18 | 17 | 16     |  |  |
-|        | RESERVED           |    |          |          |    |    |        |  |  |
-| R/W-0h |                    |    |          |          |    |    |        |  |  |
-| 15     | 14                 | 13 | 12       | 11       | 10 | 9  | 8      |  |  |
-|        |                    |    |          | RESERVED |    |    |        |  |  |
-|        |                    |    |          | R/W-0h   |    |    |        |  |  |
-| 7      | 6                  | 5  | 4        | 3        | 2  | 1  | 0      |  |  |
-|        |                    |    | Enable_1 | Enable_0 |    |    |        |  |  |
-|        | RESERVED<br>R/W-0h |    |          |          |    |    | R/W-0h |  |  |
+| 31     | 30                 | 29  | 28       | 27       | 26  | 25  | 24     |     |     |
+| ------ | ------------------ | --- | -------- | -------- | --- | --- | ------ | --- | --- |
+|        | RESERVED           |     |          |          |     |     |        |     |     |
+|        | R/W-0h             |     |          |          |     |     |        |     |     |
+| 23     | 22                 | 21  | 20       | 19       | 18  | 17  | 16     |     |     |
+|        | RESERVED           |     |          |          |     |     |        |     |     |
+| R/W-0h |                    |     |          |          |     |     |        |     |     |
+| 15     | 14                 | 13  | 12       | 11       | 10  | 9   | 8      |     |     |
+|        |                    |     |          | RESERVED |     |     |        |     |     |
+|        |                    |     |          | R/W-0h   |     |     |        |     |     |
+| 7      | 6                  | 5   | 4        | 3        | 2   | 1   | 0      |     |     |
+|        |                    |     | Enable_1 | Enable_0 |     |     |        |     |     |
+|        | RESERVED<br>R/W-0h |     |          |          |     |     | R/W-0h |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 12-13. DMAENABLE\_CLR Register Field Descriptions**
+#### **Table 12-13. DMAENABLE_CLR Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                     |
-|------|----------|------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-2 | RESERVED | R/W  | 0h    |                                                                                                                                                 |
 | 1    | Enable_1 | R/W  | 0h    | Disable DMA request FIFO 1.<br>Write 0 = No action.<br>Read 0 = DMA line disabled.<br>Read 1 = DMA line enabled.<br>Write 1 = Disable DMA line. |
 | 0    | Enable_0 | R/W  | 0h    | Disable DMA request FIFO 0.<br>Write 0 = No action.<br>Read 0 = DMA line disabled.<br>Read 1 = DMA line enabled.<br>Write 1 = Disable DMA line. |
@@ -898,30 +908,30 @@ Register mask: FFFFFFFFh
 
 CTRL is shown in [Figure](#page-26-1) 12-14 and described in Table [12-14](#page-26-2).
 
-@TSC\_ADC\_SS Control Register
+@TSC_ADC_SS Control Register
 
 **Figure 12-14. CTRL Register**
 
-| 31                      | 30           | 29 | 28         | 27                  | 26                                           | 25          | 24                   |
-|-------------------------|--------------|----|------------|---------------------|----------------------------------------------|-------------|----------------------|
-|                         |              |    |            | RESERVED            |                                              |             |                      |
-|                         |              |    |            | R-0h                |                                              |             |                      |
-| 23                      | 22           | 21 | 20         | 19                  | 18                                           | 17          | 16                   |
-|                         |              |    |            | RESERVED            |                                              |             |                      |
-|                         |              |    |            | R-0h                |                                              |             |                      |
-| 15                      | 14           | 13 | 12         | 11                  | 10                                           | 9           | 8                    |
-|                         |              |    | RESERVED   |                     |                                              | HW_preempt  | HW_event_ma<br>pping |
-|                         |              |    | R-0h       |                     |                                              | R/W-0h      | R/W-0h               |
-| 7                       | 6            | 5  | 4          | 3                   | 2                                            | 1           | 0                    |
-| Touch_Screen_<br>Enable | AFE_Pen_Ctrl |    | Power_Down | ADC_Bias_Sel<br>ect | StepConfig_Wri<br>teProtect_n_act<br>ive_low | Step_ID_tag | Enable               |
-| R/W-0h                  | R/W-0h       |    | R/W-0h     | R/W-0h              | R/W-0h                                       | R/W-0h      | R/W-0h               |
+| 31                      | 30           | 29  | 28         | 27                  | 26                                           | 25          | 24                   |
+| ----------------------- | ------------ | --- | ---------- | ------------------- | -------------------------------------------- | ----------- | -------------------- |
+|                         |              |     |            | RESERVED            |                                              |             |                      |
+|                         |              |     |            | R-0h                |                                              |             |                      |
+| 23                      | 22           | 21  | 20         | 19                  | 18                                           | 17          | 16                   |
+|                         |              |     |            | RESERVED            |                                              |             |                      |
+|                         |              |     |            | R-0h                |                                              |             |                      |
+| 15                      | 14           | 13  | 12         | 11                  | 10                                           | 9           | 8                    |
+|                         |              |     | RESERVED   |                     |                                              | HW_preempt  | HW_event_ma<br>pping |
+|                         |              |     | R-0h       |                     |                                              | R/W-0h      | R/W-0h               |
+| 7                       | 6            | 5   | 4          | 3                   | 2                                            | 1           | 0                    |
+| Touch*Screen*<br>Enable | AFE_Pen_Ctrl |     | Power_Down | ADC_Bias_Sel<br>ect | StepConfig_Wri<br>teProtect_n_act<br>ive_low | Step_ID_tag | Enable               |
+| R/W-0h                  | R/W-0h       |     | R/W-0h     | R/W-0h              | R/W-0h                                       | R/W-0h      | R/W-0h               |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-14. CTRL Register Field Descriptions**
 
 | Bit   | Field                                    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                         |
-|-------|------------------------------------------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ---------------------------------------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-10 | RESERVED                                 | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                     |
 | 9     | HW_preempt                               | R/W  | 0h    | 0 = SW steps are not pre-empted by HW events.<br>1 = SW steps are pre-empted by HW events                                                                                                                                                                                                                                                           |
 | 8     | HW_event_mapping                         | R/W  | 0h    | 0 = Map HW event to Pen touch irq (from AFE).<br>1 = Map HW event to HW event input.                                                                                                                                                                                                                                                                |
@@ -929,7 +939,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 6-5   | AFE_Pen_Ctrl                             | R/W  | 0h    | These two bits are sent directly to the AFE Pen Ctrl inputs.<br>Bit 6 controls the Wiper touch (5 wire modes)Bit 5 controls the X+<br>touch (4 wire modes)User also needs to make sure the ground path<br>is connected properly for pen interrupt to occur (using the<br>StepConfig registers)Refer to section 4 interrupts for more<br>information |
 | 4     | Power_Down                               | R/W  | 0h    | ADC Power Down control.<br>0 = AFE is powered up (default).<br>1 = Write 1 to power down AFE (the tsc_adc_ss enable (bit 0)<br>should also be set to off)                                                                                                                                                                                           |
 | 3     | ADC_Bias_Select                          | R/W  | 0h    | Select Bias to AFE.<br>0 = Internal.<br>1 = Reserved.                                                                                                                                                                                                                                                                                               |
-| 2     | StepConfig_WriteProtect_<br>n_active_low | R/W  | 0h    | 0 = Step configuration registers are protected (not writable).<br>1 = Step configuration registers are not protected (writable).                                                                                                                                                                                                                    |
+| 2     | StepConfig*WriteProtect*<br>n_active_low | R/W  | 0h    | 0 = Step configuration registers are protected (not writable).<br>1 = Step configuration registers are not protected (writable).                                                                                                                                                                                                                    |
 | 1     | Step_ID_tag                              | R/W  | 0h    | Writing 1 to this bit will store the Step ID number with the captured<br>ADC data in the FIFO.<br>0 = Write zeroes.<br>1 = Store the channel ID tag.                                                                                                                                                                                                |
 | 0     | Enable                                   | R/W  | 0h    | TSC_ADC_SS module enable bit.<br>After programming all the steps and configuration registers, write a<br>1to this bit to turn on TSC_ADC_SS.<br>Writing a 0 will disable the module (after the current conversion).                                                                                                                                 |
 
@@ -939,30 +949,30 @@ Register mask: FFFFFFFFh
 
 ADCSTAT is shown in [Figure](#page-27-1) 12-15 and described in Table [12-15.](#page-27-2)
 
-General Status bits @TSC\_ADC\_SS\_Sequencer\_Status Register
+General Status bits @TSC_ADC_SS_Sequencer_Status Register
 
 **Figure 12-15. ADCSTAT Register**
 
-| 31       | 30       | 29       | 28       | 27 | 26      | 25 | 24 |
-|----------|----------|----------|----------|----|---------|----|----|
-|          |          |          | RESERVED |    |         |    |    |
-|          |          |          | R-0h     |    |         |    |    |
-| 23       | 22       | 21       | 20       | 19 | 18      | 17 | 16 |
-|          |          |          | RESERVED |    |         |    |    |
-|          |          |          | R-0h     |    |         |    |    |
-| 15       | 14       | 13       | 12       | 11 | 10      | 9  | 8  |
-|          |          |          | RESERVED |    |         |    |    |
-|          |          |          | R-0h     |    |         |    |    |
-| 7        | 6        | 5        | 4        | 3  | 2       | 1  | 0  |
-| PEN_IRQ1 | PEN_IRQ0 | FSM_BUSY |          |    | STEP_ID |    |    |
-| R-0h     | R-0h     | R-0h     |          |    | R-10h   |    |    |
+| 31       | 30       | 29       | 28       | 27  | 26      | 25  | 24  |
+| -------- | -------- | -------- | -------- | --- | ------- | --- | --- |
+|          |          |          | RESERVED |     |         |     |     |
+|          |          |          | R-0h     |     |         |     |     |
+| 23       | 22       | 21       | 20       | 19  | 18      | 17  | 16  |
+|          |          |          | RESERVED |     |         |     |     |
+|          |          |          | R-0h     |     |         |     |     |
+| 15       | 14       | 13       | 12       | 11  | 10      | 9   | 8   |
+|          |          |          | RESERVED |     |         |     |     |
+|          |          |          | R-0h     |     |         |     |     |
+| 7        | 6        | 5        | 4        | 3   | 2       | 1   | 0   |
+| PEN_IRQ1 | PEN_IRQ0 | FSM_BUSY |          |     | STEP_ID |     |     |
+| R-0h     | R-0h     | R-0h     |          |     | R-10h   |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 12-15. ADCSTAT Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                 |
-|------|----------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-8 | RESERVED | R    | 0h    | -                                                                                                                                                                                                                                                                                                                                                                           |
 | 7    | PEN_IRQ1 | R    | 0h    | PEN_IRQ[1] status                                                                                                                                                                                                                                                                                                                                                           |
 | 6    | PEN_IRQ0 | R    | 0h    | PEN_IRQ[0] status                                                                                                                                                                                                                                                                                                                                                           |
@@ -975,85 +985,85 @@ Register mask: FFFFFFFFh
 
 ADCRANGE is shown in [Figure](#page-28-1) 12-16 and described in Table [12-16.](#page-28-2)
 
-High and Low Range Threshold@TSC\_ADC\_SS\_Range\_Check Register
+High and Low Range Threshold@TSC_ADC_SS_Range_Check Register
 
 **Figure 12-16. ADCRANGE Register**
 
-| 31 | 30 | 29       | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21              | 20 | 19 | 18 | 17 | 16 |
-|----|----|----------|----|----|----|----|----|----|----|-----------------|----|----|----|----|----|
-|    |    | RESERVED |    |    |    |    |    |    |    | High_Range_Data |    |    |    |    |    |
-|    |    | R-0h     |    |    |    |    |    |    |    | R/W-0h          |    |    |    |    |    |
-| 15 | 14 | 13       | 12 | 11 | 10 | 9  | 8  | 7  | 6  | 5               | 4  | 3  | 2  | 1  | 0  |
-|    |    | RESERVED |    |    |    |    |    |    |    | Low_Range_Data  |    |    |    |    |    |
-|    |    | R/W-0h   |    |    |    |    |    |    |    | R/W-0h          |    |    |    |    |    |
-|    |    |          |    |    |    |    |    |    |    |                 |    |    |    |    |    |
+| 31  | 30  | 29       | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21              | 20  | 19  | 18  | 17  | 16  |
+| --- | --- | -------- | --- | --- | --- | --- | --- | --- | --- | --------------- | --- | --- | --- | --- | --- |
+|     |     | RESERVED |     |     |     |     |     |     |     | High_Range_Data |     |     |     |     |     |
+|     |     | R-0h     |     |     |     |     |     |     |     | R/W-0h          |     |     |     |     |     |
+| 15  | 14  | 13       | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5               | 4   | 3   | 2   | 1   | 0   |
+|     |     | RESERVED |     |     |     |     |     |     |     | Low_Range_Data  |     |     |     |     |     |
+|     |     | R/W-0h   |     |     |     |     |     |     |     | R/W-0h          |     |     |     |     |     |
+|     |     |          |     |     |     |     |     |     |     |                 |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-16. ADCRANGE Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                                      |
-|-------|-----------------|------|-------|----------------------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------- |
 | 31-28 | RESERVED        | R    | 0h    |                                                                                                                                  |
 | 27-16 | High_Range_Data | R/W  | 0h    | Sampled ADC data is compared to this value.<br>If the sampled data is greater than the value, then an interrupt is<br>generated. |
 | 15-12 | RESERVED        | R/W  | 0h    | Reserved.                                                                                                                        |
 | 11-0  | Low_Range_Data  | R/W  | 0h    | Sampled ADC data is compared to this value.<br>If the sampled data is less than the value, then an interrupt is<br>generated.    |
 
-#### **12.5.1.13 ADC\_CLKDIV Register (offset = 4Ch) [reset = 0h]**
+#### **12.5.1.13 ADC_CLKDIV Register (offset = 4Ch) [reset = 0h]**
 
 Register mask: FFFFFFFFh
 
-ADC\_CLKDIV is shown in [Figure](#page-29-1) 12-17 and described in Table [12-17.](#page-29-2)
+ADC_CLKDIV is shown in [Figure](#page-29-1) 12-17 and described in Table [12-17.](#page-29-2)
 
-ADC clock divider register@TSC\_ADC\_SS\_Clock\_Divider Register
+ADC clock divider register@TSC_ADC_SS_Clock_Divider Register
 
-#### **Figure 12-17. ADC\_CLKDIV Register**
+#### **Figure 12-17. ADC_CLKDIV Register**
 
-| 31 |                  | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15     | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7          | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|------------------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|--------|----|----|----|----|----|---|---|------------|---|---|---|---|---|---|---|
-|    |                  |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |        |    |    |    |    |    |   |   | ADC_ClkDiv |   |   |   |   |   |   |   |
-|    | RESERVED<br>R-0h |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | R/W-0h |    |    |    |    |    |   |   |            |   |   |   |   |   |   |   |
+| 31  |                  | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15     | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7          | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | ---------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | ---------- | --- | --- | --- | --- | --- | --- | --- |
+|     |                  |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |        |     |     |     |     |     |     |     | ADC_ClkDiv |     |     |     |     |     |     |     |
+|     | RESERVED<br>R-0h |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     |     |            |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 12-17. ADC\_CLKDIV Register Field Descriptions**
+#### **Table 12-17. ADC_CLKDIV Register Field Descriptions**
 
 | Bit   | Field      | Type | Reset | Description                                                                                               |
-|-------|------------|------|-------|-----------------------------------------------------------------------------------------------------------|
+| ----- | ---------- | ---- | ----- | --------------------------------------------------------------------------------------------------------- |
 | 31-16 | RESERVED   | R    | 0h    |                                                                                                           |
 | 15-0  | ADC_ClkDiv | R/W  | 0h    | The input ADC clock will be divided by this value and sent to the<br>AFE.<br>Program to the value minus 1 |
 
-#### **12.5.1.14 ADC\_MISC Register (offset = 50h) [reset = 0h]**
+#### **12.5.1.14 ADC_MISC Register (offset = 50h) [reset = 0h]**
 
 Register mask: FFFFFFFFh
 
-ADC\_MISC is shown in [Figure](#page-30-1) 12-18 and described in Table [12-18.](#page-30-2)
+ADC_MISC is shown in [Figure](#page-30-1) 12-18 and described in Table [12-18.](#page-30-2)
 
-AFE misc debug@TSC\_ADC\_SS\_MISC Register
+AFE misc debug@TSC_ADC_SS_MISC Register
 
-**Figure 12-18. ADC\_MISC Register**
+**Figure 12-18. ADC_MISC Register**
 
-| 31 | 30 | 29               | 28 | 27       | 26              | 25 | 24 |
-|----|----|------------------|----|----------|-----------------|----|----|
-|    |    |                  |    | RESERVED |                 |    |    |
-|    |    |                  |    | R-0h     |                 |    |    |
-| 23 | 22 | 21               | 20 | 19       | 18              | 17 | 16 |
-|    |    |                  |    | RESERVED |                 |    |    |
-|    |    |                  |    | R-0h     |                 |    |    |
-| 15 | 14 | 13               | 12 | 11       | 10              | 9  | 8  |
-|    |    |                  |    | RESERVED |                 |    |    |
-|    |    |                  |    | R-0h     |                 |    |    |
-| 7  | 6  | 5                | 4  | 3        | 2               | 1  | 0  |
-|    |    | AFE_Spare_Output |    |          | AFE_Spare_Input |    |    |
-|    |    | R-0h             |    |          | R/W-0h          |    |    |
-|    |    |                  |    |          |                 |    |    |
+| 31  | 30  | 29               | 28  | 27       | 26              | 25  | 24  |
+| --- | --- | ---------------- | --- | -------- | --------------- | --- | --- |
+|     |     |                  |     | RESERVED |                 |     |     |
+|     |     |                  |     | R-0h     |                 |     |     |
+| 23  | 22  | 21               | 20  | 19       | 18              | 17  | 16  |
+|     |     |                  |     | RESERVED |                 |     |     |
+|     |     |                  |     | R-0h     |                 |     |     |
+| 15  | 14  | 13               | 12  | 11       | 10              | 9   | 8   |
+|     |     |                  |     | RESERVED |                 |     |     |
+|     |     |                  |     | R-0h     |                 |     |     |
+| 7   | 6   | 5                | 4   | 3        | 2               | 1   | 0   |
+|     |     | AFE_Spare_Output |     |          | AFE_Spare_Input |     |     |
+|     |     | R-0h             |     |          | R/W-0h          |     |     |
+|     |     |                  |     |          |                 |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-**Table 12-18. ADC\_MISC Register Field Descriptions**
+**Table 12-18. ADC_MISC Register Field Descriptions**
 
 | Bit  | Field            | Type | Reset | Description                                                          |
-|------|------------------|------|-------|----------------------------------------------------------------------|
+| ---- | ---------------- | ---- | ----- | -------------------------------------------------------------------- |
 | 31-8 | RESERVED         | R    | 0h    | RESERVED.                                                            |
 | 7-4  | AFE_Spare_Output | R    | 0h    | Connected to AFE Spare Output pins.<br>Reserved in normal operation. |
 | 3-0  | AFE_Spare_Input  | R/W  | 0h    | Connected to AFE Spare Input pins.<br>Reserved in normal operation.  |
@@ -1069,7 +1079,7 @@ Step Enable
 **Figure 12-19. STEPENABLE Register**
 
 | 31     | 30     | 29     | 28       | 27       | 26     | 25     | 24        |
-|--------|--------|--------|----------|----------|--------|--------|-----------|
+| ------ | ------ | ------ | -------- | -------- | ------ | ------ | --------- |
 |        |        |        |          | RESERVED |        |        |           |
 |        |        |        |          | R-0h     |        |        |           |
 | 23     | 22     | 21     | 20       | 19       | 18     | 17     | 16        |
@@ -1082,12 +1092,12 @@ Step Enable
 | STEP7  | STEP6  | STEP5  | STEP4    | STEP3    | STEP2  | STEP1  | TS_Charge |
 | R/W-0h | R/W-0h | R/W-0h | R/W-0h   | R/W-0h   | R/W-0h | R/W-0h | R/W-0h    |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-19. STEPENABLE Register Field Descriptions**
 
 | Bit   | Field     | Type | Reset | Description           |
-|-------|-----------|------|-------|-----------------------|
+| ----- | --------- | ---- | ----- | --------------------- |
 | 31-17 | RESERVED  | R    | 0h    | RESERVED.             |
 | 16    | STEP16    | R/W  | 0h    | Enable step 16        |
 | 15    | STEP15    | R/W  | 0h    | Enable step 15        |
@@ -1113,30 +1123,30 @@ Register mask: FFFFFFFFh
 
 IDLECONFIG is shown in [Figure](#page-32-1) 12-20 and described in Table [12-20](#page-32-2).
 
-Idle Step configuration@TSC\_ADC\_SS\_IDLE\_StepConfig Register
+Idle Step configuration@TSC_ADC_SS_IDLE_StepConfig Register
 
 ### **Figure 12-20. IDLECONFIG Register**
 
-| 31                  | 30                     | 29              | 28 | 27        | 26        | 25              | 24                  |  |
-|---------------------|------------------------|-----------------|----|-----------|-----------|-----------------|---------------------|--|
-|                     |                        | RESERVED        |    |           |           | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |
-|                     |                        | R/W-0h          |    |           |           | R/W-0h          | R/W-0h              |  |
-| 23                  | 22                     | 21              | 20 | 19        | 18        | 17              | 16                  |  |
-| SEL_RFM_SW<br>C_1_0 |                        | SEL_INP_SWC_3_0 |    |           |           | SEL_INM_SWC_3_0 |                     |  |
-| R/W-0h              |                        | R/W-0h          |    |           | R/W-0h    |                 |                     |  |
-| 15                  | 14                     | 13              | 12 | 11        | 10        | 9               | 8                   |  |
-| SEL_INM_SW<br>C_3_0 |                        | SEL_RFP_SWC_2_0 |    | WPNSW_SWC | YPNSW_SWC | XNPSW_SWC       | YNNSW_SWC           |  |
-| R/W-0h              |                        | R/W-0h          |    | R/W-0h    | R/W-0h    | R/W-0h          | R/W-0h              |  |
-| 7                   | 6                      | 5               | 4  | 3         | 2         | 1               | 0                   |  |
-| YPPSW_SWC           | XNNSW_SWC<br>XPPSW_SWC |                 |    |           | RESERVED  |                 |                     |  |
-| R/W-0h              | R/W-0h<br>R/W-0h       |                 |    |           | R/W-0h    |                 |                     |  |
+| 31                  | 30                     | 29              | 28  | 27        | 26        | 25              | 24                  |     |
+| ------------------- | ---------------------- | --------------- | --- | --------- | --------- | --------------- | ------------------- | --- |
+|                     |                        | RESERVED        |     |           |           | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |
+|                     |                        | R/W-0h          |     |           |           | R/W-0h          | R/W-0h              |     |
+| 23                  | 22                     | 21              | 20  | 19        | 18        | 17              | 16                  |     |
+| SEL_RFM_SW<br>C_1_0 |                        | SEL_INP_SWC_3_0 |     |           |           | SEL_INM_SWC_3_0 |                     |     |
+| R/W-0h              |                        | R/W-0h          |     |           | R/W-0h    |                 |                     |     |
+| 15                  | 14                     | 13              | 12  | 11        | 10        | 9               | 8                   |     |
+| SEL_INM_SW<br>C_3_0 |                        | SEL_RFP_SWC_2_0 |     | WPNSW_SWC | YPNSW_SWC | XNPSW_SWC       | YNNSW_SWC           |     |
+| R/W-0h              |                        | R/W-0h          |     | R/W-0h    | R/W-0h    | R/W-0h          | R/W-0h              |     |
+| 7                   | 6                      | 5               | 4   | 3         | 2         | 1               | 0                   |     |
+| YPPSW_SWC           | XNNSW_SWC<br>XPPSW_SWC |                 |     |           | RESERVED  |                 |                     |     |
+| R/W-0h              | R/W-0h<br>R/W-0h       |                 |     |           | R/W-0h    |                 |                     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-20. IDLECONFIG Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-26 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 25    | Diff_CNTRL      | R/W  | 0h    | Differential Control Pin.<br>0 = Single Ended.<br>1 = Differential Pair Enable.                                    |
 | 24-23 | SEL_RFM_SWC_1_0 | R/W  | 0h    | SEL_RFM pins SW configuration.<br>00 = VSSA_ADC.<br>01 = XNUR.<br>10 = YNLR.<br>11 = VREFN.                        |
@@ -1153,40 +1163,40 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-20. IDLECONFIG Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                |
-|-----|-----------|------|-------|----------------------------|
+| --- | --------- | ---- | ----- | -------------------------- |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration |
 | 4-0 | RESERVED  | R/W  | 0h    |                            |
 
-#### **12.5.1.17 TS\_CHARGE\_STEPCONFIG Register (offset = 5Ch) [reset = 0h]**
+#### **12.5.1.17 TS_CHARGE_STEPCONFIG Register (offset = 5Ch) [reset = 0h]**
 
 Register mask: FFFFFFFFh
 
-TS\_CHARGE\_STEPCONFIG is shown in [Figure](#page-34-1) 12-21 and described in Table [12-21.](#page-34-2)
+TS_CHARGE_STEPCONFIG is shown in [Figure](#page-34-1) 12-21 and described in Table [12-21.](#page-34-2)
 
-TS Charge StepConfiguration@TSC\_ADC\_SS\_TS\_Charge\_StepConfig Register
+TS Charge StepConfiguration@TSC_ADC_SS_TS_Charge_StepConfig Register
 
-**Figure 12-21. TS\_CHARGE\_STEPCONFIG Register**
+**Figure 12-21. TS_CHARGE_STEPCONFIG Register**
 
-| 31                  | 30        | 29              | 28 | 27               | 26             | 25             | 24                  |  |  |  |
-|---------------------|-----------|-----------------|----|------------------|----------------|----------------|---------------------|--|--|--|
-|                     |           | RESERVED        |    |                  |                | Diff_CNTRL     | SEL_RFM_SW<br>C_1_0 |  |  |  |
-|                     |           | R/W-0h          |    |                  | R/W-0h         | R/W-0h         |                     |  |  |  |
-| 23                  | 22        | 21              | 20 | 19               | 18<br>17<br>16 |                |                     |  |  |  |
-| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |    |                  |                | SEL_INM_SWM3_0 |                     |  |  |  |
-| R/W-0h              |           | R/W-0h          |    |                  | R/W-0h         |                |                     |  |  |  |
-| 15                  | 14        | 13              | 12 | 11               | 10             | 9              | 8                   |  |  |  |
-| SEL_INM_SW<br>M3_0  |           | SEL_RFP_SWC_2_0 |    | WPNSW_SWC        | YPNSW_SWC      | XNPSW_SWC      | YNNSW_SWC           |  |  |  |
-| R/W-0h              |           | R/W-0h          |    | R/W-0h           | R/W-0h         | R/W-0h         | R/W-0h              |  |  |  |
-| 7                   | 6         | 5               | 4  | 3<br>2<br>1<br>0 |                |                |                     |  |  |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |    |                  | RESERVED       |                |                     |  |  |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |    |                  | R/W-0h         |                |                     |  |  |  |
+| 31                  | 30        | 29              | 28  | 27               | 26             | 25             | 24                  |     |     |     |
+| ------------------- | --------- | --------------- | --- | ---------------- | -------------- | -------------- | ------------------- | --- | --- | --- |
+|                     |           | RESERVED        |     |                  |                | Diff_CNTRL     | SEL_RFM_SW<br>C_1_0 |     |     |     |
+|                     |           | R/W-0h          |     |                  | R/W-0h         | R/W-0h         |                     |     |     |     |
+| 23                  | 22        | 21              | 20  | 19               | 18<br>17<br>16 |                |                     |     |     |     |
+| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |     |                  |                | SEL_INM_SWM3_0 |                     |     |     |     |
+| R/W-0h              |           | R/W-0h          |     |                  | R/W-0h         |                |                     |     |     |     |
+| 15                  | 14        | 13              | 12  | 11               | 10             | 9              | 8                   |     |     |     |
+| SEL_INM_SW<br>M3_0  |           | SEL_RFP_SWC_2_0 |     | WPNSW_SWC        | YPNSW_SWC      | XNPSW_SWC      | YNNSW_SWC           |     |     |     |
+| R/W-0h              |           | R/W-0h          |     | R/W-0h           | R/W-0h         | R/W-0h         | R/W-0h              |     |     |     |
+| 7                   | 6         | 5               | 4   | 3<br>2<br>1<br>0 |                |                |                     |     |     |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |     |                  | RESERVED       |                |                     |     |     |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |     |                  | R/W-0h         |                |                     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 12-21. TS\_CHARGE\_STEPCONFIG Register Field Descriptions**
+#### **Table 12-21. TS_CHARGE_STEPCONFIG Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                  |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------ |
 | 31-26 | RESERVED        | R/W  | 0h    |                                                                                                              |
 | 25    | Diff_CNTRL      | R/W  | 0h    | Differential Control Pin.<br>0 = Single Ended.<br>1 = Differential Pair Enable.                              |
 | 24-23 | SEL_RFM_SWC_1_0 | R/W  | 0h    | SEL_RFM pins SW configuration.<br>00 = VSSA.<br>01 = XNUR.<br>10 = YNLR.<br>11 = VREFN.                      |
@@ -1200,34 +1210,34 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 7     | YPPSW_SWC       | R/W  | 0h    | YPPSW pin SW configuration                                                                                   |
 | 6     | XNNSW_SWC       | R/W  | 0h    | XNNSW pin SW configuration                                                                                   |
 
-#### **Table 12-21. TS\_CHARGE\_STEPCONFIG Register Field Descriptions (continued)**
+#### **Table 12-21. TS_CHARGE_STEPCONFIG Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                |
-|-----|-----------|------|-------|----------------------------|
+| --- | --------- | ---- | ----- | -------------------------- |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration |
 | 4-0 | RESERVED  | R/W  | 0h    |                            |
 
-#### **12.5.1.18 TS\_CHARGE\_DELAY Register (offset = 60h) [reset = 1h]**
+#### **12.5.1.18 TS_CHARGE_DELAY Register (offset = 60h) [reset = 1h]**
 
 Register mask: FFFFFFFFh
 
-TS\_CHARGE\_DELAY is shown in [Figure](#page-36-1) 12-22 and described in Table [12-22.](#page-36-2)
+TS_CHARGE_DELAY is shown in [Figure](#page-36-1) 12-22 and described in Table [12-22.](#page-36-2)
 
-TS Charge Delay Register@TSC\_ADC\_SS\_TS\_Charge\_StepDelay Register
+TS Charge Delay Register@TSC_ADC_SS_TS_Charge_StepDelay Register
 
-**Figure 12-22. TS\_CHARGE\_DELAY Register**
+**Figure 12-22. TS_CHARGE_DELAY Register**
 
-| 31 | 30 | 29 | 28 | 27 | 26 | 25       | 24     | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8         | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|----|----|----|----|----|----------|--------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|---|-----------|---|---|---|---|---|---|---|---|
-|    |    |    |    |    |    | RESERVED |        |    |    |    |    |    |    |    |    |    |    |    |    |    |    |   | OpenDelay |   |   |   |   |   |   |   |   |
-|    |    |    |    |    |    |          | R/W-0h |    |    |    |    |    |    |    |    |    |    |    |    |    |    |   | R/W-1h    |   |   |   |   |   |   |   |   |
+| 31  | 30  | 29  | 28  | 27  | 26  | 25       | 24     | 23  | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15  | 14  | 13  | 12  | 11  | 10  | 9   | 8         | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | --- | --- | --- | --- | --- | -------- | ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --------- | --- | --- | --- | --- | --- | --- | --- | --- |
+|     |     |     |     |     |     | RESERVED |        |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | OpenDelay |     |     |     |     |     |     |     |     |
+|     |     |     |     |     |     |          | R/W-0h |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R/W-1h    |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 12-22. TS\_CHARGE\_DELAY Register Field Descriptions**
+#### **Table 12-22. TS_CHARGE_DELAY Register Field Descriptions**
 
 | Bit   | Field     | Type | Reset | Description                                                                                                                                                         |
-|-------|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-18 | RESERVED  | R/W  | 0h    |                                                                                                                                                                     |
 | 17-0  | OpenDelay | R/W  | 1h    | Program the # of ADC clock cycles to wait between applying the<br>step configuration registers and going back to the IDLE state.<br>(Value must be greater than 0.) |
 
@@ -1241,26 +1251,26 @@ Step Configuration 1
 
 **Figure 12-23. STEPCONFIG1 Register**
 
-| 31                  | 30        | 29              | 28 | 27                | 26          | 25              | 24                  |  |  |
-|---------------------|-----------|-----------------|----|-------------------|-------------|-----------------|---------------------|--|--|
-|                     |           | RESERVED        |    | Range_check       | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |  |
-|                     |           | R/W-0h          |    | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 23                  | 22        | 21              | 20 | 19                | 18          | 17              | 16                  |  |  |
-| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |    |                   |             | SEL_INM_SWC_3_0 |                     |  |  |
-| R/W-0h              |           | R/W-0h          |    |                   | R/W-0h      |                 |                     |  |  |
-| 15                  | 14        | 13              | 12 | 11                | 10          | 9               | 8                   |  |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |    | WPNSW_SWC         | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |  |  |
-| R/W-0h              |           | R/W-0h          |    | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 7                   | 6         | 5               | 4  | 3                 | 2           | 1<br>0          |                     |  |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |    | Averaging<br>Mode |             |                 |                     |  |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |    | R/W-0h            |             |                 | R/W-0h              |  |  |
+| 31                  | 30        | 29              | 28  | 27                | 26          | 25              | 24                  |     |     |
+| ------------------- | --------- | --------------- | --- | ----------------- | ----------- | --------------- | ------------------- | --- | --- |
+|                     |           | RESERVED        |     | Range_check       | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |     |
+|                     |           | R/W-0h          |     | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 23                  | 22        | 21              | 20  | 19                | 18          | 17              | 16                  |     |     |
+| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |     |                   |             | SEL_INM_SWC_3_0 |                     |     |     |
+| R/W-0h              |           | R/W-0h          |     |                   | R/W-0h      |                 |                     |     |     |
+| 15                  | 14        | 13              | 12  | 11                | 10          | 9               | 8                   |     |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |     | WPNSW_SWC         | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |     |     |
+| R/W-0h              |           | R/W-0h          |     | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 7                   | 6         | 5               | 4   | 3                 | 2           | 1<br>0          |                     |     |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |     | Averaging<br>Mode |             |                 |                     |     |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |     | R/W-0h            |             |                 | R/W-0h              |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-23. STEPCONFIG1 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO 1.                                                   |
@@ -1277,7 +1287,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-23. STEPCONFIG1 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                           |
-|-----|-----------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                            |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                            |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                            |
@@ -1294,20 +1304,20 @@ Step Delay Register 1
 
 **Figure 12-24. STEPDELAY1 Register**
 
-| 31 | 30 | 29 | 28 | 27          | 26 | 25 | 24 | 23        | 22 | 21 | 20       | 19 | 18 | 17        | 16 |
-|----|----|----|----|-------------|----|----|----|-----------|----|----|----------|----|----|-----------|----|
-|    |    |    |    | SampleDelay |    |    |    |           |    |    | RESERVED |    |    | OpenDelay |    |
-|    |    |    |    | R/W-0h      |    |    |    |           |    |    | R/W-0h   |    |    | R/W-0h    |    |
-| 15 | 14 | 13 | 12 | 11          | 10 | 9  | 8  | 7         | 6  | 5  | 4        | 3  | 2  | 1         | 0  |
-|    |    |    |    |             |    |    |    | OpenDelay |    |    |          |    |    |           |    |
-|    |    |    |    |             |    |    |    | R/W-0h    |    |    |          |    |    |           |    |
+| 31  | 30  | 29  | 28  | 27          | 26  | 25  | 24  | 23        | 22  | 21  | 20       | 19  | 18  | 17        | 16  |
+| --- | --- | --- | --- | ----------- | --- | --- | --- | --------- | --- | --- | -------- | --- | --- | --------- | --- |
+|     |     |     |     | SampleDelay |     |     |     |           |     |     | RESERVED |     |     | OpenDelay |     |
+|     |     |     |     | R/W-0h      |     |     |     |           |     |     | R/W-0h   |     |     | R/W-0h    |     |
+| 15  | 14  | 13  | 12  | 11          | 10  | 9   | 8   | 7         | 6   | 5   | 4        | 3   | 2   | 1         | 0   |
+|     |     |     |     |             |     |     |     | OpenDelay |     |     |          |     |     |           |     |
+|     |     |     |     |             |     |     |     | R/W-0h    |     |     |          |     |     |           |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-24. STEPDELAY1 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -1322,26 +1332,26 @@ Step Configuration 2
 
 **Figure 12-25. STEPCONFIG2 Register**
 
-| 31                  | 30        | 29              | 28 | 27                | 26          | 25              | 24                  |  |  |
-|---------------------|-----------|-----------------|----|-------------------|-------------|-----------------|---------------------|--|--|
-|                     |           | RESERVED        |    | Range_check       | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |  |
-|                     |           | R/W-0h          |    | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 23                  | 22        | 21              | 20 | 19                | 18          | 17              | 16                  |  |  |
-| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |    |                   |             | SEL_INM_SWC_3_0 |                     |  |  |
-| R/W-0h              |           | R/W-0h          |    |                   | R/W-0h      |                 |                     |  |  |
-| 15                  | 14        | 13              | 12 | 11                | 10          | 9               | 8                   |  |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |    | WPNSW_SWC         | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |  |  |
-| R/W-0h              |           | R/W-0h          |    | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 7                   | 6         | 5               | 4  | 3                 | 2           | 1<br>0          |                     |  |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |    | Averaging<br>Mode |             |                 |                     |  |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |    | R/W-0h            |             |                 | R/W-0h              |  |  |
+| 31                  | 30        | 29              | 28  | 27                | 26          | 25              | 24                  |     |     |
+| ------------------- | --------- | --------------- | --- | ----------------- | ----------- | --------------- | ------------------- | --- | --- |
+|                     |           | RESERVED        |     | Range_check       | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |     |
+|                     |           | R/W-0h          |     | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 23                  | 22        | 21              | 20  | 19                | 18          | 17              | 16                  |     |     |
+| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |     |                   |             | SEL_INM_SWC_3_0 |                     |     |     |
+| R/W-0h              |           | R/W-0h          |     |                   | R/W-0h      |                 |                     |     |     |
+| 15                  | 14        | 13              | 12  | 11                | 10          | 9               | 8                   |     |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |     | WPNSW_SWC         | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |     |     |
+| R/W-0h              |           | R/W-0h          |     | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 7                   | 6         | 5               | 4   | 3                 | 2           | 1<br>0          |                     |     |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |     | Averaging<br>Mode |             |                 |                     |     |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |     | R/W-0h            |             |                 | R/W-0h              |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-25. STEPCONFIG2 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -1358,7 +1368,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-25. STEPCONFIG2 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                         |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -1375,24 +1385,24 @@ Step Delay Register 2
 
 **Figure 12-26. STEPDELAY2 Register**
 
-| 31                      | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23        | 22 | 21 | 20 | 19     | 18 | 17        | 16 |
-|-------------------------|----|----|----|----|----|----|----|-----------|----|----|----|--------|----|-----------|----|
-| SampleDelay<br>RESERVED |    |    |    |    |    |    |    |           |    |    |    |        |    | OpenDelay |    |
-| R/W-0h<br>R/W-0h        |    |    |    |    |    |    |    |           |    |    |    | R/W-0h |    |           |    |
-| 15                      | 14 | 13 | 12 | 11 | 10 | 9  | 8  | 7         | 6  | 5  | 4  | 3      | 2  | 1         | 0  |
-|                         |    |    |    |    |    |    |    | OpenDelay |    |    |    |        |    |           |    |
-|                         |    |    |    |    |    |    |    | R/W-0h    |    |    |    |        |    |           |    |
-|                         |    |    |    |    |    |    |    |           |    |    |    |        |    |           |    |
+| 31                      | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23        | 22  | 21  | 20  | 19     | 18  | 17        | 16  |
+| ----------------------- | --- | --- | --- | --- | --- | --- | --- | --------- | --- | --- | --- | ------ | --- | --------- | --- |
+| SampleDelay<br>RESERVED |     |     |     |     |     |     |     |           |     |     |     |        |     | OpenDelay |     |
+| R/W-0h<br>R/W-0h        |     |     |     |     |     |     |     |           |     |     |     | R/W-0h |     |           |     |
+| 15                      | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7         | 6   | 5   | 4   | 3      | 2   | 1         | 0   |
+|                         |     |     |     |     |     |     |     | OpenDelay |     |     |     |        |     |           |     |
+|                         |     |     |     |     |     |     |     | R/W-0h    |     |     |     |        |     |           |     |
+|                         |     |     |     |     |     |     |     |           |     |     |     |        |     |           |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-26. STEPDELAY2 Register Field Descriptions**
 
-| Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |  |  |  |  |  |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--|--|--|--|--|
-| 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |  |  |  |  |  |
-| 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |  |  |  |  |  |
-| 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |  |  |  |  |  |
+| Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |     |     |     |     |     |
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- | --- | --- | --- |
+| 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |     |     |     |     |     |
+| 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |     |     |     |     |     |
+| 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |     |     |     |     |     |
 
 #### **12.5.1.23 STEPCONFIG3 Register (offset = 74h) [reset = 0h]**
 
@@ -1404,26 +1414,26 @@ Step Configuration 3
 
 **Figure 12-27. STEPCONFIG3 Register**
 
-| 31                  | 30        | 29              | 28 | 27                | 26          | 25              | 24                  |  |  |
-|---------------------|-----------|-----------------|----|-------------------|-------------|-----------------|---------------------|--|--|
-|                     |           | RESERVED        |    | Range_check       | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |  |
-|                     |           | R/W-0h          |    | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 23                  | 22        | 21              | 20 | 19                | 18          | 17<br>16        |                     |  |  |
-| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |    |                   |             | SEL_INM_SWC_3_0 |                     |  |  |
-| R/W-0h              |           | R/W-0h          |    |                   |             | R/W-0h          |                     |  |  |
-| 15                  | 14        | 13              | 12 | 11                | 10          | 9               | 8                   |  |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |    | WPNSW_SWC         | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |  |  |
-| R/W-0h              |           | R/W-0h          |    | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 7                   | 6         | 5               | 4  | 3                 | 2           | 1               | 0                   |  |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |    | Averaging<br>Mode |             |                 |                     |  |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |    | R/W-0h            | R/W-0h      |                 |                     |  |  |
+| 31                  | 30        | 29              | 28  | 27                | 26          | 25              | 24                  |     |     |
+| ------------------- | --------- | --------------- | --- | ----------------- | ----------- | --------------- | ------------------- | --- | --- |
+|                     |           | RESERVED        |     | Range_check       | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |     |
+|                     |           | R/W-0h          |     | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 23                  | 22        | 21              | 20  | 19                | 18          | 17<br>16        |                     |     |     |
+| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |     |                   |             | SEL_INM_SWC_3_0 |                     |     |     |
+| R/W-0h              |           | R/W-0h          |     |                   |             | R/W-0h          |                     |     |     |
+| 15                  | 14        | 13              | 12  | 11                | 10          | 9               | 8                   |     |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |     | WPNSW_SWC         | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |     |     |
+| R/W-0h              |           | R/W-0h          |     | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 7                   | 6         | 5               | 4   | 3                 | 2           | 1               | 0                   |     |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |     | Averaging<br>Mode |             |                 |                     |     |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |     | R/W-0h            | R/W-0h      |                 |                     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-27. STEPCONFIG3 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -1440,7 +1450,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-27. STEPCONFIG3 Register Field Descriptions (continued)**
 
 | Bit | Field                  | Type | Reset | Description                                                                                                                                                         |
-|-----|------------------------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | ---------------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC              | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC<br>R/W<br>0h |      |       | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC              | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -1457,23 +1467,23 @@ Step Delay Register 3
 
 **Figure 12-28. STEPDELAY3 Register**
 
-| 31     | 30 | 29 | 28 | 27          | 26 | 25 | 24 | 23        | 22 | 21 | 20       | 19 | 18 | 17        | 16 |
-|--------|----|----|----|-------------|----|----|----|-----------|----|----|----------|----|----|-----------|----|
-|        |    |    |    | SampleDelay |    |    |    |           |    |    | RESERVED |    |    | OpenDelay |    |
-|        |    |    |    | R/W-0h      |    |    |    |           |    |    | R/W-0h   |    |    | R/W-0h    |    |
-| 15     | 14 | 13 | 12 | 11          | 10 | 9  | 8  | 7         | 6  | 5  | 4        | 3  | 2  | 1         | 0  |
-|        |    |    |    |             |    |    |    | OpenDelay |    |    |          |    |    |           |    |
-| R/W-0h |    |    |    |             |    |    |    |           |    |    |          |    |    |           |    |
+| 31     | 30  | 29  | 28  | 27          | 26  | 25  | 24  | 23        | 22  | 21  | 20       | 19  | 18  | 17        | 16  |
+| ------ | --- | --- | --- | ----------- | --- | --- | --- | --------- | --- | --- | -------- | --- | --- | --------- | --- |
+|        |     |     |     | SampleDelay |     |     |     |           |     |     | RESERVED |     |     | OpenDelay |     |
+|        |     |     |     | R/W-0h      |     |     |     |           |     |     | R/W-0h   |     |     | R/W-0h    |     |
+| 15     | 14  | 13  | 12  | 11          | 10  | 9   | 8   | 7         | 6   | 5   | 4        | 3   | 2   | 1         | 0   |
+|        |     |     |     |             |     |     |     | OpenDelay |     |     |          |     |     |           |     |
+| R/W-0h |     |     |     |             |     |     |     |           |     |     |          |     |     |           |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-28. STEPDELAY3 Register Field Descriptions**
 
-| Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |  |  |  |  |  |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--|--|--|--|--|
-| 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |  |  |  |  |  |
-| 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |  |  |  |  |  |
-| 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |  |  |  |  |  |
+| Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |     |     |     |     |     |
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- | --- | --- | --- |
+| 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |     |     |     |     |     |
+| 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |     |     |     |     |     |
+| 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |     |     |     |     |     |
 
 #### **12.5.1.25 STEPCONFIG4 Register (offset = 7Ch) [reset = 0h]**
 
@@ -1485,26 +1495,26 @@ Step Configuration 4
 
 **Figure 12-29. STEPCONFIG4 Register**
 
-| 31                  | 30        | 29              | 28 | 27                | 26          | 25              | 24                  |  |  |
-|---------------------|-----------|-----------------|----|-------------------|-------------|-----------------|---------------------|--|--|
-|                     |           | RESERVED        |    | Range_check       | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |  |
-|                     |           | R/W-0h          |    | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 23                  | 22        | 21              | 20 | 19                | 18          | 17<br>16        |                     |  |  |
-| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |    |                   |             | SEL_INM_SWC_3_0 |                     |  |  |
-| R/W-0h              |           | R/W-0h          |    |                   |             | R/W-0h          |                     |  |  |
-| 15                  | 14        | 13              | 12 | 11                | 10          | 9               | 8                   |  |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |    | WPNSW_SWC         | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |  |  |
-| R/W-0h              |           | R/W-0h          |    | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 7                   | 6         | 5               | 4  | 3                 | 2           | 1               | 0                   |  |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |    | Averaging<br>Mode |             |                 |                     |  |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |    | R/W-0h            | R/W-0h      |                 |                     |  |  |
+| 31                  | 30        | 29              | 28  | 27                | 26          | 25              | 24                  |     |     |
+| ------------------- | --------- | --------------- | --- | ----------------- | ----------- | --------------- | ------------------- | --- | --- |
+|                     |           | RESERVED        |     | Range_check       | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |     |
+|                     |           | R/W-0h          |     | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 23                  | 22        | 21              | 20  | 19                | 18          | 17<br>16        |                     |     |     |
+| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |     |                   |             | SEL_INM_SWC_3_0 |                     |     |     |
+| R/W-0h              |           | R/W-0h          |     |                   |             | R/W-0h          |                     |     |     |
+| 15                  | 14        | 13              | 12  | 11                | 10          | 9               | 8                   |     |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |     | WPNSW_SWC         | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |     |     |
+| R/W-0h              |           | R/W-0h          |     | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 7                   | 6         | 5               | 4   | 3                 | 2           | 1               | 0                   |     |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |     | Averaging<br>Mode |             |                 |                     |     |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |     | R/W-0h            | R/W-0h      |                 |                     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-29. STEPCONFIG4 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -1521,7 +1531,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-29. STEPCONFIG4 Register Field Descriptions (continued)**
 
 | Bit | Field                  | Type | Reset | Description                                                                                                                                                         |
-|-----|------------------------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | ---------------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC              | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC<br>R/W<br>0h |      |       | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC              | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -1538,24 +1548,24 @@ Step Delay Register 4
 
 **Figure 12-30. STEPDELAY4 Register**
 
-| 31                      | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23        | 22 | 21 | 20 | 19     | 18 | 17        | 16 |
-|-------------------------|----|----|----|----|----|----|----|-----------|----|----|----|--------|----|-----------|----|
-| SampleDelay<br>RESERVED |    |    |    |    |    |    |    |           |    |    |    |        |    | OpenDelay |    |
-| R/W-0h<br>R/W-0h        |    |    |    |    |    |    |    |           |    |    |    | R/W-0h |    |           |    |
-| 15                      | 14 | 13 | 12 | 11 | 10 | 9  | 8  | 7         | 6  | 5  | 4  | 3      | 2  | 1         | 0  |
-|                         |    |    |    |    |    |    |    | OpenDelay |    |    |    |        |    |           |    |
-|                         |    |    |    |    |    |    |    | R/W-0h    |    |    |    |        |    |           |    |
-|                         |    |    |    |    |    |    |    |           |    |    |    |        |    |           |    |
+| 31                      | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23        | 22  | 21  | 20  | 19     | 18  | 17        | 16  |
+| ----------------------- | --- | --- | --- | --- | --- | --- | --- | --------- | --- | --- | --- | ------ | --- | --------- | --- |
+| SampleDelay<br>RESERVED |     |     |     |     |     |     |     |           |     |     |     |        |     | OpenDelay |     |
+| R/W-0h<br>R/W-0h        |     |     |     |     |     |     |     |           |     |     |     | R/W-0h |     |           |     |
+| 15                      | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7         | 6   | 5   | 4   | 3      | 2   | 1         | 0   |
+|                         |     |     |     |     |     |     |     | OpenDelay |     |     |     |        |     |           |     |
+|                         |     |     |     |     |     |     |     | R/W-0h    |     |     |     |        |     |           |     |
+|                         |     |     |     |     |     |     |     |           |     |     |     |        |     |           |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-30. STEPDELAY4 Register Field Descriptions**
 
-| Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |  |  |  |  |  |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--|--|--|--|--|
-| 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |  |  |  |  |  |
-| 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |  |  |  |  |  |
-| 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |  |  |  |  |  |
+| Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |     |     |     |     |     |
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- | --- | --- | --- |
+| 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |     |     |     |     |     |
+| 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |     |     |     |     |     |
+| 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |     |     |     |     |     |
 
 #### **12.5.1.27 STEPCONFIG5 Register (offset = 84h) [reset = 0h]**
 
@@ -1567,26 +1577,26 @@ Step Configuration 5
 
 **Figure 12-31. STEPCONFIG5 Register**
 
-| 31                  | 30        | 29              | 28 | 27                | 26          | 25              | 24                  |  |  |
-|---------------------|-----------|-----------------|----|-------------------|-------------|-----------------|---------------------|--|--|
-|                     |           | RESERVED        |    | Range_check       | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |  |
-|                     |           | R/W-0h          |    | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 23                  | 22        | 21              | 20 | 19                | 18          | 17<br>16        |                     |  |  |
-| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |    |                   |             | SEL_INM_SWC_3_0 |                     |  |  |
-| R/W-0h              |           | R/W-0h          |    |                   |             | R/W-0h          |                     |  |  |
-| 15                  | 14        | 13              | 12 | 11                | 10          | 9               | 8                   |  |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |    | WPNSW_SWC         | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |  |  |
-| R/W-0h              |           | R/W-0h          |    | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 7                   | 6         | 5               | 4  | 3                 | 2           | 1               | 0                   |  |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |    | Averaging<br>Mode |             |                 |                     |  |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |    | R/W-0h            | R/W-0h      |                 |                     |  |  |
+| 31                  | 30        | 29              | 28  | 27                | 26          | 25              | 24                  |     |     |
+| ------------------- | --------- | --------------- | --- | ----------------- | ----------- | --------------- | ------------------- | --- | --- |
+|                     |           | RESERVED        |     | Range_check       | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |     |
+|                     |           | R/W-0h          |     | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 23                  | 22        | 21              | 20  | 19                | 18          | 17<br>16        |                     |     |     |
+| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |     |                   |             | SEL_INM_SWC_3_0 |                     |     |     |
+| R/W-0h              |           | R/W-0h          |     |                   |             | R/W-0h          |                     |     |     |
+| 15                  | 14        | 13              | 12  | 11                | 10          | 9               | 8                   |     |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |     | WPNSW_SWC         | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |     |     |
+| R/W-0h              |           | R/W-0h          |     | R/W-0h            | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 7                   | 6         | 5               | 4   | 3                 | 2           | 1               | 0                   |     |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |     | Averaging<br>Mode |             |                 |                     |     |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |     | R/W-0h            | R/W-0h      |                 |                     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-31. STEPCONFIG5 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -1603,7 +1613,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-31. STEPCONFIG5 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                         |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -1620,20 +1630,20 @@ Step Delay Register 5
 
 **Figure 12-32. STEPDELAY5 Register**
 
-| 31     | 30        | 29 | 28 | 27          | 26 | 25 | 24 | 23     | 22 | 21 | 20       | 19 | 18 | 17        | 16 |
-|--------|-----------|----|----|-------------|----|----|----|--------|----|----|----------|----|----|-----------|----|
-|        |           |    |    | SampleDelay |    |    |    |        |    |    | RESERVED |    |    | OpenDelay |    |
-| R/W-0h |           |    |    |             |    |    |    | R/W-0h |    |    |          |    |    | R/W-0h    |    |
-| 15     | 14        | 13 | 12 | 11          | 10 | 9  | 8  | 7      | 6  | 5  | 4        | 3  | 2  | 1         | 0  |
-|        | OpenDelay |    |    |             |    |    |    |        |    |    |          |    |    |           |    |
-| R/W-0h |           |    |    |             |    |    |    |        |    |    |          |    |    |           |    |
+| 31     | 30        | 29  | 28  | 27          | 26  | 25  | 24  | 23     | 22  | 21  | 20       | 19  | 18  | 17        | 16  |
+| ------ | --------- | --- | --- | ----------- | --- | --- | --- | ------ | --- | --- | -------- | --- | --- | --------- | --- |
+|        |           |     |     | SampleDelay |     |     |     |        |     |     | RESERVED |     |     | OpenDelay |     |
+| R/W-0h |           |     |     |             |     |     |     | R/W-0h |     |     |          |     |     | R/W-0h    |     |
+| 15     | 14        | 13  | 12  | 11          | 10  | 9   | 8   | 7      | 6   | 5   | 4        | 3   | 2   | 1         | 0   |
+|        | OpenDelay |     |     |             |     |     |     |        |     |     |          |     |     |           |     |
+| R/W-0h |           |     |     |             |     |     |     |        |     |     |          |     |     |           |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-32. STEPDELAY5 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -1648,26 +1658,26 @@ Step Configuration 6
 
 **Figure 12-33. STEPCONFIG6 Register**
 
-| 31                  | 30                     | 29              | 28 | 27          | 26          | 25              | 24                  |  |  |
-|---------------------|------------------------|-----------------|----|-------------|-------------|-----------------|---------------------|--|--|
-|                     |                        | RESERVED        |    | Range_check | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |  |
-|                     |                        | R/W-0h          |    | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 23                  | 22                     | 21              | 20 | 19          | 18          | 17              | 16                  |  |  |
-| SEL_RFM_SW<br>C_1_0 |                        | SEL_INP_SWC_3_0 |    |             |             | SEL_INM_SWC_3_0 |                     |  |  |
-| R/W-0h              |                        | R/W-0h          |    |             | R/W-0h      |                 |                     |  |  |
-| 15                  | 14                     | 13              | 12 | 11          | 10          | 9               | 8                   |  |  |
-| SEL_INM_SW<br>C_3_0 |                        | SEL_RFP_SWC_2_0 |    | WPNSW_SWC   | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |  |  |
-| R/W-0h              |                        | R/W-0h          |    | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 7                   | 6                      | 5               | 4  | 3           | 2           | 1               | 0                   |  |  |
-| YPPSW_SWC           | XNNSW_SWC<br>XPPSW_SWC |                 |    | Averaging   |             | Mode            |                     |  |  |
-| R/W-0h              | R/W-0h                 | R/W-0h          |    | R/W-0h      |             |                 | R/W-0h              |  |  |
+| 31                  | 30                     | 29              | 28  | 27          | 26          | 25              | 24                  |     |     |
+| ------------------- | ---------------------- | --------------- | --- | ----------- | ----------- | --------------- | ------------------- | --- | --- |
+|                     |                        | RESERVED        |     | Range_check | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |     |
+|                     |                        | R/W-0h          |     | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 23                  | 22                     | 21              | 20  | 19          | 18          | 17              | 16                  |     |     |
+| SEL_RFM_SW<br>C_1_0 |                        | SEL_INP_SWC_3_0 |     |             |             | SEL_INM_SWC_3_0 |                     |     |     |
+| R/W-0h              |                        | R/W-0h          |     |             | R/W-0h      |                 |                     |     |     |
+| 15                  | 14                     | 13              | 12  | 11          | 10          | 9               | 8                   |     |     |
+| SEL_INM_SW<br>C_3_0 |                        | SEL_RFP_SWC_2_0 |     | WPNSW_SWC   | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |     |     |
+| R/W-0h              |                        | R/W-0h          |     | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 7                   | 6                      | 5               | 4   | 3           | 2           | 1               | 0                   |     |     |
+| YPPSW_SWC           | XNNSW_SWC<br>XPPSW_SWC |                 |     | Averaging   |             | Mode            |                     |     |     |
+| R/W-0h              | R/W-0h                 | R/W-0h          |     | R/W-0h      |             |                 | R/W-0h              |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-33. STEPCONFIG6 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -1684,7 +1694,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-33. STEPCONFIG6 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                         |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -1701,21 +1711,21 @@ Step Delay Register 6
 
 **Figure 12-34. STEPDELAY6 Register**
 
-|        | 31        | 30                      | 29 | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21     | 20 | 19        | 18 | 17     | 16 |
-|--------|-----------|-------------------------|----|----|----|----|----|----|----|----|--------|----|-----------|----|--------|----|
-|        |           | SampleDelay<br>RESERVED |    |    |    |    |    |    |    |    |        |    | OpenDelay |    |        |    |
-| R/W-0h |           |                         |    |    |    |    |    |    |    |    | R/W-0h |    |           |    | R/W-0h |    |
-|        | 15        | 14                      | 13 | 12 | 11 | 10 | 9  | 8  | 7  | 6  | 5      | 4  | 3         | 2  | 1      | 0  |
-|        | OpenDelay |                         |    |    |    |    |    |    |    |    |        |    |           |    |        |    |
-|        | R/W-0h    |                         |    |    |    |    |    |    |    |    |        |    |           |    |        |    |
-|        |           |                         |    |    |    |    |    |    |    |    |        |    |           |    |        |    |
+|        | 31        | 30                      | 29  | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21     | 20  | 19        | 18  | 17     | 16  |
+| ------ | --------- | ----------------------- | --- | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --------- | --- | ------ | --- |
+|        |           | SampleDelay<br>RESERVED |     |     |     |     |     |     |     |     |        |     | OpenDelay |     |        |     |
+| R/W-0h |           |                         |     |     |     |     |     |     |     |     | R/W-0h |     |           |     | R/W-0h |     |
+|        | 15        | 14                      | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5      | 4   | 3         | 2   | 1      | 0   |
+|        | OpenDelay |                         |     |     |     |     |     |     |     |     |        |     |           |     |        |     |
+|        | R/W-0h    |                         |     |     |     |     |     |     |     |     |        |     |           |     |        |     |
+|        |           |                         |     |     |     |     |     |     |     |     |        |     |           |     |        |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-34. STEPDELAY6 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -1730,26 +1740,26 @@ Step Configuration 7
 
 **Figure 12-35. STEPCONFIG7 Register**
 
-| 31                  | 30                     | 29              | 28 | 27          | 26          | 25              | 24                  |  |  |
-|---------------------|------------------------|-----------------|----|-------------|-------------|-----------------|---------------------|--|--|
-|                     |                        | RESERVED        |    | Range_check | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |  |
-|                     |                        | R/W-0h          |    | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 23                  | 22                     | 21              | 20 | 19          | 18          | 17              | 16                  |  |  |
-| SEL_RFM_SW<br>C_1_0 |                        | SEL_INP_SWC_3_0 |    |             |             | SEL_INM_SWC_3_0 |                     |  |  |
-| R/W-0h              |                        | R/W-0h          |    |             | R/W-0h      |                 |                     |  |  |
-| 15                  | 14                     | 13              | 12 | 11          | 10          | 9               | 8                   |  |  |
-| SEL_INM_SW<br>C_3_0 |                        | SEL_RFP_SWC_2_0 |    | WPNSW_SWC   | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |  |  |
-| R/W-0h              |                        | R/W-0h          |    | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 7                   | 6                      | 5               | 4  | 3           | 2           | 1               | 0                   |  |  |
-| YPPSW_SWC           | XNNSW_SWC<br>XPPSW_SWC |                 |    | Averaging   |             | Mode            |                     |  |  |
-| R/W-0h              | R/W-0h                 | R/W-0h          |    | R/W-0h      |             |                 | R/W-0h              |  |  |
+| 31                  | 30                     | 29              | 28  | 27          | 26          | 25              | 24                  |     |     |
+| ------------------- | ---------------------- | --------------- | --- | ----------- | ----------- | --------------- | ------------------- | --- | --- |
+|                     |                        | RESERVED        |     | Range_check | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |     |
+|                     |                        | R/W-0h          |     | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 23                  | 22                     | 21              | 20  | 19          | 18          | 17              | 16                  |     |     |
+| SEL_RFM_SW<br>C_1_0 |                        | SEL_INP_SWC_3_0 |     |             |             | SEL_INM_SWC_3_0 |                     |     |     |
+| R/W-0h              |                        | R/W-0h          |     |             | R/W-0h      |                 |                     |     |     |
+| 15                  | 14                     | 13              | 12  | 11          | 10          | 9               | 8                   |     |     |
+| SEL_INM_SW<br>C_3_0 |                        | SEL_RFP_SWC_2_0 |     | WPNSW_SWC   | YPNSW_SWC   | XNPSW_SWC       | YNNSW_SWC           |     |     |
+| R/W-0h              |                        | R/W-0h          |     | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 7                   | 6                      | 5               | 4   | 3           | 2           | 1               | 0                   |     |     |
+| YPPSW_SWC           | XNNSW_SWC<br>XPPSW_SWC |                 |     | Averaging   |             | Mode            |                     |     |     |
+| R/W-0h              | R/W-0h                 | R/W-0h          |     | R/W-0h      |             |                 | R/W-0h              |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-35. STEPCONFIG7 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -1766,7 +1776,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-35. STEPCONFIG7 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                         |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -1783,20 +1793,20 @@ Step Delay Register 7
 
 **Figure 12-36. STEPDELAY7 Register**
 
-| 31     | 30        | 29 | 28 | 27          | 26 | 25 | 24 | 23     | 22 | 21 | 20       | 19 | 18 | 17        | 16 |
-|--------|-----------|----|----|-------------|----|----|----|--------|----|----|----------|----|----|-----------|----|
-|        |           |    |    | SampleDelay |    |    |    |        |    |    | RESERVED |    |    | OpenDelay |    |
-| R/W-0h |           |    |    |             |    |    |    | R/W-0h |    |    |          |    |    | R/W-0h    |    |
-| 15     | 14        | 13 | 12 | 11          | 10 | 9  | 8  | 7      | 6  | 5  | 4        | 3  | 2  | 1         | 0  |
-|        | OpenDelay |    |    |             |    |    |    |        |    |    |          |    |    |           |    |
-| R/W-0h |           |    |    |             |    |    |    |        |    |    |          |    |    |           |    |
+| 31     | 30        | 29  | 28  | 27          | 26  | 25  | 24  | 23     | 22  | 21  | 20       | 19  | 18  | 17        | 16  |
+| ------ | --------- | --- | --- | ----------- | --- | --- | --- | ------ | --- | --- | -------- | --- | --- | --------- | --- |
+|        |           |     |     | SampleDelay |     |     |     |        |     |     | RESERVED |     |     | OpenDelay |     |
+| R/W-0h |           |     |     |             |     |     |     | R/W-0h |     |     |          |     |     | R/W-0h    |     |
+| 15     | 14        | 13  | 12  | 11          | 10  | 9   | 8   | 7      | 6   | 5   | 4        | 3   | 2   | 1         | 0   |
+|        | OpenDelay |     |     |             |     |     |     |        |     |     |          |     |     |           |     |
+| R/W-0h |           |     |     |             |     |     |     |        |     |     |          |     |     |           |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-36. STEPDELAY7 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -1811,26 +1821,26 @@ Step Configuration 8
 
 **Figure 12-37. STEPCONFIG8 Register**
 
-| 31                  | 30                     | 29              | 28 | 27                | 26                         | 25              | 24                  |  |  |
-|---------------------|------------------------|-----------------|----|-------------------|----------------------------|-----------------|---------------------|--|--|
-|                     |                        | RESERVED        |    | Range_check       | FIFO_select                | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |  |
-|                     |                        | R/W-0h          |    | R/W-0h            | R/W-0h<br>R/W-0h<br>R/W-0h |                 |                     |  |  |
-| 23                  | 22                     | 21              | 20 | 19                | 18                         | 17              | 16                  |  |  |
-| SEL_RFM_SW<br>C_1_0 |                        | SEL_INP_SWC_3_0 |    |                   |                            | SEL_INM_SWC_3_0 |                     |  |  |
-| R/W-0h              |                        | R/W-0h          |    |                   |                            | R/W-0h          |                     |  |  |
-| 15                  | 14                     | 13              | 12 | 11                | 10                         | 9               | 8                   |  |  |
-| SEL_INM_SW<br>C_3_0 |                        | SEL_RFP_SWC_2_0 |    | WPNSW_SWC         | YPNSW_SWC                  | XNPSW_SWC       | YNNSW_SWC           |  |  |
-| R/W-0h              |                        | R/W-0h          |    | R/W-0h            | R/W-0h                     | R/W-0h          | R/W-0h              |  |  |
-| 7                   | 6                      | 5               | 4  | 3                 | 2                          | 1               | 0                   |  |  |
-| YPPSW_SWC           | XNNSW_SWC<br>XPPSW_SWC |                 |    | Averaging<br>Mode |                            |                 |                     |  |  |
-| R/W-0h              | R/W-0h                 | R/W-0h          |    | R/W-0h            | R/W-0h                     |                 |                     |  |  |
+| 31                  | 30                     | 29              | 28  | 27                | 26                         | 25              | 24                  |     |     |
+| ------------------- | ---------------------- | --------------- | --- | ----------------- | -------------------------- | --------------- | ------------------- | --- | --- |
+|                     |                        | RESERVED        |     | Range_check       | FIFO_select                | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |     |
+|                     |                        | R/W-0h          |     | R/W-0h            | R/W-0h<br>R/W-0h<br>R/W-0h |                 |                     |     |     |
+| 23                  | 22                     | 21              | 20  | 19                | 18                         | 17              | 16                  |     |     |
+| SEL_RFM_SW<br>C_1_0 |                        | SEL_INP_SWC_3_0 |     |                   |                            | SEL_INM_SWC_3_0 |                     |     |     |
+| R/W-0h              |                        | R/W-0h          |     |                   |                            | R/W-0h          |                     |     |     |
+| 15                  | 14                     | 13              | 12  | 11                | 10                         | 9               | 8                   |     |     |
+| SEL_INM_SW<br>C_3_0 |                        | SEL_RFP_SWC_2_0 |     | WPNSW_SWC         | YPNSW_SWC                  | XNPSW_SWC       | YNNSW_SWC           |     |     |
+| R/W-0h              |                        | R/W-0h          |     | R/W-0h            | R/W-0h                     | R/W-0h          | R/W-0h              |     |     |
+| 7                   | 6                      | 5               | 4   | 3                 | 2                          | 1               | 0                   |     |     |
+| YPPSW_SWC           | XNNSW_SWC<br>XPPSW_SWC |                 |     | Averaging<br>Mode |                            |                 |                     |     |     |
+| R/W-0h              | R/W-0h                 | R/W-0h          |     | R/W-0h            | R/W-0h                     |                 |                     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-37. STEPCONFIG8 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -1847,7 +1857,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-37. STEPCONFIG8 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                         |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -1864,21 +1874,21 @@ Step Delay Register 8
 
 **Figure 12-38. STEPDELAY8 Register**
 
-| 31               | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23        | 22       | 21 | 20 | 19 | 18     | 17 | 16        |  |  |
-|------------------|----|----|----|----|----|----|----|-----------|----------|----|----|----|--------|----|-----------|--|--|
-| SampleDelay      |    |    |    |    |    |    |    |           | RESERVED |    |    |    |        |    | OpenDelay |  |  |
-| R/W-0h<br>R/W-0h |    |    |    |    |    |    |    |           |          |    |    |    | R/W-0h |    |           |  |  |
-| 15               | 14 | 13 | 12 | 11 | 10 | 9  | 8  | 7         | 6        | 5  | 4  | 3  | 2      | 1  | 0         |  |  |
-|                  |    |    |    |    |    |    |    | OpenDelay |          |    |    |    |        |    |           |  |  |
-|                  |    |    |    |    |    |    |    | R/W-0h    |          |    |    |    |        |    |           |  |  |
-|                  |    |    |    |    |    |    |    |           |          |    |    |    |        |    |           |  |  |
+| 31               | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23        | 22       | 21  | 20  | 19  | 18     | 17  | 16        |     |     |
+| ---------------- | --- | --- | --- | --- | --- | --- | --- | --------- | -------- | --- | --- | --- | ------ | --- | --------- | --- | --- |
+| SampleDelay      |     |     |     |     |     |     |     |           | RESERVED |     |     |     |        |     | OpenDelay |     |     |
+| R/W-0h<br>R/W-0h |     |     |     |     |     |     |     |           |          |     |     |     | R/W-0h |     |           |     |     |
+| 15               | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7         | 6        | 5   | 4   | 3   | 2      | 1   | 0         |     |     |
+|                  |     |     |     |     |     |     |     | OpenDelay |          |     |     |     |        |     |           |     |     |
+|                  |     |     |     |     |     |     |     | R/W-0h    |          |     |     |     |        |     |           |     |     |
+|                  |     |     |     |     |     |     |     |           |          |     |     |     |        |     |           |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-38. STEPDELAY8 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -1893,26 +1903,26 @@ Step Configuration 9
 
 **Figure 12-39. STEPCONFIG9 Register**
 
-| 31                  | 30        | 29              | 28 | 27               | 26                         | 25              | 24                  |  |  |
-|---------------------|-----------|-----------------|----|------------------|----------------------------|-----------------|---------------------|--|--|
-|                     |           | RESERVED        |    | Range_check      | FIFO_select                | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |  |
-|                     |           | R/W-0h          |    | R/W-0h           | R/W-0h<br>R/W-0h<br>R/W-0h |                 |                     |  |  |
-| 23                  | 22        | 21              | 20 | 19               | 18                         | 17              | 16                  |  |  |
-| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |    |                  |                            | SEL_INM_SWC_3_0 |                     |  |  |
-| R/W-0h              |           | R/W-0h          |    |                  | R/W-0h                     |                 |                     |  |  |
-| 15                  | 14        | 13              | 12 | 11               | 10                         | 9               | 8                   |  |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |    | WPNSW_SWC        | YPNSW_SWC                  | XNPSW_SWC       | YNNSW_SWC           |  |  |
-| R/W-0h              |           | R/W-0h          |    | R/W-0h           | R/W-0h                     | R/W-0h          | R/W-0h              |  |  |
-| 7                   | 6         | 5               | 4  | 3                | 2                          | 1               | 0                   |  |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |    | Averaging        |                            | Mode            |                     |  |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |    | R/W-0h<br>R/W-0h |                            |                 |                     |  |  |
+| 31                  | 30        | 29              | 28  | 27               | 26                         | 25              | 24                  |     |     |
+| ------------------- | --------- | --------------- | --- | ---------------- | -------------------------- | --------------- | ------------------- | --- | --- |
+|                     |           | RESERVED        |     | Range_check      | FIFO_select                | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |     |
+|                     |           | R/W-0h          |     | R/W-0h           | R/W-0h<br>R/W-0h<br>R/W-0h |                 |                     |     |     |
+| 23                  | 22        | 21              | 20  | 19               | 18                         | 17              | 16                  |     |     |
+| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |     |                  |                            | SEL_INM_SWC_3_0 |                     |     |     |
+| R/W-0h              |           | R/W-0h          |     |                  | R/W-0h                     |                 |                     |     |     |
+| 15                  | 14        | 13              | 12  | 11               | 10                         | 9               | 8                   |     |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |     | WPNSW_SWC        | YPNSW_SWC                  | XNPSW_SWC       | YNNSW_SWC           |     |     |
+| R/W-0h              |           | R/W-0h          |     | R/W-0h           | R/W-0h                     | R/W-0h          | R/W-0h              |     |     |
+| 7                   | 6         | 5               | 4   | 3                | 2                          | 1               | 0                   |     |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |     | Averaging        |                            | Mode            |                     |     |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |     | R/W-0h<br>R/W-0h |                            |                 |                     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-39. STEPCONFIG9 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO 1.<br>= FIFO1.                                                    |
@@ -1929,7 +1939,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-39. STEPCONFIG9 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                         |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -1946,20 +1956,20 @@ Step Delay Register 9
 
 **Figure 12-40. STEPDELAY9 Register**
 
-| 31 | 30          | 29 | 28 | 27 | 26     | 25 | 24 | 23        | 22       | 21 | 20 | 19 | 18 | 17 | 16        |  |  |
-|----|-------------|----|----|----|--------|----|----|-----------|----------|----|----|----|----|----|-----------|--|--|
-|    | SampleDelay |    |    |    |        |    |    |           | RESERVED |    |    |    |    |    | OpenDelay |  |  |
-|    |             |    |    |    | R/W-0h |    |    | R/W-0h    |          |    |    |    |    |    |           |  |  |
-| 15 | 14          | 13 | 12 | 11 | 10     | 9  | 8  | 7         | 6        | 5  | 4  | 3  | 2  | 1  | 0         |  |  |
-|    |             |    |    |    |        |    |    | OpenDelay |          |    |    |    |    |    |           |  |  |
-|    |             |    |    |    |        |    |    | R/W-0h    |          |    |    |    |    |    |           |  |  |
+| 31  | 30          | 29  | 28  | 27  | 26     | 25  | 24  | 23        | 22       | 21  | 20  | 19  | 18  | 17  | 16        |     |     |
+| --- | ----------- | --- | --- | --- | ------ | --- | --- | --------- | -------- | --- | --- | --- | --- | --- | --------- | --- | --- |
+|     | SampleDelay |     |     |     |        |     |     |           | RESERVED |     |     |     |     |     | OpenDelay |     |     |
+|     |             |     |     |     | R/W-0h |     |     | R/W-0h    |          |     |     |     |     |     |           |     |     |
+| 15  | 14          | 13  | 12  | 11  | 10     | 9   | 8   | 7         | 6        | 5   | 4   | 3   | 2   | 1   | 0         |     |     |
+|     |             |     |     |     |        |     |     | OpenDelay |          |     |     |     |     |     |           |     |     |
+|     |             |     |     |     |        |     |     | R/W-0h    |          |     |     |     |     |     |           |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-40. STEPDELAY9 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -1974,26 +1984,26 @@ Step Configuration 10
 
 **Figure 12-41. STEPCONFIG10 Register**
 
-| 31                  | 30        | 29              | 28              | 27               | 26             | 25              | 24                  |  |  |
-|---------------------|-----------|-----------------|-----------------|------------------|----------------|-----------------|---------------------|--|--|
-|                     |           | RESERVED        |                 | Range_check      | FIFO_select    | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |  |
-|                     |           | R/W-0h          |                 | R/W-0h           | R/W-0h         | R/W-0h          |                     |  |  |
-| 23                  | 22        | 21              | 20              | 19               | 18<br>17<br>16 |                 |                     |  |  |
-| SEL_RFM_SW<br>C_1_0 |           |                 | SEL_INP_SWC_3_0 |                  |                | SEL_INM_SWC_3_0 |                     |  |  |
-| R/W-0h              |           |                 | R/W-0h          |                  |                | R/W-0h          |                     |  |  |
-| 15                  | 14        | 13              | 12              | 11               | 10             | 9               | 8                   |  |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |                 | WPNSW_SWC        | YPNSW_SWC      | XNPSW_SWC       | YNNSW_SWC           |  |  |
-| R/W-0h              |           | R/W-0h          |                 | R/W-0h           | R/W-0h         | R/W-0h          | R/W-0h              |  |  |
-| 7                   | 6         | 5               | 4               | 3                | 2              | 1               | 0                   |  |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |                 | Averaging        | Mode           |                 |                     |  |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |                 | R/W-0h<br>R/W-0h |                |                 |                     |  |  |
+| 31                  | 30        | 29              | 28              | 27               | 26             | 25              | 24                  |     |     |
+| ------------------- | --------- | --------------- | --------------- | ---------------- | -------------- | --------------- | ------------------- | --- | --- |
+|                     |           | RESERVED        |                 | Range_check      | FIFO_select    | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |     |
+|                     |           | R/W-0h          |                 | R/W-0h           | R/W-0h         | R/W-0h          |                     |     |     |
+| 23                  | 22        | 21              | 20              | 19               | 18<br>17<br>16 |                 |                     |     |     |
+| SEL_RFM_SW<br>C_1_0 |           |                 | SEL_INP_SWC_3_0 |                  |                | SEL_INM_SWC_3_0 |                     |     |     |
+| R/W-0h              |           |                 | R/W-0h          |                  |                | R/W-0h          |                     |     |     |
+| 15                  | 14        | 13              | 12              | 11               | 10             | 9               | 8                   |     |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |                 | WPNSW_SWC        | YPNSW_SWC      | XNPSW_SWC       | YNNSW_SWC           |     |     |
+| R/W-0h              |           | R/W-0h          |                 | R/W-0h           | R/W-0h         | R/W-0h          | R/W-0h              |     |     |
+| 7                   | 6         | 5               | 4               | 3                | 2              | 1               | 0                   |     |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |                 | Averaging        | Mode           |                 |                     |     |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |                 | R/W-0h<br>R/W-0h |                |                 |                     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-41. STEPCONFIG10 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -2009,13 +2019,13 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 
 **Table 12-41. STEPCONFIG10 Register Field Descriptions (continued)**
 
-| Bit | Field     | Type | Reset | Description                                                                                                                                                         |  |  |  |  |  |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|--|--|--|--|--|
-| 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |  |  |  |  |  |
-| 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |  |  |  |  |  |
-| 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |  |  |  |  |  |
-| 4-2 | Averaging | R/W  | 0h    | Number of samples to average:<br>000 = No average.<br>001 = 2 samples average.<br>010 = 4 samples average.<br>011 = 8 samples average.<br>100 = 16 samples average. |  |  |  |  |  |
-| 1-0 | Mode      | R/W  | 0h    | 00 = SW enabled, one-shot.<br>01 = SW enabled, continuous.<br>10 = HW synchronized, one-shot.<br>11 = HW synchronized, continuous.                                  |  |  |  |  |  |
+| Bit | Field     | Type | Reset | Description                                                                                                                                                         |     |     |     |     |     |
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- | --- | --- | --- |
+| 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |     |     |     |     |     |
+| 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |     |     |     |     |     |
+| 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |     |     |     |     |     |
+| 4-2 | Averaging | R/W  | 0h    | Number of samples to average:<br>000 = No average.<br>001 = 2 samples average.<br>010 = 4 samples average.<br>011 = 8 samples average.<br>100 = 16 samples average. |     |     |     |     |     |
+| 1-0 | Mode      | R/W  | 0h    | 00 = SW enabled, one-shot.<br>01 = SW enabled, continuous.<br>10 = HW synchronized, one-shot.<br>11 = HW synchronized, continuous.                                  |     |     |     |     |     |
 
 #### **12.5.1.38 STEPDELAY10 Register (offset = B0h) [reset = 0h]**
 
@@ -2027,21 +2037,21 @@ Step Delay Register 10
 
 **Figure 12-42. STEPDELAY10 Register**
 
-| 31          | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23        | 22       | 21 | 20 | 19 | 18 | 17 | 16        |  |  |
-|-------------|----|----|----|----|----|----|----|-----------|----------|----|----|----|----|----|-----------|--|--|
-| SampleDelay |    |    |    |    |    |    |    |           | RESERVED |    |    |    |    |    | OpenDelay |  |  |
-| R/W-0h      |    |    |    |    |    |    |    | R/W-0h    |          |    |    |    |    |    | R/W-0h    |  |  |
-| 15          | 14 | 13 | 12 | 11 | 10 | 9  | 8  | 7         | 6        | 5  | 4  | 3  | 2  | 1  | 0         |  |  |
-|             |    |    |    |    |    |    |    | OpenDelay |          |    |    |    |    |    |           |  |  |
-|             |    |    |    |    |    |    |    | R/W-0h    |          |    |    |    |    |    |           |  |  |
-|             |    |    |    |    |    |    |    |           |          |    |    |    |    |    |           |  |  |
+| 31          | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23        | 22       | 21  | 20  | 19  | 18  | 17  | 16        |     |     |
+| ----------- | --- | --- | --- | --- | --- | --- | --- | --------- | -------- | --- | --- | --- | --- | --- | --------- | --- | --- |
+| SampleDelay |     |     |     |     |     |     |     |           | RESERVED |     |     |     |     |     | OpenDelay |     |     |
+| R/W-0h      |     |     |     |     |     |     |     | R/W-0h    |          |     |     |     |     |     | R/W-0h    |     |     |
+| 15          | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7         | 6        | 5   | 4   | 3   | 2   | 1   | 0         |     |     |
+|             |     |     |     |     |     |     |     | OpenDelay |          |     |     |     |     |     |           |     |     |
+|             |     |     |     |     |     |     |     | R/W-0h    |          |     |     |     |     |     |           |     |     |
+|             |     |     |     |     |     |     |     |           |          |     |     |     |     |     |           |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-42. STEPDELAY10 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -2056,26 +2066,26 @@ Step Configuration 11
 
 **Figure 12-43. STEPCONFIG11 Register**
 
-| 31                  | 30        | 29              | 28              | 27          | 26          | 25              | 24                  |  |
-|---------------------|-----------|-----------------|-----------------|-------------|-------------|-----------------|---------------------|--|
-|                     |           | RESERVED        |                 | Range_check | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |
-|                     |           | R/W-0h          |                 | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |  |
-| 23                  | 22        | 21              | 20              | 19          | 18          | 17              | 16                  |  |
-| SEL_RFM_SW<br>C_1_0 |           |                 | SEL_INP_SWC_3_0 |             |             | SEL_INM_SWC_3_0 |                     |  |
-| R/W-0h              |           |                 | R/W-0h          |             |             | R/W-0h          |                     |  |
-| 15                  | 14        | 13              | 12              | 11          | 10          | 9               | 8                   |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |                 | WPNSW_SWC   | YPNSW_SWC   | YNNSW_SWC       |                     |  |
-| R/W-0h              |           | R/W-0h          |                 | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |  |
-| 7                   | 6         | 5               | 4               | 3           | 2           | 1               | 0                   |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |                 | Averaging   |             | Mode            |                     |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |                 | R/W-0h      | R/W-0h      |                 |                     |  |
+| 31                  | 30        | 29              | 28              | 27          | 26          | 25              | 24                  |     |
+| ------------------- | --------- | --------------- | --------------- | ----------- | ----------- | --------------- | ------------------- | --- |
+|                     |           | RESERVED        |                 | Range_check | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |
+|                     |           | R/W-0h          |                 | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |     |
+| 23                  | 22        | 21              | 20              | 19          | 18          | 17              | 16                  |     |
+| SEL_RFM_SW<br>C_1_0 |           |                 | SEL_INP_SWC_3_0 |             |             | SEL_INM_SWC_3_0 |                     |     |
+| R/W-0h              |           |                 | R/W-0h          |             |             | R/W-0h          |                     |     |
+| 15                  | 14        | 13              | 12              | 11          | 10          | 9               | 8                   |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |                 | WPNSW_SWC   | YPNSW_SWC   | YNNSW_SWC       |                     |     |
+| R/W-0h              |           | R/W-0h          |                 | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |     |
+| 7                   | 6         | 5               | 4               | 3           | 2           | 1               | 0                   |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |                 | Averaging   |             | Mode            |                     |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |                 | R/W-0h      | R/W-0h      |                 |                     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-43. STEPCONFIG11 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -2092,7 +2102,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-43. STEPCONFIG11 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                         |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -2109,21 +2119,21 @@ Step Delay Register 11
 
 **Figure 12-44. STEPDELAY11 Register**
 
-| 31          | 30     | 29 | 28 | 27 | 26 | 25 | 24 | 23        | 22 | 21 | 20 | 19 | 18 | 17        | 16 |  |
-|-------------|--------|----|----|----|----|----|----|-----------|----|----|----|----|----|-----------|----|--|
-| SampleDelay |        |    |    |    |    |    |    | RESERVED  |    |    |    |    |    | OpenDelay |    |  |
-| R/W-0h      |        |    |    |    |    |    |    | R/W-0h    |    |    |    |    |    | R/W-0h    |    |  |
-| 15          | 14     | 13 | 12 | 11 | 10 | 9  | 8  | 7         | 6  | 5  | 4  | 3  | 2  | 1         | 0  |  |
-|             |        |    |    |    |    |    |    | OpenDelay |    |    |    |    |    |           |    |  |
-|             | R/W-0h |    |    |    |    |    |    |           |    |    |    |    |    |           |    |  |
-|             |        |    |    |    |    |    |    |           |    |    |    |    |    |           |    |  |
+| 31          | 30     | 29  | 28  | 27  | 26  | 25  | 24  | 23        | 22  | 21  | 20  | 19  | 18  | 17        | 16  |     |
+| ----------- | ------ | --- | --- | --- | --- | --- | --- | --------- | --- | --- | --- | --- | --- | --------- | --- | --- |
+| SampleDelay |        |     |     |     |     |     |     | RESERVED  |     |     |     |     |     | OpenDelay |     |     |
+| R/W-0h      |        |     |     |     |     |     |     | R/W-0h    |     |     |     |     |     | R/W-0h    |     |     |
+| 15          | 14     | 13  | 12  | 11  | 10  | 9   | 8   | 7         | 6   | 5   | 4   | 3   | 2   | 1         | 0   |     |
+|             |        |     |     |     |     |     |     | OpenDelay |     |     |     |     |     |           |     |     |
+|             | R/W-0h |     |     |     |     |     |     |           |     |     |     |     |     |           |     |     |
+|             |        |     |     |     |     |     |     |           |     |     |     |     |     |           |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-44. STEPDELAY11 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -2138,26 +2148,26 @@ Step Configuration 12
 
 **Figure 12-45. STEPCONFIG12 Register**
 
-| 31                  | 30        | 29              | 28     | 27          | 26                                  | 25              | 24                  |  |
-|---------------------|-----------|-----------------|--------|-------------|-------------------------------------|-----------------|---------------------|--|
-|                     |           | RESERVED        |        | Range_check | FIFO_select                         | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |
-|                     |           | R/W-0h          |        | R/W-0h      | R/W-0h                              | R/W-0h          | R/W-0h              |  |
-| 23                  | 22        | 21              | 20     | 19          | 18                                  | 17              | 16                  |  |
-| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |        |             |                                     | SEL_INM_SWC_3_0 |                     |  |
-| R/W-0h              |           |                 | R/W-0h |             |                                     | R/W-0h          |                     |  |
-| 15                  | 14        | 13              | 12     | 11          | 10                                  | 9               | 8                   |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |        | WPNSW_SWC   | YPNSW_SWC<br>XNPSW_SWC<br>YNNSW_SWC |                 |                     |  |
-| R/W-0h              |           | R/W-0h          |        | R/W-0h      | R/W-0h                              | R/W-0h          | R/W-0h              |  |
-| 7                   | 6         | 5               | 4      | 3           | 2                                   | 1               | 0                   |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |        | Averaging   |                                     |                 | Mode                |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |        | R/W-0h      | R/W-0h                              |                 |                     |  |
+| 31                  | 30        | 29              | 28     | 27          | 26                                  | 25              | 24                  |     |
+| ------------------- | --------- | --------------- | ------ | ----------- | ----------------------------------- | --------------- | ------------------- | --- |
+|                     |           | RESERVED        |        | Range_check | FIFO_select                         | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |
+|                     |           | R/W-0h          |        | R/W-0h      | R/W-0h                              | R/W-0h          | R/W-0h              |     |
+| 23                  | 22        | 21              | 20     | 19          | 18                                  | 17              | 16                  |     |
+| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |        |             |                                     | SEL_INM_SWC_3_0 |                     |     |
+| R/W-0h              |           |                 | R/W-0h |             |                                     | R/W-0h          |                     |     |
+| 15                  | 14        | 13              | 12     | 11          | 10                                  | 9               | 8                   |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |        | WPNSW_SWC   | YPNSW_SWC<br>XNPSW_SWC<br>YNNSW_SWC |                 |                     |     |
+| R/W-0h              |           | R/W-0h          |        | R/W-0h      | R/W-0h                              | R/W-0h          | R/W-0h              |     |
+| 7                   | 6         | 5               | 4      | 3           | 2                                   | 1               | 0                   |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |        | Averaging   |                                     |                 | Mode                |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |        | R/W-0h      | R/W-0h                              |                 |                     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-45. STEPCONFIG12 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -2174,7 +2184,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-45. STEPCONFIG12 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                         |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -2191,21 +2201,21 @@ Step Delay Register 12
 
 **Figure 12-46. STEPDELAY12 Register**
 
-|             | 31        | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23       | 22 | 21 | 20 | 19 | 18 | 17        | 16     |  |
-|-------------|-----------|----|----|----|----|----|----|----|----------|----|----|----|----|----|-----------|--------|--|
-| SampleDelay |           |    |    |    |    |    |    |    | RESERVED |    |    |    |    |    | OpenDelay |        |  |
-| R/W-0h      |           |    |    |    |    |    |    |    | R/W-0h   |    |    |    |    |    |           | R/W-0h |  |
-|             | 15        | 14 | 13 | 12 | 11 | 10 | 9  | 8  | 7        | 6  | 5  | 4  | 3  | 2  | 1         | 0      |  |
-|             | OpenDelay |    |    |    |    |    |    |    |          |    |    |    |    |    |           |        |  |
-|             | R/W-0h    |    |    |    |    |    |    |    |          |    |    |    |    |    |           |        |  |
-|             |           |    |    |    |    |    |    |    |          |    |    |    |    |    |           |        |  |
+|             | 31        | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23       | 22  | 21  | 20  | 19  | 18  | 17        | 16     |     |
+| ----------- | --------- | --- | --- | --- | --- | --- | --- | --- | -------- | --- | --- | --- | --- | --- | --------- | ------ | --- |
+| SampleDelay |           |     |     |     |     |     |     |     | RESERVED |     |     |     |     |     | OpenDelay |        |     |
+| R/W-0h      |           |     |     |     |     |     |     |     | R/W-0h   |     |     |     |     |     |           | R/W-0h |     |
+|             | 15        | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7        | 6   | 5   | 4   | 3   | 2   | 1         | 0      |     |
+|             | OpenDelay |     |     |     |     |     |     |     |          |     |     |     |     |     |           |        |     |
+|             | R/W-0h    |     |     |     |     |     |     |     |          |     |     |     |     |     |           |        |     |
+|             |           |     |     |     |     |     |     |     |          |     |     |     |     |     |           |        |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-46. STEPDELAY12 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -2220,26 +2230,26 @@ Step Configuration 13
 
 **Figure 12-47. STEPCONFIG13 Register**
 
-| 31                  | 30        | 29               | 28 | 27          | 26          | 25              | 24                  |  |  |
-|---------------------|-----------|------------------|----|-------------|-------------|-----------------|---------------------|--|--|
-|                     |           | RESERVED         |    | Range_check | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |  |  |
-|                     |           | R/W-0h           |    | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 23                  | 22        | 21               | 20 | 19          | 18          | 17              | 16                  |  |  |
-| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0  |    |             |             | SEL_INM_SWC_3_0 |                     |  |  |
-| R/W-0h              |           | R/W-0h           |    |             | R/W-0h      |                 |                     |  |  |
-| 15                  | 14        | 13               | 12 | 11          | 10          | 9               | 8                   |  |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0  |    | WPNSW_SWC   | YPNSW_SWC   | YNNSW_SWC       |                     |  |  |
-| R/W-0h              |           | R/W-0h           |    | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |  |  |
-| 7                   | 6         | 5                |    | 3           | 2           | 1               | 0                   |  |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC        |    | Averaging   |             |                 | Mode                |  |  |
-| R/W-0h              | R/W-0h    | R/W-0h<br>R/W-0h |    |             |             |                 |                     |  |  |
+| 31                  | 30        | 29               | 28  | 27          | 26          | 25              | 24                  |     |     |
+| ------------------- | --------- | ---------------- | --- | ----------- | ----------- | --------------- | ------------------- | --- | --- |
+|                     |           | RESERVED         |     | Range_check | FIFO_select | Diff_CNTRL      | SEL_RFM_SW<br>C_1_0 |     |     |
+|                     |           | R/W-0h           |     | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 23                  | 22        | 21               | 20  | 19          | 18          | 17              | 16                  |     |     |
+| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0  |     |             |             | SEL_INM_SWC_3_0 |                     |     |     |
+| R/W-0h              |           | R/W-0h           |     |             | R/W-0h      |                 |                     |     |     |
+| 15                  | 14        | 13               | 12  | 11          | 10          | 9               | 8                   |     |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0  |     | WPNSW_SWC   | YPNSW_SWC   | YNNSW_SWC       |                     |     |     |
+| R/W-0h              |           | R/W-0h           |     | R/W-0h      | R/W-0h      | R/W-0h          | R/W-0h              |     |     |
+| 7                   | 6         | 5                |     | 3           | 2           | 1               | 0                   |     |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC        |     | Averaging   |             |                 | Mode                |     |     |
+| R/W-0h              | R/W-0h    | R/W-0h<br>R/W-0h |     |             |             |                 |                     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-47. STEPCONFIG13 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -2256,7 +2266,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-47. STEPCONFIG13 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                         |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -2273,20 +2283,20 @@ Step Delay Register 13
 
 **Figure 12-48. STEPDELAY13 Register**
 
-| 31          | 30     | 29 | 28 | 27 | 26 | 25 | 24 | 23        | 22 | 21 | 20 | 19 | 18 | 17        | 16 |  |
-|-------------|--------|----|----|----|----|----|----|-----------|----|----|----|----|----|-----------|----|--|
-| SampleDelay |        |    |    |    |    |    |    | RESERVED  |    |    |    |    |    | OpenDelay |    |  |
-| R/W-0h      |        |    |    |    |    |    |    | R/W-0h    |    |    |    |    |    | R/W-0h    |    |  |
-| 15          | 14     | 13 | 12 | 11 | 10 | 9  | 8  | 7         | 6  | 5  | 4  | 3  | 2  | 1         | 0  |  |
-|             |        |    |    |    |    |    |    | OpenDelay |    |    |    |    |    |           |    |  |
-|             | R/W-0h |    |    |    |    |    |    |           |    |    |    |    |    |           |    |  |
+| 31          | 30     | 29  | 28  | 27  | 26  | 25  | 24  | 23        | 22  | 21  | 20  | 19  | 18  | 17        | 16  |     |
+| ----------- | ------ | --- | --- | --- | --- | --- | --- | --------- | --- | --- | --- | --- | --- | --------- | --- | --- |
+| SampleDelay |        |     |     |     |     |     |     | RESERVED  |     |     |     |     |     | OpenDelay |     |     |
+| R/W-0h      |        |     |     |     |     |     |     | R/W-0h    |     |     |     |     |     | R/W-0h    |     |     |
+| 15          | 14     | 13  | 12  | 11  | 10  | 9   | 8   | 7         | 6   | 5   | 4   | 3   | 2   | 1         | 0   |     |
+|             |        |     |     |     |     |     |     | OpenDelay |     |     |     |     |     |           |     |     |
+|             | R/W-0h |     |     |     |     |     |     |           |     |     |     |     |     |           |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-48. STEPDELAY13 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -2301,26 +2311,26 @@ Step Configuration 14
 
 **Figure 12-49. STEPCONFIG14 Register**
 
-| 31                  | 30        | 29              | 28     | 27                | 26              | 25         | 24                  |  |
-|---------------------|-----------|-----------------|--------|-------------------|-----------------|------------|---------------------|--|
-|                     |           | RESERVED        |        | Range_check       | FIFO_select     | Diff_CNTRL | SEL_RFM_SW<br>C_1_0 |  |
-|                     |           | R/W-0h          |        | R/W-0h            | R/W-0h          | R/W-0h     | R/W-0h              |  |
-| 23                  | 22        | 21              | 20     | 19                | 18              | 17         | 16                  |  |
-| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |        |                   | SEL_INM_SWC_3_0 |            |                     |  |
-| R/W-0h              |           |                 | R/W-0h |                   |                 | R/W-0h     |                     |  |
-| 15                  | 14        | 13              | 12     | 11                | 10              | 9          | 8                   |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |        | WPNSW_SWC         | YPNSW_SWC       | XNPSW_SWC  | YNNSW_SWC           |  |
-| R/W-0h              |           | R/W-0h          |        | R/W-0h            | R/W-0h          | R/W-0h     | R/W-0h              |  |
-| 7                   | 6         | 5               | 4      | 3                 | 2               | 1          | 0                   |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |        | Averaging<br>Mode |                 |            |                     |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |        | R/W-0h            |                 |            | R/W-0h              |  |
+| 31                  | 30        | 29              | 28     | 27                | 26              | 25         | 24                  |     |
+| ------------------- | --------- | --------------- | ------ | ----------------- | --------------- | ---------- | ------------------- | --- |
+|                     |           | RESERVED        |        | Range_check       | FIFO_select     | Diff_CNTRL | SEL_RFM_SW<br>C_1_0 |     |
+|                     |           | R/W-0h          |        | R/W-0h            | R/W-0h          | R/W-0h     | R/W-0h              |     |
+| 23                  | 22        | 21              | 20     | 19                | 18              | 17         | 16                  |     |
+| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |        |                   | SEL_INM_SWC_3_0 |            |                     |     |
+| R/W-0h              |           |                 | R/W-0h |                   |                 | R/W-0h     |                     |     |
+| 15                  | 14        | 13              | 12     | 11                | 10              | 9          | 8                   |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |        | WPNSW_SWC         | YPNSW_SWC       | XNPSW_SWC  | YNNSW_SWC           |     |
+| R/W-0h              |           | R/W-0h          |        | R/W-0h            | R/W-0h          | R/W-0h     | R/W-0h              |     |
+| 7                   | 6         | 5               | 4      | 3                 | 2               | 1          | 0                   |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |        | Averaging<br>Mode |                 |            |                     |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |        | R/W-0h            |                 |            | R/W-0h              |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-49. STEPCONFIG14 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -2337,7 +2347,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-49. STEPCONFIG14 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                         |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -2354,21 +2364,21 @@ Step Delay Register 14
 
 **Figure 12-50. STEPDELAY14 Register**
 
-| 31          | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23        | 22 | 21 | 20       | 19 | 18 | 17 | 16        |
-|-------------|----|----|----|----|----|----|----|-----------|----|----|----------|----|----|----|-----------|
-| SampleDelay |    |    |    |    |    |    |    |           |    |    | RESERVED |    |    |    | OpenDelay |
-| R/W-0h      |    |    |    |    |    |    |    |           |    |    | R/W-0h   |    |    |    | R/W-0h    |
-| 15          | 14 | 13 | 12 | 11 | 10 | 9  | 8  | 7         | 6  | 5  | 4        | 3  | 2  | 1  | 0         |
-|             |    |    |    |    |    |    |    | OpenDelay |    |    |          |    |    |    |           |
-|             |    |    |    |    |    |    |    | R/W-0h    |    |    |          |    |    |    |           |
-|             |    |    |    |    |    |    |    |           |    |    |          |    |    |    |           |
+| 31          | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23        | 22  | 21  | 20       | 19  | 18  | 17  | 16        |
+| ----------- | --- | --- | --- | --- | --- | --- | --- | --------- | --- | --- | -------- | --- | --- | --- | --------- |
+| SampleDelay |     |     |     |     |     |     |     |           |     |     | RESERVED |     |     |     | OpenDelay |
+| R/W-0h      |     |     |     |     |     |     |     |           |     |     | R/W-0h   |     |     |     | R/W-0h    |
+| 15          | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7         | 6   | 5   | 4        | 3   | 2   | 1   | 0         |
+|             |     |     |     |     |     |     |     | OpenDelay |     |     |          |     |     |     |           |
+|             |     |     |     |     |     |     |     | R/W-0h    |     |     |          |     |     |     |           |
+|             |     |     |     |     |     |     |     |           |     |     |          |     |     |     |           |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-50. STEPDELAY14 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -2383,26 +2393,26 @@ Step Configuration 15
 
 **Figure 12-51. STEPCONFIG15 Register**
 
-| 31                  | 30        | 29              | 28     | 27                | 26              | 25         | 24                  |  |
-|---------------------|-----------|-----------------|--------|-------------------|-----------------|------------|---------------------|--|
-|                     |           | RESERVED        |        | Range_check       | FIFO_select     | Diff_CNTRL | SEL_RFM_SW<br>C_1_0 |  |
-|                     |           | R/W-0h          |        | R/W-0h            | R/W-0h          | R/W-0h     | R/W-0h              |  |
-| 23                  | 22        | 21              | 20     | 19                | 18              | 17         | 16                  |  |
-| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |        |                   | SEL_INM_SWC_3_0 |            |                     |  |
-| R/W-0h              |           |                 | R/W-0h |                   |                 | R/W-0h     |                     |  |
-| 15                  | 14        | 13              | 12     | 11                | 10              | 9          | 8                   |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |        | WPNSW_SWC         | YPNSW_SWC       | XNPSW_SWC  | YNNSW_SWC           |  |
-| R/W-0h              |           | R/W-0h          |        | R/W-0h            | R/W-0h          | R/W-0h     | R/W-0h              |  |
-| 7                   | 6         | 5               | 4      | 3                 | 2               | 1          | 0                   |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |        | Averaging<br>Mode |                 |            |                     |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |        | R/W-0h            |                 |            | R/W-0h              |  |
+| 31                  | 30        | 29              | 28     | 27                | 26              | 25         | 24                  |     |
+| ------------------- | --------- | --------------- | ------ | ----------------- | --------------- | ---------- | ------------------- | --- |
+|                     |           | RESERVED        |        | Range_check       | FIFO_select     | Diff_CNTRL | SEL_RFM_SW<br>C_1_0 |     |
+|                     |           | R/W-0h          |        | R/W-0h            | R/W-0h          | R/W-0h     | R/W-0h              |     |
+| 23                  | 22        | 21              | 20     | 19                | 18              | 17         | 16                  |     |
+| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |        |                   | SEL_INM_SWC_3_0 |            |                     |     |
+| R/W-0h              |           |                 | R/W-0h |                   |                 | R/W-0h     |                     |     |
+| 15                  | 14        | 13              | 12     | 11                | 10              | 9          | 8                   |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |        | WPNSW_SWC         | YPNSW_SWC       | XNPSW_SWC  | YNNSW_SWC           |     |
+| R/W-0h              |           | R/W-0h          |        | R/W-0h            | R/W-0h          | R/W-0h     | R/W-0h              |     |
+| 7                   | 6         | 5               | 4      | 3                 | 2               | 1          | 0                   |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |        | Averaging<br>Mode |                 |            |                     |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |        | R/W-0h            |                 |            | R/W-0h              |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-51. STEPCONFIG15 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -2419,7 +2429,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-51. STEPCONFIG15 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                         |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -2436,21 +2446,21 @@ Step Delay Register 15
 
 **Figure 12-52. STEPDELAY15 Register**
 
-| 31 | 30          | 29 | 28 | 27 | 26 | 25 | 24 | 23        | 22 | 21 | 20       | 19 | 18 | 17        | 16 |
-|----|-------------|----|----|----|----|----|----|-----------|----|----|----------|----|----|-----------|----|
-|    | SampleDelay |    |    |    |    |    |    |           |    |    | RESERVED |    |    | OpenDelay |    |
-|    | R/W-0h      |    |    |    |    |    |    |           |    |    | R/W-0h   |    |    | R/W-0h    |    |
-| 15 | 14          | 13 | 12 | 11 | 10 | 9  | 8  | 7         | 6  | 5  | 4        | 3  | 2  | 1         | 0  |
-|    |             |    |    |    |    |    |    | OpenDelay |    |    |          |    |    |           |    |
-|    |             |    |    |    |    |    |    | R/W-0h    |    |    |          |    |    |           |    |
-|    |             |    |    |    |    |    |    |           |    |    |          |    |    |           |    |
+| 31  | 30          | 29  | 28  | 27  | 26  | 25  | 24  | 23        | 22  | 21  | 20       | 19  | 18  | 17        | 16  |
+| --- | ----------- | --- | --- | --- | --- | --- | --- | --------- | --- | --- | -------- | --- | --- | --------- | --- |
+|     | SampleDelay |     |     |     |     |     |     |           |     |     | RESERVED |     |     | OpenDelay |     |
+|     | R/W-0h      |     |     |     |     |     |     |           |     |     | R/W-0h   |     |     | R/W-0h    |     |
+| 15  | 14          | 13  | 12  | 11  | 10  | 9   | 8   | 7         | 6   | 5   | 4        | 3   | 2   | 1         | 0   |
+|     |             |     |     |     |     |     |     | OpenDelay |     |     |          |     |     |           |     |
+|     |             |     |     |     |     |     |     | R/W-0h    |     |     |          |     |     |           |     |
+|     |             |     |     |     |     |     |     |           |     |     |          |     |     |           |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-52. STEPDELAY15 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -2465,26 +2475,26 @@ Step Configuration 16
 
 **Figure 12-53. STEPCONFIG16 Register**
 
-| 31                  | 30        | 29              | 28 | 27                | 26              | 25         | 24                  |  |  |
-|---------------------|-----------|-----------------|----|-------------------|-----------------|------------|---------------------|--|--|
-|                     |           | RESERVED        |    | Range_check       | FIFO_select     | Diff_CNTRL | SEL_RFM_SW<br>C_1_0 |  |  |
-|                     |           | R/W-0h          |    | R/W-0h            | R/W-0h          | R/W-0h     | R/W-0h              |  |  |
-| 23                  | 22        | 21              | 20 | 19                | 18              | 17         | 16                  |  |  |
-| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |    |                   | SEL_INM_SWC_3_0 |            |                     |  |  |
-| R/W-0h              |           | R/W-0h          |    |                   |                 | R/W-0h     |                     |  |  |
-| 15                  | 14        | 13              | 12 | 11                | 10              | 9          | 8                   |  |  |
-| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |    | WPNSW_SWC         | YPNSW_SWC       | XNPSW_SWC  | YNNSW_SWC           |  |  |
-| R/W-0h              |           | R/W-0h          |    | R/W-0h            | R/W-0h          | R/W-0h     | R/W-0h              |  |  |
-| 7                   | 6         | 5               | 4  | 3                 | 2               | 1          | 0                   |  |  |
-| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |    | Averaging<br>Mode |                 |            |                     |  |  |
-| R/W-0h              | R/W-0h    | R/W-0h          |    | R/W-0h            |                 |            | R/W-0h              |  |  |
+| 31                  | 30        | 29              | 28  | 27                | 26              | 25         | 24                  |     |     |
+| ------------------- | --------- | --------------- | --- | ----------------- | --------------- | ---------- | ------------------- | --- | --- |
+|                     |           | RESERVED        |     | Range_check       | FIFO_select     | Diff_CNTRL | SEL_RFM_SW<br>C_1_0 |     |     |
+|                     |           | R/W-0h          |     | R/W-0h            | R/W-0h          | R/W-0h     | R/W-0h              |     |     |
+| 23                  | 22        | 21              | 20  | 19                | 18              | 17         | 16                  |     |     |
+| SEL_RFM_SW<br>C_1_0 |           | SEL_INP_SWC_3_0 |     |                   | SEL_INM_SWC_3_0 |            |                     |     |     |
+| R/W-0h              |           | R/W-0h          |     |                   |                 | R/W-0h     |                     |     |     |
+| 15                  | 14        | 13              | 12  | 11                | 10              | 9          | 8                   |     |     |
+| SEL_INM_SW<br>C_3_0 |           | SEL_RFP_SWC_2_0 |     | WPNSW_SWC         | YPNSW_SWC       | XNPSW_SWC  | YNNSW_SWC           |     |     |
+| R/W-0h              |           | R/W-0h          |     | R/W-0h            | R/W-0h          | R/W-0h     | R/W-0h              |     |     |
+| 7                   | 6         | 5               | 4   | 3                 | 2               | 1          | 0                   |     |     |
+| YPPSW_SWC           | XNNSW_SWC | XPPSW_SWC       |     | Averaging<br>Mode |                 |            |                     |     |     |
+| R/W-0h              | R/W-0h    | R/W-0h          |     | R/W-0h            |                 |            | R/W-0h              |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-53. STEPCONFIG16 Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                        |
-|-------|-----------------|------|-------|--------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------ |
 | 31-28 | RESERVED        | R/W  | 0h    |                                                                                                                    |
 | 27    | Range_check     | R/W  | 0h    | 0 = Disable out-of-range check.<br>1 = Compare ADC data with range check register.                                 |
 | 26    | FIFO_select     | R/W  | 0h    | Sampled data will be stored in FIFO.<br>0 = FIFO.<br>1 = FIFO1.                                                    |
@@ -2501,7 +2511,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 12-53. STEPCONFIG16 Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                         |
-|-----|-----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | YPPSW_SWC | R/W  | 0h    | YPPSW pin SW configuration                                                                                                                                          |
 | 6   | XNNSW_SWC | R/W  | 0h    | XNNSW pin SW configuration                                                                                                                                          |
 | 5   | XPPSW_SWC | R/W  | 0h    | XPPSW pin SW configuration                                                                                                                                          |
@@ -2518,21 +2528,21 @@ Step Delay Register 16
 
 **Figure 12-54. STEPDELAY16 Register**
 
-| 31 | 30 | 29 | 28 | 27          | 26 | 25 | 24 | 23        | 22 | 21 | 20       | 19 | 18 | 17 | 16        |
-|----|----|----|----|-------------|----|----|----|-----------|----|----|----------|----|----|----|-----------|
-|    |    |    |    | SampleDelay |    |    |    |           |    |    | RESERVED |    |    |    | OpenDelay |
-|    |    |    |    | R/W-0h      |    |    |    |           |    |    | R/W-0h   |    |    |    | R/W-0h    |
-| 15 | 14 | 13 | 12 | 11          | 10 | 9  | 8  | 7         | 6  | 5  | 4        | 3  | 2  | 1  | 0         |
-|    |    |    |    |             |    |    |    | OpenDelay |    |    |          |    |    |    |           |
-|    |    |    |    |             |    |    |    | R/W-0h    |    |    |          |    |    |    |           |
-|    |    |    |    |             |    |    |    |           |    |    |          |    |    |    |           |
+| 31  | 30  | 29  | 28  | 27          | 26  | 25  | 24  | 23        | 22  | 21  | 20       | 19  | 18  | 17  | 16        |
+| --- | --- | --- | --- | ----------- | --- | --- | --- | --------- | --- | --- | -------- | --- | --- | --- | --------- |
+|     |     |     |     | SampleDelay |     |     |     |           |     |     | RESERVED |     |     |     | OpenDelay |
+|     |     |     |     | R/W-0h      |     |     |     |           |     |     | R/W-0h   |     |     |     | R/W-0h    |
+| 15  | 14  | 13  | 12  | 11          | 10  | 9   | 8   | 7         | 6   | 5   | 4        | 3   | 2   | 1   | 0         |
+|     |     |     |     |             |     |     |     | OpenDelay |     |     |          |     |     |     |           |
+|     |     |     |     |             |     |     |     | R/W-0h    |     |     |          |     |     |     |           |
+|     |     |     |     |             |     |     |     |           |     |     |          |     |     |     |           |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-54. STEPDELAY16 Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                        |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-24 | SampleDelay | R/W  | 0h    | This register will control the number of ADC clock cycles to sample<br>(hold SOC high).<br>Any value programmed here will be added to the minimum<br>requirement of 1 clock cycle. |
 | 23-18 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                    |
 | 17-0  | OpenDelay   | R/W  | 0h    | Program the number of ADC clock cycles to wait after applying the<br>step configuration registers and before sending the start of ADC<br>conversion                                |
@@ -2543,25 +2553,25 @@ Register mask: FFFFFFFFh
 
 FIFO0COUNT is shown in [Figure](#page-85-1) 12-55 and described in Table [12-55.](#page-85-2)
 
-FIFO0 word count@TSC\_ADC\_SS\_FIFO0 Word Count Register
+FIFO0 word count@TSC_ADC_SS_FIFO0 Word Count Register
 
 **Figure 12-55. FIFO0COUNT Register**
 
-| 31 | 30 | 29 | 28 | 27       | 26 | 25 | 24 | 23       | 22 | 21 | 20 | 19             | 18 | 17 | 16 |
-|----|----|----|----|----------|----|----|----|----------|----|----|----|----------------|----|----|----|
-|    |    |    |    |          |    |    |    | RESERVED |    |    |    |                |    |    |    |
-|    |    |    |    |          |    |    |    | R-0h     |    |    |    |                |    |    |    |
-| 15 | 14 | 13 | 12 | 11       | 10 | 9  | 8  | 7        | 6  | 5  | 4  | 3              | 2  | 1  | 0  |
-|    |    |    |    | RESERVED |    |    |    |          |    |    |    | Words_in_FIFO0 |    |    |    |
-|    |    |    |    | R-0h     |    |    |    |          |    |    |    | R-0h           |    |    |    |
-|    |    |    |    |          |    |    |    |          |    |    |    |                |    |    |    |
+| 31  | 30  | 29  | 28  | 27       | 26  | 25  | 24  | 23       | 22  | 21  | 20  | 19             | 18  | 17  | 16  |
+| --- | --- | --- | --- | -------- | --- | --- | --- | -------- | --- | --- | --- | -------------- | --- | --- | --- |
+|     |     |     |     |          |     |     |     | RESERVED |     |     |     |                |     |     |     |
+|     |     |     |     |          |     |     |     | R-0h     |     |     |     |                |     |     |     |
+| 15  | 14  | 13  | 12  | 11       | 10  | 9   | 8   | 7        | 6   | 5   | 4   | 3              | 2   | 1   | 0   |
+|     |     |     |     | RESERVED |     |     |     |          |     |     |     | Words_in_FIFO0 |     |     |     |
+|     |     |     |     | R-0h     |     |     |     |          |     |     |     | R-0h           |     |     |     |
+|     |     |     |     |          |     |     |     |          |     |     |     |                |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-55. FIFO0COUNT Register Field Descriptions**
 
 | Bit  | Field          | Type | Reset | Description                            |
-|------|----------------|------|-------|----------------------------------------|
+| ---- | -------------- | ---- | ----- | -------------------------------------- |
 | 31-7 | RESERVED       | R    | 0h    | RESERVED                               |
 | 6-0  | Words_in_FIFO0 | R    | 0h    | Number of words currently in the FIFO0 |
 
@@ -2571,31 +2581,31 @@ Register mask: FFFFFFFFh
 
 FIFO0THRESHOLD is shown in [Figure](#page-86-1) 12-56 and described in Table [12-56](#page-86-2).
 
-FIFO0 Threshold trigger@TSC\_ADC\_SS\_FIFO0 Threshold Level Register
+FIFO0 Threshold trigger@TSC_ADC_SS_FIFO0 Threshold Level Register
 
 ### **Figure 12-56. FIFO0THRESHOLD Register**
 
-| 31 | 30       | 29 | 28 | 27       | 26                    | 25 | 24 |
-|----|----------|----|----|----------|-----------------------|----|----|
-|    |          |    |    | RESERVED |                       |    |    |
-|    |          |    |    | R-0h     |                       |    |    |
-| 23 | 22       | 21 | 20 | 19       | 18                    | 17 | 16 |
-|    |          |    |    | RESERVED |                       |    |    |
-|    |          |    |    | R-0h     |                       |    |    |
-| 15 | 14       | 13 | 12 | 11       | 10                    | 9  | 8  |
-|    |          |    |    | RESERVED |                       |    |    |
-|    |          |    |    | R-0h     |                       |    |    |
-| 7  | 6        | 5  | 4  | 3        | 2                     | 1  | 0  |
-|    | RESERVED |    |    |          | FIFO0_threshold_Level |    |    |
-|    | R-0h     |    |    |          | R/W-0h                |    |    |
-|    |          |    |    |          |                       |    |    |
+| 31  | 30       | 29  | 28  | 27       | 26                    | 25  | 24  |
+| --- | -------- | --- | --- | -------- | --------------------- | --- | --- |
+|     |          |     |     | RESERVED |                       |     |     |
+|     |          |     |     | R-0h     |                       |     |     |
+| 23  | 22       | 21  | 20  | 19       | 18                    | 17  | 16  |
+|     |          |     |     | RESERVED |                       |     |     |
+|     |          |     |     | R-0h     |                       |     |     |
+| 15  | 14       | 13  | 12  | 11       | 10                    | 9   | 8   |
+|     |          |     |     | RESERVED |                       |     |     |
+|     |          |     |     | R-0h     |                       |     |     |
+| 7   | 6        | 5   | 4   | 3        | 2                     | 1   | 0   |
+|     | RESERVED |     |     |          | FIFO0_threshold_Level |     |     |
+|     | R-0h     |     |     |          | R/W-0h                |     |     |
+|     |          |     |     |          |                       |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 12-56. FIFO0THRESHOLD Register Field Descriptions**
 
 | Bit  | Field                 | Type | Reset | Description                                                                                                           |
-|------|-----------------------|------|-------|-----------------------------------------------------------------------------------------------------------------------|
+| ---- | --------------------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------- |
 | 31-6 | RESERVED              | R    | 0h    |                                                                                                                       |
 | 5-0  | FIFO0_threshold_Level | R/W  | 0h    | Program the desired FIFO0 data sample level to reach before<br>generating interrupt to CPU (program to value minus 1) |
 
@@ -2605,25 +2615,25 @@ Register mask: FFFFFFFFh
 
 DMA0REQ is shown in [Figure](#page-87-1) 12-57 and described in Table [12-57.](#page-87-2)
 
-FIFO0 DMA req0 trigger@TSC\_ADC\_SS\_FIFO0 DMA REQUEST Register
+FIFO0 DMA req0 trigger@TSC_ADC_SS_FIFO0 DMA REQUEST Register
 
 **Figure 12-57. DMA0REQ Register**
 
-| 31 | 30 | 29 | 28 | 27 | 26       | 25 | 24 | 23       | 22 | 21 | 20 | 19 | 18                | 17 | 16 |
-|----|----|----|----|----|----------|----|----|----------|----|----|----|----|-------------------|----|----|
-|    |    |    |    |    |          |    |    | RESERVED |    |    |    |    |                   |    |    |
-|    |    |    |    |    |          |    |    | R-0h     |    |    |    |    |                   |    |    |
-| 15 | 14 | 13 | 12 | 11 | 10       | 9  | 8  | 7        | 6  | 5  | 4  | 3  | 2                 | 1  | 0  |
-|    |    |    |    |    | RESERVED |    |    |          |    |    |    |    | DMA_Request_Level |    |    |
-|    |    |    |    |    | R-0h     |    |    |          |    |    |    |    | R/W-0h            |    |    |
-|    |    |    |    |    |          |    |    |          |    |    |    |    |                   |    |    |
+| 31  | 30  | 29  | 28  | 27  | 26       | 25  | 24  | 23       | 22  | 21  | 20  | 19  | 18                | 17  | 16  |
+| --- | --- | --- | --- | --- | -------- | --- | --- | -------- | --- | --- | --- | --- | ----------------- | --- | --- |
+|     |     |     |     |     |          |     |     | RESERVED |     |     |     |     |                   |     |     |
+|     |     |     |     |     |          |     |     | R-0h     |     |     |     |     |                   |     |     |
+| 15  | 14  | 13  | 12  | 11  | 10       | 9   | 8   | 7        | 6   | 5   | 4   | 3   | 2                 | 1   | 0   |
+|     |     |     |     |     | RESERVED |     |     |          |     |     |     |     | DMA_Request_Level |     |     |
+|     |     |     |     |     | R-0h     |     |     |          |     |     |     |     | R/W-0h            |     |     |
+|     |     |     |     |     |          |     |     |          |     |     |     |     |                   |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-57. DMA0REQ Register Field Descriptions**
 
 | Bit  | Field             | Type | Reset | Description                                                                            |
-|------|-------------------|------|-------|----------------------------------------------------------------------------------------|
+| ---- | ----------------- | ---- | ----- | -------------------------------------------------------------------------------------- |
 | 31-6 | RESERVED          | R    | 0h    | RESERVED                                                                               |
 | 5-0  | DMA_Request_Level | R/W  | 0h    | Number of words in FIFO0 before generating a DMA request<br>(program to value minus 1) |
 
@@ -2633,25 +2643,25 @@ Register mask: FFFFFFFFh
 
 FIFO1COUNT is shown in [Figure](#page-88-1) 12-58 and described in Table [12-58.](#page-88-2)
 
-FIFO1 word count@TSC\_ADC\_SS\_FIFO1 Word Count Register
+FIFO1 word count@TSC_ADC_SS_FIFO1 Word Count Register
 
 ### **Figure 12-58. FIFO1COUNT Register**
 
-| 31 | 30 | 29 | 28 | 27       | 26 | 25 | 24 | 23       | 22 | 21 | 20 | 19             | 18 | 17 | 16 |
-|----|----|----|----|----------|----|----|----|----------|----|----|----|----------------|----|----|----|
-|    |    |    |    |          |    |    |    | RESERVED |    |    |    |                |    |    |    |
-|    |    |    |    |          |    |    |    | R-0h     |    |    |    |                |    |    |    |
-| 15 | 14 | 13 | 12 | 11       | 10 | 9  | 8  | 7        | 6  | 5  | 4  | 3              | 2  | 1  | 0  |
-|    |    |    |    | RESERVED |    |    |    |          |    |    |    | Words_in_FIFO0 |    |    |    |
-|    |    |    |    | R-0h     |    |    |    |          |    |    |    | R-0h           |    |    |    |
-|    |    |    |    |          |    |    |    |          |    |    |    |                |    |    |    |
+| 31  | 30  | 29  | 28  | 27       | 26  | 25  | 24  | 23       | 22  | 21  | 20  | 19             | 18  | 17  | 16  |
+| --- | --- | --- | --- | -------- | --- | --- | --- | -------- | --- | --- | --- | -------------- | --- | --- | --- |
+|     |     |     |     |          |     |     |     | RESERVED |     |     |     |                |     |     |     |
+|     |     |     |     |          |     |     |     | R-0h     |     |     |     |                |     |     |     |
+| 15  | 14  | 13  | 12  | 11       | 10  | 9   | 8   | 7        | 6   | 5   | 4   | 3              | 2   | 1   | 0   |
+|     |     |     |     | RESERVED |     |     |     |          |     |     |     | Words_in_FIFO0 |     |     |     |
+|     |     |     |     | R-0h     |     |     |     |          |     |     |     | R-0h           |     |     |     |
+|     |     |     |     |          |     |     |     |          |     |     |     |                |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-58. FIFO1COUNT Register Field Descriptions**
 
 | Bit  | Field          | Type | Reset | Description                            |
-|------|----------------|------|-------|----------------------------------------|
+| ---- | -------------- | ---- | ----- | -------------------------------------- |
 | 31-7 | RESERVED       | R    | 0h    | RESERVED                               |
 | 6-0  | Words_in_FIFO0 | R    | 0h    | Number of words currently in the FIFO0 |
 
@@ -2661,30 +2671,30 @@ Register mask: FFFFFFFFh
 
 FIFO1THRESHOLD is shown in [Figure](#page-89-1) 12-59 and described in Table [12-59](#page-89-2).
 
-FIFO1 Threshold trigger@TSC\_ADC\_SS\_FIFO1 Threshold Level Register
+FIFO1 Threshold trigger@TSC_ADC_SS_FIFO1 Threshold Level Register
 
 **Figure 12-59. FIFO1THRESHOLD Register**
 
-| 31 | 30       | 29 | 28 | 27                    | 26 | 25 | 24 |
-|----|----------|----|----|-----------------------|----|----|----|
-|    |          |    |    | RESERVED              |    |    |    |
-|    |          |    |    | R-0h                  |    |    |    |
-| 23 | 22       | 21 | 20 | 19                    | 18 | 17 | 16 |
-|    |          |    |    | RESERVED              |    |    |    |
-|    |          |    |    | R-0h                  |    |    |    |
-| 15 | 14       | 13 | 12 | 11                    | 10 | 9  | 8  |
-|    |          |    |    | RESERVED              |    |    |    |
-|    |          |    |    | R-0h                  |    |    |    |
-| 7  | 6        | 5  | 4  | 3                     | 2  | 1  | 0  |
-|    | RESERVED |    |    | FIFO0_threshold_Level |    |    |    |
-|    | R-0h     |    |    | R/W-0h                |    |    |    |
+| 31  | 30       | 29  | 28  | 27                    | 26  | 25  | 24  |
+| --- | -------- | --- | --- | --------------------- | --- | --- | --- |
+|     |          |     |     | RESERVED              |     |     |     |
+|     |          |     |     | R-0h                  |     |     |     |
+| 23  | 22       | 21  | 20  | 19                    | 18  | 17  | 16  |
+|     |          |     |     | RESERVED              |     |     |     |
+|     |          |     |     | R-0h                  |     |     |     |
+| 15  | 14       | 13  | 12  | 11                    | 10  | 9   | 8   |
+|     |          |     |     | RESERVED              |     |     |     |
+|     |          |     |     | R-0h                  |     |     |     |
+| 7   | 6        | 5   | 4   | 3                     | 2   | 1   | 0   |
+|     | RESERVED |     |     | FIFO0_threshold_Level |     |     |     |
+|     | R-0h     |     |     | R/W-0h                |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 12-59. FIFO1THRESHOLD Register Field Descriptions**
 
 | Bit  | Field                 | Type | Reset | Description                                                                                                           |
-|------|-----------------------|------|-------|-----------------------------------------------------------------------------------------------------------------------|
+| ---- | --------------------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------- |
 | 31-6 | RESERVED              | R    | 0h    |                                                                                                                       |
 | 5-0  | FIFO0_threshold_Level | R/W  | 0h    | Program the desired FIFO0 data sample level to reach before<br>generating interrupt to CPU (program to value minus 1) |
 
@@ -2694,25 +2704,25 @@ Register mask: FFFFFFFFh
 
 DMA1REQ is shown in [Figure](#page-90-1) 12-60 and described in Table [12-60.](#page-90-2)
 
-FIFO1 DMA req1 trigger@TSC\_ADC\_SS\_FIFO1 DMA Request Register
+FIFO1 DMA req1 trigger@TSC_ADC_SS_FIFO1 DMA Request Register
 
 **Figure 12-60. DMA1REQ Register**
 
-| 31 | 30 | 29 | 28 | 27 | 26       | 25 | 24 | 23       | 22 | 21 | 20 | 19 | 18                | 17 | 16 |
-|----|----|----|----|----|----------|----|----|----------|----|----|----|----|-------------------|----|----|
-|    |    |    |    |    |          |    |    | RESERVED |    |    |    |    |                   |    |    |
-|    |    |    |    |    |          |    |    | R-0h     |    |    |    |    |                   |    |    |
-| 15 | 14 | 13 | 12 | 11 | 10       | 9  | 8  | 7        | 6  | 5  | 4  | 3  | 2                 | 1  | 0  |
-|    |    |    |    |    | RESERVED |    |    |          |    |    |    |    | DMA_Request_Level |    |    |
-|    |    |    |    |    | R-0h     |    |    |          |    |    |    |    | R/W-0h            |    |    |
-|    |    |    |    |    |          |    |    |          |    |    |    |    |                   |    |    |
+| 31  | 30  | 29  | 28  | 27  | 26       | 25  | 24  | 23       | 22  | 21  | 20  | 19  | 18                | 17  | 16  |
+| --- | --- | --- | --- | --- | -------- | --- | --- | -------- | --- | --- | --- | --- | ----------------- | --- | --- |
+|     |     |     |     |     |          |     |     | RESERVED |     |     |     |     |                   |     |     |
+|     |     |     |     |     |          |     |     | R-0h     |     |     |     |     |                   |     |     |
+| 15  | 14  | 13  | 12  | 11  | 10       | 9   | 8   | 7        | 6   | 5   | 4   | 3   | 2                 | 1   | 0   |
+|     |     |     |     |     | RESERVED |     |     |          |     |     |     |     | DMA_Request_Level |     |     |
+|     |     |     |     |     | R-0h     |     |     |          |     |     |     |     | R/W-0h            |     |     |
+|     |     |     |     |     |          |     |     |          |     |     |     |     |                   |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-60. DMA1REQ Register Field Descriptions**
 
 | Bit  | Field             | Type | Reset | Description                                                                            |
-|------|-------------------|------|-------|----------------------------------------------------------------------------------------|
+| ---- | ----------------- | ---- | ----- | -------------------------------------------------------------------------------------- |
 | 31-6 | RESERVED          | R    | 0h    | RESERVED                                                                               |
 | 5-0  | DMA_Request_Level | R/W  | 0h    | Number of words in FIFO0 before generating a DMA request<br>(program to value minus 1) |
 
@@ -2722,24 +2732,24 @@ Register mask: FFFFFFFFh
 
 FIFO0DATA is shown in [Figure](#page-91-1) 12-61 and described in Table [12-61](#page-91-2).
 
-ADC\_ FIFO0 \_READ Data @TSC\_ADC\_SS\_FIFO0 READ Register
+ADC\_ FIFO0 \_READ Data @TSC_ADC_SS_FIFO0 READ Register
 
 #### **Figure 12-61. FIFO0DATA Register**
 
-| 31 | 30 | 29       | 28 | 27 | 26       | 25 | 24 | 23 | 22 | 21      | 20 | 19 | 18 | 17        | 16 |
-|----|----|----------|----|----|----------|----|----|----|----|---------|----|----|----|-----------|----|
-|    |    |          |    |    | RESERVED |    |    |    |    |         |    |    |    | ADCCHNLID |    |
-|    |    |          |    |    | R-0h     |    |    |    |    |         |    |    |    | R-0h      |    |
-| 15 | 14 | 13       | 12 | 11 | 10       | 9  | 8  | 7  | 6  | 5       | 4  | 3  | 2  | 1         | 0  |
-|    |    | RESERVED |    |    |          |    |    |    |    | ADCDATA |    |    |    |           |    |
-|    |    | R-0h     |    |    |          |    |    |    |    | R-0h    |    |    |    |           |    |
+| 31  | 30  | 29       | 28  | 27  | 26       | 25  | 24  | 23  | 22  | 21      | 20  | 19  | 18  | 17        | 16  |
+| --- | --- | -------- | --- | --- | -------- | --- | --- | --- | --- | ------- | --- | --- | --- | --------- | --- |
+|     |     |          |     |     | RESERVED |     |     |     |     |         |     |     |     | ADCCHNLID |     |
+|     |     |          |     |     | R-0h     |     |     |     |     |         |     |     |     | R-0h      |     |
+| 15  | 14  | 13       | 12  | 11  | 10       | 9   | 8   | 7   | 6   | 5       | 4   | 3   | 2   | 1         | 0   |
+|     |     | RESERVED |     |     |          |     |     |     |     | ADCDATA |     |     |     |           |     |
+|     |     | R-0h     |     |     |          |     |     |     |     | R-0h    |     |     |     |           |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 12-61. FIFO0DATA Register Field Descriptions**
 
 | Bit   | Field     | Type | Reset | Description                                                                                            |
-|-------|-----------|------|-------|--------------------------------------------------------------------------------------------------------|
+| ----- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------ |
 | 31-20 | RESERVED  | R    | 0h    | RESERVED.                                                                                              |
 | 19-16 | ADCCHNLID | R    | 0h    | Optional ID tag of channel that captured the data.<br>If tag option is disabled, these bits will be 0. |
 | 15-12 | RESERVED  | R    | 0h    |                                                                                                        |
@@ -2751,25 +2761,25 @@ Register mask: FFFFFFFFh
 
 FIFO1DATA is shown in [Figure](#page-92-1) 12-62 and described in Table [12-62](#page-92-2).
 
-ADC FIFO1\_READ Data@TSC\_ADC\_SS\_FIFO1 READ Register
+ADC FIFO1_READ Data@TSC_ADC_SS_FIFO1 READ Register
 
 ### **Figure 12-62. FIFO1DATA Register**
 
-| 31 | 30       | 29 | 28 | 27 | 26 | 25       | 24 | 23 | 22 | 21      | 20 | 19 | 18 | 17        | 16 |
-|----|----------|----|----|----|----|----------|----|----|----|---------|----|----|----|-----------|----|
-|    |          |    |    |    |    | RESERVED |    |    |    |         |    |    |    | ADCCHNLID |    |
-|    |          |    |    |    |    | R-0h     |    |    |    |         |    |    |    | R-0h      |    |
-| 15 | 14       | 13 | 12 | 11 | 10 | 9        | 8  | 7  | 6  | 5       | 4  | 3  | 2  | 1         | 0  |
-|    | RESERVED |    |    |    |    |          |    |    |    | ADCDATA |    |    |    |           |    |
-|    | R-0h     |    |    |    |    |          |    |    |    | R-0h    |    |    |    |           |    |
-|    |          |    |    |    |    |          |    |    |    |         |    |    |    |           |    |
+| 31  | 30       | 29  | 28  | 27  | 26  | 25       | 24  | 23  | 22  | 21      | 20  | 19  | 18  | 17        | 16  |
+| --- | -------- | --- | --- | --- | --- | -------- | --- | --- | --- | ------- | --- | --- | --- | --------- | --- |
+|     |          |     |     |     |     | RESERVED |     |     |     |         |     |     |     | ADCCHNLID |     |
+|     |          |     |     |     |     | R-0h     |     |     |     |         |     |     |     | R-0h      |     |
+| 15  | 14       | 13  | 12  | 11  | 10  | 9        | 8   | 7   | 6   | 5       | 4   | 3   | 2   | 1         | 0   |
+|     | RESERVED |     |     |     |     |          |     |     |     | ADCDATA |     |     |     |           |     |
+|     | R-0h     |     |     |     |     |          |     |     |     | R-0h    |     |     |     |           |     |
+|     |          |     |     |     |     |          |     |     |     |         |     |     |     |           |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 12-62. FIFO1DATA Register Field Descriptions**
 
 | Bit   | Field     | Type | Reset | Description                                                                                            |
-|-------|-----------|------|-------|--------------------------------------------------------------------------------------------------------|
+| ----- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------ |
 | 31-20 | RESERVED  | R    | 0h    | RESERVED                                                                                               |
 | 19-16 | ADCCHNLID | R    | 0h    | Optional ID tag of channel that captured the data.<br>If tag option is disabled, these bits will be 0. |
 | 15-12 | RESERVED  | R    | 0h    | RESERVED                                                                                               |

@@ -1,16 +1,20 @@
+---
+title: AM335x Chapter 10 Interconnects
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 10 Interconnects
 
-
 This chapter describes the interconnects of the device.
-
-
 
 ## 10.1 Introduction
 
 The system interconnect is based on a 2-level hierarchical architecture (L3, L4) driven by system
 performance. The L4 interconnect is based on a fully native OCP infrastructure, directly complying with the
 OCPIP2.2 reference standard.
-
 
 ### 10.1.1 Terminology
 
@@ -39,7 +43,6 @@ ConnID: Any transaction in the system interconnect is tagged by an in-band quali
 uniquely identifies the initiator at a given interconnect point. A ConnID is transmitted in band with the
 request and is used for error-logging mechanism.
 
-
 ### 10.1.2 L3 Interconnect
 
 The L3 high-performance interconnect is based on a Network-On-Chip (NoC) interconnect infrastructure.
@@ -48,7 +51,6 @@ payload) and backward (read response with data payload, write response) transact
 interfaces of this NoC interconnect, both for Targets and Initiators; comply with the OCPIP2.2 reference
 standard.
 
-
 #### 10.1.2.1 L3 Topology
 
 The L3 topology is driven by performance requirements, bus types, and clocking structure. The main L3
@@ -56,32 +58,28 @@ paths are shown in Figure 10-1. Arrows indicate the master/slave relationship no
 partitioned into two separate clock domains: L3F corresponds to L3 Fast clock domain and L3S
 corresponds to L3 Slow clock domain.
 
-
 **Figure 10-1. L3 Topology**
 
-MPUSS                                                 2 Port           PRU-ICSS                                                   USB
-SGX530                         (Cortex A8)                                            GEMAC
-TPTC                                                   Debug
-LCD                                                              Switch             0     1                                               0         1     IEEE
-3 Channels                                                 Acc
-Ctrl                                                                                                                                                      1500
-R0 W0 R1 W1 R2 W2                                               Port
-128                 32          128   64         128 128 128 128 128 128            32               32   32     32                                       32        32      32
+MPUSS 2 Port PRU-ICSS USB
+SGX530 (Cortex A8) GEMAC
+TPTC Debug
+LCD Switch 0 1 0 1 IEEE
+3 Channels Acc
+Ctrl 1500
+R0 W0 R1 W1 R2 W2 Port
+128 32 128 64 128 128 128 128 128 128 32 32 32 32 32 32 32
 
+L3F L3S
 
-L3F                                                                                                         L3S
-
-
-128         32   32    32        32              64         64      FR           32      32       32                         32   32   32   32    32      32              32     32        32      32        32
+128 32 32 32 32 64 64 FR 32 32 32 32 32 32 32 32 32 32 32 32 32 32
 L4_WKUP
-0        1    2
-OCMC                             OCP-WP            L4_FAST                                           ADC
-TPTC CFG                                         SGX530                                                                                                      McASP1               USB             L4_WKUP
-RAM                                                                                                 TSC
+0 1 2
+OCMC OCP-WP L4_FAST ADC
+TPTC CFG SGX530 McASP1 USB L4_WKUP
+RAM TSC
 32
-EMIF                             TPCC                                                                                           L4_PER                   McASP0                  GPMC             MMCHS2
+EMIF TPCC L4_PER McASP0 GPMC MMCHS2
 DebugSS
-
 
 #### 10.1.2.2 L3 Port Mapping
 
@@ -117,12 +115,11 @@ Target Ports:
 – GPMC 32-bit target port
 – McASP0 32-bit target port
 
-–   McASP1 32-bit target port
-–   ADC_TSC 32-bit target port
-–   USB 32-bit target port
-–   MMHCS2 32-bit target port
-–   L4_WKUP wakeup 32-bit target port
-
+– McASP1 32-bit target port
+– ADC_TSC 32-bit target port
+– USB 32-bit target port
+– MMHCS2 32-bit target port
+– L4_WKUP wakeup 32-bit target port
 
 #### 10.1.2.3 Interconnect Requirements
 
@@ -130,41 +127,31 @@ The required L3 connections between bus masters and slave ports are shown in Tab
 interconnect will return an address-hole error if any initiator attempts to access a target to which it has no
 connection.
 
-
 **Table 10-1. L3 Master — Slave Connectivity**
 
 Slaves
 OCMC-RAM
 
-
 TPCC
-
 
 L4_PER ort0
 
-
 MMCHS2
-
 
 NOC Registers
 SGX530
-
 
 L4_WKUP
 
 DebugSS
 TPTC0–2 FG
 
-
 Expansion Slot
-
 
 USBCFG
 EMIF
 
-
 L4_Fast
-
 
 L4_PER Port1
 
@@ -175,27 +162,25 @@ L4_PER Port 3
 GPMC
 
 ADC / TSC
-Master ID          Masters
+Master ID Masters
 
-
-0x00           MPUSS M1 (128-bit)      R
-0x00           MPUSS M2 (64-bit)       R      R          R            R      R        R                R         R                                                            R      R           R        R        R         R         R
-0x18           TPTC0 RD                R      R                       R               R                R                                      R                               R      R           R        R        R
-0x19           TPTC0 WR                R      R                       R               R                R                                      R                               R      R           R        R        R         R
-0x1A           TPTC1 RD                R      R                       R               R                R                                      R                               R      R           R        R        R
-0x1B           TPTC1 WR                R      R                       R               R                R                                      R                               R      R           R        R        R
-0x1C           TPTC2 RD                R      R                       R               R                R                                                      R               R      R           R        R        R
-0x1D           TPTC2 WR                R      R                       R               R                R                                                      R               R      R           R        R        R
-0x24           LCD Controller          R      R                                                                                                                               R
-0x0E           PRU-ICSS (PRU0)         R      R          R            R               R                R                       R                                              R      R                             R         R         R
-0x0F           PRU-ICSS (PRU1)         R      R          R            R               R                R                       R                                              R      R                             R         R         R
-0x30           GEMAC                   R      R                                                                                                                               R
-0x20           SGX530                  R      R                                                                                                                               R
-0x34           USB0 DMA                R      R
-0x35           USB1 Queue Mgr          R      R                                                                                                                               R
-0x04           EMU (DAP)               R      R          R            R      R        R                R                                                      R               R      R           R        R        R         R         R
-0x05           IEEE1500                R      R          R            R      R        R                R                                                      R               R      R           R        R        R         R         R
-
+0x00 MPUSS M1 (128-bit) R
+0x00 MPUSS M2 (64-bit) R R R R R R R R R R R R R R R
+0x18 TPTC0 RD R R R R R R R R R R R
+0x19 TPTC0 WR R R R R R R R R R R R R
+0x1A TPTC1 RD R R R R R R R R R R R
+0x1B TPTC1 WR R R R R R R R R R R R
+0x1C TPTC2 RD R R R R R R R R R R R
+0x1D TPTC2 WR R R R R R R R R R R R
+0x24 LCD Controller R R R
+0x0E PRU-ICSS (PRU0) R R R R R R R R R R R R
+0x0F PRU-ICSS (PRU1) R R R R R R R R R R R R
+0x30 GEMAC R R R
+0x20 SGX530 R R R
+0x34 USB0 DMA R R
+0x35 USB1 Queue Mgr R R R
+0x04 EMU (DAP) R R R R R R R R R R R R R R R
+0x05 IEEE1500 R R R R R R R R R R R R R R R
 
 ### 10.1.3 L4 Interconnect
 
@@ -206,39 +191,33 @@ four initiators and can distribute those communication requests to and collect r
 This device provides three interfaces with L3 interconnect for High Speed Peripheral, Standard Peripheral,
 and Wakeup Peripherals. . Figure 10-2 shows the L4 bus architecture and memory-mapped peripherals.
 
-
 **Figure 10-2. L4 Topology**
-
 
 L3S
 M3
 
-32       32        32           32              32                   32              32
+32 32 32 32 32 32 32
 
+L4_PER L4_FAST L4_WKUP
 
-L4_PER                                     L4_FAST               L4_WKUP
-
-
-DCAN0             LCD Ctlr                         GEMAC        ADC_TSC
-DCAN1             Mailbox0                                      Control Module
-DMTIMER2          McASP0 CFG                                    DMTIMER0
-DMTIMER3          McASP1 CFG                                    DMTIMER1_1MS
-DMTIMER4          MMCHS0                PRU-ICSS                GPIO0
-DMTIMER5          MMCHS1                                        I2C0
-DMTIMER6          OCP Watchpoint                                M3 UMEM
+DCAN0 LCD Ctlr GEMAC ADC_TSC
+DCAN1 Mailbox0 Control Module
+DMTIMER2 McASP0 CFG DMTIMER0
+DMTIMER3 McASP1 CFG DMTIMER1_1MS
+DMTIMER4 MMCHS0 PRU-ICSS GPIO0
+DMTIMER5 MMCHS1 I2C0
+DMTIMER6 OCP Watchpoint M3 UMEM
 RTC
-DMTIMER7          SPI0                                          M3 DMEM
-eCAP/eQEP/ePWM0   SPI1                                          SmartReflex 0
-eCAP/eQEP/ePWM1   Spinlock                                      SmartReflex 1
-eCAP/eQEP/ePWM2   UART1                                         UART0
-eFuse Ctl         UART2                                         WDT1
-ELM               UART3
-GPIO1             UART4
-GPIO2             UART5
+DMTIMER7 SPI0 M3 DMEM
+eCAP/eQEP/ePWM0 SPI1 SmartReflex 0
+eCAP/eQEP/ePWM1 Spinlock SmartReflex 1
+eCAP/eQEP/ePWM2 UART1 UART0
+eFuse Ctl UART2 WDT1
+ELM UART3
+GPIO1 UART4
+GPIO2 UART5
 GPIO3
-I2C1                                                                                          DebugSS
+I2C1 DebugSS
 PRCM
-I2C2                                                                                         HWMaster1
+I2C2 HWMaster1
 IEEE1500
-
-

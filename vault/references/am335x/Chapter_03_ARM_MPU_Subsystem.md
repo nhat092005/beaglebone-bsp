@@ -1,3 +1,11 @@
+---
+title: AM335x Chapter 3 ARM MPU Subsystem
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 3 ARM MPU Subsystem
 
 **Document:** SPRUH73Q - October 2011 - Revised December 2019  
@@ -78,17 +86,20 @@ The Microprocessor Unit (MPU) subsystem handles transactions between the ARM cor
 ### ARM Cortex-A8 Microprocessor
 
 **Architecture:**
+
 - ARM Architecture version 7 ISA
 - 2-issue, in-order execution pipeline
 - Backward compatible with previous ARM ISA versions
 
 **Instruction Sets:**
+
 - Standard ARM instruction set
 - Thumb-2 technology for code density
 - Jazelle-X Java accelerator
 - Media extensions (NEON)
 
 **L1 Cache:**
+
 - Instruction and Data Cache: 32KB each
 - 4-way set associative
 - 16-word line length
@@ -96,6 +107,7 @@ The Microprocessor Unit (MPU) subsystem handles transactions between the ARM cor
 - SED (Single Error Detection) support
 
 **L2 Cache:**
+
 - Size: 256KB
 - 8-way set associative
 - 16-word line length
@@ -104,6 +116,7 @@ The Microprocessor Unit (MPU) subsystem handles transactions between the ARM cor
 - Hardware or software clearing of valid bits
 
 **Memory Management:**
+
 - Enhanced MMU with TLB
 - Fully associative separate ITLB: 32 entries
 - Fully associative separate DTLB: 32 entries
@@ -112,25 +125,29 @@ The Microprocessor Unit (MPU) subsystem handles transactions between the ARM cor
 
 **Coprocessors:**
 
-| Coprocessor | Description |
-|-------------|-------------|
-| NEON | Media coprocessor implementing Advanced SIMD architecture |
-| VFP | VFPv3 architecture, IEEE 754 compliant floating-point |
+| Coprocessor | Description                                               |
+| ----------- | --------------------------------------------------------- |
+| NEON        | Media coprocessor implementing Advanced SIMD architecture |
+| VFP         | VFPv3 architecture, IEEE 754 compliant floating-point     |
 
 **Branch Prediction:**
+
 - Branch Target Address Cache: 512 entries
 
 **External Interface:**
+
 - AXI protocol
 - 128-bit data width
 
 **Debug Support:**
+
 - Embedded Trace Macrocell (ETM) for non-invasive debugging
 - ARMv7 debug with watchpoint and breakpoint registers
 - 32-bit Advanced Peripheral Bus (APB) slave interface
 - CoreSight debug systems compatible
 
 **On-chip Memory:**
+
 - ROM: 176 KB
 - RAM (OCM): 64 KB
 
@@ -172,28 +189,34 @@ The Microprocessor Unit (MPU) subsystem handles transactions between the ARM cor
 ### Integrated Submodules
 
 **ARM Cortex-A8 Processor:**
+
 - High processing capability
 - NEON technology for mobile multimedia acceleration
 - AXI bus communication with AXI2OCP bridge
 - Interrupt reception from MPU INTC
 
 **Interrupt Controller (AINTC):**
+
 - Handles module interrupts
 - See Chapter 6 for detailed interrupt handling
 
 **AXI2OCP Bridge:**
+
 - Communication between ARM (AXI) and modules (OCP L3)
 - Interface to INTC (OCP)
 
 **I2Async Bridge:**
+
 - Asynchronous OCP to OCP interface
 - Between AXI2OCP bridge (MPU subsystem) and T2Async bridge (external)
 
 **Clock Generator:**
+
 - Provides divided clocks to internal modules
 - Input: MPU_CLK from PRCM
 
 **In-Circuit Emulator (ICECrusher):**
+
 - CoreSight Architecture compliant
 - Debugging capabilities
 
@@ -243,19 +266,20 @@ MPU_DPLL → MPU_CLK → Clock Generator
 
 **Clock Frequencies:**
 
-| Clock Signal | Frequency | Purpose |
-|--------------|-----------|---------|
-| ARM_FCLK | MPU_CLK | ARM core, NEON, L2 cache, ETM, internal RAMs |
-| AXI2OCP_FCLK | MPU_CLK / 2 | OCP interface bridge |
-| MPU_INTC_FCLK | MPU_CLK / 2 | Interrupt controller |
-| ICECRUSHER_FCLK | MPU_CLK / 2 | Debug APB interface |
-| I2ASYNC_FCLK | MPU_CLK / 2 | Asynchronous bridge (MPU side) |
-| T2ASYNC | Core Clock | Asynchronous bridge (device side, from PRCM) |
-| EMU_CLOCKS | Max ARM_FCLK / 3 | Emulation (async to ARM core) |
+| Clock Signal    | Frequency        | Purpose                                      |
+| --------------- | ---------------- | -------------------------------------------- |
+| ARM_FCLK        | MPU_CLK          | ARM core, NEON, L2 cache, ETM, internal RAMs |
+| AXI2OCP_FCLK    | MPU_CLK / 2      | OCP interface bridge                         |
+| MPU_INTC_FCLK   | MPU_CLK / 2      | Interrupt controller                         |
+| ICECRUSHER_FCLK | MPU_CLK / 2      | Debug APB interface                          |
+| I2ASYNC_FCLK    | MPU_CLK / 2      | Asynchronous bridge (MPU side)               |
+| T2ASYNC         | Core Clock       | Asynchronous bridge (device side, from PRCM) |
+| EMU_CLOCKS      | Max ARM_FCLK / 3 | Emulation (async to ARM core)                |
 
 **Clock Divider Configuration:**
 
 The output clock divider can be programmed with:
+
 - Register: `CM_DIV_M2_DPLL_MPU.DPLL_CLKOUT_DIV`
 - Frequency relative to ARM core
 - See Chapter 8 (PRCM) for details
@@ -266,14 +290,14 @@ All resets provided by PRCM and controlled by the clock generator module.
 
 **Reset Signals:**
 
-| Signal | Source | Target |
-|--------|--------|--------|
-| MPU_RSTPWRON | PRCM | MPU power-on reset |
-| MPU_RST | PRCM | MPU subsystem modules |
-| CORE_RST | PRCM | INTC, ARM core |
-| NEON_RST | PRCM | NEON coprocessor |
-| EMU_RSTPWRON | PRCM | Emulation power-on reset |
-| EMU_RST | PRCM | Emulation modules |
+| Signal       | Source | Target                   |
+| ------------ | ------ | ------------------------ |
+| MPU_RSTPWRON | PRCM   | MPU power-on reset       |
+| MPU_RST      | PRCM   | MPU subsystem modules    |
+| CORE_RST     | PRCM   | INTC, ARM core           |
+| NEON_RST     | PRCM   | NEON coprocessor         |
+| EMU_RSTPWRON | PRCM   | Emulation power-on reset |
+| EMU_RST      | PRCM   | Emulation modules        |
 
 **Reset Scheme:**
 
@@ -317,6 +341,7 @@ The AXI bus interface is the main interface to the ARM system bus:
 **Transaction Rules:**
 
 Memory region attributes determine:
+
 - Ordering
 - Posting
 - Pipeline synchronization
@@ -329,11 +354,11 @@ The device supports special secure monitor functions for accessing ARM core regi
 
 **Available Service IDs:**
 
-| Service ID (R12) | Function |
-|------------------|----------|
-| 0x100 | Write value in R0 to Auxiliary Control Register |
-| 0x101 | Write value in R0 to Non-Secure Access Control Register |
-| 0x102 | Write value in R0 to L2 Cache Auxiliary Control Register |
+| Service ID (R12) | Function                                                 |
+| ---------------- | -------------------------------------------------------- |
+| 0x100            | Write value in R0 to Auxiliary Control Register          |
+| 0x101            | Write value in R0 to Non-Secure Access Control Register  |
+| 0x102            | Write value in R0 to L2 Cache Auxiliary Control Register |
 
 **Procedure:**
 
@@ -365,28 +390,28 @@ _enableL2ECC:
 
 ### Supported Features Summary
 
-| Feature | Description |
-|---------|-------------|
-| ARM ISA Version | ARMv7 with Thumb-2, Jazelle-X, Media extensions |
-| Backward Compatibility | Previous ARM ISA versions supported |
-| L1 I-cache | 32KB, 4-way, 16-word line, 128-bit interface |
-| L1 D-cache | 32KB, 4-way, 16-word line, 128-bit interface |
-| L2 Cache | 256KB, 8-way, 16-word line, 128-bit to L1, ECC/Parity |
-| L2 Valid Bits | Software loop or hardware clearing |
-| TLB | Fully associative, separate ITLB (32 entries) and DTLB (32 entries) |
-| CoreSight ETM | Embedded with ARM core, 32KB ETB at chip level |
-| Branch Target Cache | 512 entries |
-| MMU | Enhanced with 4KB, 64KB, 1MB, 16MB mapping sizes |
-| NEON | Enhanced throughput for media workloads, VFP-Lite support |
-| ROM | 176KB flat memory |
-| RAM | 64KB flat memory |
-| Internal Bus | 128-bit AXI from Cortex-A8 via AXI2OCP bridge |
-| OCP Ports | 128-bit and 64-bit asynchronous |
-| Low Interrupt Latency | Closely coupled INTC with 128 interrupt lines |
-| Vectored Interrupt | Controller port present |
-| Debug | JTAG-based via DAP |
-| Trace | Supported via TPIU |
-| External Coprocessor | Not supported |
+| Feature                | Description                                                         |
+| ---------------------- | ------------------------------------------------------------------- |
+| ARM ISA Version        | ARMv7 with Thumb-2, Jazelle-X, Media extensions                     |
+| Backward Compatibility | Previous ARM ISA versions supported                                 |
+| L1 I-cache             | 32KB, 4-way, 16-word line, 128-bit interface                        |
+| L1 D-cache             | 32KB, 4-way, 16-word line, 128-bit interface                        |
+| L2 Cache               | 256KB, 8-way, 16-word line, 128-bit to L1, ECC/Parity               |
+| L2 Valid Bits          | Software loop or hardware clearing                                  |
+| TLB                    | Fully associative, separate ITLB (32 entries) and DTLB (32 entries) |
+| CoreSight ETM          | Embedded with ARM core, 32KB ETB at chip level                      |
+| Branch Target Cache    | 512 entries                                                         |
+| MMU                    | Enhanced with 4KB, 64KB, 1MB, 16MB mapping sizes                    |
+| NEON                   | Enhanced throughput for media workloads, VFP-Lite support           |
+| ROM                    | 176KB flat memory                                                   |
+| RAM                    | 64KB flat memory                                                    |
+| Internal Bus           | 128-bit AXI from Cortex-A8 via AXI2OCP bridge                       |
+| OCP Ports              | 128-bit and 64-bit asynchronous                                     |
+| Low Interrupt Latency  | Closely coupled INTC with 128 interrupt lines                       |
+| Vectored Interrupt     | Controller port present                                             |
+| Debug                  | JTAG-based via DAP                                                  |
+| Trace                  | Supported via TPIU                                                  |
+| External Coprocessor   | Not supported                                                       |
 
 ---
 
@@ -397,6 +422,7 @@ _enableL2ECC:
 The Host ARM Interrupt Controller (AINTC) prioritizes service requests from system peripherals and generates nIRQ or nFIQ to the ARM processor.
 
 **Interface:**
+
 - Connects to ARM via AXI port through AXI2OCP bridge
 - Runs at half the processor speed
 - Handles up to 128 interrupt requests
@@ -411,6 +437,7 @@ The Host ARM Interrupt Controller (AINTC) prioritizes service requests from syst
 ### Configuration
 
 All interrupt configuration is programmable:
+
 - Interrupt type (nIRQ or nFIQ)
 - Priority levels
 - Enable/disable per interrupt
@@ -467,15 +494,16 @@ The MPU subsystem is divided into four power domains controlled by PRCM:
 
 Each power domain can be in one of three states:
 
-| State | Logic Power | Memory Power | Clocks |
-|-------|-------------|--------------|--------|
-| Active | On | On or Off | On (at least one clock) |
-| Inactive | On | On or Off | Off |
-| Off | Off | Off | Off (all clocks) |
+| State    | Logic Power | Memory Power | Clocks                  |
+| -------- | ----------- | ------------ | ----------------------- |
+| Active   | On          | On or Off    | On (at least one clock) |
+| Inactive | On          | On or Off    | Off                     |
+| Off      | Off         | Off          | Off (all clocks)        |
 
 ### Power Modes
 
 The MPU subsystem supports multiple operational power modes. The PRCM manages all transitions by controlling:
+
 - Domain clocks
 - Domain resets
 - Domain logic power switches
@@ -497,24 +525,25 @@ CAUTION: The MPU L1 cache memory does not support retention mode. Its array swit
 
 ### Supported Operation Modes
 
-| Mode | MPU & ARM Logic | ARM L2 RAM | NEON | INTC | Device Core | ETM APB/ATB Debug |
-|------|----------------|------------|------|------|-------------|-------------------|
-| 1 | Active | Active | Active | Active | Disabled or enabled | |
-| 2 | Active | Active | OFF | Active | Disabled or enabled | |
-| 3 | Active | RET | Active | Active | Disabled or enabled | |
-| 4 | Active | RET | OFF | Active | Disabled or enabled | |
-| 5 | Active | OFF | Active | Active | Disabled or enabled | |
-| 6 | Active | OFF | OFF | Active | Disabled or enabled | |
-| 7 | OFF | RET | OFF | OFF | Disabled or enabled | |
-| 8 | Standby | Active | Standby | Active | Disabled or enabled | |
-| 9 | Standby | Active | OFF | Active | Disabled or enabled | |
-| 10 | Standby | RET | Standby | Active | Disabled or enabled | |
-| 11 | Standby | RET | OFF | Active | Disabled or enabled | |
-| 12 | Standby | OFF | Standby | Active | Disabled or enabled | |
-| 13 | Standby | OFF | OFF | Active | Disabled or enabled | |
-| 14 | OFF | OFF | OFF | OFF | Disabled or enabled | |
+| Mode | MPU & ARM Logic | ARM L2 RAM | NEON    | INTC   | Device Core         | ETM APB/ATB Debug |
+| ---- | --------------- | ---------- | ------- | ------ | ------------------- | ----------------- |
+| 1    | Active          | Active     | Active  | Active | Disabled or enabled |                   |
+| 2    | Active          | Active     | OFF     | Active | Disabled or enabled |                   |
+| 3    | Active          | RET        | Active  | Active | Disabled or enabled |                   |
+| 4    | Active          | RET        | OFF     | Active | Disabled or enabled |                   |
+| 5    | Active          | OFF        | Active  | Active | Disabled or enabled |                   |
+| 6    | Active          | OFF        | OFF     | Active | Disabled or enabled |                   |
+| 7    | OFF             | RET        | OFF     | OFF    | Disabled or enabled |                   |
+| 8    | Standby         | Active     | Standby | Active | Disabled or enabled |                   |
+| 9    | Standby         | Active     | OFF     | Active | Disabled or enabled |                   |
+| 10   | Standby         | RET        | Standby | Active | Disabled or enabled |                   |
+| 11   | Standby         | RET        | OFF     | Active | Disabled or enabled |                   |
+| 12   | Standby         | OFF        | Standby | Active | Disabled or enabled |                   |
+| 13   | Standby         | OFF        | OFF     | Active | Disabled or enabled |                   |
+| 14   | OFF             | OFF        | OFF     | OFF    | Disabled or enabled |                   |
 
 **Key:**
+
 - RET = Retention
 - OFF = Powered off
 - Active = Fully operational
@@ -522,6 +551,7 @@ CAUTION: The MPU L1 cache memory does not support retention mode. Its array swit
 **Requirements:**
 
 The MPU subsystem must be in a power mode where:
+
 - MPU power domain is in standby or off
 - NEON power domain is in standby or off
 - Debug power domain is in standby or off
@@ -547,6 +577,7 @@ For clock configuration settings, see Chapter 8 (PRCM).
 2. Clocks must be active during MPU reset and CORE reset
 
 **Applicability:**
+
 - Initial power-up
 - Wakeup from device off mode
 
@@ -561,6 +592,7 @@ For clock configuration settings, see Chapter 8 (PRCM).
 5. INTC acknowledges to PRCM
 
 **Notes:**
+
 - INTC SWAKEUP output is a hardware signal to PRCM for IDLE request/acknowledge handshake status
 - In debug mode, ICECrusher can prevent MPU subsystem from entering IDLE mode
 
@@ -573,6 +605,7 @@ For clock configuration settings, see Chapter 8 (PRCM).
 3. Initiate interrupt through INTC to wake up ARM core from STANDBYWFI mode
 
 **Applicability:**
+
 - Exit from standby
 - Wakeup from device off mode
 
@@ -599,11 +632,13 @@ For clock configuration settings, see Chapter 8 (PRCM).
 ### Clock Management Registers
 
 **CM_DIV_M2_DPLL_MPU:**
+
 - Field: `DPLL_CLKOUT_DIV`
 - Purpose: Configure clock divider for MPU subsystem
 - Result: Frequencies relative to ARM core
 
 **CM_MPU_MPU_CLKCTRL:**
+
 - Field: `STBYST`
 - Purpose: Check MPU standby status
 
@@ -612,14 +647,17 @@ See Chapter 8 (PRCM) for complete register map and detailed descriptions.
 ### CP15 Registers (Secure Monitor Access)
 
 **Auxiliary Control Register:**
+
 - Access: Secure monitor call with service ID 0x100
 - Write value in R0
 
 **Non-Secure Access Control Register:**
+
 - Access: Secure monitor call with service ID 0x101
 - Write value in R0
 
 **L2 Cache Auxiliary Control Register:**
+
 - Access: Secure monitor call with service ID 0x102
 - Write value in R0
 - Example use: Enable L2 ECC (set bits 21 and 28)
@@ -631,12 +669,14 @@ See Chapter 8 (PRCM) for complete register map and detailed descriptions.
 ### Memory Map
 
 **On-Chip Memory:**
+
 - ROM: 176KB (code and data)
 - RAM (OCM): 64KB (SRAM internal)
 
 ### Interconnect
 
 **L3 Interconnect:**
+
 - Connection via I2Async → T2Async bridges
 - OCP Master 0: 128-bit
 - OCP Master 1: 64-bit
@@ -644,6 +684,7 @@ See Chapter 8 (PRCM) for complete register map and detailed descriptions.
 ### Debug Architecture
 
 **CoreSight Components:**
+
 - ETM: Embedded in ARM core
 - ETB: 32KB at chip level (DebugSS)
 - DAP: Debug Access Port
@@ -651,6 +692,7 @@ See Chapter 8 (PRCM) for complete register map and detailed descriptions.
 - ICECrusher: Debug interface controller
 
 **Access:**
+
 - JTAG-based debug
 - APB slave interface (32-bit)
 - ATB (Advanced Trace Bus) for trace data
@@ -726,11 +768,13 @@ See Chapter 8 (PRCM) for complete register map and detailed descriptions.
 ### TLB Configuration
 
 **Instruction TLB:**
+
 - Entries: 32
 - Associativity: Fully associative
 - Page sizes: 4KB, 64KB, 1MB, 16MB
 
 **Data TLB:**
+
 - Entries: 32
 - Associativity: Fully associative
 - Page sizes: 4KB, 64KB, 1MB, 16MB
@@ -738,6 +782,7 @@ See Chapter 8 (PRCM) for complete register map and detailed descriptions.
 ### Bus Specifications
 
 **AXI Interface:**
+
 - Protocol: AMBA AXI
 - Data width: 128-bit
 - Address width: 32-bit
@@ -745,6 +790,7 @@ See Chapter 8 (PRCM) for complete register map and detailed descriptions.
 - Clock ratio: Synchronous with core, supports various ratios
 
 **OCP Interface:**
+
 - Protocol: OCP 2.2
 - SRMD: Single Request Multiple Data
 - Port widths: 128-bit, 64-bit, 32-bit

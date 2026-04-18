@@ -1,10 +1,14 @@
+---
+title: AM335x Chapter 11 Enhanced Direct Memory Access
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 11 Enhanced Direct Memory Access (EDMA)
 
-
-
 This chapter describes the EDMA of the device.
-
-
 
 ## 11.1 Introduction
 
@@ -27,39 +31,34 @@ The EDMA3 transfer controllers are slaves to the EDMA3 channel controller that i
 movement. The transfer controller issues read/write commands to the source and destination addresses
 that are programmed for a given transfer. The operation is transparent to user.
 
-
 ### 11.1.1 EDMA3 Controller Block Diagram
 
 Figure 11-1 shows a block diagram for the EDMA3 controller.
-
 
 **Figure 11-1. EDMA3 Controller Block Diagram**
 
 Transfer
 controllers
 MMR
-Channel controller                                                         access
+Channel controller access
 Read/write
-TC0        commands
-To/from       DMA/QDMA                                   Transfer                                           and data
+TC0 commands
+To/from DMA/QDMA Transfer and data
 Event
-EDMA3          channel                     PaRAM          request                 EDMA3TC0_
+EDMA3 channel PaRAM request EDMA3TC0\_
 queues
-programmer          logic                                   submission                  ERRINT
-
+programmer logic submission ERRINT
 
 MMR
 access
-Completion                                                                                     Read/write
-EDMA3CC_ERRINT                                                     Completion                               TC2        commands
+Completion Read/write
+EDMA3CC*ERRINT Completion TC2 commands
 and error
-EDMA3CC_INT[7:0]         interrupt                                  detection                                          and data
-EDMA3CC_MPINT           logic                                                             EDMA3TC2_
+EDMA3CC_INT[7:0] interrupt detection and data
+EDMA3CC_MPINT logic EDMA3TC2*
 ERRINT
 
-
 ### 11.1.2 Third-Party Channel Controller (TPCC) Overview
-
 
 #### 11.1.2.1 TPCC Features
 
@@ -100,7 +99,6 @@ The general features of the TPCC module are:
 • Parameterizable number of Write Completion interfaces (up to 8) (set to number of TC Channels)
 • AET Event generation
 
-
 #### 11.1.2.2 Unsupported TPCC Features
 
 This device does not support AET event generation because output is not connected.
@@ -109,15 +107,12 @@ supported.
 The channel controller only supports 4 memory protection regions 0-3.
 The channel controller only supports 4 shadow regions 0-3.
 
-
 Only 2 region completion interrupts are connected at the system level. See Table 10-1 for more
 information.
 Only 256 PaRAM entries are supported.
 Only 3 event queues are supported.
 
-
 ### 11.1.3 Third-Party Transfer Controller (TPTC) Overview
-
 
 #### 11.1.3.1 TPTC Features
 
@@ -135,14 +130,11 @@ The TPTC module includes the following features:
 • Interrupt and error support
 • Single clock domain for all interfaces
 
-
 #### 11.1.3.2 Unsupported TPTC Features
 
 TPTCx supports 512-byte FIFO size.
 
-
 ## 11.2 Integration
-
 
 ### 11.2.1 Third-Party Channel Controller (TPCC) Integration
 
@@ -151,44 +143,39 @@ TPCC Integration shows the integration of the TPCC module.
 
 TPCC Integration
 
-
 TPCC
-L3 Fast                                   TR Interface
-CFG Slave      Master                    To TPTCs
+L3 Fast TR Interface
+CFG Slave Master To TPTCs
 Interconnect
-mpint_pend_po                            Fr. TPTC0
-Host ARM                      errint_pend_po     Completion
-Interrupts                                           Ports             Fr. TPTC1
+mpint_pend_po Fr. TPTC0
+Host ARM errint_pend_po Completion
+Interrupts Ports Fr. TPTC1
 int_pend_po0
 Fr. TPTC2
-PRU-ICSS Interrupts                 int_pend_po1
+PRU-ICSS Interrupts int_pend_po1
 int_pend_po[3:2]
 intg_pend_po
 aet_po
 Crossbar
 
-
 From Event
 Event
 
-
-Sources                          event_pi[63:0]
-(up to 128)                   64
-
+Sources event_pi[63:0]
+(up to 128) 64
 
 #### 11.2.1.1 TPCC Connectivity Attributes
 
 The general connectivity attributes of the TPCC are summarized in Table 11-1.
 
-
 **Table 11-1. TPCC Connectivity Attributes**
 
-Attributes                                                                Type
-Power domain                                                              Peripheral Domain
-Clock domain                                                              PD_PER_L3_GCLK
-Reset signals                                                             PER_DOM_RST_N
-Idle/Wakeup signals                                                       Smart Idle
-Interrupt request                                                         4 Regional Completion Interrupts:
+Attributes Type
+Power domain Peripheral Domain
+Clock domain PD_PER_L3_GCLK
+Reset signals PER_DOM_RST_N
+Idle/Wakeup signals Smart Idle
+Interrupt request 4 Regional Completion Interrupts:
 int_pend_po0 (EDMACOMPINT) – to MPU Subsystem
 int_pend_po1 (tpcc_int_pend_po1) – to PRU-ICSS
 Int_pend_po[3:2] - unused
@@ -196,26 +183,22 @@ Error Interrupt:
 errint_po (EDMAERRINT) – to MPU Subsystem
 Memory Protection Error Interrupt:
 mpint_p0 (EDMAMPERR) – to MPU Subsystem
-DMA request                                                               none
-Physical address                                                          L3 Fast slave port
-
+DMA request none
+Physical address L3 Fast slave port
 
 #### 11.2.1.2 TPCC Clock and Reset Management
 
 The TPCC operates from a single clock and runs at the L3_Fast clock rate.
 
-
 **Table 11-2. TPCC Clock Signals**
 
-Clock Signal                       Max Freq                               Reference / Source            Comments
-tpcc_clk_pi                        200 MHz                                CORE_CLKOUTM4                 pd_per_l3_gclk
-Interface / Functional clock                                                                            From PRCM
-
+Clock Signal Max Freq Reference / Source Comments
+tpcc_clk_pi 200 MHz CORE_CLKOUTM4 pd_per_l3_gclk
+Interface / Functional clock From PRCM
 
 #### 11.2.1.3 TPCC Pin List
 
 The TPCC module does not include any external interface pins.
-
 
 ### 11.2.2 Third-Party Transfer Controller (TPTC) Integration
 
@@ -227,71 +210,63 @@ TPTC Integration
 
 Device
 TPTC
-L3 Fast             CFG Slave                                        L3 Fast
+L3 Fast CFG Slave L3 Fast
 Master Read
-Interconnect                                                              Interconnect
+Interconnect Interconnect
 128
 
 L3 Fast
-Master Write               Interconnect
-Control                                                           128
+Master Write Interconnect
+Control 128
 dbs_pi[1:0]
 Module
 
 MPU Subsystem
-erint_pend_po          Completion
-PRU-ICSS                                                                  To TPCC
+erint_pend_po Completion
+PRU-ICSS To TPCC
 Port
 Interrupts
 int_pend_po
 
 bigendian_pi
 
-
 #### 11.2.2.1 TPTC Connectivity Attributes
 
 The general connectivity attributes for the TPTCs are shown in Table 11-3.
 
-
 **Table 11-3. TPTC Connectivity Attributes**
 
-Attributes                                                           Type
-Power domain                                                         Peripheral Domain
-Clock domain                                                         PD_PER_L3_GCLK
-Reset signals                                                        PER_DOM_RST_N
-Idle/Wakeup signals                                                  Standby
+Attributes Type
+Power domain Peripheral Domain
+Clock domain PD_PER_L3_GCLK
+Reset signals PER_DOM_RST_N
+Idle/Wakeup signals Standby
 Smart Idle
-Interrupt request                                                    Error interrupt per instance
+Interrupt request Error interrupt per instance
 erint_pend_po (TCERRINTx) – to MPU Subsystem and PRU-
 ICSS (tptc_erint_pend_po, TPTC0 only)
-DMA request                                                          none
-Physical address                                                     L3 Fast slave port
-
+DMA request none
+Physical address L3 Fast slave port
 
 #### 11.2.2.2 TPTC Clock and Reset Management
 
 The TPTC operates from a single clock and runs at the L3_Fast clock rate.
 
-
 **Table 11-4. TPTC Clock Signals**
 
-Clock Signal                      Max Freq                           Reference / Source                Comments
-tptc_clk_pi                       200 MHz                            CORE_CLKOUTM4                     pd_per_l3_gclk
-Interface / Functional clock                                                                           From PRCM
-
+Clock Signal Max Freq Reference / Source Comments
+tptc_clk_pi 200 MHz CORE_CLKOUTM4 pd_per_l3_gclk
+Interface / Functional clock From PRCM
 
 #### 11.2.2.3 TPTC Pin List
 
 The TPTC module does not include any external interface pins.
 
-
 ## 11.3 Functional Description
 
 This chapter discusses the architecture of the EDMA3 controller.
 
-
 ### 11.3.1 Functional Overview
-
 
 #### 11.3.1.1 EDMA3 Channel Controller (EDMA3CC)
 
@@ -322,73 +297,63 @@ Each channel is associated with a given event queue/transfer controller and with
 main thing that differentiates a DMA channel from a QDMA channel is the method that the system uses to
 trigger transfers. See Section 11.3.4.
 
-
 **Figure 11-2. EDMA3 Channel Controller (EDMA3CC) Block Diagram**
 
-From peripherals/external events                                                                             EDMA3
-E63 E1 E0                                                                                            channel
+From peripherals/external events EDMA3
+E63 E1 E0 channel
 controller
-Event queues                                              PaRAM
-15              0                                    Parameter
+Event queues PaRAM
+15 0 Parameter
 Event
 
-
 64:1 priority encoder
-register                                                                  Queue 0                                          set 0
-
+register Queue 0 set 0
 
 Transfer request process submit
-Event     (ER/ERH)                                                                                                                  Parameter
-trigger      Event                                                                                                                     set 1
-enable          64
-
+Event (ER/ERH) Parameter
+trigger Event set 1
+enable 64
 
 Channel mapping
-15              0
+15 0
 register
-(EER/EERH)                                                                  Queue 1
+(EER/EERH) Queue 1
 To
 TC(S)
 Event
-Manual         set    64                                                         15              0
-trigger      register
-(ESR/ESRH)                                                                  Queue 2                                        Parameter
-64                                                                                                      set 254
-Chain                                                                            Queue bypass                                       Parameter
-trigger     Chained                                                                                                                   set 255
+Manual set 64 15 0
+trigger register
+(ESR/ESRH) Queue 2 Parameter
+64 set 254
+Chain Queue bypass Parameter
+trigger Chained set 255
 event
 8:1 priority encoder
 
-
 register
-
 
 Early completion
 (CER/CERH)
 
-
 QDMA
-event              8
+event 8
 register
 (QER)
 Completion
 QDMA trigger
 interface
 
-To chained event register (CER/CERH)                                        Completion                                                                                        From
-detection                                                                                        EDMA3TC0
+To chained event register (CER/CERH) Completion From
+detection EDMA3TC0
 
-
-Memory                       Error                                       Completion                                                                                                       From
-protection                  detection                                      interrupt                                                                                                       EDMA3TC2
-
+Memory Error Completion From
+protection detection interrupt EDMA3TC2
 
 EDMA3CC_INT[7:0]
 
-EDMA3CC_              Read/                                                                                                          EDMA3CC_ERRINT
-MPINT              write to/
+EDMA3CC\_ Read/ EDMA3CC_ERRINT
+MPINT write to/
 from CPU
-
 
 A trigger event is needed to initiate a transfer. A trigger event may be due to an external event, manual
 write to the event set register, or chained event for DMA channels. QDMA channels auto-trigger when a
@@ -402,7 +367,6 @@ available. See Section 11.3.11.
 If events on different channels are detected simultaneously, the events are queued based on a fixed
 priority arbitration scheme with the DMA channels being higher priority events than the QDMA channels.
 Among the two groups of channels, the lowest-numbered channel is the highest priority.
-
 
 Each event in the event queue is processed in FIFO order. When the head of the queue is reached, the
 PaRAM associated with that channel is read to determine the transfer details. The TR submission logic
@@ -422,19 +386,15 @@ Additionally, the EDMA3CC also has an error detection logic that causes an error
 various error conditions (like missed events, exceeding event queue thresholds, etc.). For more
 information on error interrupts, refer to Section 11.3.9.4.
 
-
 #### 11.3.1.2 EDMA3 Transfer Controller (EDMA3TC)
 
 Section 11.3.9.4 shows a functional block diagram of the EDMA3 transfer controller (EDMA3TC).
-
 
 **Figure 11-3. EDMA3 Transfer Controller (EDMA3TC) Block Diagram**
 
 EDMA3TCn
 
-
-SRC active                     Read
-
+SRC active Read
 
 controller
 register set
@@ -442,28 +402,23 @@ Read
 command
 register set
 
-
 Read data
 Program
 
-
 Transfer request
 submission
-SRC                         Write
+SRC Write
 To completion
 controller
 
-
 command
 Write
-
 
 detection logic
 in EDMA3CC
 Write data
 Destination FIFO
-EDMA3TCn_ERRINT                                 register set
-
+EDMA3TCn_ERRINT register set
 
 The main blocks of the EDMA3TC are:
 • DMA program register set: The DMA program register set stores the transfer requests received from
@@ -479,7 +434,6 @@ transfer request(s) currently in progress in the write controller.
 transfer completes, and generates interrupts and chained events (also, see Section 11.3.1.1 for more
 information on transfer completion reporting).
 
-
 When the EDMA3TC is idle and receives its first TR, DMA program register set receives the TR, where it
 transitions to the DMA source active set and the destination FIFO register set immediately. The second
 TR (if pending from EDMA3CC) is loaded into the DMA program set, ensuring it can start as soon as
@@ -493,7 +447,6 @@ rules for command fragmentation and optimization. For more information on comman
 optimization, refer to Section 11.3.12.1.1.
 Depending on the number of entries, the read controller can process up to two or four transfer requests
 ahead of the destination subject to the amount of free data FIFO.
-
 
 ### 11.3.2 Types of EDMA3 Transfers
 
@@ -511,25 +464,19 @@ transferred upon receipt of a trigger/synchronization event is controlled by the
 (SYNCDIM bit in OPT). Of the three dimensions, only two synchronization types are supported: A-
 synchronized transfers and AB-synchronized transfers.
 
-
 **Figure 11-4. Definition of ACNT, BCNT, and CCNT**
 
 ACNT bytes in
 Array/1st dimension
 
+Frame 0 Array 1 Array 2 Array BCNT
 
-Frame 0       Array 1              Array 2                   Array BCNT
-
-
-Frame 1       Array 1              Array 2                   Array BCNT            CCNT frames in
+Frame 1 Array 1 Array 2 Array BCNT CCNT frames in
 Block/3rd dimmension
 
-
-Frame CCNT         Array 1              Array 2                   Array BCNT
-
+Frame CCNT Array 1 Array 2 Array BCNT
 
 BCNT arrays in Frame/2nd dimmension
-
 
 #### 11.3.2.1 A-Synchronized Transfers
 
@@ -547,27 +494,25 @@ Figure 11-5 shows an A-synchronized transfer of 3 (CCNT) frames of 4 (BCNT) arra
 In this example, a total of 12 sync events (BCNT × CCNT) exhaust a PaRAM set. See Section 11.3.3.6 for
 details on parameter set updates.
 
-
 **Figure 11-5. A-Synchronized Transfers (ACNT = n, BCNT = 4, CCNT = 3)**
 
-(SRC|DST)          (SRC|DST)            (SRC|DST)            Each array submit
+(SRC|DST) (SRC|DST) (SRC|DST) Each array submit
 as one TR
-BIDX                BIDX                 BIDX
-Frame 0   Array 0            Array 1              Array 2               Array 3
+BIDX BIDX BIDX
+Frame 0 Array 0 Array 1 Array 2 Array 3
 
 (SRC|DST)
 CIDX
 
-(SRC|DST)          (SRC|DST)            (SRC|DST)
-BIDX                BIDX                 BIDX
-Frame 1   Array 0            Array 1              Array 2               Array 3
+(SRC|DST) (SRC|DST) (SRC|DST)
+BIDX BIDX BIDX
+Frame 1 Array 0 Array 1 Array 2 Array 3
 
 (SRC|DST)
 CIDX
-(SRC|DST)          (SRC|DST)           (SRC|DST)
-BIDX                BIDX                 BIDX
-Frame 2   Array 0            Array 1              Array 2               Array 3
-
+(SRC|DST) (SRC|DST) (SRC|DST)
+BIDX BIDX BIDX
+Frame 2 Array 0 Array 1 Array 2 Array 3
 
 #### 11.3.2.2 AB-Synchronized Transfers
 
@@ -584,33 +529,29 @@ Figure 11-6 shows an AB-synchronized transfer of 3 (CCNT) frames of 4 (BCNT) arr
 bytes. In this example, a total of 3 sync events (CCNT) exhaust a PaRAM set; that is, a total of 3 transfers
 of 4 arrays each completes the transfer.
 
-
 **Figure 11-6. AB-Synchronized Transfers (ACNT = n, BCNT = 4, CCNT = 3)**
 
 AB_Sync transfer
 
-(SRC|DST)         (SRC|DST)           (SRC|DST)           Each array submit
+(SRC|DST) (SRC|DST) (SRC|DST) Each array submit
 as one TR
-BIDX               BIDX               BIDX
-Frame 0      Array 0           Array 1             Array 2            Array 3
+BIDX BIDX BIDX
+Frame 0 Array 0 Array 1 Array 2 Array 3
 
 (SRC|DST)
 CIDX
-(SRC|DST)        (SRC|DST)           (SRC|DST)
-BIDX               BIDX               BIDX
-Frame 1      Array 0           Array 1             Array 2            Array 3
-
+(SRC|DST) (SRC|DST) (SRC|DST)
+BIDX BIDX BIDX
+Frame 1 Array 0 Array 1 Array 2 Array 3
 
 (SRC|DST)
 CIDX
-(SRC|DST)        (SRC|DST)           (SRC|DST)
-BIDX               BIDX               BIDX
-Frame 2      Array 0           Array 1             Array 2            Array 3
-
+(SRC|DST) (SRC|DST) (SRC|DST)
+BIDX BIDX BIDX
+Frame 2 Array 0 Array 1 Array 2 Array 3
 
 NOTE: ABC-synchronized transfers are not directly supported. But can be logically achieved by
 chaining between multiple AB-synchronized transfers.
-
 
 ### 11.3.3 Parameter RAM (PaRAM)
 
@@ -628,99 +569,93 @@ The contents of the PaRAM include the following:
 channels
 • 64 channels remain for link or QDMA sets
 
-
 By default, all channels map to PaRAM set to 0. These should be remapped before use. For more
 information, see (DCHMAP registers) and (QCHMAP registers).
 
-
 **Table 11-5. EDMA3 Parameter RAM Contents**
 
-PaRAM Set Number                           Address                               Parameters
-0               EDMA Base Address + 4000h to EDMA Base                  PaRAM set 0
+PaRAM Set Number Address Parameters
+0 EDMA Base Address + 4000h to EDMA Base PaRAM set 0
 Address + 401Fh
-1               EDMA Base Address + 4020h to EDMA Base                  PaRAM set 1
+1 EDMA Base Address + 4020h to EDMA Base PaRAM set 1
 Address + 403Fh
-2               EDMA Base Address + 4040h to EDMA Base                  PaRAM set 2
+2 EDMA Base Address + 4040h to EDMA Base PaRAM set 2
 Address + 405Fh
-3               EDMA Base Address + 4060h to EDMA Base                  PaRAM set 3
+3 EDMA Base Address + 4060h to EDMA Base PaRAM set 3
 Address + 407Fh
-4               EDMA Base Address + 4080h to EDMA Base                  PaRAM set 4
+4 EDMA Base Address + 4080h to EDMA Base PaRAM set 4
 Address + 409Fh
-5               EDMA Base Address + 40A0h to EDMA Base                  PaRAM set 5
+5 EDMA Base Address + 40A0h to EDMA Base PaRAM set 5
 Address + 40BFh
-6               EDMA Base Address + 40C0h to EDMA Base                  PaRAM set 6
+6 EDMA Base Address + 40C0h to EDMA Base PaRAM set 6
 Address + 40DFh
-7               EDMA Base Address + 40E0h to EDMA Base                  PaRAM set 7
+7 EDMA Base Address + 40E0h to EDMA Base PaRAM set 7
 Address + 40FFh
-8               EDMA Base Address + 4100h to EDMA Base                  PaRAM set 8
+8 EDMA Base Address + 4100h to EDMA Base PaRAM set 8
 Address + 411Fh
-9               EDMA Base Address + 4120h to EDMA Base                  PaRAM set 9
+9 EDMA Base Address + 4120h to EDMA Base PaRAM set 9
 Address + 413Fh
-...                                    ...                                   ...
-63              EDMA Base Address + 47E0h to EDMA Base                  PaRAM set 63
+... ... ...
+63 EDMA Base Address + 47E0h to EDMA Base PaRAM set 63
 Address + 47FFh
-64              EDMA Base Address + 4800h to EDMA Base                  PaRAM set 64
+64 EDMA Base Address + 4800h to EDMA Base PaRAM set 64
 Address + 481Fh
-65              EDMA Base Address + 4820h to EDMA Base                  PaRAM set 65
+65 EDMA Base Address + 4820h to EDMA Base PaRAM set 65
 Address + 483Fh
-...                                    ...                                   ...
-254             EDMA Base Address + 5FC0h to EDMA Base                 PaRAM set 254
+... ... ...
+254 EDMA Base Address + 5FC0h to EDMA Base PaRAM set 254
 Address + 5FDFh
-255             EDMA Base Address + 5FE0h to EDMA Base                 PaRAM set 255
+255 EDMA Base Address + 5FE0h to EDMA Base PaRAM set 255
 Address + 5FFFh
-
 
 #### 11.3.3.1 PaRAM
 
 Each parameter set of PaRAM is organized into eight 32-bit words or 32 bytes, as shown in Figure 11-7
 and described in Table 11-6. Each PaRAM set consists of 16-bit and 32-bit parameters.
 
-
 **Figure 11-7. PaRAM Set**
 
-Byte          Set                                                                                  Byte address
-address          #              PaRAM                                            PaRAM set               offset
+Byte Set Byte address
+address # PaRAM PaRAM set offset
 
-EDMA Base Address + 4000h    0        Parameter set 0                                            OPT                +0h
-EDMA Base Address + 4020h    1        Parameter set 1                                            SRC                +4h
-EDMA Base Address + 4040h    2        Parameter set 2                                     BCNT          ACNT        +8h
-EDMA Base Address + 4060h    3        Parameter set 3                                            DST                +Ch
-DSTBIDX           SRCBIDX      +10h
-BCNTRLD             LINK       +14h
-DSTCIDX           SRCCIDX      +18h
-Rsvd          CCNT        +1Ch
+EDMA Base Address + 4000h 0 Parameter set 0 OPT +0h
+EDMA Base Address + 4020h 1 Parameter set 1 SRC +4h
+EDMA Base Address + 4040h 2 Parameter set 2 BCNT ACNT +8h
+EDMA Base Address + 4060h 3 Parameter set 3 DST +Ch
+DSTBIDX SRCBIDX +10h
+BCNTRLD LINK +14h
+DSTCIDX SRCCIDX +18h
+Rsvd CCNT +1Ch
 
-
-EDMA Base Address + 5FC0    254      Parameter set 254
-EDMA Base Address + 5FE0    255      Parameter set 255
-
+EDMA Base Address + 5FC0 254 Parameter set 254
+EDMA Base Address + 5FE0 255 Parameter set 255
 
 **Table 11-6. EDMA3 Channel Parameter Description**
 
 Offset Address
-(bytes)       Acronym               Parameter                             Description
-0h          OPT                   Channel Options                       Transfer configuration options
-4h          SRC                   Channel Source Address                The byte address from which data is transferred
-8h (1)       ACNT                  Count for 1st Dimension               Unsigned value specifying the number of contiguous bytes
+(bytes) Acronym Parameter Description
+0h OPT Channel Options Transfer configuration options
+4h SRC Channel Source Address The byte address from which data is transferred
+8h (1) ACNT Count for 1st Dimension Unsigned value specifying the number of contiguous bytes
 within an array (first dimension of the transfer). Valid values
 range from 1 to 65 535.
-BCNT                  Count for 2nd Dimension               Unsigned value specifying the number of arrays in a frame,
+BCNT Count for 2nd Dimension Unsigned value specifying the number of arrays in a frame,
 where an array is ACNT bytes. Valid values range from 1 to
 65 535.
-Ch          DST                   Channel Destination Address           The byte address to which data is transferred
-10h (1)       SRCBIDX               Source BCNT Index                     Signed value specifying the byte address offset between
+Ch DST Channel Destination Address The byte address to which data is transferred
+10h (1) SRCBIDX Source BCNT Index Signed value specifying the byte address offset between
 source arrays within a frame (2nd dimension). Valid values
 range from –32 768 and 32 767.
-DSTBIDX               Destination BCNT Index                Signed value specifying the byte address offset between
+DSTBIDX Destination BCNT Index Signed value specifying the byte address offset between
 destination arrays within a frame (2nd dimension). Valid
 values range from –32 768 and 32 767.
-14h (1)       LINK                  Link Address                          The PaRAM address containing the PaRAM set to be linked
+14h (1) LINK Link Address The PaRAM address containing the PaRAM set to be linked
 (copied from) when the current PaRAM set is exhausted. A
 value of FFFFh specifies a null link.
-BCNTRLD               BCNT Reload                           The count value used to reload BCNT when BCNT
+BCNTRLD BCNT Reload The count value used to reload BCNT when BCNT
 decrements to 0 (TR is submitted for the last array in 2nd
 dimension). Only relevant in A-synchronized transfers.
-18h (1)       SRCCIDX               Source CCNT Index                     Signed value specifying the byte address offset between
+18h (1) SRCCIDX Source CCNT Index Signed value specifying the byte address offset between
 frames within a block (3rd dimension). Valid values range
 from –32 768 and 32 767.
 A-synchronized transfers: The byte address offset from the
@@ -729,7 +664,7 @@ beginning of the first source array in the next frame.
 AB-synchronized transfers: The byte address offset from the
 beginning of the first source array in a frame to the
 beginning of the first source array in the next frame.
-DSTCIDX               Destination CCNT index                Signed value specifying the byte address offset between
+DSTCIDX Destination CCNT index Signed value specifying the byte address offset between
 frames within a block (3rd dimension). Valid values range
 from –32 768 and 32 767.
 A-synchronized transfers: The byte address offset from the
@@ -738,10 +673,10 @@ beginning of the first destination array in the next frame.
 AB-synchronized transfers: The byte address offset from the
 beginning of the first destination array in a frame to the
 beginning of the first destination array in the next frame.
-1Ch          CCNT                  Count for 3rd Dimension               Unsigned value specifying the number of frames in a block,
+1Ch CCNT Count for 3rd Dimension Unsigned value specifying the number of frames in a block,
 where a frame is BCNT arrays of ACNT bytes. Valid values
 range from 1 to 65 535.
-RSVD                  Reserved                              Reserved. Always write 0 to this bit; writes of 1 to this bit are
+RSVD Reserved Reserved. Always write 0 to this bit; writes of 1 to this bit are
 not supported and attempts to do so may result in undefined
 behavior.
 (1)
@@ -749,105 +684,99 @@ If OPT, SRC, or DST is the trigger word for a QDMA transfer, then doing a 32-bit
 performing only 32-bit accesses on the parameter RAM for best code compatibility. For example, switching the endianness of the
 processor swaps addresses of the 16-bit fields, but 32-bit accesses avoid the issue entirely.
 
-
 #### 11.3.3.2 EDMA3 Channel PaRAM Set Entry Fields
-
 
 ##### 11.3.3.2.1 Channel Options Parameter (OPT)
 
 The channel options parameter (OPT) is shown in Figure 11-8 and described in Table 11-7.
 
-
 **Figure 11-8. Channel Options Parameter (OPT)**
 
-31      30         28     27                     24       23             22              21        20         19            18        17         16
-PRIV      Reserved              PRIVID                  ITCCHEN         TCCHEN      ITCINTEN      TCINTEN           Reserved                TCC
-R-0          R-0                   R-0                  R/W-0          R/W-0           R/W-0      R/W-0             R/W-0                 R/W-0
+31 30 28 27 24 23 22 21 20 19 18 17 16
+PRIV Reserved PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
+R-0 R-0 R-0 R/W-0 R/W-0 R/W-0 R/W-0 R/W-0 R/W-0
 
-15                 12     11         10           8        7                                        4          3              2       1           0
-TCC              TCCMOD            FWID                                Reserved                     STATIC      SYNCDIM      DAM      SAM
+15 12 11 10 8 7 4 3 2 1 0
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 E
-R/W-0             R/W-0            R/W-0                                R/W-0                        R/W-0        R/W-0      R/W-0    R/W-0
-
+R/W-0 R/W-0 R/W-0 R/W-0 R/W-0 R/W-0 R/W-0 R/W-0
 
 **Table 11-7. Channel Options Parameters (OPT) Field Descriptions**
 
-Bit     Field             Value         Description
-31      PRIV                            Privilege level (supervisor versus user) for the host/CPU/DMA that programmed this PaRAM set. This
+Bit Field Value Description
+31 PRIV Privilege level (supervisor versus user) for the host/CPU/DMA that programmed this PaRAM set. This
 value is set with the EDMA3 master’s privilege value when any part of the PaRAM set is written.
-0         User level privilege.
-1         Supervisor level privilege.
-30-28     Reserved              0         Reserved. Always write 0 to this bit; writes of 1 to this bit are not supported and attempts to do so may
+0 User level privilege.
+1 Supervisor level privilege.
+30-28 Reserved 0 Reserved. Always write 0 to this bit; writes of 1 to this bit are not supported and attempts to do so may
 result in undefined behavior.
-27-24     PRIVID            0-Fh          Privilege identification for the external host/CPU/DMA that programmed this PaRAM set. This value is
+27-24 PRIVID 0-Fh Privilege identification for the external host/CPU/DMA that programmed this PaRAM set. This value is
 set with the EDMA3 master’s privilege identification value when any part of the PaRAM set is written.
-23      ITCCHEN                         Intermediate transfer completion chaining enable.
-0         Intermediate transfer complete chaining is disabled.
-1         Intermediate transfer complete chaining is enabled.
+23 ITCCHEN Intermediate transfer completion chaining enable.
+0 Intermediate transfer complete chaining is disabled.
+1 Intermediate transfer complete chaining is enabled.
 When enabled, the chained event register (CER/CERH) bit is set on every intermediate chained transfer
 completion (upon completion of every intermediate TR in the PaRAM set, except the final TR in the
 PaRAM set). The bit (position) set in CER or CERH is the TCC value specified.
-22      TCCHEN                          Transfer complete chaining enable.
-0         Transfer complete chaining is disabled.
-1         Transfer complete chaining is enabled.
+22 TCCHEN Transfer complete chaining enable.
+0 Transfer complete chaining is disabled.
+1 Transfer complete chaining is enabled.
 When enabled, the chained event register (CER/CERH) bit is set on final chained transfer completion
 (upon completion of the final TR in the PaRAM set). The bit (position) set in CER or CERH is the TCC
 value specified.
-21      ITCINTEN                        Intermediate transfer completion interrupt enable.
-0         Intermediate transfer complete interrupt is disabled.
-1         Intermediate transfer complete interrupt is enabled.
+21 ITCINTEN Intermediate transfer completion interrupt enable.
+0 Intermediate transfer complete interrupt is disabled.
+1 Intermediate transfer complete interrupt is enabled.
 When enabled, the interrupt pending register (IPR / IPRH) bit is set on every intermediate transfer
 completion (upon completion of every intermediate TR in the PaRAM set, except the final TR in the
 PaRAM set). The bit (position) set in IPR or IPRH is the TCC value specified. To generate a completion
 interrupt to the CPU, the corresponding IER [TCC] / IERH [TCC] bit must be set.
-20      TCINTEN                         Transfer complete interrupt enable.
-0         Transfer complete interrupt is disabled.
-1         Transfer complete interrupt is enabled.
+20 TCINTEN Transfer complete interrupt enable.
+0 Transfer complete interrupt is disabled.
+1 Transfer complete interrupt is enabled.
 When enabled, the interrupt pending register (IPR / IPRH) bit is set on transfer completion (upon
 completion of the final TR in the PaRAM set). The bit (position) set in IPR or IPRH is the TCC value
 specified. To generate a completion interrupt to the CPU, the corresponding IER[TCC] / IERH [TCC] bit
 must be set.
-19-18     Reserved              0         Reserved. Always write 0 to this bit; writes of 1 to this bit are not supported and attempts to do so may
+19-18 Reserved 0 Reserved. Always write 0 to this bit; writes of 1 to this bit are not supported and attempts to do so may
 result in undefined behavior.
-
 
 **Table 11-7. Channel Options Parameters (OPT) Field Descriptions (continued)**
 
-Bit     Field         Value   Description
-17-12     TCC           0-3Fh   Transfer complete code. This 6-bit code sets the relevant bit in the chaining enable register (CER [TCC]
+Bit Field Value Description
+17-12 TCC 0-3Fh Transfer complete code. This 6-bit code sets the relevant bit in the chaining enable register (CER [TCC]
 /CERH [TCC]) for chaining or in the interrupt pending register (IPR [TCC] / IPRH [TCC]) for interrupts.
-11      TCCMODE               Transfer complete code mode. Indicates the point at which a transfer is considered completed for
+11 TCCMODE Transfer complete code mode. Indicates the point at which a transfer is considered completed for
 chaining and interrupt generation.
-0     Normal completion: A transfer is considered completed after the data has been transferred.
-1     Early completion: A transfer is considered completed after the EDMA3CC submits a TR to the
+0 Normal completion: A transfer is considered completed after the data has been transferred.
+1 Early completion: A transfer is considered completed after the EDMA3CC submits a TR to the
 EDMA3TC. TC may still be transferring data when the interrupt/chain is triggered.
-10-8     FWID           0-7h   FIFO Width. Applies if either SAM or DAM is set to constant addressing mode.
-0     FIFO width is 8-bit.
-1h    FIFO width is 16-bit.
-2h    FIFO width is 32-bit.
-3h    FIFO width is 64-bit.
-4h    FIFO width is 128-bit.
-5h    FIFO width is 256-bit.
-6h-7h   Reserved.
-7-4      Reserved        0     Reserved. Always write 0 to this bit; writes of 1 to this bit are not supported and attempts to do so may
+10-8 FWID 0-7h FIFO Width. Applies if either SAM or DAM is set to constant addressing mode.
+0 FIFO width is 8-bit.
+1h FIFO width is 16-bit.
+2h FIFO width is 32-bit.
+3h FIFO width is 64-bit.
+4h FIFO width is 128-bit.
+5h FIFO width is 256-bit.
+6h-7h Reserved.
+7-4 Reserved 0 Reserved. Always write 0 to this bit; writes of 1 to this bit are not supported and attempts to do so may
 result in undefined behavior.
-3       STATIC                Static set.
-0     Set is not static. The PaRAM set is updated or linked after a TR is submitted. A value of 0 should be
+3 STATIC Static set.
+0 Set is not static. The PaRAM set is updated or linked after a TR is submitted. A value of 0 should be
 used for DMA channels and for non-final transfers in a linked list of QDMA transfers.
-1     Set is static. The PaRAM set is not updated or linked after a TR is submitted. A value of 1 should be
+1 Set is static. The PaRAM set is not updated or linked after a TR is submitted. A value of 1 should be
 used for isolated QDMA transfers or for the final transfer in a linked list of QDMA transfers.
-2       SYNCDIM               Transfer synchronization dimension.
-0     A-synchronized. Each event triggers the transfer of a single array of ACNT bytes.
-1     AB-synchronized. Each event triggers the transfer of BCNT arrays of ACNT bytes.
-1       DAM                   Destination address mode.
-0     Increment (INCR) mode. Destination addressing within an array increments. Destination is not a FIFO.
-1     Constant addressing (CONST) mode. Destination addressing within an array wraps around upon
+2 SYNCDIM Transfer synchronization dimension.
+0 A-synchronized. Each event triggers the transfer of a single array of ACNT bytes.
+1 AB-synchronized. Each event triggers the transfer of BCNT arrays of ACNT bytes.
+1 DAM Destination address mode.
+0 Increment (INCR) mode. Destination addressing within an array increments. Destination is not a FIFO.
+1 Constant addressing (CONST) mode. Destination addressing within an array wraps around upon
 reaching FIFO width.
-0       SAM                   Source address mode.
-0     Increment (INCR) mode. Source addressing within an array increments. Source is not a FIFO.
-1     Constant addressing (CONST) mode. Source addressing within an array wraps around upon reaching
+0 SAM Source address mode.
+0 Increment (INCR) mode. Source addressing within an array increments. Source is not a FIFO.
+1 Constant addressing (CONST) mode. Source addressing within an array wraps around upon reaching
 FIFO width.
-
 
 ##### 11.3.3.2.2 Channel Source Address (SRC)
 
@@ -857,7 +786,6 @@ mode, you must program the source address to be aligned to a 256-bit aligned add
 address must be 0). The EDMA3TC will signal an error, if this rule is violated. See Section 11.3.12.3 for
 additional details.
 
-
 ##### 11.3.3.2.3 Channel Destination Address (DST)
 
 The 32-bit destination address parameter specifies the starting byte address of the destination. For DAM
@@ -865,7 +793,6 @@ in increment mode, there are no alignment restrictions imposed by EDMA3. For DAM
 addressing mode, you must program the destination address to be aligned to a 256-bit aligned address (5
 LSBs of address must be 0). The EDMA3TC will signal an error, if this rule is violated. See
 Section 11.3.12.3 for additional details.
-
 
 ##### 11.3.3.2.4 Count for 1st Dimension (ACNT)
 
@@ -876,7 +803,6 @@ EDMA3TC. A transfer with ACNT equal to 0 is considered either a null or dummy tr
 null transfer generates a completion code depending on the settings of the completion bit fields in OPT.
 See Section 11.3.3.5 and Section 11.3.5.3 for details on dummy/null completion conditions.
 
-
 ##### 11.3.3.2.5 Count for 2nd Dimension (BCNT)
 
 BCNT is a 16-bit unsigned value that specifies the number of arrays of length ACNT. For normal
@@ -885,7 +811,6 @@ a frame is 65 535 (64K – 1 arrays). A transfer with BCNT equal to 0 is conside
 transfer. A dummy or null transfer generates a completion code depending on the settings of the
 completion bit fields in OPT.
 See Section 11.3.3.5 and Section 11.3.5.3 for details on dummy/null completion conditions.
-
 
 ##### 11.3.3.2.6 Count for 3rd Dimension (CCNT)
 
@@ -896,7 +821,6 @@ generates a completion code depending on the settings of the completion bit fiel
 A CCNT value of 0 is considered either a null or dummy transfer. See Section 11.3.3.5 and
 Section 11.3.5.3 for details on dummy/null completion conditions.
 
-
 ##### 11.3.3.2.7 BCNT Reload (BCNTRLD)
 
 BCNTRLD is a 16-bit unsigned value used to reload the BCNT field once the last array in the
@@ -905,7 +829,6 @@ EDMA3CC decrements the BCNT value by 1 on each TR submission. When BCNT reaches 
 EDMA3CC decrements CCNT and uses the BCNTRLD value to reinitialize the BCNT value.
 For AB-synchronized transfers, the EDMA3CC submits the BCNT in the TR and the EDMA3TC
 decrements BCNT appropriately. For AB-synchronized transfers, BCNTRLD is not used.
-
 
 ##### 11.3.3.2.8 Source B Index (SRCBIDX)
 
@@ -922,7 +845,6 @@ begins at 1003h.
 array in a frame is –1 byte. For example, if the current array begins at address 5054h, the next array
 begins at 5053h.
 
-
 ##### 11.3.3.2.9 Destination B Index (DSTBIDX)
 
 DSTBIDX is a 16-bit signed value (2s complement) used for destination address modification between
@@ -930,7 +852,6 @@ each array in the 2nd dimension. Valid values for DSTBIDX are between –32 768 
 a byte address offset from the beginning of the destination array to the beginning of the next destination
 array within the current frame. It applies to both A-synchronized and AB-synchronized transfers. See
 SRCBIDX for examples.
-
 
 ##### 11.3.3.2.10 Source C Index (SRCCIDX)
 
@@ -942,7 +863,6 @@ when SRCCIDX is applied, the current array in an A-synchronized transfer is the 
 (Figure 11-5), while the current array in an AB-synchronized transfer is the first array in the frame
 (Figure 11-6).
 
-
 ##### 11.3.3.2.11 Destination C Index (DSTCIDX)
 
 DSTCIDX is a 16-bit signed value (2s complement) used for destination address modification in the
@@ -952,7 +872,6 @@ TR in the next frame. It applies to both A-synchronized and AB-synchronized tran
 DSTCIDX is applied, the current array in an A-synchronized transfer is the last array in the frame
 (Figure 11-5), while the current array in a AB-synchronized transfer is the first array in the frame
 (Figure 11-6).
-
 
 ##### 11.3.3.2.12 Link Address (LINK)
 
@@ -972,7 +891,6 @@ A LINK value of FFFFh is referred to as a NULL link that should cause the EDMA3C
 internal write of 0 to all entries of the current PaRAM set, except for the LINK field that is set to FFFFh.
 Also, see Section 11.3.5 for details on terminating a transfer.
 
-
 #### 11.3.3.3 Null PaRAM Set
 
 A null PaRAM set is defined as a PaRAM set where all count fields (ACNT, BCNT, and CCNT) are
@@ -984,7 +902,6 @@ are required to clear the bit in SER, SERH, or QSER for the channel. This is con
 condition, since events are not expected on a channel that is configured as a null transfer. See and for
 more information on the SER and EMR registers, respectively.
 
-
 #### 11.3.3.4 Dummy PaRAM Set
 
 A dummy PaRAM set is defined as a PaRAM set where at least one of the count fields (ACNT, BCNT, or
@@ -995,7 +912,6 @@ QEMR) and the secondary event register (SER, SERH, or QSER) bit gets cleared sim
 transfer. Future events on that channel are serviced. A dummy transfer is a legal transfer of 0 bytes. For
 more information, see the SER and EMR registers.
 
-
 #### 11.3.3.5 Dummy Versus Null Transfer Comparison
 
 There are some differences in the way the EDMA3CC logic treats a dummy versus a null transfer request.
@@ -1004,16 +920,14 @@ transfer causes an error bit (En) in EMR to get set and the En bit in SER remain
 preventing any further transfers on that channel without clearing the associated error registers.
 Table 11-8 summarizes the conditions and effects of null and dummy transfer requests.
 
-
 **Table 11-8. Dummy and Null Transfer Request**
 
-Feature                                                                                    Null TR           Dummy TR
-EMR/EMRH/QEMR is set                                                                        Yes                  No
-SER/SERH/QSER remains set                                                                   Yes                  No
-Link update (STATIC = 0 in OPT)                                                             Yes                  Yes
-QER is set                                                                                  Yes                  Yes
-IPR/IPRH CER/CERH is set using early completion                                             Yes                  Yes
-
+Feature Null TR Dummy TR
+EMR/EMRH/QEMR is set Yes No
+SER/SERH/QSER remains set Yes No
+Link update (STATIC = 0 in OPT) Yes Yes
+QER is set Yes Yes
+IPR/IPRH CER/CERH is set using early completion Yes Yes
 
 #### 11.3.3.6 Parameter Set Updates
 
@@ -1037,7 +951,6 @@ PaRAM set):
 • A-synchronized: ACNT, BCNTRLD, SRCBIDX, DSTBIDX, SRCCIDX, DSTCIDX, OPT, LINK.
 • AB-synchronized: ACNT, BCNT, BCNTRLD, SRCBIDX, DSTBIDX, SRCCIDX, DSTCIDX, OPT, LINK.
 
-
 Note that PaRAM updates only pertain to the information that is needed to properly submit the next
 transfer request to the EDMA3TC. Updates that occur while data is moved within a transfer request are
 tracked within the transfer controller, and is detailed in Section 11.3.12. For A-synchronized transfers, the
@@ -1049,36 +962,33 @@ and destination addresses between arrays based on SRCBIDX and DSTBIDX.
 Table 11-9 shows the details of parameter updates that occur within EDMA3CC for A-synchronized and
 AB-synchronized transfers.
 
-
 **Table 11-9. Parameter Updates in EDMA3CC (for Non-Null, Non-Dummy PaRAM Set)**
 
-A-Synchronized Transfer                                     AB-Synchronized Transfer
-B-Update          C-Update           Link Update            B-Update         C-Update        Link Update
-BCNT == 1 &&         BCNT == 1 &&
-Condition:            BCNT > 1         CCNT > 1            CCNT == 1                 N/A           CCNT > 1        CCNT == 1
-SRC                  += SRCBIDX       += SRCCIDX        = Link.SRC              in EDMA3TC        += SRCCIDX    = Link.SRC
-DST                  += DSTBIDX       += DSTCIDX        = Link.DST              in EDMA3TC        += DSTCIDX    = Link.DST
-ACNT                    None              None          = Link.ACNT                 None             None       = Link.ACNT
-BCNT                     –= 1          = BCNTRLD        = Link.BCNT             in EDMA3TC            N/A       = Link.BCNT
-CCNT                    None               –= 1         = Link.CCNT             in EDMA3TC            –=1       = Link.CCNT
-SRCBIDX                 None              None          = Link.SRCBIDX          in EDMA3TC           None       = Link.SRCBIDX
-DSTBIDX                 None              None          = Link.DSTBIDX              None             None       = Link.DSTBIDX
-SRCCIDX                 None              None          = Link.SRCBIDX          in EDMA3TC           None       = Link.SRCBIDX
-DSTCIDX                 None              None          = Link.DSTBIDX              None             None       = Link.DSTBIDX
-LINK                    None              None          = Link.LINK                 None             None       = Link.LINK
-BCNTRLD                 None              None          = Link.BCNTRLD              None             None       = Link.BCNTRLD
+A-Synchronized Transfer AB-Synchronized Transfer
+B-Update C-Update Link Update B-Update C-Update Link Update
+BCNT == 1 && BCNT == 1 &&
+Condition: BCNT > 1 CCNT > 1 CCNT == 1 N/A CCNT > 1 CCNT == 1
+SRC += SRCBIDX += SRCCIDX = Link.SRC in EDMA3TC += SRCCIDX = Link.SRC
+DST += DSTBIDX += DSTCIDX = Link.DST in EDMA3TC += DSTCIDX = Link.DST
+ACNT None None = Link.ACNT None None = Link.ACNT
+BCNT –= 1 = BCNTRLD = Link.BCNT in EDMA3TC N/A = Link.BCNT
+CCNT None –= 1 = Link.CCNT in EDMA3TC –=1 = Link.CCNT
+SRCBIDX None None = Link.SRCBIDX in EDMA3TC None = Link.SRCBIDX
+DSTBIDX None None = Link.DSTBIDX None None = Link.DSTBIDX
+SRCCIDX None None = Link.SRCBIDX in EDMA3TC None = Link.SRCBIDX
+DSTCIDX None None = Link.DSTBIDX None None = Link.DSTBIDX
+LINK None None = Link.LINK None None = Link.LINK
+BCNTRLD None None = Link.BCNTRLD None None = Link.BCNTRLD
 (1)
-OPT                     None              None          = LINK.OPT                  None             None       = LINK.OPT
+OPT None None = LINK.OPT None None = LINK.OPT
 (1)
 In all cases, no updates occur if OPT.STATIC == 1 for the current PaRAM set.
-
 
 NOTE: The EDMA3CC includes no special hardware to detect when an indexed address update
 calculation overflows/underflows. The address update will wrap across boundaries as
 programmed by the user. You should ensure that no transfer is allowed to cross internal port
 boundaries between peripherals. A single TR must target a single source/destination slave
 endpoint.
-
 
 #### 11.3.3.7 Linking Transfers
 
@@ -1120,7 +1030,6 @@ has the link field pointing to the address of parameter set 255 (linked to self)
 
 NOTE: If the STATIC bit in OPT is set for a PaRAM set, then link updates are not performed.
 
-
 #### 11.3.3.8 Constant Addressing Mode Transfers/Alignment Issues
 
 If either SAM or DAM is set (constant addressing mode), then the source or destination address must be
@@ -1136,7 +1045,6 @@ guide to verify if the constant addressing mode is supported. If the constant ad
 mode is not supported, the similar logical transfer can be achieved using the increment
 (INCR) mode (SAM/DAM =0) by appropriately programming the count and indices values.
 
-
 #### 11.3.3.9 Element Size
 
 The EDMA3 controller does not use element-size and element-indexing. Instead, all transfers are defined
@@ -1145,124 +1053,121 @@ achieved by programming ACNT to the size of the element and BCNT to the number o
 need to be transferred. For example, if you have 16-bit audio data and 256 audio samples that must be
 transferred to a serial port, you can only do this by programming the ACNT = 2 (2 bytes) and BCNT = 256.
 
-
 **Figure 11-9. Linked Transfer**
 
-(a)    At initialization                                                                                    PaRAM set 3
-Byte                     Set                                                                 OPT X
-address                     #                 PaRAM                                            SRC X
-EDMA Base Address + 4000h            0          Parameter set 0                             BCNT X               ACNT X
-EDMA Base Address + 4020h            1          Parameter set 1                                     DST X
-EDMA Base Address + 4040h            2          Parameter set 2                           DSTBIDX X      SRCBIDX X
-EDMA Base Address + 4060h            3          Parameter set 3                          BCNTRLD X             Link X=5FE0h
-DSTCIDX X            SRCCIDX X
-Rsvd               CCNT X
+(a) At initialization PaRAM set 3
+Byte Set OPT X
+address # PaRAM SRC X
+EDMA Base Address + 4000h 0 Parameter set 0 BCNT X ACNT X
+EDMA Base Address + 4020h 1 Parameter set 1 DST X
+EDMA Base Address + 4040h 2 Parameter set 2 DSTBIDX X SRCBIDX X
+EDMA Base Address + 4060h 3 Parameter set 3 BCNTRLD X Link X=5FE0h
+DSTCIDX X SRCCIDX X
+Rsvd CCNT X
 
 PaRAM set 255
 OPT Y
-EDMA Base Address + 5FC0h              254        Parameter set 254
+EDMA Base Address + 5FC0h 254 Parameter set 254
 SRC Y
-EDMA Base Address + 5FE0h              255        Parameter set 255
-BCNT Y               ACNT Y
+EDMA Base Address + 5FE0h 255 Parameter set 255
+BCNT Y ACNT Y
 DST Y
-DSTBIDX Y      SRCBIDX Y
-BCNTRLD Y           Link Y=FFFFh
-DSTCIDX Y            SRCCIDX Y
-Rsvd               CCNT Y
-(b)    After completion of PaRAM set 3
+DSTBIDX Y SRCBIDX Y
+BCNTRLD Y Link Y=FFFFh
+DSTCIDX Y SRCCIDX Y
+Rsvd CCNT Y
+(b) After completion of PaRAM set 3
 (link update)
 PaRAM set 3
-Byte                     Set                                                                 OPT Y
-address                     #                 PaRAM
+Byte Set OPT Y
+address # PaRAM
 SRC Y
-EDMA Base Address + 4000h            0          Parameter set 0                             BCNT Y               ACNT Y
-EDMA Base Address + 4020h            1          Parameter set 1                                     DST Y
-EDMA Base Address + 4040h            2          Parameter set 2                           DSTBIDX Y      SRCBIDX Y
-EDMA Base Address + 4060h            3          Parameter set 3                          BCNTRLD Y           Link Y=FFFFh
-DSTCIDX Y            SRCCIDX Y
-Rsvd               CCNT Y
+EDMA Base Address + 4000h 0 Parameter set 0 BCNT Y ACNT Y
+EDMA Base Address + 4020h 1 Parameter set 1 DST Y
+EDMA Base Address + 4040h 2 Parameter set 2 DSTBIDX Y SRCBIDX Y
+EDMA Base Address + 4060h 3 Parameter set 3 BCNTRLD Y Link Y=FFFFh
+DSTCIDX Y SRCCIDX Y
+Rsvd CCNT Y
 Link
 PaRAM set 255
 copy
-EDMA Base Address + 5FC0h          254        Parameter set 254                                         OPT Y
-EDMA Base Address + 5FE0h          255        Parameter set 255                                         SRC Y
-BCNT Y               ACNT Y
+EDMA Base Address + 5FC0h 254 Parameter set 254 OPT Y
+EDMA Base Address + 5FE0h 255 Parameter set 255 SRC Y
+BCNT Y ACNT Y
 DST Y
-DSTBIDX Y      SRCBIDX Y
-(c)    After completion of PaRAM set 51                  1                                     BCNTRLD Y           Link Y=FFFFh
-(link to null set)                                                                       DSTCIDX Y            SRCCIDX Y
-Byte                     Set                                                      Rsvd               CCNT Y
-address                     #                 PaRAM
-EDMA Base Address + 4000h           0          Parameter set 0
-EDMA Base Address + 4020h           1          Parameter set 1                         PaRAM set 3 (Null PaRAM set)
-EDMA Base Address + 4040h           2          Parameter set 2                                           0h
-EDMA Base Address + 4060h           3          Parameter set 3                                           0h
-0h                 0h
+DSTBIDX Y SRCBIDX Y
+(c) After completion of PaRAM set 51 1 BCNTRLD Y Link Y=FFFFh
+(link to null set) DSTCIDX Y SRCCIDX Y
+Byte Set Rsvd CCNT Y
+address # PaRAM
+EDMA Base Address + 4000h 0 Parameter set 0
+EDMA Base Address + 4020h 1 Parameter set 1 PaRAM set 3 (Null PaRAM set)
+EDMA Base Address + 4040h 2 Parameter set 2 0h
+EDMA Base Address + 4060h 3 Parameter set 3 0h
+0h 0h
 0h
-0h                 0h
-0h             Link=FFFFh
-EDMA Base Address + 5FC0h          254        Parameter set 254                                  0h                 0h
-EDMA Base Address + 5FE0h          255        Parameter set 255                                  0h                 0h
-
+0h 0h
+0h Link=FFFFh
+EDMA Base Address + 5FC0h 254 Parameter set 254 0h 0h
+EDMA Base Address + 5FE0h 255 Parameter set 255 0h 0h
 
 **Figure 11-10. Link-to-Self Transfer**
 
-(a)    At initialization                                                                PaRAM set 3
-Byte               Set                                                          OPT X
-address               #               PaRAM                                       SRC X
-EDMA Base Address + 4000h         0          Parameter set 0                      BCNT X              ACNT X
-EDMA Base Address + 4020h         1          Parameter set 1                              DST X
-EDMA Base Address + 4040h         2          Parameter set 2                    DSTBIDX X      SRCBIDX X
-EDMA Base Address + 4060h         3          Parameter set 3                    BCNTRLD X         Link=5FE0h
-DSTCIDX X         SRCCIDX X
-Rsvd            CCNT X
+(a) At initialization PaRAM set 3
+Byte Set OPT X
+address # PaRAM SRC X
+EDMA Base Address + 4000h 0 Parameter set 0 BCNT X ACNT X
+EDMA Base Address + 4020h 1 Parameter set 1 DST X
+EDMA Base Address + 4040h 2 Parameter set 2 DSTBIDX X SRCBIDX X
+EDMA Base Address + 4060h 3 Parameter set 3 BCNTRLD X Link=5FE0h
+DSTCIDX X SRCCIDX X
+Rsvd CCNT X
 
 PaRAM set 255
 OPT X
-EDMA Base Address + 5FC0h 254               Parameter set 254
+EDMA Base Address + 5FC0h 254 Parameter set 254
 SRC X
-EDMA Base Address + 5FE0h 255               Parameter set 255
-BCNT X              ACNT X
+EDMA Base Address + 5FE0h 255 Parameter set 255
+BCNT X ACNT X
 DST X
-DSTBIDX Y      SRCBIDX X
-BCNTRLD X         Link=5FE0h
-DSTCIDX X         SRCCIDX X
-Rsvd            CCNT X
-(b)    After completion of PaRAM set 3
+DSTBIDX Y SRCBIDX X
+BCNTRLD X Link=5FE0h
+DSTCIDX X SRCCIDX X
+Rsvd CCNT X
+(b) After completion of PaRAM set 3
 (link update)
 PaRAM set 3
-Byte               Set                                                          OPT X
-address               #               PaRAM
+Byte Set OPT X
+address # PaRAM
 SRC X
-EDMA Base Address + 4000h         0          Parameter set 0                      BCNT X              ACNT X
-EDMA Base Address + 4020h         1          Parameter set 1                              DST X
-EDMA Base Address + 4040h         2          Parameter set 2                    DSTBIDX X      SRCBIDX X
-EDMA Base Address + 4060h         3          Parameter set 3                    BCNTRLD X         Link=5FE0h
-DSTCIDX X         SRCCIDX X
-Rsvd            CCNT X
+EDMA Base Address + 4000h 0 Parameter set 0 BCNT X ACNT X
+EDMA Base Address + 4020h 1 Parameter set 1 DST X
+EDMA Base Address + 4040h 2 Parameter set 2 DSTBIDX X SRCBIDX X
+EDMA Base Address + 4060h 3 Parameter set 3 BCNTRLD X Link=5FE0h
+DSTCIDX X SRCCIDX X
+Rsvd CCNT X
 Link
 PaRAM set 255
 update
-EDMA Base Address + 5FC0h 254               Parameter set 254                                 OPT X
-EDMA Base Address + 5FE0h       255         Parameter set 255                                 SRC X
-BCNT X              ACNT X
+EDMA Base Address + 5FC0h 254 Parameter set 254 OPT X
+EDMA Base Address + 5FE0h 255 Parameter set 255 SRC X
+BCNT X ACNT X
 DST X
-DSTBIDX X      SRCBIDX X
-(c)    After completion of PaRAM set 127                                           BCNTRLD X         Link=5FE0h
-(link to self)                                                              DSTCIDX X         SRCCIDX X
-Byte               Set                                               Rsvd            CCNT X
-address               #               PaRAM
-EDMA Base Address + 4000h      0          Parameter set 0
-EDMA Base Address + 4020h      1          Parameter set 1                            PaRAM set 3
-EDMA Base Address + 4040h      2          Parameter set 2                                  OPT X
-EDMA Base Address + 4060h      3          Parameter set 3                                  SRC X
-BCNT X              ACNT X
+DSTBIDX X SRCBIDX X
+(c) After completion of PaRAM set 127 BCNTRLD X Link=5FE0h
+(link to self) DSTCIDX X SRCCIDX X
+Byte Set Rsvd CCNT X
+address # PaRAM
+EDMA Base Address + 4000h 0 Parameter set 0
+EDMA Base Address + 4020h 1 Parameter set 1 PaRAM set 3
+EDMA Base Address + 4040h 2 Parameter set 2 OPT X
+EDMA Base Address + 4060h 3 Parameter set 3 SRC X
+BCNT X ACNT X
 DST X
-DSTBIDX X      SRCBIDX X
-BCNTRLD X         Link=5FE0h
-EDMA Base Address + 5FC0h 254               Parameter set 254                   DSTCIDX X         SRCCIDX X
-EDMA Base Address + 5FE0h 255               Parameter set 255                      Rsvd            CCNT X
-
+DSTBIDX X SRCBIDX X
+BCNTRLD X Link=5FE0h
+EDMA Base Address + 5FC0h 254 Parameter set 254 DSTCIDX X SRCCIDX X
+EDMA Base Address + 5FE0h 255 Parameter set 255 Rsvd CCNT X
 
 ### 11.3.4 Initiating a DMA Transfer
 
@@ -1273,17 +1178,14 @@ They are listed as follows:
 externally-generated event triggers a transfer request.
 • Manually-triggered transfer request:The CPU to manually triggers a transfer by writing a 1 to the
 
-
 corresponding bit in the event set register (ESR/ESRH).
-•   Chain-triggered transfer request: A transfer is triggered on the completion of another transfer or sub-
+• Chain-triggered transfer request: A transfer is triggered on the completion of another transfer or sub-
 transfer.
 Transfers on QDMA channels are initiated by two sources. They are as follows:
 • Auto-triggered transfer request: Writing to the programmed trigger word triggers a transfer.
 • Link-triggered transfer requests: Writing to the trigger word triggers the transfer when linking occurs.
 
-
 #### 11.3.4.1 DMA Channel
-
 
 ##### 11.3.4.1.1 Event-Triggered Transfer Request
 
@@ -1312,7 +1214,6 @@ See Section 9.2.3, EDMA Event Multiplexing, for a description of how DMA events 
 event crossbar. See Section 11.3.20, EDMA Events, for a table of direct and crossbar mapped EDMA
 events.
 
-
 ##### 11.3.4.1.2 Manually Triggered Transfer Request
 
 The CPU or any EDMA programmer initiates a DMA transfer by writing to the event set register (ESR).
@@ -1330,7 +1231,6 @@ If an event is being processed (prioritized or is in the event queue) and the sa
 by a write to the corresponding channel bit of the event set register (ESR.En = 1) prior to the original
 being cleared (ESR.En = 0), then the second event is registered as a missed event in the corresponding
 bit of the event missed register (EMR.En = 1).
-
 
 ##### 11.3.4.1.3 Chain-Triggered Transfer Request
 
@@ -1357,9 +1257,7 @@ NOTE: Chained event registers, event registers, and event set registers operate 
 event (En) can be triggered by any of the trigger sources (event-triggered, manually-
 triggered, or chain-triggered).
 
-
 #### 11.3.4.2 QDMA Channels
-
 
 ##### 11.3.4.2.1 Auto-triggered and Link-Triggered Transfer Request
 
@@ -1382,14 +1280,12 @@ If a bit is already set in QER (QER.En = 1) and a second QDMA event for the same
 occurs prior to the original being cleared, the second QDMA event gets captured in the QDMA event miss
 register (QEMR.En = 1).
 
-
 #### 11.3.4.3 Comparison Between DMA and QDMA Channels
 
 The primary difference between DMA and QDMA channels is the event/channel synchronization. QDMA
 events are either auto-triggered or link triggered. auto-triggering allows QDMA channels to be triggered by
 CPU(s) with a minimum number of linear writes to PaRAM. Link triggering allows a linked list of transfers
 to be executed, using a single QDMA PaRAM set and multiple link PaRAM sets.
-
 
 A QDMA transfer is triggered when a CPU (or other EDMA3 programmer) writes to the trigger word of the
 QDMA channel parameter set (auto-triggered) or when the EDMA3CC performs a link update on a
@@ -1405,7 +1301,6 @@ initiate a linked list of QDMAs, so when EDMA3CC copies over a link PaRAM set (i
 the trigger word), the current PaRAM set mapped to the QDMA channel will automatically be recognized
 as a valid QDMA event and initiate another set of transfers as specified by the linked set.
 
-
 ### 11.3.5 Completion of a DMA Transfer
 
 A parameter set for a given channel is complete when the required number of transfer requests is
@@ -1416,17 +1311,15 @@ value, the next TR results in a:
 • Final chaining or interrupt codes to be sent by the transfer controllers (instead of intermediate).
 • Link updates (linking to either null or another valid link set).
 
-
 **Table 11-10. Expected Number of Transfers for Non-Null Transfer**
 
-Sync Mode           Counts at time 0       Total # Transfers                               Counts prior to final TR
-A-synchronized      ACNT                   (BCNT × CCNT ) TRs of ACNT bytes each           BCNT == 1 && CCNT == 1
+Sync Mode Counts at time 0 Total # Transfers Counts prior to final TR
+A-synchronized ACNT (BCNT × CCNT ) TRs of ACNT bytes each BCNT == 1 && CCNT == 1
 BCNT
 CCNT
-AB-synchronized     ACNT                   CCNT TRs for ACNT × BCNT bytes each             CCNT == 1
+AB-synchronized ACNT CCNT TRs for ACNT × BCNT bytes each CCNT == 1
 BCNT
 CCNT
-
 
 You must program the PaRAM OPT field with a specific transfer completion code (TCC) along with the
 other OPT fields (TCCHEN, TCINTEN, ITCCHEN, and ITCINTEN bits) to indicate whether the completion
@@ -1448,7 +1341,6 @@ pong buffers, the link address value should point to another predefined PaRAM se
 repetitive transfer should set the link address value to the null link value. The null link value is defined as
 FFFFh. See Section 11.3.3.7 for more details.
 
-
 NOTE: Any incoming events that are mapped to a null PaRAM set results in an error condition. The
 error condition should be cleared before the corresponding channel is used again. See
 Section 11.3.3.5.
@@ -1456,7 +1348,6 @@ Section 11.3.3.5.
 There are three ways the EDMA3CC gets updated/informed about a transfer completion: normal
 completion, early completion, and dummy/null completion. This applies to both chained events and
 completion interrupt generation.
-
 
 #### 11.3.5.1 Normal Completion
 
@@ -1466,7 +1357,6 @@ controller. In this mode, the completion code to the channel controller is poste
 after it receives a signal from the destination peripheral. Normal completion is typically used to generate
 an interrupt to inform the CPU that a set of data is ready for processing.
 
-
 #### 11.3.5.2 Early Completion
 
 In early completion mode (TCCMODE = 1 in OPT), the transfer is considered to be complete when the
@@ -1474,7 +1364,6 @@ EDMA3 channel controller submits the transfer request (TR) to the EDMA3 transfer
 mode, the channel controller generates the completion code internally. Early completion is typically useful
 for chaining, as it allows subsequent transfers to be chained-triggered while the previous transfer is still in
 progress within the transfer controller, maximizing the overall throughput of the set of the transfers.
-
 
 #### 11.3.5.3 Dummy or Null Completion
 
@@ -1486,7 +1375,6 @@ interrupt/chaining completion), then it will set the appropriate bits in the int
 (IPR/IPRH) or chained event register (CER/CERH). The internal early completion path is used by the
 channel controller to return the completion codes internally (that is, EDMA3CC generates the completion
 code).
-
 
 ### 11.3.6 Event, Channel, and PaRAM Mapping
 
@@ -1503,7 +1391,6 @@ In an application, if a channel does not use the associated synchronization even
 associated synchronization event (unused), that channel can be used for manually-triggered or chained-
 triggered transfers, for linking/reloading, or as a QDMA channel.
 
-
 #### 11.3.6.1 DMA Channel to PaRAM Mapping
 
 The mapping between the DMA channel numbers and the PaRAM sets is programmable (see Table 11-
@@ -1511,31 +1398,27 @@ The mapping between the DMA channel numbers and the PaRAM sets is programmable (
 allows the DMA channels to be mapped to any of the PaRAM sets in the PaRAM memory map. Figure 11-
 11 illustrates the use of DCHMAP. There is one DCHMAP register per channel.
 
-
 **Figure 11-11. DMA Channel and QDMA Channel to PaRAM Mapping**
 
-DCHMAPn                                                            QCHMAPn
-31                  14 13              5     4           0    31                    14 13                   5 4             2 1 0
-00 0000 0000 0000 0000       PAENTRY             00000         00 0000 0000 0000 0000          PAENTRY        TR WORD 00
-
+DCHMAPn QCHMAPn
+31 14 13 5 4 0 31 14 13 5 4 2 1 0
+00 0000 0000 0000 0000 PAENTRY 00000 00 0000 0000 0000 0000 PAENTRY TR WORD 00
 
 Byte
-Byte               Set                                                                        address
-address              #            PaRAM                                  PaRAM set              offset
-EDMA Base Address 4000h        0         Parameter set 0                              OPT                 +0h
-EDMA Base Address 4020h        1         Parameter set 1                              SRC                 +4h
-EDMA Base Address 4040h        2         Parameter set 2                       BCNT         ACNT          +8h
-EDMA Base Address 4060h        3         Parameter set 3                              DST                 +Ch
-DSTBIDX       SRCBIDX          +10h
-BCNTRLD           LINK          +14h
-DSTCIDX       SRCCIDX          +18h
-Reserved         CCNT
+Byte Set address
+address # PaRAM PaRAM set offset
+EDMA Base Address 4000h 0 Parameter set 0 OPT +0h
+EDMA Base Address 4020h 1 Parameter set 1 SRC +4h
+EDMA Base Address 4040h 2 Parameter set 2 BCNT ACNT +8h
+EDMA Base Address 4060h 3 Parameter set 3 DST +Ch
+DSTBIDX SRCBIDX +10h
+BCNTRLD LINK +14h
+DSTCIDX SRCCIDX +18h
+Reserved CCNT
 +1Ch
 
-
-EDMA Base Address 5FC0h       254       Parameter set 254
-EDMA Base Address 5FE0h       255       Parameter set 255
-
+EDMA Base Address 5FC0h 254 Parameter set 254
+EDMA Base Address 5FE0h 255 Parameter set 255
 
 #### 11.3.6.2 QDMA Channel to PaRAM Mapping
 
@@ -1548,33 +1431,30 @@ synchronization event for EDMA3CC is a write to the trigger word in the PaRAM se
 QCHMAP for a particular QDMA channel. By default, QDMA channels are mapped to PaRAM set 0. You
 must appropriately re-map PaRAM set 0 before you use it.
 
-
 **Figure 11-12. QDMA Channel to PaRAM Mapping**
 
-31                                             14 13                               5 4              2 1       0
-PAENTR Y                    TR WORD
-QCHMAPn                0000 0000 0000 00                                                                           00
-00 0000 01 1                    1 11
+31 14 13 5 4 2 1 0
+PAENTR Y TR WORD
+QCHMAPn 0000 0000 0000 00 00
+00 0000 01 1 1 11
 
-Byte           Set
-address           #             PaRAM                                                                Byte
-EDMA Base Address + 4000h     0          Parameter set 0                                                        address
-EDMA Base Address + 4020h     1          Parameter set 1                                                         offset
+Byte Set
+address # PaRAM Byte
+EDMA Base Address + 4000h 0 Parameter set 0 address
+EDMA Base Address + 4020h 1 Parameter set 1 offset
 PaRAM set
-EDMA Base Address + 4040h     2          Parameter set 2
-EDMA Base Address + 4060h     3          Parameter set 3                                        OPT               +0h
-SRC               +4h
-BCNT            ACNT      +8h
-DST               +Ch
-DSTBIDX          SRCBIDX     +10h
-BCNTRLD            LINK      +14h
-DSTCIDX          SRCCIDX     +18h
-Rsvd            CCNT       +1Ch
+EDMA Base Address + 4040h 2 Parameter set 2
+EDMA Base Address + 4060h 3 Parameter set 3 OPT +0h
+SRC +4h
+BCNT ACNT +8h
+DST +Ch
+DSTBIDX SRCBIDX +10h
+BCNTRLD LINK +14h
+DSTCIDX SRCCIDX +18h
+Rsvd CCNT +1Ch
 
-
-EDMA Base Address + 5FC0h 254           Parameter set 254
-EDMA Base Address + 5FE0h 255           Parameter set 255
-
+EDMA Base Address + 5FC0h 254 Parameter set 254
+EDMA Base Address + 5FE0h 255 Parameter set 255
 
 ### 11.3.7 EDMA3 Channel Controller Regions
 
@@ -1587,65 +1467,63 @@ region, and thus to a given DMA or QDMA channel. This allows robust system-level
 each EDMA programmer only modifies the state of the assigned resources. Memory protection is
 described in Section 11.3.10.
 
-
 #### 11.3.7.1 Region Overview
 
 The EDMA3 channel controller memory-mapped registers are divided in three main categories:
+
 1. Global registers
 2. Global region channel registers
 3. Shadow region channel registers
-The global registers are located at a single/fixed location in the EDMA3CC memory map. These registers
-control EDMA3 resource mapping and provide debug visibility and error tracking information.
-The channel registers (including DMA, QDMA, and interrupt registers) are accessible via the global
-channel region address range, or in the shadow n channel region address range(s). For example, the
-event enable register (EER) is visible at the global address of EDMA Base Address + 1020h or region
-addresses of EDMA Base Address + 2020h for region 0, EDMA Base Address + 2220h for region 1, …
-EDMA Base Address + 2E20h for region 7.
-The DMA region access enable registers (DRAEm) and the QDMA region access enable registers
-(QRAEn) control the underlying control register bits that are accessible via the shadow region address
-space (except for IEVALn). Table 11-11 lists the registers in the shadow region memory map. See the
-EDMA3CC memory map () for the complete global and shadow region memory maps. Figure 11-13
-illustrates the conceptual view of the regions.
-
+   The global registers are located at a single/fixed location in the EDMA3CC memory map. These registers
+   control EDMA3 resource mapping and provide debug visibility and error tracking information.
+   The channel registers (including DMA, QDMA, and interrupt registers) are accessible via the global
+   channel region address range, or in the shadow n channel region address range(s). For example, the
+   event enable register (EER) is visible at the global address of EDMA Base Address + 1020h or region
+   addresses of EDMA Base Address + 2020h for region 0, EDMA Base Address + 2220h for region 1, …
+   EDMA Base Address + 2E20h for region 7.
+   The DMA region access enable registers (DRAEm) and the QDMA region access enable registers
+   (QRAEn) control the underlying control register bits that are accessible via the shadow region address
+   space (except for IEVALn). Table 11-11 lists the registers in the shadow region memory map. See the
+   EDMA3CC memory map () for the complete global and shadow region memory maps. Figure 11-13
+   illustrates the conceptual view of the regions.
 
 **Table 11-11. Shadow Region Registers**
 
-DRAEm                     DRAEHm                     QRAEn
-ER                      ERH                        QER
-ECR                      ECRH                      QEER
-ESR                      ESRH                     QEECR
-CER                      CERH                     QEESR
-EER                      EERH
-EECR                    EECRH
-EESR                    EESRH
-SER                      SERH
-SECR                    SECRH
-IER                     IERH
-IECR                    IECRH
-IESR                    IESRH
-IPR                     IPRH
-ICR                      ICRH
+DRAEm DRAEHm QRAEn
+ER ERH QER
+ECR ECRH QEER
+ESR ESRH QEECR
+CER CERH QEESR
+EER EERH
+EECR EECRH
+EESR EESRH
+SER SERH
+SECR SECRH
+IER IERH
+IECR IECRH
+IESR IESRH
+IPR IPRH
+ICR ICRH
 Register not affected by DRAE\DRAEH
 IEVAL
 
-
 **Figure 11-13. Shadow Region Registers**
 
-Shadow region 0                           Physical register
+Shadow region 0 Physical register
 
-ER, ERH                                                         EDMA
-Access address                                                             ER, ERH            Base
-DRAE0/                    ECR, ECRH           Address + 1000h
+ER, ERH EDMA
+Access address ER, ERH Base
+DRAE0/ ECR, ECRH Address + 1000h
 EDMA Base Address + 2000h
-DRAE0H                    ESR, ESRH
+DRAE0H ESR, ESRH
 EDMA Base Address + 2094h
-QSECR              QRAE0                    CER, CERH
+QSECR QRAE0 CER, CERH
 except IEV AL
 EER, EERH
 IEVAL
 EECR, EECRH
-Shadow region 0                           EESR, EESRH
-registers                              SER, SERH
+Shadow region 0 EESR, EESRH
+registers SER, SERH
 SECR, SECRH
 
 IER, IERH
@@ -1656,33 +1534,29 @@ ICR,
 IEVAL,
 
 QER
-ER, ERH                                           QEER
-Access address                                 DRAE7/                          QEECR
-EDMA Base Address + 2E00h                                 DRAE7H                          QEESR
-EDMA Base Address + 2E94h               QSECR              QRAE7                          QSER          EDMA
-QSECR         Base
-IEVAL                                                          Address + 1094h
+ER, ERH QEER
+Access address DRAE7/ QEECR
+EDMA Base Address + 2E00h DRAE7H QEESR
+EDMA Base Address + 2E94h QSECR QRAE7 QSER EDMA
+QSECR Base
+IEVAL Address + 1094h
 Shadow region 7
 registers
 
-
 **Table 11-12. EDMA Shadow Regions**
 
-EDMA Address Offset                                                    Description
-0x2000-0x2094                                          Shadow Region 0 Channel Registers
-0x2200-0x2294                                          Shadow Region 1 Channel Registers
+EDMA Address Offset Description
+0x2000-0x2094 Shadow Region 0 Channel Registers
+0x2200-0x2294 Shadow Region 1 Channel Registers
 
-
-1598Enhanced Direct Memory Access (EDMA)                                            SPRUH73Q – October 2011 – Revised December 2019
-
+1598Enhanced Direct Memory Access (EDMA) SPRUH73Q – October 2011 – Revised December 2019
 
 **Table 11-12. EDMA Shadow Regions (continued)**
 
-EDMA Address Offset                                                    Description
-0x2400-0x2494                                          Shadow Region 2 Channel Registers
-0x2600-0x2694                                          Shadow Region 3 Channel Registers
-0x2800-0x2894                                     Shadow Region 4-7 Channel Registers unused
-
+EDMA Address Offset Description
+0x2400-0x2494 Shadow Region 2 Channel Registers
+0x2600-0x2694 Shadow Region 3 Channel Registers
+0x2800-0x2894 Shadow Region 4-7 Channel Registers unused
 
 #### 11.3.7.2 Channel Controller Regions
 
@@ -1721,14 +1595,12 @@ codes:
 Region 0: DRAEH, DRAE = 0xFFFF0000, 0x0000FFFF QRAE = 0x0000001
 Region 1: DRAEH, DRAE = 0x0000FFFF, 0xFFFF0000 QRAE = 0x00000FE
 
-
 #### 11.3.7.3 Region Interrupts
 
 In addition to the EDMA3CC global completion interrupt, there is an additional completion interrupt line
 that is associated with every shadow region. Along with the interrupt enable register (IER), DRAE acts as
 a secondary interrupt enable for the respective shadow region interrupts. See Section 11.3.9 for more
 information.
-
 
 ### 11.3.8 Chaining EDMA3 Channels
 
@@ -1754,15 +1626,13 @@ are enabled, then the chain-trigger event occurs after every transfer request is
 Table 11-13 illustrates the number of chain event triggers occurring in different synchronized scenarios.
 Consider channel 31 programmed with ACNT = 3, BCNT = 4, CCNT = 5, and TCC = 30.
 
-
 **Table 11-13. Chain Event Triggers**
 
 (Number of chained event triggers on channel 30)
-Options                                A-Synchronized                                  AB-Synchronized
-TCCHEN = 1, ITCCHEN = 0                1 (Owing to the last TR)                        1 (Owing to the last TR)
-TCCHEN = 0, ITCCHEN = 1                19 (Owing to all but the last TR)               4 (Owing to all but the last TR)
-TCCHEN = 1, ITCCHEN = 1                20 (Owing to a total of 20 TRs)                 5 (Owing to a total of 5 TRs)
-
+Options A-Synchronized AB-Synchronized
+TCCHEN = 1, ITCCHEN = 0 1 (Owing to the last TR) 1 (Owing to the last TR)
+TCCHEN = 0, ITCCHEN = 1 19 (Owing to all but the last TR) 4 (Owing to all but the last TR)
+TCCHEN = 1, ITCCHEN = 1 20 (Owing to a total of 20 TRs) 5 (Owing to a total of 5 TRs)
 
 ### 11.3.9 EDMA3 Interrupts
 
@@ -1771,29 +1641,26 @@ There are nine region interrupts, eight shadow regions and one global region. Th
 interrupts are listed in Table 11-14. The transfer completion interrupts and the error interrupts from the
 transfer controllers are all routed to the ARM interrupt controllers.
 
-
 **Table 11-14. EDMA3 Transfer Completion Interrupts**
 
-Name                       Description
-EDMA3CC_INT0               EDMA3CC Transfer Completion Interrupt Shadow Region 0
-EDMA3CC_INT1               EDMA3CC Transfer Completion Interrupt Shadow Region 1
-EDMA3CC_INT2               EDMA3CC Transfer Completion Interrupt Shadow Region 2
-EDMA3CC_INT3               EDMA3CC Transfer Completion Interrupt Shadow Region 3
-EDMA3CC_INT4               EDMA3CC Transfer Completion Interrupt Shadow Region 4
-EDMA3CC_INT5               EDMA3CC Transfer Completion Interrupt Shadow Region 5
-EDMA3CC_INT6               EDMA3CC Transfer Completion Interrupt Shadow Region 6
-EDMA3CC_INT7               EDMA3CC Transfer Completion Interrupt Shadow Region 7
-
+Name Description
+EDMA3CC_INT0 EDMA3CC Transfer Completion Interrupt Shadow Region 0
+EDMA3CC_INT1 EDMA3CC Transfer Completion Interrupt Shadow Region 1
+EDMA3CC_INT2 EDMA3CC Transfer Completion Interrupt Shadow Region 2
+EDMA3CC_INT3 EDMA3CC Transfer Completion Interrupt Shadow Region 3
+EDMA3CC_INT4 EDMA3CC Transfer Completion Interrupt Shadow Region 4
+EDMA3CC_INT5 EDMA3CC Transfer Completion Interrupt Shadow Region 5
+EDMA3CC_INT6 EDMA3CC Transfer Completion Interrupt Shadow Region 6
+EDMA3CC_INT7 EDMA3CC Transfer Completion Interrupt Shadow Region 7
 
 **Table 11-15. EDMA3 Error Interrupts**
 
-Name                            Description
-EDMA3CC_ERRINT                  EDMA3CC Error Interrupt
-EDMA3CC_MPINT                   EDMA3CC Memory Protection Interrupt
-EDMA3TC0_ERRINT                 TC0 Error Interrupt
-EDMA3TC1_ERRINT                 TC1 Error Interrupt
-EDMA3TC2_ERRINT                 TC2 Error Interrupt
-
+Name Description
+EDMA3CC_ERRINT EDMA3CC Error Interrupt
+EDMA3CC_MPINT EDMA3CC Memory Protection Interrupt
+EDMA3TC0_ERRINT TC0 Error Interrupt
+EDMA3TC1_ERRINT TC1 Error Interrupt
+EDMA3TC2_ERRINT TC2 Error Interrupt
 
 #### 11.3.9.1 Transfer Completion Interrupts
 
@@ -1810,23 +1677,21 @@ When a completion code is returned (as a result of early or normal completions),
 IPR/IPRH is set if transfer completion interrupt (final/intermediate) is enabled in the channel options
 parameter (OPT) for a PaRAM set associated with the transfer.
 
-
 **Table 11-16. Transfer Complete Code (TCC) to EDMA3CC Interrupt Mapping**
 
-TCC Bits in OPT                                                     TCC Bits in OPT
-IPR Bit Set                                                    IPRH Bit Set (1)
-(TCINTEN/ITCINTEN = 1)                                              (TCINTEN/ITCINTEN = 1)
-0                               IPR0                                20h                      IPR32/IPRH0
-1                               IPR1                                21h                      IPR33/IPRH1
-2h                              IPR2                                22h                      IPR34/IPRH2
-3h                              IPR3                                23h                      IPR35/IPRH3
-4h                              IPR4                                24h                      IPR36/IPRH4
-...                               ...                                ...                           ...
-1Eh                               IPR30                               3Eh                     IPR62/IPRH30
-1Fh                               IPR31                               3Fh                     IPR63/IPRH31
+TCC Bits in OPT TCC Bits in OPT
+IPR Bit Set IPRH Bit Set (1)
+(TCINTEN/ITCINTEN = 1) (TCINTEN/ITCINTEN = 1)
+0 IPR0 20h IPR32/IPRH0
+1 IPR1 21h IPR33/IPRH1
+2h IPR2 22h IPR34/IPRH2
+3h IPR3 23h IPR35/IPRH3
+4h IPR4 24h IPR36/IPRH4
+... ... ... ...
+1Eh IPR30 3Eh IPR62/IPRH30
+1Fh IPR31 3Fh IPR63/IPRH31
 (1)
 Bit fields IPR[32-63] correspond to bits 0 to 31 in IPRH, respectively.
-
 
 You can program the transfer completion code (TCC) to any value for a DMA/QDMA channel. A direct
 relation between the channel number and the transfer completion code value does not need to exist. This
@@ -1849,14 +1714,12 @@ early or normal completion).
 Table 11-17 shows the number of interrupts that occur in different synchronized scenarios. Consider
 channel 31, programmed with ACNT = 3, BCNT = 4, CCNT = 5, and TCC = 30.
 
-
 **Table 11-17. Number of Interrupts**
 
-Options                                A-Synchronized                                  AB-Synchronized
-TCINTEN = 1, ITCINTEN = 0              1 (Last TR)                                     1 (Last TR)
-TCINTEN = 0, ITCINTEN = 1              19 (All but the last TR)                        4 (All but the last TR)
-TCINTEN = 1, ITCINTEN = 1              20 (All TRs)                                    5 (All TRs)
-
+Options A-Synchronized AB-Synchronized
+TCINTEN = 1, ITCINTEN = 0 1 (Last TR) 1 (Last TR)
+TCINTEN = 0, ITCINTEN = 1 19 (All but the last TR) 4 (All but the last TR)
+TCINTEN = 1, ITCINTEN = 1 20 (All TRs) 5 (All TRs)
 
 ##### 11.3.9.1.1 Enabling Transfer Completion Interrupts
 
@@ -1876,31 +1739,26 @@ IER/IERH. see Figure 11-14
 The region interrupt outputs are gated by IER and the specific DRAE/DRAEH associated with the region.
 See Figure 11-14.
 
-
 **Figure 11-14. Interrupt Diagram**
 
 Interrupt pending
 register (IPR)
 
-X                  1    0
+X 1 0
 
 Interrupt
-enable                             DMA region                                       DMA region
-register                         access enable 1                                  access enable 7
-(IER)                              (DRAE1)                                          (DRAE7)
+enable DMA region DMA region
+register access enable 1 access enable 7
+(IER) (DRAE1) (DRAE7)
 
-X                  1    0            X              1      0                          X              1      0
+X 1 0 X 1 0 X 1 0
 
+IEVAL0.EVAL IEVAL1.EVAL IEVAL7.EVAL
 
-IEVAL0.EVAL                      IEVAL1.EVAL                                     IEVAL7.EVAL
+Eval Eval Eval
+pulse pulse pulse
 
-
-Eval                                Eval                                             Eval
-pulse                               pulse                                            pulse
-
-
-EDMA3CC_INT0                       EDMA3CC_INT1                                       EDMA3CC_INT7
-
+EDMA3CC_INT0 EDMA3CC_INT1 EDMA3CC_INT7
 
 For the EDMA3CC to generate the transfer completion interrupts that are associated with each shadow
 region, the following conditions must be true:
@@ -1925,7 +1783,6 @@ region map, you must program the DRAE/DRAEH that is associated with the shadow r
 to have read/write access to both bit 0 (corresponding to channel 0) and bit 63
 (corresponding to IPRH bit that is set upon completion).
 
-
 ##### 11.3.9.1.2 Clearing Transfer Completion Interrupts
 
 Transfer completion interrupts that are latched to the interrupt pending registers (IPR/IPRH) are cleared by
@@ -1935,7 +1792,6 @@ If an incoming transfer completion code (TCC) gets latched to a bit in IPR/IPRH,
 get set due to a subsequent transfer completion will not result in asserting the EDMA3CC completion
 interrupt. In order for the completion interrupt to be pulsed, the required transition is from a state where no
 enabled interrupts are set to a state where at least one enabled interrupt is set.
-
 
 #### 11.3.9.2 EDMA3 Interrupt Servicing
 
@@ -1957,19 +1813,19 @@ The ISR routine in Example 11-2 is more exhaustive and incurs a higher latency.
 Example 11-2. Interrupt Servicing
 
 The pseudo code:
+
 1. Reads the interrupt pending register (IPR/IPRH).
 2. Performs the operations needed.
 3. Writes to the interrupt pending clear register (ICR/ICRH) to clear the corresponding IPR/IPRH bit(s).
 4. Reads IPR/IPRH again:
-a. If IPR/IPRH is not equal to 0, repeat from step 2 (implies occurrence of new event between step 2 to
-step 4).
-b. If IPR/IPRH is equal to 0, this should assure you that all of the enabled interrupts are inactive.
+   a. If IPR/IPRH is not equal to 0, repeat from step 2 (implies occurrence of new event between step 2 to
+   step 4).
+   b. If IPR/IPRH is equal to 0, this should assure you that all of the enabled interrupts are inactive.
 
 NOTE: An event may occur during step 4 while the IPR/IPRH bits are read as 0 and the application is
 still in the interrupt service routine. If this happens, a new interrupt is recorded in the device
 interrupt controller and a new interrupt generates as soon as the application exits in the interrupt
 service routine.
-
 
 Example 11-3 is less rigorous, with less burden on the software in polling for set interrupt bits, but can
 occasionally cause a race condition as mentioned above.
@@ -1979,20 +1835,16 @@ Example 11-3. Interrupt Servicing
 If you want to leave any enabled and pending (possibly lower priority) interrupts; you must force the interrupt
 logic to reassert the interrupt pulse by setting the EVAL bit in the interrupt evaluation register (IEVAL).
 The pseudo code is as follows:
+
 1. Enters ISR.
 
-
-Example 11-3. Interrupt Servicing (continued)
-2. Reads IPR/IPRH.
-3. For the condition that is set in IPR/IPRH that you want to service, do the following:
+Example 11-3. Interrupt Servicing (continued) 2. Reads IPR/IPRH. 3. For the condition that is set in IPR/IPRH that you want to service, do the following:
 a. Service interrupt as the application requires.
 b. Clear the bit for serviced conditions (others may still be set, and other transfers may have resulted in
-returning the TCC to EDMA3CC after step 2).
-4. Reads IPR/IPRH prior to exiting the ISR:
+returning the TCC to EDMA3CC after step 2). 4. Reads IPR/IPRH prior to exiting the ISR:
 a. If IPR/IPRH is equal to 0, then exit the ISR.
 b. If IPR/IPRH is not equal to 0, then set IEVAL so that upon exit of ISR, a new interrupt triggers if any
 enabled interrupts are still pending.
-
 
 #### 11.3.9.3 Interrupt Evaluation Operations
 
@@ -2012,7 +1864,6 @@ interrupts.
 
 NOTE: While using IEVAL for shadow region completion interrupts, ensure that the IEVAL operated
 upon is from that particular shadow region memory map.
-
 
 #### 11.3.9.4 Error Interrupts
 
@@ -2046,26 +1897,21 @@ associate an interrupt service routine with it to address the various error cond
 appropriately. Doing so puts less burden on the software (polling for error status);
 additionally, it provides a good debug mechanism for unexpected error conditions.
 
-
 **Figure 11-15. Error Interrupt Operation**
 
-EMR/EMRH                                  QEMR                                CCERR
-63                                   1    0         7    ...   1    0        16    .......    3   2   1   0
-
+EMR/EMRH QEMR CCERR
+63 1 0 7 ... 1 0 16 ....... 3 2 1 0
 
 EEVAL.EVAL
 
 Eval/
 pulse
 
-
 EDMACC_ERRINT
-
 
 ### 11.3.10 Memory Protection
 
 The EDMA3 channel controller supports two kinds of memory protection: active and proxy.
-
 
 #### 11.3.10.1 Active Memory Protection
 
@@ -2091,13 +1937,11 @@ privilege level (i.e., user vs. supervisor). The PRIVID refers to a privilege ID
 associated with an EDMA3 programmer. See the device-specific data manual for the PRIVIDs that are
 associated with potential EDMA3 programmers.
 
-
 **Table 11-18. Allowed Accesses**
 
-Access                   Supervisor                User
-Read                     Yes                       Yes
-Write                    Yes                       No
-
+Access Supervisor User
+Read Yes Yes
+Write Yes No
 
 Table 11-19 describes the MPPA register mapping for the shadow regions (which includes shadow region
 registers and PaRAM addresses).
@@ -2105,89 +1949,84 @@ The region-based MPPA registers are used to protect accesses to the DMA shadow r
 associated region PaRAM. Because there are eight regions, there are eight MPPA region registers
 (MPPA[0-7]).
 
-
 **Table 11-19. MPPA Registers to Region Assignment**
 
-Register                    Registers Protect         Address Range                 PaRAM Protect (1)     Address Range
-MPPAG                       Global Range              0000h-1FFCh                   N/A                   N/A
-MPPA0                       DMA Shadow 0              2000h-21FCh                   1st octant            4000h-47FCh
-MPPA1                       DMA Shadow 1              2200h-23FCh                   2nd octant            4800h-4FFCh
-MPPA2                       DMA Shadow 2              2400h-25FCh                   3rd octant            5000h-57FCh
-MPPA3                       DMA Shadow 3              2600h-27FCh                   4th octant            5800h-5FFCh
-MPPA4                       DMA Shadow 4              2800h-29FCh                   5th octant            6000h-67FCh
-MPPA5                       DMA Shadow 5              2A00h-2BFCh                   6th octant            6800h-6FFCh
-MPPA6                       DMA Shadow 6              2C00h-2DFCh                   7th octant            7000h-77FCh
-MPPA7                       DMA Shadow 7              2E00h-2FFCh                   8th octant            7800h-7FFCh
+Register Registers Protect Address Range PaRAM Protect (1) Address Range
+MPPAG Global Range 0000h-1FFCh N/A N/A
+MPPA0 DMA Shadow 0 2000h-21FCh 1st octant 4000h-47FCh
+MPPA1 DMA Shadow 1 2200h-23FCh 2nd octant 4800h-4FFCh
+MPPA2 DMA Shadow 2 2400h-25FCh 3rd octant 5000h-57FCh
+MPPA3 DMA Shadow 3 2600h-27FCh 4th octant 5800h-5FFCh
+MPPA4 DMA Shadow 4 2800h-29FCh 5th octant 6000h-67FCh
+MPPA5 DMA Shadow 5 2A00h-2BFCh 6th octant 6800h-6FFCh
+MPPA6 DMA Shadow 6 2C00h-2DFCh 7th octant 7000h-77FCh
+MPPA7 DMA Shadow 7 2E00h-2FFCh 8th octant 7800h-7FFCh
 (1)
 The PARAM region is divided into 8 regions referred to as an octant.
 
-
 Example Access denied.
 Write access to shadow region 7's event enable set register (EESR):
+
 1. The original value of the event enable register (EER) at address offset 0x1020 is 0x0.
 2. The MPPA[7] is set to prevent user level accesses (UW = 0, UR = 0), but it allows supervisor level
-accesses (SW = 1, SR = 1) with a privilege ID of 0. (AID0 = 1).
+   accesses (SW = 1, SR = 1) with a privilege ID of 0. (AID0 = 1).
 3. An EDMA3 programmer with a privilege ID of 0 attempts to perform a user-level write of a value of
-0xFF00FF00 to shadow region 7's event enable set register (EESR) at address offset 0x2E30. Note
-that the EER is a read-only register and the only way that you can write to it is by writing to the EESR.
-Also remember that there is only one physical register for EER, EESR, etc. and that the shadow
-regions only provide to the same physical set.
+   0xFF00FF00 to shadow region 7's event enable set register (EESR) at address offset 0x2E30. Note
+   that the EER is a read-only register and the only way that you can write to it is by writing to the EESR.
+   Also remember that there is only one physical register for EER, EESR, etc. and that the shadow
+   regions only provide to the same physical set.
 4. Since the MPPA[7] has UW = 0, though the privilege ID of the write access is set to 0, the access is
-not allowed and the EER is not written to.
-
+   not allowed and the EER is not written to.
 
 **Table 11-20. Example Access Denied**
 
-Register                 Value           Description
-EER                   0x0000 0000        Value in EER to begin with.
+Register Value Description
+EER 0x0000 0000 Value in EER to begin with.
 (offset 0x1020)
-EESR                 0xFF00 FF00         Value attempted to be written to shadow region 7's EESR.
-(offset 0x2E30)           ↓              This is done by an EDMA3 programmer with a privilege level of User and Privilege ID
+EESR 0xFF00 FF00 Value attempted to be written to shadow region 7's EESR.
+(offset 0x2E30) ↓ This is done by an EDMA3 programmer with a privilege level of User and Privilege ID
 of 0.
-MPPA[7]               0x0000 04B0        Memory Protection Filter AID0 = 1, UW = 0, UR = 0, SW = 1, SR = 1.
+MPPA[7] 0x0000 04B0 Memory Protection Filter AID0 = 1, UW = 0, UR = 0, SW = 1, SR = 1.
 (offset 0x082C)
-X             Access Denied
-EER                   0x0000 0000        Final value of EER
+X Access Denied
+EER 0x0000 0000 Final value of EER
 (offset 0x1020)
-
 
 Example Access Allowed
 Write access to shadow region 7's event enable set register (EESR):
+
 1. The original value of the event enable register (EER) at address offset 0x1020 is 0x0.
 2. The MPPA[7] is set to allow user-level accesses (UW = 1, UR = 1) and supervisor-level accesses (SW
-= 1, SR = 1) with a privilege ID of 0. (AID0 = 1).
+   = 1, SR = 1) with a privilege ID of 0. (AID0 = 1).
 3. An EDMA3 programmer with a privilege ID of 0, attempts to perform a user-level write of a value of
-0xABCD0123 to shadow region 7's event enable set register (EESR) at address offset 0x2E30. Note
-that the EER is a read-only register and the only way that you can write to it is by writing to the EESR.
-Also remember that there is only one physical register for EER, EESR, etc. and that the shadow
-regions only provide to the same physical set.
+   0xABCD0123 to shadow region 7's event enable set register (EESR) at address offset 0x2E30. Note
+   that the EER is a read-only register and the only way that you can write to it is by writing to the EESR.
+   Also remember that there is only one physical register for EER, EESR, etc. and that the shadow
+   regions only provide to the same physical set.
 4. Since the MPPA[7] has UW = 1 and AID0 = 1, the user-level write access is allowed.
 5. Remember that accesses to shadow region registers are masked by their respective DRAE register. In
-this example, the DRAE[7] is set of 0x9FF00FC2.
+   this example, the DRAE[7] is set of 0x9FF00FC2.
 6. The value finally written to EER is 0x8BC00102.
 
-
-1608Enhanced Direct Memory Access (EDMA)                                             SPRUH73Q – October 2011 – Revised December 2019
-
+1608Enhanced Direct Memory Access (EDMA) SPRUH73Q – October 2011 – Revised December 2019
 
 **Table 11-21. Example Access Allowed**
 
-Register                    Value         Description
-EER                      0x0000 0000      Value in EER to begin with.
+Register Value Description
+EER 0x0000 0000 Value in EER to begin with.
 (offset 0x1020)
-EESR                     0xFF00 FF00      Value attempted to be written to shadow region 7's EESR. This is done by an EDMA3
-(offset 0x2E30)                           programmer with a privilege level of User and Privilege ID of 0.
-MPPA[7]                  0x0000 04B3      Memory Protection Filter AID = 1, UW = 1, UR = 1, SW = 1, SR = 1.
+EESR 0xFF00 FF00 Value attempted to be written to shadow region 7's EESR. This is done by an EDMA3
+(offset 0x2E30) programmer with a privilege level of User and Privilege ID of 0.
+MPPA[7] 0x0000 04B3 Memory Protection Filter AID = 1, UW = 1, UR = 1, SW = 1, SR = 1.
 (offset 0x082C)
-√           Access allowed.
+√ Access allowed.
 ↓
-DRAE[7]                  0x9FF0 0FC2      DMA Region Access Enable Filter
-(offset 0x0378)               ↓
-EESR                     0x8BC0 0102      Value written to shadow region 7's EESR. This is done by an EDMA3 programmer with a
-(offset 0x2E30)               ↓           privilege level of User and a Privilege ID of 0.
-EER                          ↓            Final value of EER.
-(offset 0x1020)          0xBC0 0102
-
+DRAE[7] 0x9FF0 0FC2 DMA Region Access Enable Filter
+(offset 0x0378) ↓
+EESR 0x8BC0 0102 Value written to shadow region 7's EESR. This is done by an EDMA3 programmer with a
+(offset 0x2E30) ↓ privilege level of User and a Privilege ID of 0.
+EER ↓ Final value of EER.
+(offset 0x1020) 0xBC0 0102
 
 #### 11.3.10.2 Proxy Memory Protection
 
@@ -2207,40 +2046,35 @@ the source buffer on an L2 page and the destination buffer on an L1D page. The P
 and the CPU has a PRIVID of 0.
 The PaRAM set is shown in Figure 11-16.
 
-
 **Figure 11-16. PaRAM Set Content for Proxy Memory Protection Example**
 
 (a) EDMA3 Parameters
 
-
-Parameter Contents                                                                      Parameter
-0010 0007h                                                               Channel Options Parameter (OPT)
-009F 0000h                                                                Channel Source Address (SRC)
-0001h                         0004h                         Count for 2nd Dimension (BCNT)              Count for 1st Dimension (ACNT)
-00F0 7800h                                                            Channel Destination Address (DST)
-0001h                         0001h                        Destination BCNT Index (DSTBIDX)             Source BCNT Index (SRCBIDX)
-0000h                        FFFFh                             BCNT Reload (BCNTRLD)                         Link Address (LINK)
-0001h                         1000h                        Destination CCNT Index (DSTCIDX)             Source CCNT Index (SRCCIDX)
-0000h                         0001h                                    Reserved                         Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 0007h Channel Options Parameter (OPT)
+009F 0000h Channel Source Address (SRC)
+0001h 0004h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+00F0 7800h Channel Destination Address (DST)
+0001h 0001h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0000h FFFFh BCNT Reload (BCNTRLD) Link Address (LINK)
+0001h 1000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h 0001h Reserved Count for 3rd Dimension (CCNT)
 
 **Figure 11-17. Channel Options Parameter (OPT) Example**
 
 (b) Channel Options Parameter (OPT) Content
 
+31 30 29 28 27 24 23 22 21 20 19 18 17 16
 
-31   30      29        28    27                  24         23             22           21           20       19          18     17          16
+0 0 00 0000 0 0 0 1 00 00
 
-0    0           00                   0000                 0              0            0             1              00               00
+PRIV Rsvd Rsvd PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
 
-PRIV Rsvd       Rsvd                    PRIVID          ITCCHEN TCCHEN ITCINTEN TCINTEN                            Reserved            TCC
+15 12 11 10 8 7 4 3 2 1 0
 
+0000 0 000 0000 0 1 1 1
 
-15                     12         11       10           8        7                                   4        3              2        1      0
-
-0000                       0             000                              0000                         0              1        1      1
-
-TCC                   TCCMOD             FWID                            Reserved                  STATIC SYNCDIM DAM SAM
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 
 The PRIV and PRIVID information travels along with the read and write requests that are issued to the
 source and destination memories.
@@ -2255,38 +2089,34 @@ requests, EDMA3 acts as a proxy.
 Figure 11-18 illustrates the propagation of PRIV and PRIVID at the boundaries of all the interacting
 entities (CPU, EDMA3CC, EDMA3TC, and slave memories).
 
-
 **Figure 11-18. Proxy Memory Protection Example**
 
 Memory
-Protection   L2 Page
-Attribute    9F 0000h
+Protection L2 Page
+Attribute 9F 0000h
 Read req
 EDMA3CC
 PRIVID=0,
-PaRAM                                         PRIV=0            AID0=1      Src Buffer
+PaRAM PRIV=0 AID0=1 Src Buffer
 UR=1
 EDMA3TC0
 PRIVID=0
 
-PaRAM                                                         Access allowed
-CPU    User write                                                             Read
-entry 5               TR
-from user                  PRIVID=0,
-PRIV=0            Submission
-Privilege level                                                                               Access
-Write                 L1D Page
-allowed     F0 7800h
+PaRAM Access allowed
+CPU User write Read
+entry 5 TR
+from user PRIVID=0,
+PRIV=0 Submission
+Privilege level Access
+Write L1D Page
+allowed F0 7800h
 
-
-PRIVID = 0,        AID0=1      Dst Buffer
-PRIV = 0           UW=1
-
+PRIVID = 0, AID0=1 Dst Buffer
+PRIV = 0 UW=1
 
 Memory
 Protection
 Attribute
-
 
 ### 11.3.11 Event Queues
 
@@ -2312,7 +2142,6 @@ Q0E1,…Q1E15, etc.). Each event entry register characterizes the queued event i
 event (manual, event, chained or auto-triggered) and the event number. See for a description of the bit
 fields in the queue event entry registers.
 
-
 #### 11.3.11.1 DMA/QDMA Channel to Event Queue Mapping
 
 Each of the 64 DMA channels and eight QDMA channels are programmed independently to map to a
@@ -2321,13 +2150,11 @@ register (QDMANUM). The mapping of DMA/QDMA channels is critical to achieving th
 performance level for the EDMA and most importantly, in meeting real-time deadlines. See
 Section 11.3.11.4.
 
-
 NOTE: If an event is ready to be queued and both the event queue and the EDMA3 transfer
 controller that is associated to the event queue are empty, then the event bypasses the
 event queue, and moves the PaRAM processing logic, and eventually to the transfer request
 submission logic for submission to the EDMA3TC. In this case, the event is not logged in the
 event queue status registers.
-
 
 #### 11.3.11.2 Queue RAM Debug Visibility
 
@@ -2350,7 +2177,6 @@ index appropriately into the 16 event entries. NUMVAL number of entries starting
 indicative of events still queued in the respective queue. The remaining entry may be read to determine
 what's already de-queued and submitted to the associated transfer controller.
 
-
 #### 11.3.11.3 Queue Resource Tracking
 
 The EDMA3CC event queue includes watermarking/threshold logic that allows you to keep track of
@@ -2365,7 +2191,6 @@ If the queue usage is exceeded, this status is visible in the EDMA3CC registers:
 channel controller error register (CCERR) and the THRXCD bit in QSTATn, where n stands for the event
 queue number. Any bits that are set in CCERR also generate an EDMA3CC error interrupt.
 
-
 #### 11.3.11.4 Performance Considerations
 
 The main system bus infrastructure (L3) arbitrates bus requests from all of the masters (TCs, CPU(S), and
@@ -2377,7 +2202,6 @@ transfer requests are submitted to TCN).
 Therefore, the priority of unloading queues has a secondary affect compared to the priority of the transfers
 as they are executed by the EDMA3TC (dictated by the priority set using QUEPRI).
 
-
 ### 11.3.12 EDMA3 Transfer Controller (EDMA3TC)
 
 The EDMA3 channel controller is the user-interface of the EDMA3 and the EDMA3 transfer controller
@@ -2385,9 +2209,7 @@ The EDMA3 channel controller is the user-interface of the EDMA3 and the EDMA3 tr
 to the EDMA3TC and the EDMA3TC performs the data transfers dictated by the TR; thus, the EDMA3TC
 is a slave to the EDMA3CC.
 
-
 #### 11.3.12.1 Architecture Details
-
 
 ##### 11.3.12.1.1 Command Fragmentation
 
@@ -2409,18 +2231,16 @@ optimization takes place if the EDMA3TC recognizes that the 2D-transfer is organ
 dimension (ACNT == BIDX) and the ACNT value is a power of 2.
 Table 11-22 lists conditions in which the optimizations are performed.
 
-
 **Table 11-22. Read/Write Command Optimization Rules**
 
 SAM/DAM =
-ACNT ≤ DBS       ACNT is power of 2       BIDX = ACNT           BCNT ≤ 1023             Increment       Description
-Yes                 Yes                     Yes                  Yes                   Yes          Optimized
-No                   x                       x                     x                    x           Not Optimized
-x                  No                       x                     x                    x           Not Optimized
-x                   x                      No                     x                    x           Not Optimized
-x                   x                       x                    No                    x           Not Optimized
-x                   x                       x                     x                   No           Not Optimized
-
+ACNT ≤ DBS ACNT is power of 2 BIDX = ACNT BCNT ≤ 1023 Increment Description
+Yes Yes Yes Yes Yes Optimized
+No x x x x Not Optimized
+x No x x x Not Optimized
+x x No x x Not Optimized
+x x x No x Not Optimized
+x x x x No Not Optimized
 
 ##### 11.3.12.1.2 TR Pipelining
 
@@ -2431,27 +2251,26 @@ The number of outstanding TRs is limited by the number of destination FIFO regis
 TR pipelining is useful for maintaining throughput on back-to-back small TRs. It minimizes the startup
 overhead because reads start in the background of a previous TR writes.
 
-
 Example 11-4. Command Fragmentation (DBS = 64)
 
 The pseudo code:
-1. ACNT = 8, BCNT = 8, SRCBIDX = 8, DSTBIDX = 10, SRCADDR = 64, DSTADDR = 191
-Read Controller: This is optimized from a 2D-transfer to a 1D-transfer such that the read side is equivalent
-to ACNT = 64, BCNT = 1.
-Cmd0 = 64 byte
-Write Controller: Because DSTBIDX != ACNT, it is not optimized.
-Cmd0 = 8 byte, Cmd1 = 8 byte, Cmd2 = 8 byte, Cmd3 = 8 byte, Cmd4 = 8 byte, Cmd5 = 8 byte, Cmd6 = 8
-byte, Cmd7 = 8 byte.
-2. ACNT=128, BCNT = 1,SRCADDR = 63, DSTADDR = 513
-Read Controller: Read address is not aligned.
-Cmd0 = 1 byte, (now the SRCADDR is aligned to 64 for the next command)
-Cmd1 = 64 bytes
-Cmd2 = 63 bytes
-Write Controller: The write address is also not aligned.
-Cmd0 = 63 bytes, (now the DSTADDR is aligned to 64 for the next command)
-Cmd1 = 64 bytes
-Cmd2 = 1 byte
 
+1. ACNT = 8, BCNT = 8, SRCBIDX = 8, DSTBIDX = 10, SRCADDR = 64, DSTADDR = 191
+   Read Controller: This is optimized from a 2D-transfer to a 1D-transfer such that the read side is equivalent
+   to ACNT = 64, BCNT = 1.
+   Cmd0 = 64 byte
+   Write Controller: Because DSTBIDX != ACNT, it is not optimized.
+   Cmd0 = 8 byte, Cmd1 = 8 byte, Cmd2 = 8 byte, Cmd3 = 8 byte, Cmd4 = 8 byte, Cmd5 = 8 byte, Cmd6 = 8
+   byte, Cmd7 = 8 byte.
+2. ACNT=128, BCNT = 1,SRCADDR = 63, DSTADDR = 513
+   Read Controller: Read address is not aligned.
+   Cmd0 = 1 byte, (now the SRCADDR is aligned to 64 for the next command)
+   Cmd1 = 64 bytes
+   Cmd2 = 63 bytes
+   Write Controller: The write address is also not aligned.
+   Cmd0 = 63 bytes, (now the DSTADDR is aligned to 64 for the next command)
+   Cmd1 = 64 bytes
+   Cmd2 = 1 byte
 
 ##### 11.3.12.1.3 Performance Tuning
 
@@ -2466,7 +2285,6 @@ value if the transfer controller is targeted for low priority transfers.
 In contrast, the Write Interface does not have any performance turning knobs because writes always have
 an interval between commands as write commands are submitted along with the associated write data.
 
-
 #### 11.3.12.2 Memory Protection
 
 The transfer controller plays an important role in handling proxy memory protection. There are two access
@@ -2478,7 +2296,6 @@ the EDMA3TC and used by the EDMA3TC while issuing read and write commands. The r
 commands have the same privilege identification, and privilege level as that programmed in the EDMA3
 transfer in the channel controller.
 
-
 #### 11.3.12.3 Error Generation
 
 Errors are generated if enabled under three conditions:
@@ -2487,10 +2304,8 @@ Errors are generated if enabled under three conditions:
 • Detection of a constant addressing mode TR violating the constant addressing mode transfer rules (the
 source/destination addresses and source/destination indexes must be aligned to 32 bytes).
 
-
 Either or all error types may be disabled. If an error bit is set and enabled, the error interrupt for the
 concerned transfer controller is pulsed.
-
 
 #### 11.3.12.4 Debug Features
 
@@ -2508,7 +2323,6 @@ values of these registers due to ongoing activities.
 It is recommended that you ensure no additional submission of TRs to the EDMA3TC in order to facilitate
 ease of debug.
 
-
 ##### 11.3.12.4.1 Destination FIFO Register Pointer
 
 The destination FIFO register pointer is implemented as a circular buffer with the start pointer being
@@ -2525,62 +2339,58 @@ FIFO register entry 2.
 from the destination FIFO register entry 3 and the second pending TR is read from the destination
 FIFO register entry 0.
 
-
 #### 11.3.12.5 EDMA3TC Configuration
 
 Table 11-23 provides the configuration of the individual EDMA3 transfer controllers present on the device.
 The default burst size (DBS) for each transfer controller is configurable using the TPTC_CFG register in
 the control module.
 
-
 **Table 11-23. EDMA3 Transfer Controller Configurations**
 
-Name             TC0                               TC1                             TC2
-FIFOSIZE                    512 bytes                         512 bytes                       512 bytes
-BUSWIDTH                    16 bytes                          16 bytes                        16 bytes
-DSTREGDEPTH                 4 entries                         4 entries                       4 entries
-DBS                         Configurable                      Configurable                    Configurable
-
+Name TC0 TC1 TC2
+FIFOSIZE 512 bytes 512 bytes 512 bytes
+BUSWIDTH 16 bytes 16 bytes 16 bytes
+DSTREGDEPTH 4 entries 4 entries 4 entries
+DBS Configurable Configurable Configurable
 
 ### 11.3.13 Event Dataflow
 
 This section summarizes the data flow of a single event, from the time the event is latched to the channel
 controller to the time the transfer completion code is returned. The following steps list the sequence of
 EDMA3CC activity:
+
 1. Event is asserted from an external source (peripheral or external interrupt). This also is similar for a
-manually-triggered, chained-triggered, or QDMA-triggered event. The event is latched into the
-ER.En/ERH.En (or CER.En/CERH.En, ESR.En /ESRH.En, QER.En) bit.
+   manually-triggered, chained-triggered, or QDMA-triggered event. The event is latched into the
+   ER.En/ERH.En (or CER.En/CERH.En, ESR.En /ESRH.En, QER.En) bit.
 2. Once an event is prioritized and queued into the appropriate event queue, the SER.En\SERH.En (or
-QSER.En) bit is set to inform the event prioritization/processing logic to disregard this event since it is
-already in the queue. Alternatively, if the transfer controller and the event queue are empty, then the
-event bypasses the queue.
+   QSER.En) bit is set to inform the event prioritization/processing logic to disregard this event since it is
+   already in the queue. Alternatively, if the transfer controller and the event queue are empty, then the
+   event bypasses the queue.
 3. The EDMA3CC processing and the submission logic evaluates the appropriate PaRAM set and
-determines whether it is a non-null and non-dummy transfer request (TR).
+   determines whether it is a non-null and non-dummy transfer request (TR).
 4. The EDMA3CC clears the ER.En/ERH.En (or CER.En/CERH.En, ESR.En/ESRH.En, QER.En) bit and
-the SER.En/SERH.En bit as soon as it determines the TR is non-null. In the case of a null set, the
-SER.En/SERH.En bit remains set. It submits the non-null/non-dummy TR to the associated transfer
-controller. If the TR was programmed for early completion, the EDMA3CC immediately sets the
-interrupt pending register (IPR.I[TCC]/IPRH.I[TCC]-32).
+   the SER.En/SERH.En bit as soon as it determines the TR is non-null. In the case of a null set, the
+   SER.En/SERH.En bit remains set. It submits the non-null/non-dummy TR to the associated transfer
+   controller. If the TR was programmed for early completion, the EDMA3CC immediately sets the
+   interrupt pending register (IPR.I[TCC]/IPRH.I[TCC]-32).
 5. If the TR was programmed for normal completion, the EDMA3CC sets the interrupt pending register
-(IPR.I[TCC]/IPRH.I[TCC]) when the EDMA3TC informs the EDMA3CC about completion of the transfer
-(returns transfer completion codes).
+   (IPR.I[TCC]/IPRH.I[TCC]) when the EDMA3TC informs the EDMA3CC about completion of the transfer
+   (returns transfer completion codes).
 6. The EDMA3CC programs the associated EDMA3TCn's Program Register Set with the TR.
 7. The TR is then passed to the Source Active set and the DST FIFO Register Set, if both the register
-sets are available.
+   sets are available.
 8. The Read Controller processes the TR by issuing read commands to the source slave endpoint. The
-Read Data lands in the Data FIFO of the EDMA3TCn.
+   Read Data lands in the Data FIFO of the EDMA3TCn.
 9. As soon as sufficient data is available, the Write Controller begins processing the TR by issuing write
-commands to the destination slave endpoint.
+   commands to the destination slave endpoint.
 10. This continues until the TR completes and the EDMA3TCn then signals completion status to the
-EDMA3CC.
-
+    EDMA3CC.
 
 ### 11.3.14 EDMA3 Prioritization
 
 The EDMA3 controller has many implementation rules to deal with concurrent events/channels, transfers,
 etc. The following subsections detail various arbitration details whenever there might be occurrence of
 concurrent activity. Figure 11-19 shows the different places EDMA3 priorities come into play.
-
 
 #### 11.3.14.1 Channel Priority
 
@@ -2594,7 +2404,6 @@ events for submission to the event queues.
 If a DMA and QDMA event occurs simultaneously, the DMA event always has prioritization against the
 QDMA event for submission to the event queues.
 
-
 #### 11.3.14.2 Trigger Source Priority
 
 If a DMA channel is associated with more than one trigger source (event trigger, manual trigger, and chain
@@ -2605,7 +2414,6 @@ manual trigger (via ESR).
 This implies that if for channel 0, both ER.E0 = 1 and CER.E0 = 1 at the same time, then the ER.E0 event
 is always queued before the CER.E0 event.
 
-
 #### 11.3.14.3 Dequeue Priority
 
 The priority of the associated transfer request (TR) is further mitigated by which event queue is being used
@@ -2613,31 +2421,26 @@ for event submission (dictated by DMAQNUM and QDMAQNUM). For submission of a TR 
 request, events need to be de-queued from the event queues. Queue 0 has the highest dequeue priority
 and Queue 2 the lowest.
 
-
 #### 11.3.14.4 System (Transfer Controller) Priority
 
 INIT_PRIORITY_0 and INIT_PRIORITY_1 registers in the chip configuration module are used to configure
 the EDMA TC's priority through the system bus infrastructure.
-
 
 NOTE: The default priority for all TCs is the same, 0 or highest priority relative to other masters. It is
 recommended that this priority be changed based on system level considerations, such as
 real-time deadlines for all masters including the priority of the transfer controllers with respect
 to each other.
 
-
 ### 11.3.15 EDMA3 Operating Frequency (Clock Control)
 
 The EDMA3 channel controller and transfer controller are clocked from PLL_L3 SYSCLK4. The EDMA3
 system runs at the L3 clock frequency.
-
 
 ### 11.3.16 Reset Considerations
 
 A hardware reset resets the EDMA3 (EDMA3CC and EDMA3TC) and the EDMA3 configuration registers.
 The PaRAM memory contents are undefined after device reset and you should not rely on parameters to
 be reset to a known state. The PaRAM entry must be initialized to a desired value before it is used.
-
 
 ### 11.3.17 Power Management
 
@@ -2649,14 +2452,12 @@ The EDMA3 controller can be idled on receiving a clock stop request from the PRC
 EDMA3CC and EDMA3TC are separate. In general, it should be verified that there are no pending
 activities in the EDMA3 controller
 
-
 ### 11.3.18 Emulation Considerations
 
 During debug when using the emulator, the CPU(s) may be halted on an execute packet boundary for
 single-stepping, benchmarking, profiling, or other debug purposes. During an emulation halt, the EDMA3
 channel controller and transfer controller operations continue. Events continue to be latched and
 processed and transfer requests continue to be submitted and serviced.
-
 
 Since EDMA3 is involved in servicing multiple master and slave peripherals, it is not feasible to have an
 independent behavior of the EDMA3 for emulation halts. EDMA3 functionality would be coupled with the
@@ -2666,96 +2467,80 @@ McASP stops generating the McASP receive or transmit events (REVT or XEVT) to th
 point of view of the McASP, the EDMA3 is suspended, but other peripherals (for example, a timer) still
 assert events and will be serviced by the EDMA.
 
-
 **Figure 11-19. EDMA3 Prioritization**
 
-From peripherals/external events         Trigger source priority
-E63      E1 E0
+From peripherals/external events Trigger source priority
+E63 E1 E0
 
-
-Channel    Event queues                                              PaRAM
-priority    0
-Event                                                                             Dequeue                                Parameter
+Channel Event queues PaRAM
+priority 0
+Event Dequeue Parameter
 64:1 priority encoder
 
-
-register                                                                            priority                               entry 0
-
+register priority entry 0
 
 Queue 0
 TC0
-Event     (ER/ERH)                                                                                                                   Parameter
-
+Event (ER/ERH) Parameter
 
 Transfer request process submit
-trigger      Event                                                                                                                     entry 1
-enable           64
-
+trigger Event entry 1
+enable 64
 
 Channel mapping
-register                                                         15
+register 15
 (EER/EERH)
 0
-
 
 L3
 Queue 1
 
-
 Event
-Manual        set        64
-trigger     register
+Manual set 64
+trigger register
 Parameter
 (ESR/ESRH)
-64                                                                                                      entry 254
+64 entry 254
 15
-Chain                                                                                                                                Parameter                                                 TC2
-Chained                                                           0
-trigger                                                                                                                               entry 255
+Chain Parameter TC2
+Chained 0
+trigger entry 255
 event
 8:1 priority encoder
 
-
 Queue 2
-
 
 register
 (CER/CERH)
 
-
-QDMA                                                             15
-event            8
-EDMA3                                                                 System
+QDMA 15
+event 8
+EDMA3 System
 Early completion
-register                                                                                                                                                                                  priority
-(QER)                                                                                                              channel
+register priority
+(QER) channel
 Queue bypass
 controller
 QDMA trigger
 
-
-To chained event register (CER/CERH)                                         Completion                                                                                From
-detection                                                                                EDMA3TC0
-
+To chained event register (CER/CERH) Completion From
+detection EDMA3TC0
 
 Completion
 interface
-Memory                         Error                                         Completion                                                                                             From
-protection                    detection                                        interrupt                                                                                             EDMA3TC2
+Memory Error Completion From
+protection detection interrupt EDMA3TC2
 
-
-EDMA3CC_              Read/            EDMA3CC_                                  EDMA3CC_INT[0:7]
-MPINT              write to/          ERRINT
+EDMA3CC* Read/ EDMA3CC* EDMA3CC_INT[0:7]
+MPINT write to/ ERRINT
 from EDMA3
 programmer
-
 
 ### 11.3.19 EDMA Transfer Examples
 
 The EDMA3 channel controller performs a variety of transfers depending on the parameter configuration.
 The following sections provide a description and PaRAM configuration for some typical use case
 scenarios.
-
 
 #### 11.3.19.1 Block Move Example
 
@@ -2777,47 +2562,39 @@ nature, the number of cycles used to submit the transfer are fewer depending on 
 transfer parameters. You may program the QDMA trigger word to be the highest numbered offset in the
 PaRAM set that undergoes change.
 
-
 **Figure 11-20. Block Move Example**
 
+Channel Source 1 2 3 4 5 6 7 8 Channel Destination 1 2 3 4 5 6 7 8
+Address (SRC) Address (DST)
+9 10 11 12 13 14 15 16 9 10 11 12 13 14 15 16
+17 18 19 20 21 ... ... 17 18 19 20 21 ... ...
 
-Channel Source     1   2      3     4      5     6    7     8     Channel Destination     1     2     3       4    5     6     7     8
-Address (SRC)                                                        Address (DST)
-9   10    11    12      13   14    15    16                            9     10    11     12    13   14     15    16
-17   18    19    20      21   ...   ...                                17     18    19     20    21    ...   ...
-
-
-...   ...   244 245 246 247 248                                          ...   ...   244 245 246 247 248
-249 250 251 252 253 254 255 256                                        249 250 251 252 253 254 255 256
-
+... ... 244 245 246 247 248 ... ... 244 245 246 247 248
+249 250 251 252 253 254 255 256 249 250 251 252 253 254 255 256
 
 **Figure 11-21. Block Move Example PaRAM Configuration**
 
 (a) EDMA Parameters
 
-
-Parameter Contents                                                               Parameter
-0010 0008h                                                      Channel Options Parameter (OPT)
-Channel Source Address (SRC)                                                Channel Source Address (SRC)
-0001h                    0100h                         Count for 2nd Dimension (BCNT)             Count for 1st Dimension (ACNT)
-Channel Destination Address (DST)                                          Channel Destination Address (DST)
-0000h                    0000h                        Destination BCNT Index (DSTBIDX)            Source BCNT Index (SRCBIDX)
-0000h                    FFFFh                            BCNT Reload (BCNTRLD)                         Link Address (LINK)
-0000h                    0000h                        Destination CCNT Index (DSTCIDX)            Source CCNT Index (SRCCIDX)
-0000h                    0001h                                   Reserved                         Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 0008h Channel Options Parameter (OPT)
+Channel Source Address (SRC) Channel Source Address (SRC)
+0001h 0100h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+Channel Destination Address (DST) Channel Destination Address (DST)
+0000h 0000h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0000h FFFFh BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h 0001h Reserved Count for 3rd Dimension (CCNT)
 
 (b) Channel Options Parameter (OPT) Content
 
+31 30 28 27 24 23 22 21 20 19 18 17 16
+0 000 0000 0 0 0 1 00 00
+PRIV Reserved PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
 
-31    30          28       27                   24      23            22               21              20                 19                 18               17            16
-0          000                 0000                     0            0                 0              1                            00                                00
-PRIV    Reserved                 PRIVID               ITCCHEN      TCCHEN           ITCINTEN       TCINTEN                      Reserved                               TCC
-
-15                12       11       10          8        7                                             4                   3                  2                1            0
-0000                 0             000                                   0000                                        1                  0                0            0
-TCC              TCCMOD            FWID                              Reserved                                  STATIC            SYNCDIM              DAM            SAM
-
+15 12 11 10 8 7 4 3 2 1 0
+0000 0 000 0000 1 0 0 0
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 
 #### 11.3.19.2 Subframe Extraction Example
 
@@ -2832,15 +2609,14 @@ The same PaRAM entry options are used for QDMA channels, as well as DMA channels
 in OPT is set to prevent linking. For successive transfers, only changed parameters need to be
 programmed before triggering the channel.
 
-
 **Figure 11-22. Subframe Extraction Example**
 
 0
 Channel Destination
 Address (DST)
-Channel Source                                                                             0_1 0_2 0_3 0_4 0_5 0_6 0_7 0_8 0_9 0_A 0_B 0_C 0_D 0_E 0_F 0_10
+Channel Source 0_1 0_2 0_3 0_4 0_5 0_6 0_7 0_8 0_9 0_A 0_B 0_C 0_D 0_E 0_F 0_10
 
-Address (SRC)                                                                             1_1 1_2 1_3 1_4 1_5 1_6 1_7 1_8 1_9 1_A 1_B 1_C 1_D 1_E 1_F 1_10
+Address (SRC) 1_1 1_2 1_3 1_4 1_5 1_6 1_7 1_8 1_9 1_A 1_B 1_C 1_D 1_E 1_F 1_10
 
 2_1 2_2 2_3 2_4 2_5 2_6 2_7 2_8 2_9 2_A 2_B 2_C 2_D 2_E 2_F 2_10
 
@@ -2862,40 +2638,34 @@ A_1 A_2 A_3 A_4 A_5 A_6 A_7 A_8 A_9 A_A A_B A_C A_D A_E A_F A_10
 
 B_1 B_2 B_3 B_4 B_5 B_6 B_7 B_8 B_9 B_A B_B B_C B_D B_E B_F B_10
 
-
 479
-0                                          6
+0 6
 3
 9
-
 
 **Figure 11-23. Subframe Extraction Example PaRAM Configuration**
 
 (a) EDMA Parameters
 
-
-Parameter Contents                                                                   Parameter
-0010 000Ch                                                         Channel Options Parameter (OPT)
-Channel Source Address (SRC)                                                  Channel Source Address (SRC)
-000Ch                    0020h                         Count for 2nd Dimension (BCNT)                    Count for 1st Dimension (ACNT)
-Channel Destination Address (DST)                                           Channel Destination Address (DST)
-0020h                    0500h                      Destination BCNT Index (DSTBIDX)                     Source BCNT Index (SRCBIDX)
-0000h                   FFFFh                               BCNT Reload (BCNTRLD)                                Link Address (LINK)
-0000h                    0000h                     Destination CCNT Index (DSTCIDX)                      Source CCNT Index (SRCCIDX)
-0000h                    0001h                                     Reserved                              Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 000Ch Channel Options Parameter (OPT)
+Channel Source Address (SRC) Channel Source Address (SRC)
+000Ch 0020h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+Channel Destination Address (DST) Channel Destination Address (DST)
+0020h 0500h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0000h FFFFh BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h 0001h Reserved Count for 3rd Dimension (CCNT)
 
 (b) Channel Options Parameter (OPT) Content
 
+31 30 28 27 24 23 22 21 20 19 18 17 16
+0 000 0000 0 0 0 1 00 00
+PRIV Reserved PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
 
-31      30         28         27                     24          23           22              21      20            19                 18         17              16
-0           000                   0000                          0             0              0        1                    00                               00
-PRIV     Reserved                   PRIVID                  ITCCHEN          TCCHEN      ITCINTEN   TCINTEN                Reserved                      TCC
-
-15                 12         11         10          8           7                                     4            3                  2           1               0
-0000                    0               000                                   0000                            1                  1           0               0
-TCC              TCCMOD                FWID                                 Reserved                       STATIC      SYNCDIM             DAM             SAM
-
+15 12 11 10 8 7 4 3 2 1 0
+0000 0 000 0000 1 1 0 0
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 
 #### 11.3.19.3 Data Sorting Example
 
@@ -2920,19 +2690,17 @@ chained to itself. After BCNT elements get sorted, intermediate chaining could b
 channel again causing the transfer of the next BCNT elements and so on. Figure 11-25 shows the
 parameter set programming for this transfer, assuming channel 0 and an element size of 4 bytes.
 
-
 **Figure 11-24. Data Sorting Example**
 
+Channel Source A_1 A_2 A_3 ... ... A_1022 A_1023 A_1024 Channel A_1 B_1 C_1 D_1
+Address (SRC) Destination
+B_1 B_2 B_3 ... ... B_1022 B_1023 B_1024 Address (DST) A_2 B_2 C_2 D_2
 
-Channel Source     A_1        A_2         A_3         ...        ...   A_1022 A_1023 A_1024      Channel       A_1       B_1           C_1    D_1
-Address (SRC)                                                                                 Destination
-B_1        B_2         B_3         ...        ...   B_1022 B_1023 B_1024 Address (DST)      A_2       B_2           C_2    D_2
+C_1 C_2 C_3 ... ... C_1022 C_1023 C_1024 A_3 B_3 C_3 D_3
 
-C_1        C_2         C_3         ...        ...   C_1022 C_1023 C_1024                    A_3       B_3           C_3    D_3
+D_1 D_2 D_3 ... ... D_1022 D_1023 D_1024 ... ... ... ...
 
-D_1        D_2         D_3         ...        ...   D_1022 D_1023 D_1024                    ...          ...        ...        ...
-
-...          ...        ...        ...
+... ... ... ...
 
 A_1022 B_1022 C_1022 D_1022
 
@@ -2940,34 +2708,29 @@ A_1023 B_1023 C_1023 D_1023
 
 A_1024 B_1024 C_1024 D_1024
 
-
 **Figure 11-25. Data Sorting Example PaRAM Configuration**
 
 (a) EDMA Parameters
 
-
-Parameter Contents                                                               Parameter
-0090 0004h                                                     Channel Options Parameter (OPT)
-Channel Source Address (SRC)                                                Channel Source Address (SRC)
-0400h                    0004h                         Count for 2nd Dimension (BCNT)         Count for 1st Dimension (ACNT)
-Channel Destination Address (DST)                                         Channel Destination Address (DST)
-0010h                    0004h                      Destination BCNT Index (DSTBIDX)          Source BCNT Index (SRCBIDX)
-0000h                    FFFFh                           BCNT Reload (BCNTRLD)                       Link Address (LINK)
-0004h                    1000h                     Destination CCNT Index (DSTCIDX)           Source CCNT Index (SRCCIDX)
-0000h                    0004h                                   Reserved                     Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0090 0004h Channel Options Parameter (OPT)
+Channel Source Address (SRC) Channel Source Address (SRC)
+0400h 0004h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+Channel Destination Address (DST) Channel Destination Address (DST)
+0010h 0004h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0000h FFFFh BCNT Reload (BCNTRLD) Link Address (LINK)
+0004h 1000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h 0004h Reserved Count for 3rd Dimension (CCNT)
 
 (b) Channel Options Parameter (OPT) Content
 
+31 30 28 27 24 23 22 21 20 19 18 17 16
+0 000 0000 1 0 0 1 00 00
+PRIV Reserved PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
 
-31    30          28       27                   24      23            22              21           20           19            18         17          16
-0          000                 0000                     1            0               0             1                  00                       00
-PRIV    Reserved                 PRIVID               ITCCHEN      TCCHEN         ITCINTEN       TCINTEN              Reserved                  TCC
-
-15                12       11       10          8        7                                          4           3               2        1            0
-0000                 0              000                                0000                               0               1        0            0
-TCC              TCCMOD            FWID                              Reserved                          STATIC      SYNCDIM       DAM           SAM
-
+15 12 11 10 8 7 4 3 2 1 0
+0000 0 000 0000 0 1 0 0
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 
 #### 11.3.19.4 Peripheral Servicing Example
 
@@ -2980,7 +2743,6 @@ event in the event enable register (EER). When programming an EDMA3 channel to s
 it is necessary to know how data is to be presented to the processor. Data is always provided with some
 kind of synchronization event as either one element per event (non-bursting) or multiple elements per
 event (bursting).
-
 
 ##### 11.3.19.4.1 Non-bursting Peripherals
 
@@ -2999,54 +2761,48 @@ the data block in DDR. Because the address of serializer buffer is fixed, the so
 Based on the premise that serial data is typically a high priority, the EDMA3 channel should be
 programmed to be on queue 0.
 
-
 **Figure 11-26. Servicing Incoming McASP Data Example**
 
 :
-3                                           Channel Destination         1        2         3      4         5        6         7     8
-:                                               Address (DST)
-2                                                                       9       10        11     12      13      14           15    16
+3 Channel Destination 1 2 3 4 5 6 7 8
+: Address (DST)
+2 9 10 11 12 13 14 15 16
 :
-1                                  AREVT                               17       18        19     20      21       ...         ...
+1 AREVT 17 18 19 20 21 ... ...
 
 McASP RX Address
 
-RSR                                  DAT
+RSR DAT
 
 Receive
 serializer
-...       ...    244    245      246          247   248
+... ... 244 245 246 247 248
 
-249      250      251     252    253      254          255   256
-
+249 250 251 252 253 254 255 256
 
 **Figure 11-27. Servicing Incoming McASP Data Example PaRAM Configuration**
 
 (a) EDMA Parameters
 
-
-Parameter Contents                                                                   Parameter
-0010 0000h                                                       Channel Options Parameter (OPT)
-McASP RX Address                                                          Channel Source Address (SRC)
-0100h                   0001h                         Count for 2nd Dimension (BCNT)              Count for 1st Dimension (ACNT)
-Channel Destination Address (DST)                                           Channel Destination Address (DST)
-0001h                   0000h                      Destination BCNT Index (DSTBIDX)               Source BCNT Index (SRCBIDX)
-0000h                   FFFFh                           BCNT Reload (BCNTRLD)                            Link Address (LINK)
-0000h                   0000h                     Destination CCNT Index (DSTCIDX)                Source CCNT Index (SRCCIDX)
-0000h                   0004h                                    Reserved                         Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 0000h Channel Options Parameter (OPT)
+McASP RX Address Channel Source Address (SRC)
+0100h 0001h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+Channel Destination Address (DST) Channel Destination Address (DST)
+0001h 0000h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0000h FFFFh BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h 0004h Reserved Count for 3rd Dimension (CCNT)
 
 (b) Channel Options Parameter (OPT) Content
 
+31 30 28 27 24 23 22 21 20 19 18 17 16
+0 000 0000 0 0 0 1 00 00
+PRIV Reserved PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
 
-31    30          28        27                  24      23            22              21               20            19               18         17          16
-0          000                  0000                    0            0                  0              1                    00                        00
-PRIV    Reserved                  PRIVID              ITCCHEN      TCCHEN         ITCINTEN           TCINTEN               Reserved                     TCC
-
-15                12        11      10          8        7                                              4            3                2           1          0
-0000                  0             000                                0000                                    0                0           0          0
-TCC              TCCMOD            FWID                              Reserved                                STATIC     SYNCDIM            DAM        SAM
-
+15 12 11 10 8 7 4 3 2 1 0
+0000 0 000 0000 0 0 0 0
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 
 ##### 11.3.19.4.2 Bursting Peripherals
 
@@ -3068,49 +2824,43 @@ number of arrays in the block, 480. SRCCIDX is 0 because the source address unde
 The DSTCIDX is equal to the difference between the starting addresses of each array. Because a pixel is
 16 bits (2 bytes), DSTCIDX is equal to 640 × 2.
 
-
 **Figure 11-28. Servicing Peripheral Burst Example**
 
 EVTx
-Destination Address   0_1     0_2     0_3        ...   ...   0_638    0_639   0_640
-Destination Address + 500h   1_1     1_2      ...                     ...    1_639   1_640
-Destination Address + A00h   2_1      ...                                     ...    2_640
+Destination Address 0_1 0_2 0_3 ... ... 0_638 0_639 0_640
+Destination Address + 500h 1_1 1_2 ... ... 1_639 1_640
+Destination Address + A00h 2_1 ... ... 2_640
 
-External                          ...        ...                                                      ...
+External ... ... ...
 ...1_2..1_1..0_2..0_1
-peripheral                         ...        ...                                                      ...
-Destination Address + 95100h   477_1    ...                                     ...    477_640
-Destination Address + 95600h   478_1   478_2    ...                     ...   478_639 478_640
-Destination Address + 95B00h   479_1   479_2   479_3      ...   ...   479_638 479_639 479_640
-
+peripheral ... ... ...
+Destination Address + 95100h 477_1 ... ... 477_640
+Destination Address + 95600h 478_1 478_2 ... ... 478_639 478_640
+Destination Address + 95B00h 479_1 479_2 479_3 ... ... 479_638 479_639 479_640
 
 **Figure 11-29. Servicing Peripheral Burst Example PaRAM Configuration**
 
 (a) EDMA Parameters
 
-
-Parameter Contents                                                               Parameter
-0010 0004h                                                      Channel Options Parameter (OPT)
-Channel Source Address                                                   Channel Source Address (SRC)
-0280h                      0002h                         Count for 2nd Dimension (BCNT)         Count for 1st Dimension (ACNT)
-Channel Destination Address                                            Channel Destination Address (DST)
-0002h                      0000h                      Destination BCNT Index (DSTBIDX)          Source BCNT Index (SRCBIDX)
-0000h                     FFFFh                            BCNT Reload (BCNTRLD)                       Link Address (LINK)
-0500h                      0000h                     Destination CCNT Index (DSTCIDX)           Source CCNT Index (SRCCIDX)
-0000h                     01E0h                                    Reserved                     Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 0004h Channel Options Parameter (OPT)
+Channel Source Address Channel Source Address (SRC)
+0280h 0002h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+Channel Destination Address Channel Destination Address (DST)
+0002h 0000h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0000h FFFFh BCNT Reload (BCNTRLD) Link Address (LINK)
+0500h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h 01E0h Reserved Count for 3rd Dimension (CCNT)
 
 (b) Channel Options Parameter (OPT) Content
 
+31 30 28 27 24 23 22 21 20 19 18 17 16
+0 000 0000 0 0 0 1 00 00
+PRIV Reserved PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
 
-31    30          28         27                   24      23            22              21           20           19            18         17         16
-0          000                   0000                     0            0               0             1                  00                     00
-PRIV    Reserved                   PRIVID               ITCCHEN      TCCHEN         ITCINTEN       TCINTEN              Reserved                 TCC
-
-15                12         11       10          8        7                                          4           3               2        1          0
-0000                   0             000                                 0000                               0               1        0          0
-TCC                TCCMOD            FWID                              Reserved                          STATIC      SYNCDIM       DAM         SAM
-
+15 12 11 10 8 7 4 3 2 1 0
+0000 0 000 0000 0 1 0 0
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 
 ##### 11.3.19.4.3 Continuous Operation
 
@@ -3130,7 +2880,6 @@ continuously, the channels must be linked to a duplicate PaRAM set in the PaRAM.
 been transferred, the EDMA3 channels reload and continue. Figure 11-32 shows the reload parameters
 for the channel.
 
-
 ##### 11.3.19.4.3.1 Receive Channel
 
 EDMA3 channel 15 services the incoming data stream of McASP. The source address is set to that of the
@@ -3142,144 +2891,123 @@ The LINK option is set and the link address is provided in the PaRAM set. Upon e
 15 parameter set, the parameters located at the link address are loaded into the channel 15 parameter set
 and operation continues. This function continues throughout device operation until halted by the CPU.
 
-
 ##### 11.3.19.4.3.2 Transmit Channel
 
 EDMA3 channel 12 services the outgoing data stream of McASP. In this case the destination address
 needs no update, hence, the parameter set changes accordingly. Linking is also used to allow continuous
 operation by the EDMA3 channel, with duplicate PaRAM set entries at PaRAM set 65.
 
-
 **Figure 11-30. Servicing Continuous McASP Data Example**
 
+AREVT Stream A Destination Address A1i A2i A3i A4i A5i A6i A7i A8i
 
-AREVT           Stream A Destination Address A1i         A2i     A3i   A4i   A5i   A6i   A7i   A8i
+..B5..A5..B4..A4..B3..A3..B2..A2..B1..A1 McASP RX Register A9i A10i A11i A12i A13i ... ...
+RSR DAT
 
-..B5..A5..B4..A4..B3..A3..B2..A2..B1..A1   McASP RX Register                 A9i    A10i A11i A12i A13i        ...   ...
-RSR                                     DAT
+Stream B Destination Address B1i B2i B3i B4i B5i B6i B7i B8i
 
-Stream B Destination Address      B1i     B2i     B3i   B4i   B5i   B6i   B7i   B8i
+B9i B10i B11i B12i B13i ... ...
 
-B9i    B10i B11i B12i B13i        ...   ...
+AXEVT Stream A Source Address A1o A2o A3o A4o A5o A6o A7o A8o
 
-
-AXEVT              Stream A Source Address A1o A2o A3o A4o A5o A6o A7o A8o
-
-A1..B1..A2..B2..A3..B3..A4..B4..A5..B5    McASP TX Register                 A9o A10o A11o A12o A13o           ...   ...
-XSR                                     DAT
+A1..B1..A2..B2..A3..B3..A4..B4..A5..B5 McASP TX Register A9o A10o A11o A12o A13o ... ...
+XSR DAT
 
 Stream B Source Address B1o B2o B3o B4o B5o B6o B7o B8o
 
-B9o B10o B11o B12o B13o           ...   ...
-
+B9o B10o B11o B12o B13o ... ...
 
 **Figure 11-31. Servicing Continuous McASP Data Example PaRAM Configuration**
 
 (a) EDMA Parameters for Receive Channel (PaRAM Set 15) being Linked to PaRAM Set 64
 
-
-Parameter Contents                                                              Parameter
-0010 0000h                                                     Channel Options Parameter (OPT)
-McASP RX Register                                                     Channel Source Address (SRC)
-0080h                    0001h                         Count for 2nd Dimension (BCNT)         Count for 1st Dimension (ACNT)
-Channel Destination Address (DST)                                         Channel Destination Address (DST)
-0001h                    0000h                      Destination BCNT Index (DSTBIDX)          Source BCNT Index (SRCBIDX)
-0080h                    4800h                           BCNT Reload (BCNTRLD)                       Link Address (LINK)
-0000h                    0000h                     Destination CCNT Index (DSTCIDX)           Source CCNT Index (SRCCIDX)
-0000h                    FFFFh                                   Reserved                     Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 0000h Channel Options Parameter (OPT)
+McASP RX Register Channel Source Address (SRC)
+0080h 0001h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+Channel Destination Address (DST) Channel Destination Address (DST)
+0001h 0000h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0080h 4800h BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h FFFFh Reserved Count for 3rd Dimension (CCNT)
 
 (b) Channel Options Parameter (OPT) Content for Receive Channel (PaRAM Set 15)
 
+31 30 28 27 24 23 22 21 20 19 18 17 16
+0 000 0000 0 0 0 1 00 00
+PRIV Reserved PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
 
-31    30          28       27                   24      23            22              21           20           19            18         17         16
-0          000                 0000                     0            0               0             1                  00                     00
-PRIV    Reserved                 PRIVID               ITCCHEN      TCCHEN         ITCINTEN       TCINTEN              Reserved                 TCC
-
-15                12       11       10          8        7                                          4           3               2        1          0
-0000                 0              000                                0000                               0               0        0          0
-TCC               TCCMOD           FWID                              Reserved                          STATIC      SYNCDIM       DAM         SAM
-
+15 12 11 10 8 7 4 3 2 1 0
+0000 0 000 0000 0 0 0 0
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 
 (c) EDMA Parameters for Transmit Channel (PaRAM Set 12) being Linked to PaRAM Set 65
 
-
-Parameter Contents                                                              Parameter
-0010 1000h                                                     Channel Options Parameter (OPT)
-Channel Source Address (SRC)                                                Channel Source Address (SRC)
-0080h                    0001h                         Count for 2nd Dimension (BCNT)         Count for 1st Dimension (ACNT)
-McASP TX Register                                                  Channel Destination Address (DST)
-0000h                    0001h                      Destination BCNT Index (DSTBIDX)          Source BCNT Index (SRCBIDX)
-0080h                    4860h                           BCNT Reload (BCNTRLD)                       Link Address (LINK)
-0000h                    0000h                     Destination CCNT Index (DSTCIDX)           Source CCNT Index (SRCCIDX)
-0000h                    FFFFh                                   Reserved                     Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 1000h Channel Options Parameter (OPT)
+Channel Source Address (SRC) Channel Source Address (SRC)
+0080h 0001h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+McASP TX Register Channel Destination Address (DST)
+0000h 0001h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0080h 4860h BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h FFFFh Reserved Count for 3rd Dimension (CCNT)
 
 (d) Channel Options Parameter (OPT) Content for Transmit Channel (PaRAM Set 12)
 
+31 30 28 27 24 23 22 21 20 19 18 17 16
+0 000 0000 0 0 0 1 00 00
+PRIV Reserved PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
 
-31    30          28       27                   24      23            22              21           20           19            18         17         16
-0          000                 0000                     0            0               0             1                  00                     00
-PRIV    Reserved                 PRIVID               ITCCHEN      TCCHEN         ITCINTEN       TCINTEN              Reserved                 TCC
-
-15                12       11       10          8        7                                          4           3               2        1          0
-0001                 0              000                                0000                               0               0        0          0
-TCC               TCCMOD           FWID                              Reserved                          STATIC      SYNCDIM       DAM         SAM
-
+15 12 11 10 8 7 4 3 2 1 0
+0001 0 000 0000 0 0 0 0
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 
 **Figure 11-32. Servicing Continuous McASP Data Example Reload PaRAM Configuration**
 
 (a) EDMA Reload Parameters (PaRAM Set 64) for Receive Channel
 
-
-Parameter Contents                                                               Parameter
-0010 0000h                                                     Channel Options Parameter (OPT)
-McASP RX Register                                                     Channel Source Address (SRC)
-0080h                    0001h                         Count for 2nd Dimension (BCNT)         Count for 1st Dimension (ACNT)
-Channel Destination Address (DST)                                         Channel Destination Address (DST)
-0001h                    0000h                      Destination BCNT Index (DSTBIDX)          Source BCNT Index (SRCBIDX)
-0080h                    4800h                           BCNT Reload (BCNTRLD)                       Link Address (LINK)
-0000h                    0000h                     Destination CCNT Index (DSTCIDX)           Source CCNT Index (SRCCIDX)
-0000h                    FFFFh                                   Reserved                     Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 0000h Channel Options Parameter (OPT)
+McASP RX Register Channel Source Address (SRC)
+0080h 0001h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+Channel Destination Address (DST) Channel Destination Address (DST)
+0001h 0000h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0080h 4800h BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h FFFFh Reserved Count for 3rd Dimension (CCNT)
 
 (b) Channel Options Parameter (OPT) Content for Receive Channel (PaRAM Set 64)
 
+31 30 28 27 24 23 22 21 20 19 18 17 16
+0 000 0000 0 0 0 1 00 00
+PRIV Reserved PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
 
-31    30          28       27                   24      23            22              21           20           19            18         17          16
-0          000                 0000                     0            0               0             1                  00                       00
-PRIV    Reserved                 PRIVID               ITCCHEN      TCCHEN         ITCINTEN       TCINTEN              Reserved                  TCC
-
-15                12       11       10          8        7                                          4           3               2        1            0
-0000                 0              000                                0000                               0               0        0            0
-TCC              TCCMOD            FWID                              Reserved                          STATIC      SYNCDIM       DAM           SAM
-
+15 12 11 10 8 7 4 3 2 1 0
+0000 0 000 0000 0 0 0 0
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 
 (c) EDMA Reload Parameters (PaRAM Set 65) for Transmit Channel
 
-
-Parameter Contents                                                               Parameter
-0010 1000h                                                     Channel Options Parameter (OPT)
-Channel Source Address (SRC)                                                Channel Source Address (SRC)
-0080h                    0001h                         Count for 2nd Dimension (BCNT)         Count for 1st Dimension (ACNT)
-McASP TX Register                                                  Channel Destination Address (DST)
-0000h                    0001h                      Destination BCNT Index (DSTBIDX)          Source BCNT Index (SRCBIDX)
-0080h                    4860h                           BCNT Reload (BCNTRLD)                       Link Address (LINK)
-0000h                    0000h                     Destination CCNT Index (DSTCIDX)           Source CCNT Index (SRCCIDX)
-0000h                    FFFFh                                   Reserved                     Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 1000h Channel Options Parameter (OPT)
+Channel Source Address (SRC) Channel Source Address (SRC)
+0080h 0001h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+McASP TX Register Channel Destination Address (DST)
+0000h 0001h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0080h 4860h BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h FFFFh Reserved Count for 3rd Dimension (CCNT)
 
 (d) Channel Options Parameter (OPT) Content for Transmit Channel (PaRAM Set 65)
 
+31 30 28 27 24 23 22 21 20 19 18 17 16
+0 000 0000 0 0 0 1 00 00
+PRIV Reserved PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
 
-31    30          28       27                   24      23            22              21           20           19            18         17          16
-0          000                 0000                     0            0               0             1                  00                       00
-PRIV    Reserved                 PRIVID               ITCCHEN      TCCHEN         ITCINTEN       TCINTEN              Reserved                  TCC
-
-15                12       11       10          8        7                                          4           3               2        1            0
-0001                 0              000                                0000                               0               0        0            0
-TCC              TCCMOD            FWID                              Reserved                          STATIC      SYNCDIM       DAM           SAM
-
+15 12 11 10 8 7 4 3 2 1 0
+0001 0 000 0000 0 0 0 0
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 
 ##### 11.3.19.4.4 Ping-Pong Buffering
 
@@ -3307,7 +3035,6 @@ parameter set (Figure 11-36). The channel options, count values, and index value
 between the ping and pong parameters for each channel. The only differences are the link address
 provided and the address of the data buffer.
 
-
 ##### 11.3.19.4.4.1 Synchronization with the CPU
 
 To utilize the ping-pong buffering technique, the system must signal the CPU when to begin to access the
@@ -3320,154 +3047,133 @@ channel parameters set, the CPU polls IPR to determine when to switch. The EDMA3
 alternatively be configured such that the channel completion interrupts the CPU. By doing this, the CPU
 could service a background task while waiting for the EDMA3 to complete.
 
-
 **Figure 11-33. Ping-Pong Buffering for McASP Data Example**
 
-..B5..A5..B4..A4..B3..A3..B2..A2..B1..A1             RSR
+..B5..A5..B4..A4..B3..A3..B2..A2..B1..A1 RSR
 
-Ping                                                                                                 Pong
+Ping Pong
 
-Stream A     A1i   A2i    A3i    A4i    A5i     A6i     A7i    A8i                                 Stream A     A1i   A2i   A3i       A4i   A5i   A6i   A7i   A8i
-Destination                                                                                        Destination
-Address     A9i   A10i A11i A12i A13i          ...      ...                                        Address     A9i   A10i A11i A12i A13i         ...   ...
+Stream A A1i A2i A3i A4i A5i A6i A7i A8i Stream A A1i A2i A3i A4i A5i A6i A7i A8i
+Destination Destination
+Address A9i A10i A11i A12i A13i ... ... Address A9i A10i A11i A12i A13i ... ...
 DAT
 
-Stream B B1i       B2i    B3i    B4i    B5i     B6i     B7i    B8i            McASP RX Register Stream B B1i          B2i   B3i       B4i   B5i   B6i   B7i   B8i
-Destination                                                           AREVT                    Destination
-Address B9i       B10i B11i B12i B13i          ...      ...                                     Address B9i          B10i B11i B12i B13i         ...   ...
+Stream B B1i B2i B3i B4i B5i B6i B7i B8i McASP RX Register Stream B B1i B2i B3i B4i B5i B6i B7i B8i
+Destination AREVT Destination
+Address B9i B10i B11i B12i B13i ... ... Address B9i B10i B11i B12i B13i ... ...
 
-
-Stream A A1o A2o A3o A4o A5o A6o                        A7o    A8o   AXEVT                         Stream A A1o A2o A3o A4o A5o A6o                     A7o   A8o
-Source                                                                      McASP TX Register      Source
-Address A9o A10o A11o A12o A13o ...                     ...                                        Address A9o A10o A11o A12o A13o ...                 ...
+Stream A A1o A2o A3o A4o A5o A6o A7o A8o AXEVT Stream A A1o A2o A3o A4o A5o A6o A7o A8o
+Source McASP TX Register Source
+Address A9o A10o A11o A12o A13o ... ... Address A9o A10o A11o A12o A13o ... ...
 DAT
 
-Stream B B1o B2o B3o B4o B5o B6o                        B7o    B8o                                 Stream B B1o B2o B3o B4o B5o B6o                     B7o   B8o
-Source                                                                                             Source
-Address B9o B10o B11o B12o B13o ...                     ...                                        Address B9o B10o B11o B12o B13o ...                 ...
+Stream B B1o B2o B3o B4o B5o B6o B7o B8o Stream B B1o B2o B3o B4o B5o B6o B7o B8o
+Source Source
+Address B9o B10o B11o B12o B13o ... ... Address B9o B10o B11o B12o B13o ... ...
 
-
-A1..B1..A2..B2..A3..B3..A4..B4..A5..B5              XSR
-
+A1..B1..A2..B2..A3..B3..A4..B4..A5..B5 XSR
 
 **Figure 11-34. Ping-Pong Buffering for McASP Example PaRAM Configuration**
 
 (a) EDMA Parameters for Channel 15 (Using PaRAM Set 15 Linked to Pong Set 64)
 
-
-Parameter Contents                                                                                Parameter
-0010 D000h                                                                   Channel Options Parameter (OPT)
-McASP RX Register                                                                    Channel Source Address (SRC)
-0080h                           0001h                              Count for 2nd Dimension (BCNT)                   Count for 1st Dimension (ACNT)
-Channel Destination Address (DST)                                                        Channel Destination Address (DST)
-0001h                           0000h                          Destination BCNT Index (DSTBIDX)                     Source BCNT Index (SRCBIDX)
-0080h                           4800h                                BCNT Reload (BCNTRLD)                                    Link Address (LINK)
-0000h                           0000h                          Destination CCNT Index (DSTCIDX)                     Source CCNT Index (SRCCIDX)
-0000h                           0001h                                         Reserved                              Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 D000h Channel Options Parameter (OPT)
+McASP RX Register Channel Source Address (SRC)
+0080h 0001h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+Channel Destination Address (DST) Channel Destination Address (DST)
+0001h 0000h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0080h 4800h BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h 0001h Reserved Count for 3rd Dimension (CCNT)
 
 (b) Channel Options Parameter (OPT) Content for Channel 15
 
+31 30 28 27 24 23 22 21 20 19 18 17 16
+0 000 0000 0 0 0 1 00 00
+PRIV Reserved PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
 
-31     30           28          27                     24             23            22              21                 20            19                  18          17          16
-0          000                        0000                           0             0               0                  1                           00                      00
-PRIV     Reserved                     PRIVID                     ITCCHEN       TCCHEN           ITCINTEN          TCINTEN                     Reserved                      TCC
-
-15                  12          11        10            8             7                                                4                 3               2            1          0
-1101                      0                000                                       0000                                          0               0            0          0
-TCC                 TCCMOD               FWID                                      Reserved                                  STATIC             SYNCDIM        DAM        SAM
-
+15 12 11 10 8 7 4 3 2 1 0
+1101 0 000 0000 0 0 0 0
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 
 (c) EDMA Parameters for Channel 12 (Using PaRAM Set 12 Linked to Pong Set 66)
 
-
-Parameter Contents                                                               Parameter
-0010 C000h                                                      Channel Options Parameter (OPT)
-Channel Source Address (SRC)                                                Channel Source Address (SRC)
-0080h                    0001h                         Count for 2nd Dimension (BCNT)         Count for 1st Dimension (ACNT)
-McASP TX Register                                                  Channel Destination Address (DST)
-0000h                    0001h                      Destination BCNT Index (DSTBIDX)          Source BCNT Index (SRCBIDX)
-0080h                    4840h                           BCNT Reload (BCNTRLD)                       Link Address (LINK)
-0000h                    0000h                     Destination CCNT Index (DSTCIDX)           Source CCNT Index (SRCCIDX)
-0000h                    0001h                                   Reserved                     Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 C000h Channel Options Parameter (OPT)
+Channel Source Address (SRC) Channel Source Address (SRC)
+0080h 0001h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+McASP TX Register Channel Destination Address (DST)
+0000h 0001h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0080h 4840h BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h 0001h Reserved Count for 3rd Dimension (CCNT)
 
 (d) Channel Options Parameter (OPT) Content for Channel 12
 
+31 30 28 27 24 23 22 21 20 19 18 17 16
+0 000 0000 0 0 0 1 00 00
+PRIV Reserved PRIVID ITCCHEN TCCHEN ITCINTEN TCINTEN Reserved TCC
 
-31    30          28       27                   24      23            22              21           20           19            18         17         16
-0          000                 0000                     0            0               0             1                  00                     00
-PRIV    Reserved                 PRIVID               ITCCHEN      TCCHEN         ITCINTEN       TCINTEN              Reserved                 TCC
-
-15                12       11       10          8        7                                          4           3               2        1          0
-1100                 0             000                                 0000                               0               0        0          0
-TCC              TCCMOD            FWID                              Reserved                          STATIC      SYNCDIM       DAM         SAM
-
+15 12 11 10 8 7 4 3 2 1 0
+1100 0 000 0000 0 0 0 0
+TCC TCCMOD FWID Reserved STATIC SYNCDIM DAM SAM
 
 **Figure 11-35. Ping-Pong Buffering for McASP Example Pong PaRAM Configuration**
 
 (a) EDMA Pong Parameters for Channel 15 at Set 64 Linked to Set 65
 
-
-Parameter Contents                                                               Parameter
-0010 D000h                                                      Channel Options Parameter (OPT)
-McASP RX Register                                                     Channel Source Address (SRC)
-0080h                    0001h                         Count for 2nd Dimension (BCNT)         Count for 1st Dimension (ACNT)
-Channel Destination Address (DST)                                         Channel Destination Address (DST)
-0001h                    0000h                      Destination BCNT Index (DSTBIDX)          Source BCNT Index (SRCBIDX)
-0080h                    4820h                           BCNT Reload (BCNTRLD)                       Link Address (LINK)
-0000h                    0000h                     Destination CCNT Index (DSTCIDX)           Source CCNT Index (SRCCIDX)
-0000h                    0001h                                   Reserved                     Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 D000h Channel Options Parameter (OPT)
+McASP RX Register Channel Source Address (SRC)
+0080h 0001h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+Channel Destination Address (DST) Channel Destination Address (DST)
+0001h 0000h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0080h 4820h BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h 0001h Reserved Count for 3rd Dimension (CCNT)
 
 (b) EDMA Pong Parameters for Channel 12 at Set 66 Linked to Set 67
 
-
-Parameter Contents                                                               Parameter
-0010 C000h                                                      Channel Options Parameter (OPT)
-Channel Source Address (SRC)                                                Channel Source Address (SRC)
-0080h                    0001h                         Count for 2nd Dimension (BCNT)         Count for 1st Dimension (ACNT)
-McASP TX Register                                                  Channel Destination Address (DST)
-0000h                    0001h                      Destination BCNT Index (DSTBIDX)          Source BCNT Index (SRCBIDX)
-0080h                    4860h                           BCNT Reload (BCNTRLD)                       Link Address (LINK)
-0000h                    0000h                     Destination CCNT Index (DSTCIDX)           Source CCNT Index (SRCCIDX)
-0000h                    0001h                                   Reserved                     Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 C000h Channel Options Parameter (OPT)
+Channel Source Address (SRC) Channel Source Address (SRC)
+0080h 0001h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+McASP TX Register Channel Destination Address (DST)
+0000h 0001h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0080h 4860h BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h 0001h Reserved Count for 3rd Dimension (CCNT)
 
 **Figure 11-36. Ping-Pong Buffering for McASP Example Ping PaRAM Configuration**
 
 (a) EDMA Ping Parameters for Channel 15 at Set 65 Linked to Set 64
 
-
-Parameter Contents                                                             Parameter
-0010 D000h                                                 Channel Options Parameter (OPT)
-McASP RX Register                                                  Channel Source Address (SRC)
-0080h                   0001h                      Count for 2nd Dimension (BCNT)           Count for 1st Dimension (ACNT)
-Channel Destination Address (DST)                                      Channel Destination Address (DST)
-0001h                   0000h                     Destination BCNT Index (DSTBIDX)          Source BCNT Index (SRCBIDX)
-0080h                   4800h                         BCNT Reload (BCNTRLD)                      Link Address (LINK)
-0000h                   0000h                    Destination CCNT Index (DSTCIDX)           Source CCNT Index (SRCCIDX)
-0000h                   0001h                                 Reserved                      Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 D000h Channel Options Parameter (OPT)
+McASP RX Register Channel Source Address (SRC)
+0080h 0001h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+Channel Destination Address (DST) Channel Destination Address (DST)
+0001h 0000h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0080h 4800h BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h 0001h Reserved Count for 3rd Dimension (CCNT)
 
 (b) EDMA Ping Parameters for Channel 12 at Set 67 Linked to Set 66
 
-
-Parameter Contents                                                             Parameter
-0010 C000h                                                 Channel Options Parameter (OPT)
-Channel Source Address (SRC)                                            Channel Source Address (SRC)
-0080h                   0001h                      Count for 2nd Dimension (BCNT)           Count for 1st Dimension (ACNT)
-McASP TX Register                                             Channel Destination Address (DST)
-0000h                   0001h                     Destination BCNT Index (DSTBIDX)          Source BCNT Index (SRCBIDX)
-0080h                   4840h                         BCNT Reload (BCNTRLD)                      Link Address (LINK)
-0000h                   0000h                    Destination CCNT Index (DSTCIDX)           Source CCNT Index (SRCCIDX)
-0000h                   0001h                                 Reserved                      Count for 3rd Dimension (CCNT)
-
+Parameter Contents Parameter
+0010 C000h Channel Options Parameter (OPT)
+Channel Source Address (SRC) Channel Source Address (SRC)
+0080h 0001h Count for 2nd Dimension (BCNT) Count for 1st Dimension (ACNT)
+McASP TX Register Channel Destination Address (DST)
+0000h 0001h Destination BCNT Index (DSTBIDX) Source BCNT Index (SRCBIDX)
+0080h 4840h BCNT Reload (BCNTRLD) Link Address (LINK)
+0000h 0000h Destination CCNT Index (DSTCIDX) Source CCNT Index (SRCCIDX)
+0000h 0001h Reserved Count for 3rd Dimension (CCNT)
 
 ##### 11.3.19.4.5 Transfer Chaining Examples
 
 The following examples explain the intermediate transfer complete chaining function.
-
 
 ##### 11.3.19.4.5.1 Servicing Input/Output FIFOs with a Single Event
 
@@ -3481,59 +3187,56 @@ require two events, and thus two external interrupt pins. The intermediate trans
 feature allows the use of a single external event (for example, a GPIO event). Figure 11-37 shows the
 EDMA3 setup and illustration for this example.
 A GPIO event (in this case, GPINT0) triggers an array transfer. Upon completion of each intermediate
-array transfer of channel 48, intermediate transfer complete chaining sets the E8 bit (specified by TCC of
-8) in the chained event register (CER) and provides a synchronization event to channel 8. Upon
+array transfer of channel 48, intermediate transfer complete chaining sets the E8 bit (specified by TCC of 8) in the chained event register (CER) and provides a synchronization event to channel 8. Upon
 completion of the last array transfer of channel 48, transfer complete chaining—not intermediate transfer
 complete chaining—sets the E8 bit in CER (specified by TCCMODE:TCC) and provides a synchronization
 event to channel 8. The completion of channel 8 sets the I8 bit (specified by TCCMODE:TCC) in the
 interrupt pending register (IPR), which can generate an interrupt to the CPU, if the I8 bit in the interrupt
 enable register (IER) is set.
 
-
 **Figure 11-37. Intermediate Transfer Completion Chaining Example**
 
-Hardwired event                                   Chained event
-(tied to GPINT0, event 48)                                (event 8)
+Hardwired event Chained event
+(tied to GPINT0, event 48) (event 8)
 Event 48
 Intermediate
 transfer complete(A)
-Channel 48, array 0                                Channel 8, array 0
+Channel 48, array 0 Channel 8, array 0
 
 Event 48
 Intermediate
 transfer complete(A)
-Channel 48, array 1                                Channel 8, array 1
+Channel 48, array 1 Channel 8, array 1
 
 Event 48
 Intermediate
 transfer complete(A)
-Channel 48, array 2                                Channel 8, array 2
+Channel 48, array 2 Channel 8, array 2
 
 Event 48
 Transfer complete(B)
-Channel 48, array 3                                Channel 8, array 3          Transfer complete sets
-(last array)                                                                IPR.I8 = 1
+Channel 48, array 3 Channel 8, array 3 Transfer complete sets
+(last array) IPR.I8 = 1
 If IPR.I8 = 1, interrupt
-Notes:   (A) Intermediate transfer complete chaining synchronizes event 8                  EDMACC_INT* sent
+Notes: (A) Intermediate transfer complete chaining synchronizes event 8 EDMACC_INT\* sent
 to CPU
 ITCCHEN = 1, TCC = 01000b, and sets CER.E8 = 1
 (B) Transfer complete chaining synchronizes event 8
 TCCHEN =1, TCC = 01000b and sets CER.E8 = 1
 
 Setup
-Channel 48 parameters                     Channel 8 parameters
-for chaining                              for chaining                              Event enable register (EER)
+Channel 48 parameters Channel 8 parameters
+for chaining for chaining Event enable register (EER)
 
-Enable transfer                           Enable transfer                          Enable channel 48
-complete chaining:                        complete chaining:                       EER.E48 = 1
-OPT.TCCHEN = 1                            OPT.TCINTEN = 1
-OPT.TCC = 01000b                          OPT.TCC = 01000b
+Enable transfer Enable transfer Enable channel 48
+complete chaining: complete chaining: EER.E48 = 1
+OPT.TCCHEN = 1 OPT.TCINTEN = 1
+OPT.TCC = 01000b OPT.TCC = 01000b
 
-Enable intermediate transfer              Disable intermediate transfer
-complete chaining:                        complete chaining:
-OPT.ITCCHEN = 1                           OPT.ITCCHEN = 0
+Enable intermediate transfer Disable intermediate transfer
+complete chaining: complete chaining:
+OPT.ITCCHEN = 1 OPT.ITCCHEN = 0
 OPT.TCC = 01000b
-
 
 ##### 11.3.19.4.5.2 Breaking Up Large Transfers with Intermediate Chaining
 
@@ -3545,19 +3248,17 @@ EMIF for a long duration to service other lower priority transfers. When a large
 high priority, it should be split into multiple smaller transfers. Figure 11-38 shows the EDMA3 setup and
 illustration of an example single large block transfer.
 
-
 **Figure 11-38. Single Large Block Transfer Example**
 
 Event 25 (CPU writes 1 to ESR.E25)
 EDMA3 channel 25 setup
 
 ACNT = 16384
-16 KBytes data transfer                                    BCNT = 1
+16 KBytes data transfer BCNT = 1
 CCNT = 1
 OPT.ITCINTEN = 0
 OPT.TCC = Don’t care
 1D transfer of 16 KByte elements
-
 
 The intermediate transfer chaining enable (ITCCHEN) provides a method to break up a large transfer into
 smaller transfers. For example, to move a single large block of memory (16K bytes), the EDMA3 performs
@@ -3576,20 +3277,16 @@ EDMA3 has completed the 16K byte transfer. This method breaks up a large transfe
 thus providing natural time slices in the transfer such that other events may be processed. Figure 11-39
 shows the EDMA3 setup and illustration of the broken up smaller packet transfers.
 
-
 **Figure 11-39. Smaller Packet Data Transfers Example**
 
 Event 25 (CPU writes 1 to ESR.E25)
 ITCCHEN=1, TCC=25 causes
 channel 25 to be synchronized again
 
-
-1K     1K        1K      1K      1K      1K       1K      1K       1K      1K       1K        1K     1K    1K    1K    1K
-
+1K 1K 1K 1K 1K 1K 1K 1K 1K 1K 1K 1K 1K 1K 1K 1K
 
 Time gaps allow other transfers on the same priority level
 to be performed
-
 
 EDMA3 channel 25 setup
 ACNT = 1024
@@ -3600,165 +3297,157 @@ OPT.ITCCHEN = 1
 OPT.TCINTEN = 1
 OPT.TCC = 25
 
-
 ### 11.3.20 EDMA Events
-
 
 **Table 11-24. Direct Mapped**
 
-Event Number                                  Event Name                                      Source Module
+Event Number Event Name Source Module
 (1)
-0                                             pr1_host[7]                                     PRU-ICSS
-1                                             pr1_host[6] (1)                                 PRU-ICSS
-2                                             SDTXEVT1                                        MMCHS1
-3                                             SDRXEVT1                                        MMCHS1
-4                                             Reserved                                        Reserved
-5                                             Reserved                                        Reserved
-6                                             Reserved                                        Reserved
-7                                             Reserved                                        Reserved
-8                                             AXEVT0                                          McASP0
-9                                             AREVT0                                          McASP0
-10                                            AXEVT1                                          McASP1
-11                                            AREVT1                                          McASP1
-12                                            Open                                            Open
-13                                            Open                                            Open
-14                                            ePWMEVT0                                        ePWM 0
-15                                            ePWMEVT1                                        ePWM 1
-16                                            SPIXEVT0                                        McSPI0
-17                                            SPIREVT0                                        McSPI0
-18                                            SPIXEVT1                                        McSPI0
-19                                            SPIREVT1                                        McSPI0
-20                                            Open                                            Open
-21                                            Open                                            Open
-22                                            GPIOEVT0                                        GPIO0
-23                                            GPIOEVT1                                        GPIO1
-24                                            SDTXEVT0                                        MMCHS0
-25                                            SDRXEVT0                                        MMCHS0
-26                                            UTXEVT0                                         UART0
-27                                            URXEVT0                                         UART0
-28                                            UTXEVT1                                         UART1
-29                                            URXEVT1                                         UART1
-30                                            UTXEVT2                                         UART2
-31                                            URXEVT2                                         UART2
-32                                            Open                                            Open
-33                                            Open                                            Open
-34                                            Open                                            Open
-35                                            Open                                            Open
-36                                            Open                                            Open
-37                                            Open                                            Open
-38                                            eCAPEVT0                                        eCAP 0
-39                                            eCAPEVT1                                        eCAP 1
-40                                            CAN_IF1DMA                                      DCAN 0
-41                                            CAN_IF2DMA                                      DCAN 0
-42                                            SPIXEVT0                                        McSPI1
-43                                            SPIREVT0                                        McSPI1
-44                                            SPIXEVT1                                        McSPI1
+0 pr1_host[7] PRU-ICSS
+1 pr1_host[6] (1) PRU-ICSS
+2 SDTXEVT1 MMCHS1
+3 SDRXEVT1 MMCHS1
+4 Reserved Reserved
+5 Reserved Reserved
+6 Reserved Reserved
+7 Reserved Reserved
+8 AXEVT0 McASP0
+9 AREVT0 McASP0
+10 AXEVT1 McASP1
+11 AREVT1 McASP1
+12 Open Open
+13 Open Open
+14 ePWMEVT0 ePWM 0
+15 ePWMEVT1 ePWM 1
+16 SPIXEVT0 McSPI0
+17 SPIREVT0 McSPI0
+18 SPIXEVT1 McSPI0
+19 SPIREVT1 McSPI0
+20 Open Open
+21 Open Open
+22 GPIOEVT0 GPIO0
+23 GPIOEVT1 GPIO1
+24 SDTXEVT0 MMCHS0
+25 SDRXEVT0 MMCHS0
+26 UTXEVT0 UART0
+27 URXEVT0 UART0
+28 UTXEVT1 UART1
+29 URXEVT1 UART1
+30 UTXEVT2 UART2
+31 URXEVT2 UART2
+32 Open Open
+33 Open Open
+34 Open Open
+35 Open Open
+36 Open Open
+37 Open Open
+38 eCAPEVT0 eCAP 0
+39 eCAPEVT1 eCAP 1
+40 CAN_IF1DMA DCAN 0
+41 CAN_IF2DMA DCAN 0
+42 SPIXEVT0 McSPI1
+43 SPIREVT0 McSPI1
+44 SPIXEVT1 McSPI1
 (1)
 pr1_host_intr[0:7] corresponds to Host-2 to Host-9 of the PRU-ICSS interrupt controller.
 
-
 **Table 11-24. Direct Mapped (continued)**
 
-Event Number                          Event Name                                      Source Module
-45                                    SPIREVT1                                        McSPI1
-46                                    eQEPEVT0                                        eQEP 0
-47                                    CAN_IF3DMA                                      DCAN 0
-48                                    TINT4                                           Timer 4
-49                                    TINT5                                           Timer 5
-50                                    TINT6                                           Timer 6
-51                                    TINT7                                           Timer 7
-52                                    GPMCEVT                                         GPMC
-53                                    tsc_adc_FIFO0                                   ADC/TSC
-54                                    Open
-55                                    Open
-56                                    eQEPEVT1                                        eQEP 1
-57                                    tsc_adc_FIFO1                                   ADC/TSC
-58                                    I2CTXEVT0                                       I2C0
-59                                    I2CRXEVT0                                       I2C0
-60                                    I2CTXEVT1                                       I2C1
-61                                    I2CRXEVT1                                       I2C1
-62                                    eCAPEVT2                                        eCAP 2
-63                                    eHRPWMEVT2                                      eHRPWM 2
-
+Event Number Event Name Source Module
+45 SPIREVT1 McSPI1
+46 eQEPEVT0 eQEP 0
+47 CAN_IF3DMA DCAN 0
+48 TINT4 Timer 4
+49 TINT5 Timer 5
+50 TINT6 Timer 6
+51 TINT7 Timer 7
+52 GPMCEVT GPMC
+53 tsc_adc_FIFO0 ADC/TSC
+54 Open
+55 Open
+56 eQEPEVT1 eQEP 1
+57 tsc_adc_FIFO1 ADC/TSC
+58 I2CTXEVT0 I2C0
+59 I2CRXEVT0 I2C0
+60 I2CTXEVT1 I2C1
+61 I2CRXEVT1 I2C1
+62 eCAPEVT2 eCAP 2
+63 eHRPWMEVT2 eHRPWM 2
 
 **Table 11-25. Crossbar Mapped**
 
-Event Number                          Event Name                                      Source Module
-1                                     SDTXEVT2                                        MMCHS2
-2                                     SDRXEVT2                                        MMCHS2
-3                                     I2CTXEVT2                                       I2C2
-4                                     I2CRXEVT2                                       I2C2
-5                                     Open                                            Open
-6                                     Open                                            Open
-7                                     UTXEVT3                                         UART3
-8                                     URXEVT3                                         UART3
-9                                     UTXEVT4                                         UART4
-10                                    URXEVT4                                         UART4
-11                                    UTXEVT5                                         UART5
-12                                    URXEVT5                                         UART5
-13                                    CAN_IF1DMA                                      DCAN 1
-14                                    CAN_IF2DMA                                      DCAN 1
-15                                    CAN_IF3DMA                                      DCAN 1
-16                                    Open                                            Open
-17                                    Open                                            Open
-18                                    Open                                            Open
-19                                    Open                                            Open
-20                                    Open                                            Open
-21                                    Open                                            Open
-22                                    TINT0                                           Timer 0
+Event Number Event Name Source Module
+1 SDTXEVT2 MMCHS2
+2 SDRXEVT2 MMCHS2
+3 I2CTXEVT2 I2C2
+4 I2CRXEVT2 I2C2
+5 Open Open
+6 Open Open
+7 UTXEVT3 UART3
+8 URXEVT3 UART3
+9 UTXEVT4 UART4
+10 URXEVT4 UART4
+11 UTXEVT5 UART5
+12 URXEVT5 UART5
+13 CAN_IF1DMA DCAN 1
+14 CAN_IF2DMA DCAN 1
+15 CAN_IF3DMA DCAN 1
+16 Open Open
+17 Open Open
+18 Open Open
+19 Open Open
+20 Open Open
+21 Open Open
+22 TINT0 Timer 0
 23
-24                                    TINT2                                           Timer 2
+24 TINT2 Timer 2
 
-
-1636Enhanced Direct Memory Access (EDMA)                                          SPRUH73Q – October 2011 – Revised December 2019
-
+1636Enhanced Direct Memory Access (EDMA) SPRUH73Q – October 2011 – Revised December 2019
 
 **Table 11-25. Crossbar Mapped (continued)**
 
-Event Number                           Event Name                                      Source Module
-25                                     TINT3                                           Timer 3
-26                                     Open                                            Open
-27                                     Open                                            Open
-28                                     pi_x_dma_event_intr0                            External pin (XDMA_EVENT_INTR0)
-29                                     pi_x_dma_event_intr1                            External pin (XDMA_EVENT_INTR1)
-30                                     pi_x_dma_event_intr2                            External pin (XDMA_EVENT_INTR2)
-31                                     eQEPEVT2                                        eQEP 2
-32                                     GPIOEVT2                                        GPIO2
-33                                     Open
-34                                     Open
-35                                     Open
-36                                     Open
-37                                     Open
-38                                     Open
-39                                     Open
-40                                     Open
-41                                     Open
-42                                     Open
-43                                     Open
-44                                     Open
-45                                     Open
-46                                     Open
-47                                     Open
-48                                     Open
-49                                     Open
-50                                     Open
-51                                     Open
-52                                     Open
-53                                     Open
-54                                     Open
-55                                     Open
-56                                     Open
-57                                     Open
-58                                     Open
-59                                     Open
-60                                     Open
-61                                     Open
-62                                     Open
-63                                     Open
-
+Event Number Event Name Source Module
+25 TINT3 Timer 3
+26 Open Open
+27 Open Open
+28 pi_x_dma_event_intr0 External pin (XDMA_EVENT_INTR0)
+29 pi_x_dma_event_intr1 External pin (XDMA_EVENT_INTR1)
+30 pi_x_dma_event_intr2 External pin (XDMA_EVENT_INTR2)
+31 eQEPEVT2 eQEP 2
+32 GPIOEVT2 GPIO2
+33 Open
+34 Open
+35 Open
+36 Open
+37 Open
+38 Open
+39 Open
+40 Open
+41 Open
+42 Open
+43 Open
+44 Open
+45 Open
+46 Open
+47 Open
+48 Open
+49 Open
+50 Open
+51 Open
+52 Open
+53 Open
+54 Open
+55 Open
+56 Open
+57 Open
+58 Open
+59 Open
+60 Open
+61 Open
+62 Open
+63 Open
 
 ## 11.4 EDMA3 Registers
-
 
 ### 11.4.1 EDMA3CC Registers
 
@@ -3766,163 +3455,158 @@ Table 11-26 lists the memory-mapped registers for the EDMA3CC. All register offs
 in Table 11-26 should be considered as reserved locations and the register contents should not be
 modified.
 
-
 **Table 11-26. EDMA3CC Registers**
 
-Offset    Acronym                                Register Name                                            Section
-0h      PID                                    Peripheral Identification Register                   Section 11.4.1.1
-4h      CCCFG                                  EDMA3CC Configuration Register                       Section 11.4.1.2
-10h      SYSCONFIG                              EDMA3CC System Configuration Register                Section 15.1.3.2
-100h to   DCHMAP_0 to DCHMAP_63                  DMA Channel Mapping Registers 0-63                   Section 11.4.1.4
+Offset Acronym Register Name Section
+0h PID Peripheral Identification Register Section 11.4.1.1
+4h CCCFG EDMA3CC Configuration Register Section 11.4.1.2
+10h SYSCONFIG EDMA3CC System Configuration Register Section 15.1.3.2
+100h to DCHMAP_0 to DCHMAP_63 DMA Channel Mapping Registers 0-63 Section 11.4.1.4
 1FCh
-200h to   QCHMAP_0 to QCHMAP_7                   QDMA Channel Mapping Registers 0-7                   Section 11.4.1.5
+200h to QCHMAP_0 to QCHMAP_7 QDMA Channel Mapping Registers 0-7 Section 11.4.1.5
 21Ch
-240h to   DMAQNUM_0 to DMAQNUM_7                 DMA Queue Number Registers 0-7                       Section 11.4.1.6
+240h to DMAQNUM_0 to DMAQNUM_7 DMA Queue Number Registers 0-7 Section 11.4.1.6
 25Ch
-260h     QDMAQNUM                               QDMA Queue Number Register                           Section 11.4.1.7
-284h     QUEPRI                                 Queue Priority Register                              Section 11.4.1.8
-300h     EMR                                    Event Missed Register                                Section 11.4.1.9
-304h     EMRH                                   Event Missed Register High                           Section 11.4.1.10
-308h     EMCR                                   Event Missed Clear Register                          Section 11.4.1.11
-30Ch     EMCRH                                  Event Missed Clear Register High                     Section 11.4.1.12
-310h     QEMR                                   QDMA Event Missed Register                           Section 11.4.1.13
-314h     QEMCR                                  QDMA Event Missed Clear Register                     Section 11.4.1.14
-318h     CCERR                                  EDMA3CC Error Register                               Section 11.4.1.15
-31Ch     CCERRCLR                               EDMA3CC Error Clear Register                         Section 11.4.1.16
-320h     EEVAL                                  Error Evaluate Register                              Section 11.4.1.17
-340h     DRAE0                                  DMA Region Access Enable Register for Region 0       Section 11.4.1.18
-344h     DRAEH0                                 DMA Region Access Enable Register High for           Section 11.4.1.19
+260h QDMAQNUM QDMA Queue Number Register Section 11.4.1.7
+284h QUEPRI Queue Priority Register Section 11.4.1.8
+300h EMR Event Missed Register Section 11.4.1.9
+304h EMRH Event Missed Register High Section 11.4.1.10
+308h EMCR Event Missed Clear Register Section 11.4.1.11
+30Ch EMCRH Event Missed Clear Register High Section 11.4.1.12
+310h QEMR QDMA Event Missed Register Section 11.4.1.13
+314h QEMCR QDMA Event Missed Clear Register Section 11.4.1.14
+318h CCERR EDMA3CC Error Register Section 11.4.1.15
+31Ch CCERRCLR EDMA3CC Error Clear Register Section 11.4.1.16
+320h EEVAL Error Evaluate Register Section 11.4.1.17
+340h DRAE0 DMA Region Access Enable Register for Region 0 Section 11.4.1.18
+344h DRAEH0 DMA Region Access Enable Register High for Section 11.4.1.19
 Region 0
-348h     DRAE1                                  DMA Region Access Enable Register for Region 1       Section 11.4.1.20
-34Ch     DRAEH1                                 DMA Region Access Enable Register High for           Section 11.4.1.21
+348h DRAE1 DMA Region Access Enable Register for Region 1 Section 11.4.1.20
+34Ch DRAEH1 DMA Region Access Enable Register High for Section 11.4.1.21
 Region 1
-350h     DRAE2                                  DMA Region Access Enable Register for Region 2       Section 11.4.1.22
-354h     DRAEH2                                 DMA Region Access Enable Register High for           Section 11.4.1.23
+350h DRAE2 DMA Region Access Enable Register for Region 2 Section 11.4.1.22
+354h DRAEH2 DMA Region Access Enable Register High for Section 11.4.1.23
 Region 2
-358h     DRAE3                                  DMA Region Access Enable Register for Region 3       Section 11.4.1.24
-35Ch     DRAEH3                                 DMA Region Access Enable Register High for           Section 11.4.1.25
+358h DRAE3 DMA Region Access Enable Register for Region 3 Section 11.4.1.24
+35Ch DRAEH3 DMA Region Access Enable Register High for Section 11.4.1.25
 Region 3
-360h     DRAE4                                  DMA Region Access Enable Register for Region 4       Section 11.4.1.26
-364h     DRAEH4                                 DMA Region Access Enable Register High for           Section 11.4.1.27
+360h DRAE4 DMA Region Access Enable Register for Region 4 Section 11.4.1.26
+364h DRAEH4 DMA Region Access Enable Register High for Section 11.4.1.27
 Region 4
-368h     DRAE5                                  DMA Region Access Enable Register for Region 5       Section 11.4.1.28
-36Ch     DRAEH5                                 DMA Region Access Enable Register High for           Section 11.4.1.29
+368h DRAE5 DMA Region Access Enable Register for Region 5 Section 11.4.1.28
+36Ch DRAEH5 DMA Region Access Enable Register High for Section 11.4.1.29
 Region 5
-370h     DRAE6                                  DMA Region Access Enable Register for Region 6       Section 11.4.1.30
-374h     DRAEH6                                 DMA Region Access Enable Register High for           Section 11.4.1.31
+370h DRAE6 DMA Region Access Enable Register for Region 6 Section 11.4.1.30
+374h DRAEH6 DMA Region Access Enable Register High for Section 11.4.1.31
 Region 6
-378h     DRAE7                                  DMA Region Access Enable Register for Region 7       Section 11.4.1.32
-37Ch     DRAEH7                                 DMA Region Access Enable Register High for           Section 11.4.1.33
+378h DRAE7 DMA Region Access Enable Register for Region 7 Section 11.4.1.32
+37Ch DRAEH7 DMA Region Access Enable Register High for Section 11.4.1.33
 Region 7
 
-
-1638Enhanced Direct Memory Access (EDMA)                                          SPRUH73Q – October 2011 – Revised December 2019
-
+1638Enhanced Direct Memory Access (EDMA) SPRUH73Q – October 2011 – Revised December 2019
 
 **Table 11-26. EDMA3CC Registers (continued)**
 
-Offset    Acronym                                 Register Name                                             Section
-380h to   QRAE_0 to QRAE_7                        QDMA Region Access Enable Registers for Region        Section 11.4.1.34
-39Ch                                             0-7
-400h   Q0E0                                    Event Queue 0 Entry 0 Register                        Section 11.4.1.35
-404h   Q0E1                                    Event Queue 0 Entry 1 Register                        Section 11.4.1.36
-408h   Q0E2                                    Event Queue 0 Entry 2 Register                        Section 11.4.1.37
-40Ch   Q0E3                                    Event Queue 0 Entry 3 Register                        Section 11.4.1.38
-410h   Q0E4                                    Event Queue 0 Entry 4 Register                        Section 11.4.1.39
-414h   Q0E5                                    Event Queue 0 Entry 5 Register                        Section 11.4.1.40
-418h   Q0E6                                    Event Queue 0 Entry 6 Register                        Section 11.4.1.41
-41Ch   Q0E7                                    Event Queue 0 Entry 7 Register                        Section 11.4.1.42
-420h   Q0E8                                    Event Queue 0 Entry 8 Register                        Section 11.4.1.43
-424h   Q0E9                                    Event Queue 0 Entry 9 Register                        Section 11.4.1.44
-428h   Q0E10                                   Event Queue 0 Entry 10 Register                       Section 11.4.1.45
-42Ch   Q0E11                                   Event Queue 0 Entry 11 Register                       Section 11.4.1.46
-430h   Q0E12                                   Event Queue 0 Entry 12 Register                       Section 11.4.1.47
-434h   Q0E13                                   Event Queue 0 Entry 13 Register                       Section 11.4.1.48
-438h   Q0E14                                   Event Queue 0 Entry 14 Register                       Section 11.4.1.49
-43Ch   Q0E15                                   Event Queue 0 Entry 15 Register                       Section 11.4.1.50
-440h   Q1E0                                    Event Queue 1 Entry 0 Register                        Section 11.4.1.51
-444h   Q1E1                                    Event Queue 1 Entry 1 Register                        Section 11.4.1.52
-448h   Q1E2                                    Event Queue 1 Entry 2 Register                        Section 11.4.1.53
-44Ch   Q1E3                                    Event Queue 1 Entry 3 Register                        Section 11.4.1.54
-450h   Q1E4                                    Event Queue 1 Entry 4 Register                        Section 11.4.1.55
-454h   Q1E5                                    Event Queue 1 Entry 5 Register                        Section 11.4.1.56
-458h   Q1E6                                    Event Queue 1 Entry 6 Register                        Section 11.4.1.57
-45Ch   Q1E7                                    Event Queue 1 Entry 7 Register                        Section 11.4.1.58
-460h   Q1E8                                    Event Queue 1 Entry 8 Register                        Section 11.4.1.59
-464h   Q1E9                                    Event Queue 1 Entry 9 Register                        Section 11.4.1.60
-468h   Q1E10                                   Event Queue 1 Entry 10 Register                       Section 11.4.1.61
-46Ch   Q1E11                                   Event Queue 1 Entry 11 Register                       Section 11.4.1.62
-470h   Q1E12                                   Event Queue 1 Entry 12 Register                       Section 11.4.1.63
-474h   Q1E13                                   Event Queue 1 Entry 13 Register                       Section 11.4.1.64
-478h   Q1E14                                   Event Queue 1 Entry 14 Register                       Section 11.4.1.65
-47Ch   Q1E15                                   Event Queue 1 Entry 15 Register                       Section 11.4.1.66
-480h   Q2E0                                    Event Queue 2 Entry 0 Register                        Section 11.4.1.67
-484h   Q2E1                                    Event Queue 2 Entry 1 Register                        Section 11.4.1.68
-488h   Q2E2                                    Event Queue 2 Entry 2 Register                        Section 11.4.1.69
-48Ch   Q2E3                                    Event Queue 2 Entry 3 Register                        Section 11.4.1.70
-490h   Q2E4                                    Event Queue 2 Entry 4 Register                        Section 11.4.1.71
-494h   Q2E5                                    Event Queue 2 Entry 5 Register                        Section 11.4.1.72
-498h   Q2E6                                    Event Queue 2 Entry 6 Register                        Section 11.4.1.73
-49Ch   Q2E7                                    Event Queue 2 Entry 7 Register                        Section 11.4.1.74
-4A0h   Q2E8                                    Event Queue 2 Entry 8 Register                        Section 11.4.1.75
-4A4h   Q2E9                                    Event Queue 2 Entry 9 Register                        Section 11.4.1.76
-4A8h   Q2E10                                   Event Queue 2 Entry 10 Register                       Section 11.4.1.77
-4ACh   Q2E11                                   Event Queue 2 Entry 11 Register                       Section 11.4.1.78
-4B0h   Q2E12                                   Event Queue 2 Entry 12 Register                       Section 11.4.1.79
-4B4h   Q2E13                                   Event Queue 2 Entry 13 Register                       Section 11.4.1.80
-
+Offset Acronym Register Name Section
+380h to QRAE_0 to QRAE_7 QDMA Region Access Enable Registers for Region Section 11.4.1.34
+39Ch 0-7
+400h Q0E0 Event Queue 0 Entry 0 Register Section 11.4.1.35
+404h Q0E1 Event Queue 0 Entry 1 Register Section 11.4.1.36
+408h Q0E2 Event Queue 0 Entry 2 Register Section 11.4.1.37
+40Ch Q0E3 Event Queue 0 Entry 3 Register Section 11.4.1.38
+410h Q0E4 Event Queue 0 Entry 4 Register Section 11.4.1.39
+414h Q0E5 Event Queue 0 Entry 5 Register Section 11.4.1.40
+418h Q0E6 Event Queue 0 Entry 6 Register Section 11.4.1.41
+41Ch Q0E7 Event Queue 0 Entry 7 Register Section 11.4.1.42
+420h Q0E8 Event Queue 0 Entry 8 Register Section 11.4.1.43
+424h Q0E9 Event Queue 0 Entry 9 Register Section 11.4.1.44
+428h Q0E10 Event Queue 0 Entry 10 Register Section 11.4.1.45
+42Ch Q0E11 Event Queue 0 Entry 11 Register Section 11.4.1.46
+430h Q0E12 Event Queue 0 Entry 12 Register Section 11.4.1.47
+434h Q0E13 Event Queue 0 Entry 13 Register Section 11.4.1.48
+438h Q0E14 Event Queue 0 Entry 14 Register Section 11.4.1.49
+43Ch Q0E15 Event Queue 0 Entry 15 Register Section 11.4.1.50
+440h Q1E0 Event Queue 1 Entry 0 Register Section 11.4.1.51
+444h Q1E1 Event Queue 1 Entry 1 Register Section 11.4.1.52
+448h Q1E2 Event Queue 1 Entry 2 Register Section 11.4.1.53
+44Ch Q1E3 Event Queue 1 Entry 3 Register Section 11.4.1.54
+450h Q1E4 Event Queue 1 Entry 4 Register Section 11.4.1.55
+454h Q1E5 Event Queue 1 Entry 5 Register Section 11.4.1.56
+458h Q1E6 Event Queue 1 Entry 6 Register Section 11.4.1.57
+45Ch Q1E7 Event Queue 1 Entry 7 Register Section 11.4.1.58
+460h Q1E8 Event Queue 1 Entry 8 Register Section 11.4.1.59
+464h Q1E9 Event Queue 1 Entry 9 Register Section 11.4.1.60
+468h Q1E10 Event Queue 1 Entry 10 Register Section 11.4.1.61
+46Ch Q1E11 Event Queue 1 Entry 11 Register Section 11.4.1.62
+470h Q1E12 Event Queue 1 Entry 12 Register Section 11.4.1.63
+474h Q1E13 Event Queue 1 Entry 13 Register Section 11.4.1.64
+478h Q1E14 Event Queue 1 Entry 14 Register Section 11.4.1.65
+47Ch Q1E15 Event Queue 1 Entry 15 Register Section 11.4.1.66
+480h Q2E0 Event Queue 2 Entry 0 Register Section 11.4.1.67
+484h Q2E1 Event Queue 2 Entry 1 Register Section 11.4.1.68
+488h Q2E2 Event Queue 2 Entry 2 Register Section 11.4.1.69
+48Ch Q2E3 Event Queue 2 Entry 3 Register Section 11.4.1.70
+490h Q2E4 Event Queue 2 Entry 4 Register Section 11.4.1.71
+494h Q2E5 Event Queue 2 Entry 5 Register Section 11.4.1.72
+498h Q2E6 Event Queue 2 Entry 6 Register Section 11.4.1.73
+49Ch Q2E7 Event Queue 2 Entry 7 Register Section 11.4.1.74
+4A0h Q2E8 Event Queue 2 Entry 8 Register Section 11.4.1.75
+4A4h Q2E9 Event Queue 2 Entry 9 Register Section 11.4.1.76
+4A8h Q2E10 Event Queue 2 Entry 10 Register Section 11.4.1.77
+4ACh Q2E11 Event Queue 2 Entry 11 Register Section 11.4.1.78
+4B0h Q2E12 Event Queue 2 Entry 12 Register Section 11.4.1.79
+4B4h Q2E13 Event Queue 2 Entry 13 Register Section 11.4.1.80
 
 **Table 11-26. EDMA3CC Registers (continued)**
 
-Offset    Acronym                                 Register Name                                            Section
-4B8h      Q2E14                                   Event Queue 2 Entry 14 Register                      Section 11.4.1.81
-4BCh      Q2E15                                   Event Queue 2 Entry 15 Register                      Section 11.4.1.82
-600h to    QSTAT_0 to QSTAT_2                      Queue Status Registers 0-2                           Section 11.4.1.83
+Offset Acronym Register Name Section
+4B8h Q2E14 Event Queue 2 Entry 14 Register Section 11.4.1.81
+4BCh Q2E15 Event Queue 2 Entry 15 Register Section 11.4.1.82
+600h to QSTAT_0 to QSTAT_2 Queue Status Registers 0-2 Section 11.4.1.83
 608h
-620h     QWMTHRA                                 Queue Watermark Threshold A Register                 Section 11.4.1.84
-640h     CCSTAT                                  EDMA3CC Status Register                              Section 11.4.1.85
-800h     MPFAR                                   Memory Protection Fault Address Register             Section 11.4.1.86
-804h     MPFSR                                   Memory Protection Fault Status Register              Section 11.4.1.87
-808h     MPFCR                                   Memory Protection Fault Command Register             Section 11.4.1.88
-80Ch      MPPAG                                   Memory Protection Page Attribute Register Global     Section 11.4.1.89
-810h to    MPPA_0 to MPPA_7                        Memory Protection Page Attribute Registers           Section 11.4.1.90
+620h QWMTHRA Queue Watermark Threshold A Register Section 11.4.1.84
+640h CCSTAT EDMA3CC Status Register Section 11.4.1.85
+800h MPFAR Memory Protection Fault Address Register Section 11.4.1.86
+804h MPFSR Memory Protection Fault Status Register Section 11.4.1.87
+808h MPFCR Memory Protection Fault Command Register Section 11.4.1.88
+80Ch MPPAG Memory Protection Page Attribute Register Global Section 11.4.1.89
+810h to MPPA_0 to MPPA_7 Memory Protection Page Attribute Registers Section 11.4.1.90
 82Ch
-1000h     ER                                      Event Register                                       Section 11.4.1.91
-1004h     ERH                                     Event Register High                                  Section 11.4.1.92
-1008h     ECR                                     Event Clear Register                                 Section 11.4.1.93
-100Ch     ECRH                                    Event Clear Register High                            Section 11.4.1.94
-1010h     ESR                                     Event Set Register                                   Section 11.4.1.95
-1014h     ESRH                                    Event Set Register High                              Section 11.4.1.96
-1018h     CER                                     Chained Event Register                               Section 11.4.1.97
-101Ch     CERH                                    Chained Event Register High                          Section 11.4.1.98
-1020h     EER                                     Event Enable Register                                Section 11.4.1.99
-1024h     EERH                                    Event Enable Register High                          Section 11.4.1.100
-1028h     EECR                                    Event Enable Clear Register                         Section 11.4.1.101
-102Ch     EECRH                                   Event Enable Clear Register High                    Section 11.4.1.102
-1030h     EESR                                    Event Enable Set Register                           Section 11.4.1.103
-1034h     EESRH                                   Event Enable Set Register High                      Section 11.4.1.104
-1038h     SER                                     Secondary Event Register                            Section 11.4.1.105
-103Ch     SERH                                    Secondary Event Register High                       Section 11.4.1.106
-1040h     SECR                                    Secondary Event Clear Register                      Section 11.4.1.107
-1044h     SECRH                                   Secondary Event Clear Register High                 Section 11.4.1.108
-1050h     IER                                     Interrupt Enable Register                           Section 11.4.1.109
-1054h     IERH                                    Interrupt Enable Register High                      Section 11.4.1.110
-1058h     IECR                                    Interrupt Enable Clear Register                     Section 11.4.1.111
-105Ch     IECRH                                   Interrupt Enable Clear Register High                Section 11.4.1.112
-1060h     IESR                                    Interrupt Enable Set Register                       Section 11.4.1.113
-1064h     IESRH                                   Interrupt Enable Set Register High                  Section 11.4.1.114
-1068h     IPR                                     Interrupt Pending Register                          Section 11.4.1.115
-106Ch     IPRH                                    Interrupt Pending Register High                     Section 11.4.1.116
-1070h     ICR                                     Interrupt Clear Register                            Section 11.4.1.117
-1074h     ICRH                                    Interrupt Clear Register High                       Section 11.4.1.118
-1078h     IEVAL                                   Interrupt Evaluate Register                         Section 11.4.1.119
-1080h     QER                                     QDMA Event Register                                 Section 11.4.1.120
-1084h     QEER                                    QDMA Event Enable Register                          Section 11.4.1.121
-1088h     QEECR                                   QDMA Event Enable Clear Register                    Section 11.4.1.122
-108Ch     QEESR                                   QDMA Event Enable Set Register                      Section 11.4.1.123
-1090h     QSER                                    QDMA Secondary Event Register                       Section 11.4.1.124
-1094h     QSECR                                   QDMA Secondary Event Clear Register                 Section 11.4.1.125
-
+1000h ER Event Register Section 11.4.1.91
+1004h ERH Event Register High Section 11.4.1.92
+1008h ECR Event Clear Register Section 11.4.1.93
+100Ch ECRH Event Clear Register High Section 11.4.1.94
+1010h ESR Event Set Register Section 11.4.1.95
+1014h ESRH Event Set Register High Section 11.4.1.96
+1018h CER Chained Event Register Section 11.4.1.97
+101Ch CERH Chained Event Register High Section 11.4.1.98
+1020h EER Event Enable Register Section 11.4.1.99
+1024h EERH Event Enable Register High Section 11.4.1.100
+1028h EECR Event Enable Clear Register Section 11.4.1.101
+102Ch EECRH Event Enable Clear Register High Section 11.4.1.102
+1030h EESR Event Enable Set Register Section 11.4.1.103
+1034h EESRH Event Enable Set Register High Section 11.4.1.104
+1038h SER Secondary Event Register Section 11.4.1.105
+103Ch SERH Secondary Event Register High Section 11.4.1.106
+1040h SECR Secondary Event Clear Register Section 11.4.1.107
+1044h SECRH Secondary Event Clear Register High Section 11.4.1.108
+1050h IER Interrupt Enable Register Section 11.4.1.109
+1054h IERH Interrupt Enable Register High Section 11.4.1.110
+1058h IECR Interrupt Enable Clear Register Section 11.4.1.111
+105Ch IECRH Interrupt Enable Clear Register High Section 11.4.1.112
+1060h IESR Interrupt Enable Set Register Section 11.4.1.113
+1064h IESRH Interrupt Enable Set Register High Section 11.4.1.114
+1068h IPR Interrupt Pending Register Section 11.4.1.115
+106Ch IPRH Interrupt Pending Register High Section 11.4.1.116
+1070h ICR Interrupt Clear Register Section 11.4.1.117
+1074h ICRH Interrupt Clear Register High Section 11.4.1.118
+1078h IEVAL Interrupt Evaluate Register Section 11.4.1.119
+1080h QER QDMA Event Register Section 11.4.1.120
+1084h QEER QDMA Event Enable Register Section 11.4.1.121
+1088h QEECR QDMA Event Enable Clear Register Section 11.4.1.122
+108Ch QEESR QDMA Event Enable Set Register Section 11.4.1.123
+1090h QSER QDMA Secondary Event Register Section 11.4.1.124
+1094h QSECR QDMA Secondary Event Clear Register Section 11.4.1.125
 
 #### 11.4.1.1 PID Register (offset = 0h) [reset = 0h]
 
@@ -3930,19 +3614,17 @@ PID is shown in Figure 11-40 and described in Table 11-27.
 The peripheral identification register (PID) uniquely identifies the EDMA3CC and the specific revision of
 the EDMA3CC.
 
-
 **Figure 11-40. PID Register**
 
-15       14           13   12     11        10        9         8          7      6         5      4       3        2        1        0
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 PID
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-27. PID Register Field Descriptions**
 
-Bit         Field                    Type            Reset          Description
-15-0        PID                      R               0h             Peripheral identifier uniquely identifies the EDMA3CC and the
+Bit Field Type Reset Description
+15-0 PID R 0h Peripheral identifier uniquely identifies the EDMA3CC and the
 specific revision of the EDMA3CC.
 Value 0 to FFFF FFFFh.
 Reset value for PID[31] to PID[16] is 4001h.
@@ -3951,118 +3633,111 @@ specific revision of the EDMA3CC.
 Value 0 to FFFF FFFFh.
 Reset value for PID[15] to PID[0] is 4C00h.
 
-
 #### 11.4.1.2 CCCFG Register (offset = 4h) [reset = 3224445h]
 
 CCCFG is shown in Figure 11-41 and described in Table 11-28.
 The EDMA3CC configuration register (CCCFG) provides the features/resources for the EDMA3CC in a
 particular device.
 
-
 **Figure 11-41. CCCFG Register**
 
-31               30             29                    28               27                    26           25          24
-RESERVED                                                         MP_EXIST   CHMAP_EXIST
-R-0h                                                             R-1h        R-1h
-23               22             21                    20             19                      18        17              16
-RESERVED                        NUM_REGN                     RESERVED                         NUM_EVQUE
-R-0h                            R-2h                         R-0h                              R-2h
-15                   14            13                     12             11                      10         9              8
-RESERVED                         NUM_PAENTRY                             RESERVED                          NUM_INTCH
-R-0h                               R-4h                                  R-0h                               R-4h
-7                   6             5                      4               3                      2         1               0
-RESERVED                         NUM_QDMACH                              RESERVED                         NUM_DMACH
-R-0h                               R-4h                                  R-0h                              R-5h
+31 30 29 28 27 26 25 24
+RESERVED MP_EXIST CHMAP_EXIST
+R-0h R-1h R-1h
+23 22 21 20 19 18 17 16
+RESERVED NUM_REGN RESERVED NUM_EVQUE
+R-0h R-2h R-0h R-2h
+15 14 13 12 11 10 9 8
+RESERVED NUM_PAENTRY RESERVED NUM_INTCH
+R-0h R-4h R-0h R-4h
+7 6 5 4 3 2 1 0
+RESERVED NUM_QDMACH RESERVED NUM_DMACH
+R-0h R-4h R-0h R-5h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-28. CCCFG Register Field Descriptions**
 
-Bit       Field                   Type             Reset          Description
-31-26         RESERVED                R                0h
-25        MP_EXIST                R                1h             Memory protection existence.
+Bit Field Type Reset Description
+31-26 RESERVED R 0h
+25 MP_EXIST R 1h Memory protection existence.
 0h = Reserved.
 1h = Memory protection logic included.
-24        CHMAP_EXIST             R                1h             Channel mapping existence.
+24 CHMAP_EXIST R 1h Channel mapping existence.
 0h = Reserved.
 1h = Channel mapping logic included.
-23-22         RESERVED                R                0h
-21-20         NUM_REGN                R                2h             Number of MP and shadow regions.
+23-22 RESERVED R 0h
+21-20 NUM_REGN R 2h Number of MP and shadow regions.
 0h = Reserved.
 1h = Reserved
 2h = 4 regions.
 3h = Reserved.
-19        RESERVED                R                0h
-18-16         NUM_EVQUE               R                2h             Number of queues/number of TCs.
+19 RESERVED R 0h
+18-16 NUM_EVQUE R 2h Number of queues/number of TCs.
 0h = Reserved.
 1h = Reserved.
 2h = 3 EDMA3TCs/Event Queues
 3h = Reserved from 3h to 7h.
 7h = Reserved.
-15        RESERVED                R                0h
-14-12         NUM_PAENTRY             R                4h             Number of PaRAM sets.
+15 RESERVED R 0h
+14-12 NUM_PAENTRY R 4h Number of PaRAM sets.
 0h = Reserved from 0h to 3h.
 3h = Reserved
 4h = 256 PaRAM sets.
 5h = Reserved from 5h to 7h.
 7h = Reserved.
-11        RESERVED                R                0h
-
+11 RESERVED R 0h
 
 **Table 11-28. CCCFG Register Field Descriptions (continued)**
 
-Bit      Field                   Type            Reset          Description
-10-8     NUM_INTCH               R               4h             Number of interrupt channels.
+Bit Field Type Reset Description
+10-8 NUM_INTCH R 4h Number of interrupt channels.
 0h = Reserved from 0h to 3h.
 3h = Reserved.
 4h = 64 interrupt channels.
 5h = Reserved from 5h to 7.
 7h = Reserved.
-7       RESERVED                R               0h
-6-4      NUM_QDMACH              R               4h             Number of QDMA channels.
+7 RESERVED R 0h
+6-4 NUM_QDMACH R 4h Number of QDMA channels.
 0h = Reserved from 0h to 3h.
 3h = Reserved.
 4h = 8 QDMA channels.
 5h = Reserved from 5h to 7.
 7h = Reserved.
-3       RESERVED                R               0h
-2-0      NUM_DMACH               R               5h             Number of DMA channels.
+3 RESERVED R 0h
+2-0 NUM_DMACH R 5h Number of DMA channels.
 0h = Reserved from 0h to 4h.
 4h = Reserved.
 5h = 64 DMA channels.
 6h = Reserved.
 7h = Reserved.
 
-
 #### 11.4.1.3 SYSCONFIG Register (offset = 10h) [reset = 8h]
 
 SYSCONFIG is shown in Figure 15-4 and described in Table 15-7.
 The EDMA3CC system configuration register is used for clock management configuration.
 
-
 **Figure 11-42. SYSCONFIG Register**
 
-31               30             29                    28               27                    26            25                 24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23               22             21                    20               19                    18            17                 16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15               14             13                    12               11                    10             9                  8
+15 14 13 12 11 10 9 8
 RESERVED
 R-0h
-7              6              5                     4                 3                    2            1                  0
-RESERVED                        RESERVED                              IDLEMODE                  RESERVED           RESERVED
-R-0h                            R-0h                                  R/W-2h                    R-0h               R-0h
+7 6 5 4 3 2 1 0
+RESERVED RESERVED IDLEMODE RESERVED RESERVED
+R-0h R-0h R/W-2h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-29. SYSCONFIG Register Field Descriptions**
 
-Bit       Field                   Type             Reset          Description
-31-6          RESERVED                R                0h
-5-4       RESERVED                R                0h
-3-2       IDLEMODE                R/W              2h             Configuration of the local target state management mode.
+Bit Field Type Reset Description
+31-6 RESERVED R 0h
+5-4 RESERVED R 0h
+3-2 IDLEMODE R/W 2h Configuration of the local target state management mode.
 By definition, target can handle read/write transaction as long as it is
 out of IDLE state.
 0h = Force-idle mode: local target's idle state follows (acknowledges)
@@ -4080,34 +3755,30 @@ depending on the IP module's internal requirements. IP module may
 generate (IRQ- or DMA-request-related) wakeup events when in idle
 state. Mode is only relevant if the appropriate IP module "swakeup"
 output(s) is (are) implemented.
-1         RESERVED                R                0h
-0         RESERVED                R                0h
-
+1 RESERVED R 0h
+0 RESERVED R 0h
 
 #### 11.4.1.4 DCHMAP_0 to DCHMAP_63 Register (offset = 100h to 1FCh) [reset = 0h]
 
 DCHMAP_0 to DCHMAP_63 is shown in Figure 11-43 and described in Table 11-30.
 
-
 **Figure 11-43. DCHMAP_0 to DCHMAP_63 Register**
 
-31       30           29   28     27         26        25       24      23         22       21      20     19      18       17     16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15      14            13   12     11         10      9           8        7        6         5      4       3       2    1         0
-RESERVED                                          PAENTRY                                                       RESERVED
-R-0h                                            R/W-0h                                                         R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED PAENTRY RESERVED
+R-0h R/W-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-30. DCHMAP_0 to DCHMAP_63 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-14        RESERVED                  R               0h
-13-5        PAENTRY                   R/W             0h             Points to the PaRAM set number for DMA channel n.
+Bit Field Type Reset Description
+31-14 RESERVED R 0h
+13-5 PAENTRY R/W 0h Points to the PaRAM set number for DMA channel n.
 Value 0 to FFh.
-4-0         RESERVED                  R               0h
-
+4-0 RESERVED R 0h
 
 #### 11.4.1.5 QCHMAP_0 to QCHMAP_7 Register (offset = 200h to 21Ch) [reset = 0h]
 
@@ -4119,39 +3790,36 @@ map register (QCHMAPn). At reset the QDMA channel map registers for all QDMA cha
 PaRAM set 0. If an application makes use of both a DMA channel that points to PaRAM set 0 and any
 QDMA channels, ensure that QCHMAP is programmed appropriately to point to a different PaRAM entry.
 
-
 **Figure 11-44. QCHMAP_0 to QCHMAP_7 Register**
 
-31               30             29                    28               27                    26            25                24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23               22             21                    20               19                    18            17                16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15               14             13                    12               11                    10             9                 8
-RESERVED                                                               PAENTRY
-R-0h                                                                  R/W-0h
-7                 6             5                     4               3                      2              1                 0
-PAENTRY                                             TRWORD                                       RESERVED
-R/W-0h                                              R/W-0h                                        R-0h
+15 14 13 12 11 10 9 8
+RESERVED PAENTRY
+R-0h R/W-0h
+7 6 5 4 3 2 1 0
+PAENTRY TRWORD RESERVED
+R/W-0h R/W-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-31. QCHMAP_0 to QCHMAP_7 Register Field Descriptions**
 
-Bit      Field                    Type             Reset          Description
-31-14        RESERVED                 R                0h
-13-5         PAENTRY                  R/W              0h             PAENTRY points to the PaRAM set number for QDMA channel .
+Bit Field Type Reset Description
+31-14 RESERVED R 0h
+13-5 PAENTRY R/W 0h PAENTRY points to the PaRAM set number for QDMA channel .
 0h = Parameter entry 0 through 255, from 0 to FFh.
 1h = Reserved, from 100h to 1FFh. Always write 0 to this bit. Writes
 of 1 to this bit are not supported and attempts to do so may result in
 undefine behavior.
-4-2      TRWORD                   R/W              0h             Points to the specific trigger word of the PaRAM set defined by
+4-2 TRWORD R/W 0h Points to the specific trigger word of the PaRAM set defined by
 PAENTRY.
 A write to the trigger word results in a QDMA event being
 recognized.
-1-0      RESERVED                 R                0h
-
+1-0 RESERVED R 0h
 
 #### 11.4.1.6 DMAQNUM_0 to DMAQNUM_7 Register (offset = 240h to 25Ch) [reset = 0h]
 
@@ -4163,29 +3831,27 @@ fixed association to the transfer controllers, that is, Q0 TRs are submitted to 
 to TC1, etc., by programming DMAQNUM for a particular DMA channel also dictates which transfer
 controller is utilized for the data movement (or which EDMA3TC receives the TR request).
 
-
 **Figure 11-45. DMAQNUM_0 to DMAQNUM_7 Register**
 
-31                30               29                    28             27                      26            25                 24
-RESERVED                              E7                                RESERVED                                 E6
-R-0h                              R/W-0h                                R-0h                                 R/W-0h
-23                22               21                    20             19                      18            17                 16
-RESERVED                              E5                                RESERVED                                 E4
-R-0h                              R/W-0h                                R-0h                                 R/W-0h
-15                14               13                    12             11                      10            9                  8
-RESERVED                              E3                                RESERVED                                 E2
-R-0h                              R/W-0h                                R-0h                                 R/W-0h
-7                 6               5                     4               3                      2             1                  0
-RESERVED                              E1                                RESERVED                                 E0
-R-0h                              R/W-0h                                R-0h                                 R/W-0h
+31 30 29 28 27 26 25 24
+RESERVED E7 RESERVED E6
+R-0h R/W-0h R-0h R/W-0h
+23 22 21 20 19 18 17 16
+RESERVED E5 RESERVED E4
+R-0h R/W-0h R-0h R/W-0h
+15 14 13 12 11 10 9 8
+RESERVED E3 RESERVED E2
+R-0h R/W-0h R-0h R/W-0h
+7 6 5 4 3 2 1 0
+RESERVED E1 RESERVED E0
+R-0h R/W-0h R-0h R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-32. DMAQNUM_0 to DMAQNUM_7 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31        RESERVED                  R               0h
-30-28       E7                        R/W             0h             DMA queue number.
+Bit Field Type Reset Description
+31 RESERVED R 0h
+30-28 E7 R/W 0h DMA queue number.
 Contains the event queue number to be used for the corresponding
 DMA channel.
 Programming DMAQNUM for an event queue number to a value
@@ -4208,13 +3874,12 @@ undefined behavior.
 7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
 not supported and attempts to do so may result in undefined
 behavior.
-27        RESERVED                  R               0h
-
+27 RESERVED R 0h
 
 **Table 11-32. DMAQNUM_0 to DMAQNUM_7 Register Field Descriptions (continued)**
 
-Bit       Field                   Type            Reset          Description
-26-24         E6                      R/W             0h             DMA queue number.
+Bit Field Type Reset Description
+26-24 E6 R/W 0h DMA queue number.
 Contains the event queue number to be used for the corresponding
 DMA channel.
 Programming DMAQNUM for an event queue number to a value
@@ -4237,8 +3902,8 @@ undefined behavior.
 7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
 not supported and attempts to do so may result in undefined
 behavior.
-23        RESERVED                R               0h
-22-20         E5                      R/W             0h             DMA queue number.
+23 RESERVED R 0h
+22-20 E5 R/W 0h DMA queue number.
 Contains the event queue number to be used for the corresponding
 DMA channel.
 Programming DMAQNUM for an event queue number to a value
@@ -4261,13 +3926,12 @@ undefined behavior.
 7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
 not supported and attempts to do so may result in undefined
 behavior.
-19        RESERVED                R               0h
-
+19 RESERVED R 0h
 
 **Table 11-32. DMAQNUM_0 to DMAQNUM_7 Register Field Descriptions (continued)**
 
-Bit      Field                   Type            Reset          Description
-18-16     E4                      R/W             0h             DMA queue number.
+Bit Field Type Reset Description
+18-16 E4 R/W 0h DMA queue number.
 Contains the event queue number to be used for the corresponding
 DMA channel.
 Programming DMAQNUM for an event queue number to a value
@@ -4290,8 +3954,8 @@ undefined behavior.
 7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
 not supported and attempts to do so may result in undefined
 behavior.
-15      RESERVED                R               0h
-14-12     E3                      R/W             0h             DMA queue number.
+15 RESERVED R 0h
+14-12 E3 R/W 0h DMA queue number.
 Contains the event queue number to be used for the corresponding
 DMA channel.
 Programming DMAQNUM for an event queue number to a value
@@ -4314,13 +3978,12 @@ undefined behavior.
 7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
 not supported and attempts to do so may result in undefined
 behavior.
-11      RESERVED                R               0h
-
+11 RESERVED R 0h
 
 **Table 11-32. DMAQNUM_0 to DMAQNUM_7 Register Field Descriptions (continued)**
 
-Bit      Field                   Type            Reset          Description
-10-8         E2                      R/W             0h             DMA queue number.
+Bit Field Type Reset Description
+10-8 E2 R/W 0h DMA queue number.
 Contains the event queue number to be used for the corresponding
 DMA channel.
 Programming DMAQNUM for an event queue number to a value
@@ -4343,8 +4006,8 @@ undefined behavior.
 7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
 not supported and attempts to do so may result in undefined
 behavior.
-7        RESERVED                R               0h
-6-4      E1                      R/W             0h             DMA queue number.
+7 RESERVED R 0h
+6-4 E1 R/W 0h DMA queue number.
 Contains the event queue number to be used for the corresponding
 DMA channel.
 Programming DMAQNUM for an event queue number to a value
@@ -4367,13 +4030,12 @@ undefined behavior.
 7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
 not supported and attempts to do so may result in undefined
 behavior.
-3        RESERVED                R               0h
-
+3 RESERVED R 0h
 
 **Table 11-32. DMAQNUM_0 to DMAQNUM_7 Register Field Descriptions (continued)**
 
-Bit      Field                   Type          Reset          Description
-2-0      E0                      R/W           0h             DMA queue number.
+Bit Field Type Reset Description
+2-0 E0 R/W 0h DMA queue number.
 Contains the event queue number to be used for the corresponding
 DMA channel.
 Programming DMAQNUM for an event queue number to a value
@@ -4397,36 +4059,33 @@ undefined behavior.
 not supported and attempts to do so may result in undefined
 behavior.
 
-
 #### 11.4.1.7 QDMAQNUM Register (offset = 260h) [reset = 0h]
 
 QDMAQNUM is shown in Figure 11-46 and described in Table 11-33.
 The QDMA channel queue number register (QDMAQNUMn) is used to program all the QDMA channels in
 the EDMA3CC to submit the associated QDMA event to any of the event queues in the EDMA3CC.
 
-
 **Figure 11-46. QDMAQNUM Register**
 
-31                   30             29                   28             27                      26            25                 24
-RESERVED                               E7                               RESERVED                                 E6
-R-0h                               R/W-0h                               R-0h                                 R/W-0h
-23                   22             21                   20             19                      18            17                 16
-RESERVED                               E5                               RESERVED                                 E4
-R-0h                               R/W-0h                               R-0h                                 R/W-0h
-15                   14             13                   12             11                      10            9                  8
-RESERVED                               E3                               RESERVED                                 E2
-R-0h                               R/W-0h                               R-0h                                 R/W-0h
-7                   6              5                    4               3                      2             1                  0
-RESERVED                               E1                               RESERVED                                 E0
-R-0h                               R/W-0h                               R-0h                                 R/W-0h
+31 30 29 28 27 26 25 24
+RESERVED E7 RESERVED E6
+R-0h R/W-0h R-0h R/W-0h
+23 22 21 20 19 18 17 16
+RESERVED E5 RESERVED E4
+R-0h R/W-0h R-0h R/W-0h
+15 14 13 12 11 10 9 8
+RESERVED E3 RESERVED E2
+R-0h R/W-0h R-0h R/W-0h
+7 6 5 4 3 2 1 0
+RESERVED E1 RESERVED E0
+R-0h R/W-0h R-0h R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-33. QDMAQNUM Register Field Descriptions**
 
-Bit       Field                   Type            Reset          Description
-31        RESERVED                R               0h
-30-28         E7                      R/W             0h             QDMA queue number.
+Bit Field Type Reset Description
+31 RESERVED R 0h
+30-28 E7 R/W 0h QDMA queue number.
 Contains the event queue number to be used for the corresponding
 QDMA channel.
 0h = Event n is queued on Q0.
@@ -4438,8 +4097,8 @@ undefined behavior.
 7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
 not supported and attempts to do so may result in undefined
 behavior.
-27        RESERVED                R               0h
-26-24         E6                      R/W             0h             QDMA queue number.
+27 RESERVED R 0h
+26-24 E6 R/W 0h QDMA queue number.
 Contains the event queue number to be used for the corresponding
 QDMA channel.
 0h = Event n is queued on Q0.
@@ -4451,70 +4110,12 @@ undefined behavior.
 7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
 not supported and attempts to do so may result in undefined
 behavior.
-23        RESERVED                R               0h
-
-
-**Table 11-33. QDMAQNUM Register Field Descriptions (continued)**
-
-Bit      Field                   Type            Reset          Description
-22-20     E5                      R/W             0h             QDMA queue number.
-Contains the event queue number to be used for the corresponding
-QDMA channel.
-0h = Event n is queued on Q0.
-1h = Event n is queued on Q1.
-2h = Event n is queued on Q2.
-3h = Reserved, from 3h to 7h. Always write 0 to this bit; writes of 1
-to this bit are not supported and attempts to do so may result in
-undefined behavior.
-7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
-not supported and attempts to do so may result in undefined
-behavior.
-19      RESERVED                R               0h
-18-16     E4                      R/W             0h             QDMA queue number.
-Contains the event queue number to be used for the corresponding
-QDMA channel.
-0h = Event n is queued on Q0.
-1h = Event n is queued on Q1.
-2h = Event n is queued on Q2.
-3h = Reserved, from 3h to 7h. Always write 0 to this bit; writes of 1
-to this bit are not supported and attempts to do so may result in
-undefined behavior.
-7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
-not supported and attempts to do so may result in undefined
-behavior.
-15      RESERVED                R               0h
-14-12     E3                      R/W             0h             QDMA queue number.
-Contains the event queue number to be used for the corresponding
-QDMA channel.
-0h = Event n is queued on Q0.
-1h = Event n is queued on Q1.
-2h = Event n is queued on Q2.
-3h = Reserved, from 3h to 7h. Always write 0 to this bit; writes of 1
-to this bit are not supported and attempts to do so may result in
-undefined behavior.
-7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
-not supported and attempts to do so may result in undefined
-behavior.
-11      RESERVED                R               0h
-10-8     E2                      R/W             0h             QDMA queue number.
-Contains the event queue number to be used for the corresponding
-QDMA channel.
-0h = Event n is queued on Q0.
-1h = Event n is queued on Q1.
-2h = Event n is queued on Q2.
-3h = Reserved, from 3h to 7h. Always write 0 to this bit; writes of 1
-to this bit are not supported and attempts to do so may result in
-undefined behavior.
-7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
-not supported and attempts to do so may result in undefined
-behavior.
-7       RESERVED                R               0h
-
+23 RESERVED R 0h
 
 **Table 11-33. QDMAQNUM Register Field Descriptions (continued)**
 
-Bit      Field                   Type            Reset          Description
-6-4      E1                      R/W             0h             QDMA queue number.
+Bit Field Type Reset Description
+22-20 E5 R/W 0h QDMA queue number.
 Contains the event queue number to be used for the corresponding
 QDMA channel.
 0h = Event n is queued on Q0.
@@ -4526,8 +4127,8 @@ undefined behavior.
 7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
 not supported and attempts to do so may result in undefined
 behavior.
-3        RESERVED                R               0h
-2-0      E0                      R/W             0h             QDMA queue number.
+19 RESERVED R 0h
+18-16 E4 R/W 0h QDMA queue number.
 Contains the event queue number to be used for the corresponding
 QDMA channel.
 0h = Event n is queued on Q0.
@@ -4539,7 +4140,62 @@ undefined behavior.
 7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
 not supported and attempts to do so may result in undefined
 behavior.
+15 RESERVED R 0h
+14-12 E3 R/W 0h QDMA queue number.
+Contains the event queue number to be used for the corresponding
+QDMA channel.
+0h = Event n is queued on Q0.
+1h = Event n is queued on Q1.
+2h = Event n is queued on Q2.
+3h = Reserved, from 3h to 7h. Always write 0 to this bit; writes of 1
+to this bit are not supported and attempts to do so may result in
+undefined behavior.
+7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
+not supported and attempts to do so may result in undefined
+behavior.
+11 RESERVED R 0h
+10-8 E2 R/W 0h QDMA queue number.
+Contains the event queue number to be used for the corresponding
+QDMA channel.
+0h = Event n is queued on Q0.
+1h = Event n is queued on Q1.
+2h = Event n is queued on Q2.
+3h = Reserved, from 3h to 7h. Always write 0 to this bit; writes of 1
+to this bit are not supported and attempts to do so may result in
+undefined behavior.
+7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
+not supported and attempts to do so may result in undefined
+behavior.
+7 RESERVED R 0h
 
+**Table 11-33. QDMAQNUM Register Field Descriptions (continued)**
+
+Bit Field Type Reset Description
+6-4 E1 R/W 0h QDMA queue number.
+Contains the event queue number to be used for the corresponding
+QDMA channel.
+0h = Event n is queued on Q0.
+1h = Event n is queued on Q1.
+2h = Event n is queued on Q2.
+3h = Reserved, from 3h to 7h. Always write 0 to this bit; writes of 1
+to this bit are not supported and attempts to do so may result in
+undefined behavior.
+7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
+not supported and attempts to do so may result in undefined
+behavior.
+3 RESERVED R 0h
+2-0 E0 R/W 0h QDMA queue number.
+Contains the event queue number to be used for the corresponding
+QDMA channel.
+0h = Event n is queued on Q0.
+1h = Event n is queued on Q1.
+2h = Event n is queued on Q2.
+3h = Reserved, from 3h to 7h. Always write 0 to this bit; writes of 1
+to this bit are not supported and attempts to do so may result in
+undefined behavior.
+7h = Reserved. Always write 0 to this bit; writes of 1 to this bit are
+not supported and attempts to do so may result in undefined
+behavior.
 
 #### 11.4.1.8 QUEPRI Register (offset = 284h) [reset = 777h]
 
@@ -4550,46 +4206,43 @@ EDMA3TC mapping is fixed, programming QUEPRI essentially governs the priority of
 transfer controller(s) read/write commands with respect to the other bus masters in the device. You can
 modify the EDMA3TC priority to obtain the desired system performance.
 
-
 **Figure 11-47. QUEPRI Register**
 
-31               30                29                    28               27                    26            25                24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23               22                21                    20               19                    18            17                16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15               14              13                      12               11                    10           9                   8
-RESERVED                                                                     PRIQ2
-R-0h                                                                       R/W-7h
-7                 6               5                      4               3                      2            1                   0
-RESERVED                            PRIQ1                                RESERVED                              PRIQ0
-R-0h                              R/W-7h                                 R-0h                                R/W-7h
+15 14 13 12 11 10 9 8
+RESERVED PRIQ2
+R-0h R/W-7h
+7 6 5 4 3 2 1 0
+RESERVED PRIQ1 RESERVED PRIQ0
+R-0h R/W-7h R-0h R/W-7h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-34. QUEPRI Register Field Descriptions**
 
-Bit       Field                      Type             Reset          Description
-31-11      RESERVED                   R                0h
-10-8      PRIQ2                      R/W              7h             Priority level for queue 2.
+Bit Field Type Reset Description
+31-11 RESERVED R 0h
+10-8 PRIQ2 R/W 7h Priority level for queue 2.
 Dictates the priority level used by TC2 relative to other masters in
 the device.
 A value of 0 means highest priority and a value of 7 means lowest
 priority.
-7        RESERVED                   R                0h
-6-4       PRIQ1                      R/W              7h             Priority level for queue 1.
+7 RESERVED R 0h
+6-4 PRIQ1 R/W 7h Priority level for queue 1.
 Dictates the priority level used by TC1 relative to other masters in
 the device.
 A value of 0 means highest priority and a value of 7 means lowest
 priority.
-3        RESERVED                   R                0h
-2-0       PRIQ0                      R/W              7h             Priority level for queue 0.
+3 RESERVED R 0h
+2-0 PRIQ0 R/W 7h Priority level for queue 0.
 Dictates the priority level used by TC0 relative to other masters in
 the device.
 A value of 0 means highest priority and a value of 7 means lowest
 priority.
-
 
 #### 11.4.1.9 EMR Register (offset = 300h) [reset = 0h]
 
@@ -4605,24 +4258,21 @@ Interrupts. This register is part of a set of registers that provide information
 events, and instances when event queue thresholds are exceeded. If any of the bits in these registers is
 set, it results in the EDMA3CC generating an error interrupt.
 
-
 **Figure 11-48. EMR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6    5    4   3    2   1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-35. EMR Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       En                         R               0h             Channel 0 to 31 event missed.
+Bit Field Type Reset Description
+31-0 En R 0h Channel 0 to 31 event missed.
 En is cleared by writing a 1 to the corresponding bit in the event
 missed clear register (EMCR).
 0h = No missed event.
 1h = Missed event occurred.
-
 
 #### 11.4.1.10 EMRH Register (offset = 304h) [reset = 0h]
 
@@ -4638,24 +4288,21 @@ Interrupts. This register is part of a set of registers that provide information
 events, and instances when event queue thresholds are exceeded. If any of the bits in these registers is
 set, it results in the EDMA3CC generating an error interrupt.
 
-
 **Figure 11-49. EMRH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6    5    4   3    2   1     0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-36. EMRH Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     En                          R               0h             Channel 32 to 63 event missed.
+Bit Field Type Reset Description
+31-0 En R 0h Channel 32 to 63 event missed.
 En is cleared by writing a 1 to the corresponding bit in the event
 missed clear register high (EMCRH).
 0h = No missed event.
 1h = Missed event occurred.
-
 
 #### 11.4.1.11 EMCR Register (offset = 308h) [reset = 0h]
 
@@ -4667,25 +4314,22 @@ writing a 0 has no effect. This register is part of a set of registers that prov
 and/or QDMA events, and instances when event queue thresholds are exceeded. If any of the bits in
 these registers is set, it results in the EDMA3CC generating an error interrupt.
 
-
 **Figure 11-50. EMCR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8    7    6   5    4    3   2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-37. EMCR Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       En                         W               0h             Event missed 0 to 31 clear.
+Bit Field Type Reset Description
+31-0 En W 0h Event missed 0 to 31 clear.
 All error bits must be cleared before additional error interrupts will be
 asserted by the EDMA3CC.
 0h = No effect.
 1h = Corresponding missed event bit in the event missed register
 (EMR) is cleared (En = 0).
-
 
 #### 11.4.1.12 EMCRH Register (offset = 30Ch) [reset = 0h]
 
@@ -4697,25 +4341,22 @@ writing a 0 has no effect. This register is part of a set of registers that prov
 and/or QDMA events, and instances when event queue thresholds are exceeded. If any of the bits in
 these registers is set, it results in the EDMA3CC generating an error interrupt.
 
-
 **Figure 11-51. EMCRH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8    7    6   5    4    3   2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-38. EMCRH Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     En                          W               0h             Event missed 32 to 63 clear.
+Bit Field Type Reset Description
+31-0 En W 0h Event missed 32 to 63 clear.
 All error bits must be cleared before additional error interrupts will be
 asserted by the EDMA3CC.
 0h = No effect.
 1h = Corresponding missed event bit in the event missed register
 high (EMRH) is cleared (En = 0).
-
 
 #### 11.4.1.13 QEMR Register (offset = 310h) [reset = 0h]
 
@@ -4730,25 +4371,22 @@ registers that provide information on missed DMA and/or QDMA events, and instanc
 thresholds are exceeded. If any of the bits in these registers is set, it results in the EDMA3CC generating
 an error interrupt.
 
-
 **Figure 11-52. QEMR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3    2   1     0
-RESERVED                                                                                   En
-R-0h                                                                                   R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED En
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-39. QEMR Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-8       RESERVED                   R               0h
-7-0    En                         R               0h             Channel 0 to 7 QDMA event missed.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-0 En R 0h Channel 0 to 7 QDMA event missed.
 En is cleared by writing a 1 to the corresponding bit in the QDMA
 event missed clear register (QEMCR).
 0h = No missed event.
 1h = Missed event occurred.
-
 
 #### 11.4.1.14 QEMCR Register (offset = 314h) [reset = 0h]
 
@@ -4760,26 +4398,23 @@ has no effect. This register is part of a set of registers that provide informat
 QDMA events, and instances when event queue thresholds are exceeded. If any of the bits in these
 registers is set, it results in the EDMA3CC generating an error interrupt.
 
-
 **Figure 11-53. QEMCR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8    7    6   5    4   3    2    1    0
-RESERVED                                                                                      En
-R-0h                                                                                      W-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED En
+R-0h W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-40. QEMCR Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-8     RESERVED                    R               0h
-7-0      En                          W               0h             QDMA event missed clear.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-0 En W 0h QDMA event missed clear.
 All error bits must be cleared before additional error interrupts will be
 asserted by the EDMA3CC.
 0h = No effect.
 1h = Corresponding missed event bit in the QDMA event missed
 register (QEMR) is cleared (En= 0).
-
 
 #### 11.4.1.15 CCERR Register (offset = 318h) [reset = 0h]
 
@@ -4797,51 +4432,48 @@ register is part of a set of registers that provide information on missed DMA an
 instances when event queue thresholds are exceeded. If any of the bits in these registers is set, it results
 in the EDMA3CC generating an error interrupt.
 
-
 **Figure 11-54. CCERR Register**
 
-31               30             29                    28               27                    26          25                24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23               22             21                20                   19                    18          17                16
-RESERVED                                                                 TCCERR
-R-0h                                                                     R-0h
-15               14             13                    12               11                    10           9                 8
+23 22 21 20 19 18 17 16
+RESERVED TCCERR
+R-0h R-0h
+15 14 13 12 11 10 9 8
 RESERVED
 R-0h
-7              6              5                     4                 3               2               1                0
-RESERVED                                                 QTHRXCD2        QTHRXCD1         QTHRXCD0
-R-0h                                                     R-0h            R-0h             R-0h
+7 6 5 4 3 2 1 0
+RESERVED QTHRXCD2 QTHRXCD1 QTHRXCD0
+R-0h R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-41. CCERR Register Field Descriptions**
 
-Bit       Field                   Type             Reset          Description
-31-17         RESERVED                R                0h
-16        TCCERR                  R                0h             Transfer completion code error.
+Bit Field Type Reset Description
+31-17 RESERVED R 0h
+16 TCCERR R 0h Transfer completion code error.
 TCCERR is cleared by writing a 1 to the corresponding bit in the
 EDMA3CC error clear register (CCERRCLR).
 0h = Total number of allowed TCCs outstanding has not been
 reached.
 1h = Total number of allowed TCCs has been reached.
-15-3          RESERVED                R                0h
-2         QTHRXCD2                R                0h             Queue threshold error for queue 2.
+15-3 RESERVED R 0h
+2 QTHRXCD2 R 0h Queue threshold error for queue 2.
 QTHRXCD2 is cleared by writing a 1 to the corresponding bit in the
 EDMA3CC error clear register (CCERRCLR).
 0h = Watermark/threshold has not been exceeded.
 1h = Watermark/threshold has been exceeded.
-1         QTHRXCD1                R                0h             Queue threshold error for queue 1 .
+1 QTHRXCD1 R 0h Queue threshold error for queue 1 .
 QTHRXCD1 is cleared by writing a 1 to the corresponding bit in the
 EDMA3CC error clear register (CCERRCLR).
 0h = Watermark/threshold has not been exceeded.
 1h = Watermark/threshold has been exceeded.
-0         QTHRXCD0                R                0h             Queue threshold error for queue 0.
+0 QTHRXCD0 R 0h Queue threshold error for queue 0.
 QTHRXCD0 is cleared by writing a 1 to the corresponding bit in the
 EDMA3CC error clear register (CCERRCLR).
 0h = Watermark/threshold has not been exceeded.
 1h = Watermark/threshold has been exceeded.
-
 
 #### 11.4.1.16 CCERRCLR Register (offset = 31Ch) [reset = 0h]
 
@@ -4854,49 +4486,46 @@ registers that provide information on missed DMA and/or QDMA events, and instanc
 thresholds are exceeded. If any of the bits in these registers is set, it results in the EDMA3CC generating
 an error interrupt.
 
-
 **Figure 11-55. CCERRCLR Register**
 
-31                30               29                    28               27                    26         25             24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23                22               21                20                   19                    18         17            16
-RESERVED                                                             TCCERR
-R-0h                                                                W-0h
-15                14               13                    12               11                    10         9                  8
+23 22 21 20 19 18 17 16
+RESERVED TCCERR
+R-0h W-0h
+15 14 13 12 11 10 9 8
 RESERVED
 R-0h
-7              6               5                      4                 3               2              1              0
-RESERVED                                                  QTHRXCD2       QTHRXCD1       QTHRXCD0
-R-0h                                                      W-0h           W-0h           W-0h
+7 6 5 4 3 2 1 0
+RESERVED QTHRXCD2 QTHRXCD1 QTHRXCD0
+R-0h W-0h W-0h W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-42. CCERRCLR Register Field Descriptions**
 
-Bit        Field                     Type             Reset          Description
-31-17       RESERVED                  R                0h
-16        TCCERR                    W                0h             Transfer completion code error clear.
+Bit Field Type Reset Description
+31-17 RESERVED R 0h
+16 TCCERR W 0h Transfer completion code error clear.
 0h = No effect.
 1h = Clears the TCCERR bit in the EDMA3CC error register
 (CCERR).
-15-3       RESERVED                  R                0h
-2         QTHRXCD2                  W                0h             Queue threshold error clear for queue 2.
+15-3 RESERVED R 0h
+2 QTHRXCD2 W 0h Queue threshold error clear for queue 2.
 0h = No effect.
 1h = Clears the QTHRXCD2 bit in the EDMA3CC error register
 (CCERR) and the WM and THRXCD bits in the queue status register
 2 (QSTAT2).
-1         QTHRXCD1                  W                0h             Queue threshold error clear for queue 1.
+1 QTHRXCD1 W 0h Queue threshold error clear for queue 1.
 0h = No effect.
 1h = Clears the QTHRXCD1 bit in the EDMA3CC error register
 (CCERR) and the WM and THRXCD bits in the queue status register
 1 (QSTAT1).
-0         QTHRXCD0                  W                0h             Queue threshold error clear for queue 0.
+0 QTHRXCD0 W 0h Queue threshold error clear for queue 0.
 0h = No effect.
 1h = Clears the QTHRXCD0 bit in the EDMA3CC error register
 (CCERR) and the WM and THRXCD bits in the queue status register
 0 (QSTAT0).
-
 
 #### 11.4.1.17 EEVAL Register (offset = 320h) [reset = 0h]
 
@@ -4911,36 +4540,33 @@ information on missed DMA and/or QDMA events, and instances when event queue thr
 exceeded. If any of the bits in these registers is set, it results in the EDMA3CC generating an error
 interrupt.
 
-
 **Figure 11-56. EEVAL Register**
 
-31              30              29                    28               27                    26          25                24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23              22              21                    20               19                    18          17                16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15              14              13                    12               11                    10           9                 8
+15 14 13 12 11 10 9 8
 RESERVED
 R-0h
-7             6               5                     4                 3                    2           1                 0
-RESERVED                                                       RESERVED            EVAL
-R-0h                                                           R-0h              W-0h
+7 6 5 4 3 2 1 0
+RESERVED RESERVED EVAL
+R-0h R-0h W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-43. EEVAL Register Field Descriptions**
 
-Bit      Field                    Type             Reset          Description
-31-2         RESERVED                 R                0h
-1        RESERVED                 R                0h
-0        EVAL                     W                0h             Error interrupt evaluate.
+Bit Field Type Reset Description
+31-2 RESERVED R 0h
+1 RESERVED R 0h
+0 EVAL W 0h Error interrupt evaluate.
 0h = No effect.
 1h = Write 1 to clear interrupts when all error registers have been
 cleared. EDMA3CC error interrupt will remain if any errors have not
 been cleared in any of the error registers (EMR/EMRH, CCERR,
 QEMR)
-
 
 #### 11.4.1.18 DRAE0 Register (offset = 340h) [reset = 0h]
 
@@ -4953,19 +4579,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-57. DRAE0 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8    7   6    5    4   3    2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-44. DRAE0 Register Field Descriptions**
 
-Bit      Field                       Type          Reset          Description
-31-0     En                          R/W           0h             DMA region access enable for bit 31 to 0 in region 0.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 31 to 0 in region 0.
 0h = Accesses via region 0 address space to bit 31 to 0 in any DMA
 channel register are not allowed. Reads return 0 on bit n and writes
 do not modify the state of bit 31 to 0. Enabled interrupt bits for bit n
@@ -4976,7 +4600,6 @@ channel register are allowed. Reads return the value from bit n and
 writes modify the state of bit 31 to 0. Enabled interrupt bits for bit n
 contribute to the generation of a transfer completion interrupt for
 shadow region 0.
-
 
 #### 11.4.1.19 DRAEH0 Register (offset = 344h) [reset = 0h]
 
@@ -4989,19 +4612,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-58. DRAEH0 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8   7    6   5    4    3   2    1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-45. DRAEH0 Register Field Descriptions**
 
-Bit    Field                      Type          Reset          Description
-31-0       En                         R/W           0h             DMA region access enable for bit 63 to 32 in region 0.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 63 to 32 in region 0.
 0h = Accesses via region 0 address space to bit 63 to 32 in any
 DMA channel register are not allowed. Reads return 0 on bit n and
 writes do not modify the state of bit 63 to 32. Enabled interrupt bits
@@ -5012,7 +4633,6 @@ DMA channel register are allowed. Reads return the value from bit n
 and writes modify the state of bit 63 to 32. Enabled interrupt bits for
 bit 31 to 0 contribute to the generation of a transfer completion
 interrupt for shadow region 0.
-
 
 #### 11.4.1.20 DRAE1 Register (offset = 348h) [reset = 0h]
 
@@ -5025,19 +4645,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-59. DRAE1 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8    7   6    5    4   3    2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-46. DRAE1 Register Field Descriptions**
 
-Bit      Field                       Type          Reset          Description
-31-0     En                          R/W           0h             DMA region access enable for bit 31 to 0 in region 1.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 31 to 0 in region 1.
 0h = Accesses via region 1 address space to bit 31 to 0 in any DMA
 channel register are not allowed. Reads return 0 on bit n and writes
 do not modify the state of bit 31 to 0. Enabled interrupt bits for bit n
@@ -5048,7 +4666,6 @@ channel register are allowed. Reads return the value from bit n and
 writes modify the state of bit 31 to 0. Enabled interrupt bits for bit n
 contribute to the generation of a transfer completion interrupt for
 shadow region 1.
-
 
 #### 11.4.1.21 DRAEH1 Register (offset = 34Ch) [reset = 0h]
 
@@ -5061,19 +4678,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-60. DRAEH1 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8   7    6   5    4    3   2    1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-47. DRAEH1 Register Field Descriptions**
 
-Bit    Field                      Type          Reset          Description
-31-0       En                         R/W           0h             DMA region access enable for bit 63 to 32 in region 1.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 63 to 32 in region 1.
 0h = Accesses via region 1 address space to bit 63 to 32 in any
 DMA channel register are not allowed. Reads return 0 on bit n and
 writes do not modify the state of bit 63 to 32. Enabled interrupt bits
@@ -5084,7 +4699,6 @@ DMA channel register are allowed. Reads return the value from bit n
 and writes modify the state of bit 63 to 32. Enabled interrupt bits for
 bit 31 to 0 contribute to the generation of a transfer completion
 interrupt for shadow region 1.
-
 
 #### 11.4.1.22 DRAE2 Register (offset = 350h) [reset = 0h]
 
@@ -5097,19 +4711,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-61. DRAE2 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8    7   6    5    4   3    2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-48. DRAE2 Register Field Descriptions**
 
-Bit      Field                       Type          Reset          Description
-31-0     En                          R/W           0h             DMA region access enable for bit 31 to 0 in region 2.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 31 to 0 in region 2.
 0h = Accesses via region 2 address space to bit 31 to 0 in any DMA
 channel register are not allowed. Reads return 0 on bit n and writes
 do not modify the state of bit 31 to 0. Enabled interrupt bits for bit n
@@ -5120,7 +4732,6 @@ channel register are allowed. Reads return the value from bit n and
 writes modify the state of bit 31 to 0. Enabled interrupt bits for bit n
 contribute to the generation of a transfer completion interrupt for
 shadow region 2.
-
 
 #### 11.4.1.23 DRAEH2 Register (offset = 354h) [reset = 0h]
 
@@ -5133,19 +4744,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-62. DRAEH2 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8   7    6   5    4    3   2    1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-49. DRAEH2 Register Field Descriptions**
 
-Bit    Field                      Type          Reset          Description
-31-0       En                         R/W           0h             DMA region access enable for bit 63 to 32 in region 2.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 63 to 32 in region 2.
 0h = Accesses via region 2 address space to bit 63 to 32 in any
 DMA channel register are not allowed. Reads return 0 on bit n and
 writes do not modify the state of bit 63 to 32. Enabled interrupt bits
@@ -5156,7 +4765,6 @@ DMA channel register are allowed. Reads return the value from bit n
 and writes modify the state of bit 63 to 32. Enabled interrupt bits for
 bit 31 to 0 contribute to the generation of a transfer completion
 interrupt for shadow region 2.
-
 
 #### 11.4.1.24 DRAE3 Register (offset = 358h) [reset = 0h]
 
@@ -5169,19 +4777,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-63. DRAE3 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8    7   6    5    4   3    2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-50. DRAE3 Register Field Descriptions**
 
-Bit      Field                       Type          Reset          Description
-31-0     En                          R/W           0h             DMA region access enable for bit 31 to 0 in region 3.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 31 to 0 in region 3.
 0h = Accesses via region 3 address space to bit 31 to 0 in any DMA
 channel register are not allowed. Reads return 0 on bit n and writes
 do not modify the state of bit 31 to 0. Enabled interrupt bits for bit n
@@ -5192,7 +4798,6 @@ channel register are allowed. Reads return the value from bit n and
 writes modify the state of bit 31 to 0. Enabled interrupt bits for bit n
 contribute to the generation of a transfer completion interrupt for
 shadow region 3.
-
 
 #### 11.4.1.25 DRAEH3 Register (offset = 35Ch) [reset = 0h]
 
@@ -5205,19 +4810,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-64. DRAEH3 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8   7    6   5    4    3   2    1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-51. DRAEH3 Register Field Descriptions**
 
-Bit    Field                      Type          Reset          Description
-31-0       En                         R/W           0h             DMA region access enable for bit 63 to 32 in region 3.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 63 to 32 in region 3.
 0h = Accesses via region 3 address space to bit 63 to 32 in any
 DMA channel register are not allowed. Reads return 0 on bit n and
 writes do not modify the state of bit 63 to 32. Enabled interrupt bits
@@ -5228,7 +4831,6 @@ DMA channel register are allowed. Reads return the value from bit n
 and writes modify the state of bit 63 to 32. Enabled interrupt bits for
 bit 31 to 0 contribute to the generation of a transfer completion
 interrupt for shadow region 3.
-
 
 #### 11.4.1.26 DRAE4 Register (offset = 360h) [reset = 0h]
 
@@ -5241,19 +4843,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-65. DRAE4 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8    7   6    5    4   3    2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-52. DRAE4 Register Field Descriptions**
 
-Bit      Field                       Type          Reset          Description
-31-0     En                          R/W           0h             DMA region access enable for bit 31 to 0 in region 4.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 31 to 0 in region 4.
 0h = Accesses via region 4 address space to bit 31 to 0 in any DMA
 channel register are not allowed. Reads return 0 on bit n and writes
 do not modify the state of bit 31 to 0. Enabled interrupt bits for bit n
@@ -5264,7 +4864,6 @@ channel register are allowed. Reads return the value from bit n and
 writes modify the state of bit 31 to 0. Enabled interrupt bits for bit n
 contribute to the generation of a transfer completion interrupt for
 shadow region 4.
-
 
 #### 11.4.1.27 DRAEH4 Register (offset = 364h) [reset = 0h]
 
@@ -5277,19 +4876,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-66. DRAEH4 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8   7    6   5    4    3   2    1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-53. DRAEH4 Register Field Descriptions**
 
-Bit    Field                      Type          Reset          Description
-31-0       En                         R/W           0h             DMA region access enable for bit 63 to 32 in region 4.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 63 to 32 in region 4.
 0h = Accesses via region 4 address space to bit 63 to 32 in any
 DMA channel register are not allowed. Reads return 0 on bit n and
 writes do not modify the state of bit 63 to 32. Enabled interrupt bits
@@ -5300,7 +4897,6 @@ DMA channel register are allowed. Reads return the value from bit n
 and writes modify the state of bit 63 to 32. Enabled interrupt bits for
 bit 31 to 0 contribute to the generation of a transfer completion
 interrupt for shadow region 4.
-
 
 #### 11.4.1.28 DRAE5 Register (offset = 368h) [reset = 0h]
 
@@ -5313,19 +4909,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-67. DRAE5 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8    7   6    5    4   3    2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-54. DRAE5 Register Field Descriptions**
 
-Bit      Field                       Type          Reset          Description
-31-0     En                          R/W           0h             DMA region access enable for bit 31 to 0 in region 5.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 31 to 0 in region 5.
 0h = Accesses via region 5 address space to bit 31 to 0 in any DMA
 channel register are not allowed. Reads return 0 on bit n and writes
 do not modify the state of bit 31 to 0. Enabled interrupt bits for bit n
@@ -5336,7 +4930,6 @@ channel register are allowed. Reads return the value from bit n and
 writes modify the state of bit 31 to 0. Enabled interrupt bits for bit n
 contribute to the generation of a transfer completion interrupt for
 shadow region 5.
-
 
 #### 11.4.1.29 DRAEH5 Register (offset = 36Ch) [reset = 0h]
 
@@ -5349,19 +4942,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-68. DRAEH5 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8   7    6   5    4    3   2    1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-55. DRAEH5 Register Field Descriptions**
 
-Bit    Field                      Type          Reset          Description
-31-0       En                         R/W           0h             DMA region access enable for bit 63 to 32 in region 5.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 63 to 32 in region 5.
 0h = Accesses via region 5 address space to bit 63 to 32 in any
 DMA channel register are not allowed. Reads return 0 on bit n and
 writes do not modify the state of bit 63 to 32. Enabled interrupt bits
@@ -5372,7 +4963,6 @@ DMA channel register are allowed. Reads return the value from bit n
 and writes modify the state of bit 63 to 32. Enabled interrupt bits for
 bit 31 to 0 contribute to the generation of a transfer completion
 interrupt for shadow region 5.
-
 
 #### 11.4.1.30 DRAE6 Register (offset = 370h) [reset = 0h]
 
@@ -5385,19 +4975,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-69. DRAE6 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8    7   6    5    4   3    2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-56. DRAE6 Register Field Descriptions**
 
-Bit      Field                       Type          Reset          Description
-31-0     En                          R/W           0h             DMA region access enable for bit 31 to 0 in region 6.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 31 to 0 in region 6.
 0h = Accesses via region 6 address space to bit 31 to 0 in any DMA
 channel register are not allowed. Reads return 0 on bit n and writes
 do not modify the state of bit 31 to 0. Enabled interrupt bits for bit n
@@ -5408,7 +4996,6 @@ channel register are allowed. Reads return the value from bit n and
 writes modify the state of bit 31 to 0. Enabled interrupt bits for bit n
 contribute to the generation of a transfer completion interrupt for
 shadow region 6.
-
 
 #### 11.4.1.31 DRAEH6 Register (offset = 374h) [reset = 0h]
 
@@ -5421,19 +5008,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-70. DRAEH6 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8   7    6   5    4    3   2    1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-57. DRAEH6 Register Field Descriptions**
 
-Bit    Field                      Type          Reset          Description
-31-0       En                         R/W           0h             DMA region access enable for bit 63 to 32 in region 6.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 63 to 32 in region 6.
 0h = Accesses via region 6 address space to bit 63 to 32 in any
 DMA channel register are not allowed. Reads return 0 on bit n and
 writes do not modify the state of bit 63 to 32. Enabled interrupt bits
@@ -5444,7 +5029,6 @@ DMA channel register are allowed. Reads return the value from bit n
 and writes modify the state of bit 63 to 32. Enabled interrupt bits for
 bit 31 to 0 contribute to the generation of a transfer completion
 interrupt for shadow region 6.
-
 
 #### 11.4.1.32 DRAE7 Register (offset = 378h) [reset = 0h]
 
@@ -5457,19 +5041,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-71. DRAE7 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8    7   6    5    4   3    2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-58. DRAE7 Register Field Descriptions**
 
-Bit      Field                       Type          Reset          Description
-31-0     En                          R/W           0h             DMA region access enable for bit 31 to 0 in region 7.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 31 to 0 in region 7.
 0h = Accesses via region 7 address space to bit 31 to 0 in any DMA
 channel register are not allowed. Reads return 0 on bit n and writes
 do not modify the state of bit 31 to 0. Enabled interrupt bits for bit n
@@ -5480,7 +5062,6 @@ channel register are allowed. Reads return the value from bit n and
 writes modify the state of bit 31 to 0. Enabled interrupt bits for bit n
 contribute to the generation of a transfer completion interrupt for
 shadow region 7.
-
 
 #### 11.4.1.33 DRAEH7 Register (offset = 37Ch) [reset = 0h]
 
@@ -5493,19 +5074,17 @@ the region access enable registers, which includes DRAEm and QRAEm. Where m is t
 shadow regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-72. DRAEH7 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8   7    6   5    4    3   2    1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-59. DRAEH7 Register Field Descriptions**
 
-Bit    Field                      Type          Reset          Description
-31-0       En                         R/W           0h             DMA region access enable for bit 63 to 32 in region 7.
+Bit Field Type Reset Description
+31-0 En R/W 0h DMA region access enable for bit 63 to 32 in region 7.
 0h = Accesses via region 7 address space to bit 63 to 32 in any
 DMA channel register are not allowed. Reads return 0 on bit n and
 writes do not modify the state of bit 63 to 32. Enabled interrupt bits
@@ -5517,7 +5096,6 @@ and writes modify the state of bit 63 to 32. Enabled interrupt bits for
 bit 31 to 0 contribute to the generation of a transfer completion
 interrupt for shadow region 7.
 
-
 #### 11.4.1.34 QRAE_0 to QRAE_7 Register (offset = 380h to 39Ch) [reset = 0h]
 
 QRAE_0 to QRAE_7 is shown in Figure 11-73 and described in Table 11-60.
@@ -5528,27 +5106,24 @@ region access enable registers, which includes DRAEm and QRAEm. Where m is the n
 regions in the EDMA3CC memory map for a device. You can configure these registers to assign
 ownership of DMA/QDMA channels to a particular shadow region.
 
-
 **Figure 11-73. QRAE_0 to QRAE_7 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4    3 2      1    0
-RESERVED                                                                                    En
-R-0h                                                                                   R/W-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED En
+R-0h R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-60. QRAE_0 to QRAE_7 Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-8     RESERVED                    R               0h
-7-0      En                          R/W             0h             QDMA region access enable for bit n/QDMA channel n in region m.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-0 En R/W 0h QDMA region access enable for bit n/QDMA channel n in region m.
 0h = Accesses via region m address space to bit n in any QDMA
 channel register are not allowed. Reads return 0 on bit n and writes
 do not modify the state of bit n.
 1h = Accesses via region m address space to bit n in any QDMA
 channel register are allowed. Reads return the value from bit n and
 writes modify the state of bit n.
-
 
 #### 11.4.1.35 Q0E0 Register (offset = 400h) [reset = 0h]
 
@@ -5562,33 +5137,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-74. Q0E0 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-61. Q0E0 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 0 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 0 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 0 in queue 0.
+5-0 ENUM R 0h Event entry 0 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.36 Q0E1 Register (offset = 404h) [reset = 0h]
 
@@ -5602,33 +5174,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-75. Q0E1 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-62. Q0E1 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 1 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 1 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 1 in queue 0.
+5-0 ENUM R 0h Event entry 1 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.37 Q0E2 Register (offset = 408h) [reset = 0h]
 
@@ -5642,33 +5211,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-76. Q0E2 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-63. Q0E2 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 2 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 2 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 2 in queue 0.
+5-0 ENUM R 0h Event entry 2 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.38 Q0E3 Register (offset = 40Ch) [reset = 0h]
 
@@ -5682,33 +5248,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-77. Q0E3 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-64. Q0E3 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 3 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 3 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 3 in queue 0.
+5-0 ENUM R 0h Event entry 3 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.39 Q0E4 Register (offset = 410h) [reset = 0h]
 
@@ -5722,33 +5285,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-78. Q0E4 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-65. Q0E4 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 4 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 4 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 4 in queue 0.
+5-0 ENUM R 0h Event entry 4 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.40 Q0E5 Register (offset = 414h) [reset = 0h]
 
@@ -5762,33 +5322,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-79. Q0E5 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-66. Q0E5 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 5 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 5 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 5 in queue 0.
+5-0 ENUM R 0h Event entry 5 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.41 Q0E6 Register (offset = 418h) [reset = 0h]
 
@@ -5802,33 +5359,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-80. Q0E6 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-67. Q0E6 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 6 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 6 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 6 in queue 0.
+5-0 ENUM R 0h Event entry 6 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.42 Q0E7 Register (offset = 41Ch) [reset = 0h]
 
@@ -5842,33 +5396,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-81. Q0E7 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-68. Q0E7 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 7 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 7 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 7 in queue 0.
+5-0 ENUM R 0h Event entry 7 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.43 Q0E8 Register (offset = 420h) [reset = 0h]
 
@@ -5882,33 +5433,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-82. Q0E8 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-69. Q0E8 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 8 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 8 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 8 in queue 0.
+5-0 ENUM R 0h Event entry 8 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.44 Q0E9 Register (offset = 424h) [reset = 0h]
 
@@ -5922,33 +5470,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-83. Q0E9 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-70. Q0E9 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 9 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 9 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 9 in queue 0.
+5-0 ENUM R 0h Event entry 9 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.45 Q0E10 Register (offset = 428h) [reset = 0h]
 
@@ -5962,33 +5507,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-84. Q0E10 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-71. Q0E10 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 10 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 10 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 10 in queue 0.
+5-0 ENUM R 0h Event entry 10 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.46 Q0E11 Register (offset = 42Ch) [reset = 0h]
 
@@ -6002,33 +5544,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-85. Q0E11 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-72. Q0E11 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 11 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 11 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 11 in queue 0.
+5-0 ENUM R 0h Event entry 11 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.47 Q0E12 Register (offset = 430h) [reset = 0h]
 
@@ -6042,33 +5581,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-86. Q0E12 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-73. Q0E12 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 12 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 12 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 12 in queue 0.
+5-0 ENUM R 0h Event entry 12 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.48 Q0E13 Register (offset = 434h) [reset = 0h]
 
@@ -6082,33 +5618,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-87. Q0E13 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-74. Q0E13 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 13 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 13 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 13 in queue 0.
+5-0 ENUM R 0h Event entry 13 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.49 Q0E14 Register (offset = 438h) [reset = 0h]
 
@@ -6122,33 +5655,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-88. Q0E14 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-75. Q0E14 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 14 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 14 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 14 in queue 0.
+5-0 ENUM R 0h Event entry 14 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.50 Q0E15 Register (offset = 43Ch) [reset = 0h]
 
@@ -6162,33 +5692,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-89. Q0E15 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-76. Q0E15 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 15 in queue 0.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 15 in queue 0.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 15 in queue 0.
+5-0 ENUM R 0h Event entry 15 in queue 0.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.51 Q1E0 Register (offset = 440h) [reset = 0h]
 
@@ -6202,33 +5729,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-90. Q1E0 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-77. Q1E0 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 0 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 0 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 0 in queue 1.
+5-0 ENUM R 0h Event entry 0 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.52 Q1E1 Register (offset = 444h) [reset = 0h]
 
@@ -6242,33 +5766,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-91. Q1E1 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-78. Q1E1 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 1 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 1 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 1 in queue 1.
+5-0 ENUM R 0h Event entry 1 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.53 Q1E2 Register (offset = 448h) [reset = 0h]
 
@@ -6282,33 +5803,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-92. Q1E2 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-79. Q1E2 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 2 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 2 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 2 in queue 1.
+5-0 ENUM R 0h Event entry 2 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.54 Q1E3 Register (offset = 44Ch) [reset = 0h]
 
@@ -6322,33 +5840,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-93. Q1E3 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-80. Q1E3 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 3 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 3 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 3 in queue 1.
+5-0 ENUM R 0h Event entry 3 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.55 Q1E4 Register (offset = 450h) [reset = 0h]
 
@@ -6362,33 +5877,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-94. Q1E4 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-81. Q1E4 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 4 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 4 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 4 in queue 1.
+5-0 ENUM R 0h Event entry 4 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.56 Q1E5 Register (offset = 454h) [reset = 0h]
 
@@ -6402,33 +5914,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-95. Q1E5 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-82. Q1E5 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 5 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 5 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 5 in queue 1.
+5-0 ENUM R 0h Event entry 5 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.57 Q1E6 Register (offset = 458h) [reset = 0h]
 
@@ -6442,33 +5951,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-96. Q1E6 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-83. Q1E6 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 6 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 6 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 6 in queue 1.
+5-0 ENUM R 0h Event entry 6 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.58 Q1E7 Register (offset = 45Ch) [reset = 0h]
 
@@ -6482,33 +5988,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-97. Q1E7 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-84. Q1E7 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 7 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 7 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 7 in queue 1.
+5-0 ENUM R 0h Event entry 7 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.59 Q1E8 Register (offset = 460h) [reset = 0h]
 
@@ -6522,33 +6025,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-98. Q1E8 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-85. Q1E8 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 8 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 8 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 8 in queue 1.
+5-0 ENUM R 0h Event entry 8 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.60 Q1E9 Register (offset = 464h) [reset = 0h]
 
@@ -6562,33 +6062,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-99. Q1E9 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-86. Q1E9 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 9 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 9 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 9 in queue 1.
+5-0 ENUM R 0h Event entry 9 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.61 Q1E10 Register (offset = 468h) [reset = 0h]
 
@@ -6602,33 +6099,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-100. Q1E10 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-87. Q1E10 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 10 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 10 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 10 in queue 1.
+5-0 ENUM R 0h Event entry 10 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.62 Q1E11 Register (offset = 46Ch) [reset = 0h]
 
@@ -6642,33 +6136,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-101. Q1E11 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-88. Q1E11 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 11 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 11 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 11 in queue 1.
+5-0 ENUM R 0h Event entry 11 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.63 Q1E12 Register (offset = 470h) [reset = 0h]
 
@@ -6682,33 +6173,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-102. Q1E12 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-89. Q1E12 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 12 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 12 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 12 in queue 1.
+5-0 ENUM R 0h Event entry 12 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.64 Q1E13 Register (offset = 474h) [reset = 0h]
 
@@ -6722,33 +6210,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-103. Q1E13 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-90. Q1E13 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 13 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 13 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 13 in queue 1.
+5-0 ENUM R 0h Event entry 13 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.65 Q1E14 Register (offset = 478h) [reset = 0h]
 
@@ -6762,33 +6247,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-104. Q1E14 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-91. Q1E14 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 14 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 14 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 14 in queue 1.
+5-0 ENUM R 0h Event entry 14 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.66 Q1E15 Register (offset = 47Ch) [reset = 0h]
 
@@ -6802,33 +6284,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-105. Q1E15 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-92. Q1E15 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 15 in queue 1.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 15 in queue 1.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 15 in queue 1.
+5-0 ENUM R 0h Event entry 15 in queue 1.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.67 Q2E0 Register (offset = 480h) [reset = 0h]
 
@@ -6842,33 +6321,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-106. Q2E0 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-93. Q2E0 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 0 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 0 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 0 in queue 2.
+5-0 ENUM R 0h Event entry 0 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.68 Q2E1 Register (offset = 484h) [reset = 0h]
 
@@ -6882,33 +6358,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-107. Q2E1 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-94. Q2E1 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 1 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 1 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 1 in queue 2.
+5-0 ENUM R 0h Event entry 1 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.69 Q2E2 Register (offset = 488h) [reset = 0h]
 
@@ -6922,33 +6395,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-108. Q2E2 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-95. Q2E2 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 2 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 2 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 2 in queue 2.
+5-0 ENUM R 0h Event entry 2 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.70 Q2E3 Register (offset = 48Ch) [reset = 0h]
 
@@ -6962,33 +6432,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-109. Q2E3 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-96. Q2E3 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 3 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 3 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 3 in queue 2.
+5-0 ENUM R 0h Event entry 3 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.71 Q2E4 Register (offset = 490h) [reset = 0h]
 
@@ -7002,33 +6469,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-110. Q2E4 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-97. Q2E4 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 4 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 4 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 4 in queue 2.
+5-0 ENUM R 0h Event entry 4 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.72 Q2E5 Register (offset = 494h) [reset = 0h]
 
@@ -7042,33 +6506,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-111. Q2E5 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-98. Q2E5 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 5 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 5 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 5 in queue 2.
+5-0 ENUM R 0h Event entry 5 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.73 Q2E6 Register (offset = 498h) [reset = 0h]
 
@@ -7082,33 +6543,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-112. Q2E6 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-99. Q2E6 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 6 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 6 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 6 in queue 2.
+5-0 ENUM R 0h Event entry 6 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.74 Q2E7 Register (offset = 49Ch) [reset = 0h]
 
@@ -7122,33 +6580,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-113. Q2E7 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-100. Q2E7 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 7 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 7 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 7 in queue 2.
+5-0 ENUM R 0h Event entry 7 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.75 Q2E8 Register (offset = 4A0h) [reset = 0h]
 
@@ -7162,33 +6617,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-114. Q2E8 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-101. Q2E8 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 8 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 8 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 8 in queue 2.
+5-0 ENUM R 0h Event entry 8 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.76 Q2E9 Register (offset = 4A4h) [reset = 0h]
 
@@ -7202,33 +6654,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-115. Q2E9 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-102. Q2E9 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 9 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 9 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 9 in queue 2.
+5-0 ENUM R 0h Event entry 9 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.77 Q2E10 Register (offset = 4A8h) [reset = 0h]
 
@@ -7242,33 +6691,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-116. Q2E10 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-103. Q2E10 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 10 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 10 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 10 in queue 2.
+5-0 ENUM R 0h Event entry 10 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.78 Q2E11 Register (offset = 4ACh) [reset = 0h]
 
@@ -7282,33 +6728,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-117. Q2E11 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-104. Q2E11 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 11 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 11 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 11 in queue 2.
+5-0 ENUM R 0h Event entry 11 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.79 Q2E12 Register (offset = 4B0h) [reset = 0h]
 
@@ -7322,33 +6765,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-118. Q2E12 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-105. Q2E12 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 12 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 12 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 12 in queue 2.
+5-0 ENUM R 0h Event entry 12 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.80 Q2E13 Register (offset = 4B4h) [reset = 0h]
 
@@ -7362,33 +6802,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-119. Q2E13 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-106. Q2E13 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 13 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 13 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 13 in queue 2.
+5-0 ENUM R 0h Event entry 13 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.81 Q2E14 Register (offset = 4B8h) [reset = 0h]
 
@@ -7402,33 +6839,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-120. Q2E14 Register**
 
-31         30           29   28     27         26        25       24      23         22        21      20       19       18       17          16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15         14           13   12      11        10        9         8        7           6       5      4        3           2      1          0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-107. Q2E14 Register Field Descriptions**
 
-Bit        Field                     Type            Reset          Description
-31-8           RESERVED                  R               0h
-7-6        ETYPE                     R               0h             Event entry 14 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 14 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0        ENUM                      R               0h             Event entry 14 in queue 2.
+5-0 ENUM R 0h Event entry 14 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.82 Q2E15 Register (offset = 4BCh) [reset = 0h]
 
@@ -7442,33 +6876,30 @@ event queues and a TR life cycle. These are useful for system debug as they prov
 the events queued up in the event queue and also provide information on what parts of the EDMA3CC
 logic are active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-121. Q2E15 Register**
 
-31       30           29   28     27         26        25       24      23         22       21       20       19       18         17        16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12      11        10        9         8        7           6      5       4        3           2       1         0
-RESERVED                                           ETYPE                               ENUM
-R-0h                                             R-0h                                R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ETYPE ENUM
+R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-108. Q2E15 Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-8        RESERVED                  R               0h
-7-6         ETYPE                     R               0h             Event entry 15 in queue 2.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-6 ETYPE R 0h Event entry 15 in queue 2.
 Specifies the specific event type for the given entry in the event
 queue.
 0h = Event triggered via ER.
 1h = Manual triggered via ESR.
 2h = Chain triggered via CER
 3h = Autotriggered via QER
-5-0         ENUM                      R               0h             Event entry 15 in queue 2.
+5-0 ENUM R 0h Event entry 15 in queue 2.
 Event number: QDMA channel number (0 to 3).
 DMA channel/event number (0 to 63).
-
 
 #### 11.4.1.83 QSTAT_0 to QSTAT_2 Register (offset = 600h to 608h) [reset = Fh]
 
@@ -7478,37 +6909,35 @@ useful for system debug as they provide in-depth visibility for the events queue
 and also provide information on what parts of the EDMA3CC logic are active once the event has been
 received by the EDMA3CC.
 
-
 **Figure 11-122. QSTAT_0 to QSTAT_2 Register**
 
-31                 30              29                28                   27                    26             25                24
-RESERVED                                                                    THRXCD
-R-0h                                                                        R-0h
-23                 22              21                    20               19                 18                17                  16
-RESERVED                                                                    WM
-R-0h                                                                      R-0h
-15                 14              13                    12               11               10                  9                   8
-RESERVED                                                                 NUMVAL
-R-0h                                                                    R-0h
-7                  6               5                     4                 3                    2              1                   0
-RESERVED                                                                     STRTPTR
-R-0h                                                                         R-Fh
+31 30 29 28 27 26 25 24
+RESERVED THRXCD
+R-0h R-0h
+23 22 21 20 19 18 17 16
+RESERVED WM
+R-0h R-0h
+15 14 13 12 11 10 9 8
+RESERVED NUMVAL
+R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED STRTPTR
+R-0h R-Fh
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-109. QSTAT_0 to QSTAT_2 Register Field Descriptions**
 
-Bit       Field                      Type             Reset          Description
-31-25         RESERVED                   R                0h
-24        THRXCD                     R                0h             Threshold exceeded.
+Bit Field Type Reset Description
+31-25 RESERVED R 0h
+24 THRXCD R 0h Threshold exceeded.
 THRXCD is cleared by writing a 1 to the corresponding QTHRXCDn
 bit in the EDMA3CC error clear register (CCERRCLR).
 0h = Threshold specified by the Qn bit in the queue watermark
 threshold A register (QWMTHRA) has not been exceeded.
 1h = Threshold specified by the Qn bit in the queue watermark
 threshold A register (QWMTHRA) has been exceeded.
-23-21         RESERVED                   R                0h
-20-16         WM                         R                0h             Watermark for maximum queue usage.
+23-21 RESERVED R 0h
+20-16 WM R 0h Watermark for maximum queue usage.
 Watermark tracks the most entries that have been in queue n since
 reset or since the last time that the watermark (WM) bit was cleared.
 WM is cleared by writing a 1 to the corresponding QTHRXCDn bit in
@@ -7517,8 +6946,8 @@ the EDMA3CC error clear register (CCERRCLR).
 1h = Reserved, from 11h to 1Fh. Always write 0 to this bit; writes of
 1 to this bit are not supported and attempts to do so may result in
 undefined behavior.
-15-13         RESERVED                   R                0h
-12-8          NUMVAL                     R                0h             Number of valid entries in queue n.
+15-13 RESERVED R 0h
+12-8 NUMVAL R 0h Number of valid entries in queue n.
 The total number of entries residing in the queue manager FIFO at a
 given instant.
 Always enabled.
@@ -7526,12 +6955,11 @@ Always enabled.
 1h = Reserved, from 11h to 1Fh. Always write 0 to this bit; writes of
 1 to this bit are not supported and attempts to do so may result in
 undefined behavior.
-7-4       RESERVED                   R                0h
-3-0       STRTPTR                    R                Fh             Start pointer.
+7-4 RESERVED R 0h
+3-0 STRTPTR R Fh Start pointer.
 The offset to the head entry of queue n, in units of entries.
 Always enabled.
 Legal values are 0 (0th entry) to Fh (15th entry).
-
 
 #### 11.4.1.84 QWMTHRA Register (offset = 620h) [reset = A0A0Ah]
 
@@ -7541,23 +6969,21 @@ life cycle. These are useful for system debug as they provide in-depth visibilit
 the event queue and also provide information on what parts of the EDMA3CC logic are active once the
 event has been received by the EDMA3CC.
 
-
 **Figure 11-123. QWMTHRA Register**
 
-31       30           29   28     27      26    25             24       23        22       21      20       19       18        17       16
-RESERVED                                                                      Q2
-R-0h                                                                      R/W-Ah
-15      14    13           12     11      10          9         8        7       6    5             4        3        2        1        0
-RESERVED                             Q1                                 RESERVED                                Q0
-R-0h                             R/W-Ah                                 R-0h                                R/W-Ah
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
+RESERVED Q2
+R-0h R/W-Ah
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED Q1 RESERVED Q0
+R-0h R/W-Ah R-0h R/W-Ah
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-110. QWMTHRA Register Field Descriptions**
 
-Bit         Field                    Type            Reset          Description
-31-21        RESERVED                 R               0h
-20-16        Q2                       R/W             Ah             Queue threshold for queue 2 value.
+Bit Field Type Reset Description
+31-21 RESERVED R 0h
+20-16 Q2 R/W Ah Queue threshold for queue 2 value.
 The QTHRXCD2 bit in the EDMA3CC error register (CCERR) and
 the THRXCD bit in the queue status register 2 (QSTAT2) are set
 when the number of events in queue 2 at an instant in time (visible
@@ -7568,8 +6994,8 @@ specified by Q2.
 12h = From 12h to 1Fh, Reserved. Always write 0 to this bit; writes
 of 1 to this bit are not supported and attempts to do so may result in
 undefined behavior.
-15-13        RESERVED                 R               0h
-12-8        Q1                       R/W             Ah             Queue threshold for queue 1 value.
+15-13 RESERVED R 0h
+12-8 Q1 R/W Ah Queue threshold for queue 1 value.
 The QTHRXCD1 bit in the EDMA3CC error register (CCERR) and
 the THRXCD bit in the queue status register 1 (QSTAT1) are set
 when the number of events in queue 1 at an instant in time (visible
@@ -7580,8 +7006,8 @@ specified by Q1.
 12h = From 12h to 1Fh, Reserved. Always write 0 to this bit; writes
 of 1 to this bit are not supported and attempts to do so may result in
 undefined behavior.
-7-5         RESERVED                 R               0h
-4-0         Q0                       R/W             Ah             Queue threshold for queue 0 value.
+7-5 RESERVED R 0h
+4-0 Q0 R/W Ah Queue threshold for queue 0 value.
 The QTHRXCD0 bit in the EDMA3CC error register (CCERR) and
 the THRXCD bit in the queue status register 0 (QSTAT0) are set
 when the number of events in queue 0 at an instant in time (visible
@@ -7593,7 +7019,6 @@ specified by Q0.
 of 1 to this bit are not supported and attempts to do so may result in
 undefined behavior.
 
-
 #### 11.4.1.85 CCSTAT Register (offset = 640h) [reset = 0h]
 
 CCSTAT is shown in Figure 11-124 and described in Table 11-111.
@@ -7603,39 +7028,37 @@ and a TR life cycle. These are useful for system debug as they provide in-depth 
 queued up in the event queue and also provide information on what parts of the EDMA3CC logic are
 active once the event has been received by the EDMA3CC.
 
-
 **Figure 11-124. CCSTAT Register**
 
-31                 30           29                    28               27                    26          25               24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23                 22          21                     20               19               18             17                16
-RESERVED                                                 QUEACTV2       QUEACTV1          QUEACTV0
-R-0h                                                     R-0h           R-0h              R-0h
-15                 14           13                    12               11                    10           9                8
-RESERVED                                                               COMPACTV
-R-0h                                                                   R-0h
-7                   6            5                  4                 3                  2             1                  0
-RESERVED                          ACTV            RESERVED            TRACTV        QEVTACTV           EVTACTV
-R-0h                            R-0h              R-0h               R-0h           R-0h               R-0h
+23 22 21 20 19 18 17 16
+RESERVED QUEACTV2 QUEACTV1 QUEACTV0
+R-0h R-0h R-0h R-0h
+15 14 13 12 11 10 9 8
+RESERVED COMPACTV
+R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED ACTV RESERVED TRACTV QEVTACTV EVTACTV
+R-0h R-0h R-0h R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-111. CCSTAT Register Field Descriptions**
 
-Bit       Field                   Type             Reset          Description
-31-19         RESERVED                R                0h
-18        QUEACTV2                R                0h             Queue 2 active.
+Bit Field Type Reset Description
+31-19 RESERVED R 0h
+18 QUEACTV2 R 0h Queue 2 active.
 0h = No events are queued in queue 2.
 1h = At least one TR is queued in queue 2.
-17        QUEACTV1                R                0h             Queue 1 active.
+17 QUEACTV1 R 0h Queue 1 active.
 0h = No events are queued in queue 1.
 1h = At least one TR is queued in queue 1.
-16        QUEACTV0                R                0h             Queue 0 active.
+16 QUEACTV0 R 0h Queue 0 active.
 0h = No events are queued in queue 0.
 1h = At least one TR is queued in queue 0.
-15-14         RESERVED                R                0h
-13-8          COMPACTV                R                0h             Completion request active.
+15-14 RESERVED R 0h
+13-8 COMPACTV R 0h Completion request active.
 The COMPACTV field reflects the count for the number of
 completion requests submitted to the transfer controllers.
 This count increments every time a TR is submitted and is
@@ -7650,30 +7073,28 @@ decrement the count).
 0h = No completion requests outstanding.
 1h = Total of 1 completion request to 63 completion requests are
 outstanding, from 1h to 3Fh.
-7-5       RESERVED                R                0h
-
+7-5 RESERVED R 0h
 
 **Table 11-111. CCSTAT Register Field Descriptions (continued)**
 
-Bit      Field                   Type            Reset          Description
-4       ACTV                    R               0h             Channel controller active.
-Channel controller active is a logical-OR of each of the *ACTV bits.
+Bit Field Type Reset Description
+4 ACTV R 0h Channel controller active.
+Channel controller active is a logical-OR of each of the \*ACTV bits.
 The ACTV bit remains high through the life of a TR.
 0h = Channel is idle..
 1h = Channel is busy.
-3       RESERVED                R               0h
-2       TRACTV                  R               0h             Transfer request active.
+3 RESERVED R 0h
+2 TRACTV R 0h Transfer request active.
 0h = Transfer request processing/submission logic is inactive.
 1h = Transfer request processing/submission logic is active.
-1       QEVTACTV                R               0h             QDMA event active.
+1 QEVTACTV R 0h QDMA event active.
 0h = No enabled QDMA events are active within the EDMA3CC.
 1h = At least one enabled QDMA event (QER) is active within the
 EDMA3CC.
-0       EVTACTV                 R               0h             DMA event active.
+0 EVTACTV R 0h DMA event active.
 0h = No enabled DMA events are active within the EDMA3CC.
 1h = At least one enabled DMA event (ER and EER, ESR, CER) is
 active within the EDMA3CC.
-
 
 #### 11.4.1.86 MPFAR Register (offset = 800h) [reset = 0h]
 
@@ -7681,25 +7102,22 @@ MPFAR is shown in Figure 11-125 and described in Table 11-112.
 A CPU write of 1 to the MPFCLR bit in the memory protection fault command register (MPFCR) causes
 any error conditions stored in MPFAR to be cleared.
 
-
 **Figure 11-125. MPFAR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5    4   3    2   1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 FADDR
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-112. MPFAR Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       FADDR                      R               0h             Fault address.
+Bit Field Type Reset Description
+31-0 FADDR R 0h Fault address.
 This 32 bit read-only status register contains the fault address when
 a memory protection violation is detected.
 This register can only be cleared via the memory protection fault
 command register (MPFCR).
 Value 0 to FFFF FFFFh.
-
 
 #### 11.4.1.87 MPFSR Register (offset = 804h) [reset = 0h]
 
@@ -7707,207 +7125,195 @@ MPFSR is shown in Figure 11-126 and described in Table 11-113.
 A CPU write of 1 to the MPFCLR bit in the memory protection fault command register (MPFCR) causes
 any error conditions stored in MPFSR to be cleared.
 
-
 **Figure 11-126. MPFSR Register**
 
-31         30           29   28   27          26       25       24      23         22       21       20     19       18       17       16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15      14    13             12   11          10       9         8       7    6             5        4      3        2        1        0
-RESERVED                          FID                           RESERVED              SRE      SWE    SXE      URE      UWE      UXE
-R-0h                            R-0h                            R-0h                R-0h     R-0h   R-0h     R-0h     R-0h     R-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED FID RESERVED SRE SWE SXE URE UWE UXE
+R-0h R-0h R-0h R-0h R-0h R-0h R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-113. MPFSR Register Field Descriptions**
 
-Bit           Field                   Type            Reset          Description
-31-13          RESERVED                R               0h
-12-9          FID                     R               0h             Faulted identification.
+Bit Field Type Reset Description
+31-13 RESERVED R 0h
+12-9 FID R 0h Faulted identification.
 FID contains valid information if any of the MP error bits (UXE, UWE,
 URE, SXE, SWE, SRE) are nonzero (that is, if an error has been
 detected.) The FID field contains the privilege ID for the specific
 request/requestor that resulted in an MP error.
 Value 0 to Fh.
-8-6           RESERVED                R               0h
-5          SRE                     R               0h             Supervisor read error.
+8-6 RESERVED R 0h
+5 SRE R 0h Supervisor read error.
 0h = No error detected.
 1h = Supervisor level task attempted to read from a MP page without
 SR permissions.
-4          SWE                     R               0h             Supervisor write error.
+4 SWE R 0h Supervisor write error.
 0h = No error detected.
 1h = Supervisor level task attempted to write to a MP page without
 SW permissions.
-3          SXE                     R               0h             Supervisor execute error.
+3 SXE R 0h Supervisor execute error.
 0h = No error detected.
 1h = Supervisor level task attempted to execute from a MP page
 without SX permissions.
-2          URE                     R               0h             User read error.
+2 URE R 0h User read error.
 0h = No error detected.
 1h = User level task attempted to read from a MP page without UR
 permissions.
-1          UWE                     R               0h             User write error.
+1 UWE R 0h User write error.
 0h = No error detected.
 1h = User level task attempted to write to a MP page without UW
 permissions.
-0          UXE                     R               0h             User execute error.
+0 UXE R 0h User execute error.
 0h = No error detected.
 1h = User level task attempted to execute from a MP page without
 UX permissions.
-
 
 #### 11.4.1.88 MPFCR Register (offset = 808h) [reset = 0h]
 
 MPFCR is shown in Figure 11-127 and described in Table 11-114.
 
-
 **Figure 11-127. MPFCR Register**
 
-31              30              29                    28               27                    26         25                24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23              22              21                    20               19                    18         17                16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15              14              13                    12               11                    10          9                8
+15 14 13 12 11 10 9 8
 RESERVED
 R-0h
-7             6               5                  4                    3                    2           1              0
-RESERVED                                                               MPFCLR
-R-0h                                                                  W-0h
+7 6 5 4 3 2 1 0
+RESERVED MPFCLR
+R-0h W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-114. MPFCR Register Field Descriptions**
 
-Bit      Field                    Type             Reset          Description
-31-1         RESERVED                 R                0h
-0        MPFCLR                   W                0h             Fault clear register.
+Bit Field Type Reset Description
+31-1 RESERVED R 0h
+0 MPFCLR W 0h Fault clear register.
 0h = CPU write of 0 has no effect.
 1h = CPU write of 1 to the MPFCLR bit causes any error conditions
 stored in the memory protection fault address register (MPFAR) and
 the memory protection fault status register (MPFSR) to be cleared.
 
-
 #### 11.4.1.89 MPPAG Register (offset = 80Ch) [reset = 676h]
 
 MPPAG is shown in Figure 11-128 and described in Table 11-115.
 
-
 **Figure 11-128. MPPAG Register**
 
-31                30               29                    28               27                    26           25                24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23                22               21                    20               19                    18           17                16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15                14               13                    12               11                    10           9                8
-AIDm                                                            EXT           RESERVED
-R/W-1h                                                          R/W-1h           R-0h
-7              6                5                    4                 3                  2                1                 0
-RESERVED                   SR                   SW                SX                 UR               UW                UX
-R-1h                   R/W-1h               R/W-1h            R/W-0h             R/W-1h           R/W-1h            R/W-0h
+15 14 13 12 11 10 9 8
+AIDm EXT RESERVED
+R/W-1h R/W-1h R-0h
+7 6 5 4 3 2 1 0
+RESERVED SR SW SX UR UW UX
+R-1h R/W-1h R/W-1h R/W-0h R/W-1h R/W-1h R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-115. MPPAG Register Field Descriptions**
 
-Bit        Field                     Type             Reset          Description
-31-16       RESERVED                  R                0h
-15-10       AIDm                      R/W              1h             Allowed ID 'N'
+Bit Field Type Reset Description
+31-16 RESERVED R 0h
+15-10 AIDm R/W 1h Allowed ID 'N'
 0h = Requests with Privilege ID == N are not allowed to region M,
 regardless of permission settings (UW, UR, SW, SR).
 1h = Requests with Privilege ID == N are permitted, if access type is
 allowed as defined by permission settings (UW, UR, SW, SR).
-9         EXT                       R/W              1h             External Allowed ID.
+9 EXT R/W 1h External Allowed ID.
 0h = Requests with Privilege ID >= 6 are not allowed to region M,
 regardless of permission settings (UW, UR, SW, SR).
 1h = Requests with Privilege ID >= 6 are permitted, if access type is
 allowed as defined by permission settings (UW, UR, SW, SR).
-8         RESERVED                  R                0h
-7-6        RESERVED                  R                1h
-5         SR                        R/W              1h             Supervisor read permission.
+8 RESERVED R 0h
+7-6 RESERVED R 1h
+5 SR R/W 1h Supervisor read permission.
 0h = Supervisor read accesses are not allowed from region M.
 1h = Supervisor write accesses are allowed from region M
 addresses.
-4         SW                        R/W              1h             Supervisor write permission.
+4 SW R/W 1h Supervisor write permission.
 0h = Supervisor write accesses are not allowed to region M.
 1h = Supervisor write accesses are allowed to region N addresses.
-3         SX                        R/W              0h             Supervisor execute permission.
+3 SX R/W 0h Supervisor execute permission.
 0h = Supervisor execute accesses are not allowed from region M.
 1h = Supervisor execute accesses are allowed from region M
 addresses.
-2         UR                        R/W              1h             User read permission.
+2 UR R/W 1h User read permission.
 0h = User read accesses are not allowed from region M.
 1h = User read accesses are allowed from region N addresses.
-1         UW                        R/W              1h             User write permission.
+1 UW R/W 1h User write permission.
 0h = User write accesses are not allowed to region M.
 1h = User write accesses are allowed to region M addresses.
-0         UX                        R/W              0h             User execute permission.
+0 UX R/W 0h User execute permission.
 0h = User execute accesses are not allowed from region M.
 1h = User execute accesses are allowed from region M addresses.
-
 
 #### 11.4.1.90 MPPA_0 to MPPA_7 Register (offset = 810h to 82Ch) [reset = 676h]
 
 MPPA_0 to MPPA_7 is shown in Figure 11-129 and described in Table 11-116.
 
-
 **Figure 11-129. MPPA_0 to MPPA_7 Register**
 
-31               30             29                    28               27                    26           25                24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23               22             21                    20               19                    18           17                16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15               14             13                    12               11                    10           9                8
-AIDm                                                            EXT           RESERVED
-R/W-1h                                                          R/W-1h           R-0h
-7              6              5                    4                 3                  2                1                 0
-RESERVED                 SR                   SW                SX                 UR               UW                UX
-R-1h                 R/W-1h               R/W-1h            R/W-0h             R/W-1h           R/W-1h            R/W-0h
+15 14 13 12 11 10 9 8
+AIDm EXT RESERVED
+R/W-1h R/W-1h R-0h
+7 6 5 4 3 2 1 0
+RESERVED SR SW SX UR UW UX
+R-1h R/W-1h R/W-1h R/W-0h R/W-1h R/W-1h R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-116. MPPA_0 to MPPA_7 Register Field Descriptions**
 
-Bit       Field                   Type             Reset          Description
-31-16         RESERVED                R                0h
-15-10         AIDm                    R/W              1h             Allowed ID 'N'
+Bit Field Type Reset Description
+31-16 RESERVED R 0h
+15-10 AIDm R/W 1h Allowed ID 'N'
 0h = Requests with Privilege ID == N are not allowed to region M,
 regardless of permission settings (UW, UR, SW, SR).
 1h = Requests with Privilege ID == N are permitted, if access type is
 allowed as defined by permission settings (UW, UR, SW, SR).
-9         EXT                     R/W              1h             External Allowed ID.
+9 EXT R/W 1h External Allowed ID.
 0h = Requests with Privilege ID >= 6 are not allowed to region M,
 regardless of permission settings (UW, UR, SW, SR).
 1h = Requests with Privilege ID >= 6 are permitted, if access type is
 allowed as defined by permission settings (UW, UR, SW, SR).
-8         RESERVED                R                0h
-7-6       RESERVED                R                1h
-5         SR                      R/W              1h             Supervisor read permission.
+8 RESERVED R 0h
+7-6 RESERVED R 1h
+5 SR R/W 1h Supervisor read permission.
 0h = Supervisor read accesses are not allowed from region M.
 1h = Supervisor write accesses are allowed from region M
 addresses.
-4         SW                      R/W              1h             Supervisor write permission.
+4 SW R/W 1h Supervisor write permission.
 0h = Supervisor write accesses are not allowed to region M.
 1h = Supervisor write accesses are allowed to region N addresses.
-3         SX                      R/W              0h             Supervisor execute permission.
+3 SX R/W 0h Supervisor execute permission.
 0h = Supervisor execute accesses are not allowed from region M.
 1h = Supervisor execute accesses are allowed from region M
 addresses.
-2         UR                      R/W              1h             User read permission.
+2 UR R/W 1h User read permission.
 0h = User read accesses are not allowed from region M.
 1h = User read accesses are allowed from region N addresses.
-1         UW                      R/W              1h             User write permission.
+1 UW R/W 1h User write permission.
 0h = User write accesses are not allowed to region M.
 1h = User write accesses are allowed to region M addresses.
-0         UX                      R/W              0h             User execute permission.
+0 UX R/W 0h User execute permission.
 0h = User execute accesses are not allowed from region M.
 1h = User execute accesses are allowed from region M addresses.
-
 
 #### 11.4.1.91 ER Register (offset = 1000h) [reset = 0h]
 
@@ -7935,19 +7341,17 @@ the event register. The DMA channel registers are accessible via read/writes to 
 They are also accessible via read/writes to the shadow address range. The read/write ability to the
 registers in the shadow region are controlled by the DMA region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-130. ER Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-117. ER Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     En                          R               0h             Event 0 to 31.
+Bit Field Type Reset Description
+31-0 En R 0h Event 0 to 31.
 Events 0 to 31 are captured by the EDMA3CC and are latched into
 ER.
 The events are set (En = 1) even when events are disabled (En = 0
@@ -7956,7 +7360,6 @@ in the event enable register, EER).
 1h = EDMA3CC event is asserted. Corresponding DMA event is
 prioritized versus other pending DMA/QDMA events for submission
 to the EDMA3TC.
-
 
 #### 11.4.1.92 ERH Register (offset = 1004h) [reset = 0h]
 
@@ -7984,19 +7387,17 @@ the event register. The DMA channel registers are accessible via read/writes to 
 They are also accessible via read/writes to the shadow address range. The read/write ability to the
 registers in the shadow region are controlled by the DMA region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-131. ERH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-118. ERH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       En                         R               0h             Event 32 to 63.
+Bit Field Type Reset Description
+31-0 En R 0h Event 32 to 63.
 Events 32 to 63 are captured by the EDMA3CC and are latched into
 ERH.
 The events are set (En = 1) even when events are disabled (En = 0
@@ -8005,7 +7406,6 @@ in the event enable register high, EERH).
 1h = EDMA3CC event is asserted. Corresponding DMA event is
 prioritized versus other pending DMA/QDMA events for submission
 to the EDMA3TC.
-
 
 #### 11.4.1.93 ECR Register (offset = 1008h) [reset = 0h]
 
@@ -8027,25 +7427,22 @@ the event register. The DMA channel registers are accessible via read/writes to 
 They are also accessible via read/writes to the shadow address range. The read/write ability to the
 registers in the shadow region are controlled by the DMA region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-132. ECR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7    6   5    4   3    2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-119. ECR Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     En                          W               0h             Event clear for event 0 to 31.
+Bit Field Type Reset Description
+31-0 En W 0h Event clear for event 0 to 31.
 Any of the event bits in ECR is set to clear the event (En) in the
 event register (ER).
 A write of 0 has no effect.
 0h = No effect.
 1h = EDMA3CC event is cleared in the event register (ER).
-
 
 #### 11.4.1.94 ECRH Register (offset = 100Ch) [reset = 0h]
 
@@ -8067,25 +7464,22 @@ the event register. The DMA channel registers are accessible via read/writes to 
 They are also accessible via read/writes to the shadow address range. The read/write ability to the
 registers in the shadow region are controlled by the DMA region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-133. ECRH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5    4   3    2   1       0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-120. ECRH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       En                         W               0h             Event clear for event 32 to 63.
+Bit Field Type Reset Description
+31-0 En W 0h Event clear for event 32 to 63.
 Any of the event bits in ECRH are set to clear the event (En) in the
 event register high (ERH).
 A write of 0 has no effect.
 0h = No effect.
 1h = EDMA3CC event is cleared in the event register high (ERH).
-
 
 #### 11.4.1.95 ESR Register (offset = 1010h) [reset = 0h]
 
@@ -8117,23 +7511,20 @@ the global address range. They are also accessible via read/writes to the shadow
 read/write ability to the registers in the shadow region are controlled by the DMA region access registers
 (DRAEm/DRAEHm).
 
-
 **Figure 11-134. ESR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8   7   6   5   4   3   2   1     0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-121. ESR Register Field Descriptions**
 
-Bit      Field                       Type          Reset          Description
-31-0     En                          R/W           0h             Event set for event 0 to 31.
+Bit Field Type Reset Description
+31-0 En R/W 0h Event set for event 0 to 31.
 0h = No effect.
 1h = Corresponding DMA event is prioritized versus other pending
 DMA/QDMA events for submission to the EDMA3TC.
-
 
 #### 11.4.1.96 ESRH Register (offset = 1014h) [reset = 0h]
 
@@ -8165,23 +7556,20 @@ the global address range. They are also accessible via read/writes to the shadow
 read/write ability to the registers in the shadow region are controlled by the DMA region access registers
 (DRAEm/DRAEHm).
 
-
 **Figure 11-135. ESRH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                  9   8   7   6   5   4   3   2   1     0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-122. ESRH Register Field Descriptions**
 
-Bit    Field                      Type          Reset          Description
-31-0       En                         R/W           0h             Event set for event 32 to 63.
+Bit Field Type Reset Description
+31-0 En R/W 0h Event set for event 32 to 63.
 0h = No effect.
 1h = Corresponding DMA event is prioritized versus other pending
 DMA/QDMA events for submission to the EDMA3TC.
-
 
 #### 11.4.1.97 CER Register (offset = 1018h) [reset = 0h]
 
@@ -8211,23 +7599,20 @@ the event register. The DMA channel registers are accessible via read/writes to 
 They are also accessible via read/writes to the shadow address range. The read/write ability to the
 registers in the shadow region are controlled by the DMA region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-136. CER Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1     0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-123. CER Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     En                          R               0h             Chained event for event 0 to 31.
+Bit Field Type Reset Description
+31-0 En R 0h Chained event for event 0 to 31.
 0h = No effect.
 1h = Corresponding DMA event is prioritized versus other pending
 DMA/QDMA events for submission to the EDMA3TC.
-
 
 #### 11.4.1.98 CERH Register (offset = 101Ch) [reset = 0h]
 
@@ -8257,23 +7642,20 @@ the event register. The DMA channel registers are accessible via read/writes to 
 They are also accessible via read/writes to the shadow address range. The read/write ability to the
 registers in the shadow region are controlled by the DMA region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-137. CERH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1     0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-124. CERH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       En                         R               0h             Chained event set for event 32 to 63.
+Bit Field Type Reset Description
+31-0 En R 0h Chained event set for event 32 to 63.
 0h = No effect.
 1h = Corresponding DMA event is prioritized versus other pending
 DMA/QDMA events for submission to the EDMA3TC.
-
 
 #### 11.4.1.99 EER Register (offset = 1020h) [reset = 0h]
 
@@ -8297,24 +7679,21 @@ via read/writes to the global address range. They are also accessible via read/w
 address range. The read/write ability to the registers in the shadow region are controlled by the DMA
 region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-138. EER Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3    2   1      0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-125. EER Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     En                          R               0h             Event enable for events 0 to 31.
+Bit Field Type Reset Description
+31-0 En R 0h Event enable for events 0 to 31.
 0h = Event is not enabled. An external event latched in the event
 register (ER) is not evaluated by the EDMA3CC.
 1h = Event is enabled. An external event latched in the event
 register (ER) is evaluated by the EDMA3CC.
-
 
 #### 11.4.1.100 EERH Register (offset = 1024h) [reset = 0h]
 
@@ -8338,24 +7717,21 @@ via read/writes to the global address range. They are also accessible via read/w
 address range. The read/write ability to the registers in the shadow region are controlled by the DMA
 region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-139. EERH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3    2   1     0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-126. EERH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       En                         R               0h             Event enable for events 32 to 63.
+Bit Field Type Reset Description
+31-0 En R 0h Event enable for events 32 to 63.
 0h = Event is not enabled. An external event latched in the event
 register high (ERH) is not evaluated by the EDMA3CC.
 1h = Event is enabled. An external event latched in the event
 register high (ERH) is evaluated by the EDMA3CC.
-
 
 #### 11.4.1.101 EECR Register (offset = 1028h) [reset = 0h]
 
@@ -8374,23 +7750,20 @@ the event register. The DMA channel registers are accessible via read/writes to 
 They are also accessible via read/writes to the shadow address range. The read/write ability to the
 registers in the shadow region are controlled by the DMA region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-140. EECR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3    2     1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-127. EECR Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     En                          W               0h             Event enable clear for events 0 to 31.
+Bit Field Type Reset Description
+31-0 En W 0h Event enable clear for events 0 to 31.
 0h = No effect.
 1h = Event is disabled. Corresponding bit in the event enable
 register (EER) is cleared (En = 0).
-
 
 #### 11.4.1.102 EECRH Register (offset = 102Ch) [reset = 0h]
 
@@ -8409,23 +7782,20 @@ the event register. The DMA channel registers are accessible via read/writes to 
 They are also accessible via read/writes to the shadow address range. The read/write ability to the
 registers in the shadow region are controlled by the DMA region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-141. EECRH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3    2     1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-128. EECRH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       En                         W               0h             Event enable clear for events 32 to 63.
+Bit Field Type Reset Description
+31-0 En W 0h Event enable clear for events 32 to 63.
 0h = No effect.
 1h = Event is disabled. Corresponding bit in the event enable
 register high (EERH) is cleared (En = 0).
-
 
 #### 11.4.1.103 EESR Register (offset = 1030h) [reset = 0h]
 
@@ -8444,23 +7814,20 @@ register. The DMA channel registers are accessible via read/writes to the global
 also accessible via read/writes to the shadow address range. The read/write ability to the registers in the
 shadow region are controlled by the DMA region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-142. EESR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3    2   1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-129. EESR Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     En                          W               0h             Event enable set for events 0 to 31.
+Bit Field Type Reset Description
+31-0 En W 0h Event enable set for events 0 to 31.
 0h = No effect.
 1h = Event is enabled. Corresponding bit in the event enable register
 (EER) is set (En = 1).
-
 
 #### 11.4.1.104 EESRH Register (offset = 1034h) [reset = 0h]
 
@@ -8479,23 +7846,20 @@ register. The DMA channel registers are accessible via read/writes to the global
 also accessible via read/writes to the shadow address range. The read/write ability to the registers in the
 shadow region are controlled by the DMA region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-143. EESRH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3    2   1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-130. EESRH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       En                         W               0h             Event enable set for events 32 to 63.
+Bit Field Type Reset Description
+31-0 En W 0h Event enable set for events 32 to 63.
 0h = No effect.
 1h = Event is enabled. Corresponding bit in the event enable register
 high (EERH) is set (En= 1).
-
 
 #### 11.4.1.105 SER Register (offset = 1038h) [reset = 0h]
 
@@ -8520,25 +7884,22 @@ via read/writes to the global address range. They are also accessible via read/w
 address range. The read/write ability to the registers in the shadow region are controlled by the DMA
 region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-144. SER Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7    6   5    4   3    2   1       0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-131. SER Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     En                          R               0h             Secondary event register.
+Bit Field Type Reset Description
+31-0 En R 0h Secondary event register.
 The secondary event register is used along with the event register
 (ER) to provide information on the state of an event.
 0h = Event is not currently stored in the event queue.
 1h = Event is currently stored in the event queue. Event arbiter will
 not prioritize additional events.
-
 
 #### 11.4.1.106 SERH Register (offset = 103Ch) [reset = 0h]
 
@@ -8563,25 +7924,22 @@ via read/writes to the global address range. They are also accessible via read/w
 address range. The read/write ability to the registers in the shadow region are controlled by the DMA
 region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-145. SERH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8    7   6    5    4    3   2    1      0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-132. SERH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       En                         R               0h             Secondary event register.
+Bit Field Type Reset Description
+31-0 En R 0h Secondary event register.
 The secondary event register is used along with the event register
 high (ERH) to provide information on the state of an event.
 0h = Event is not currently stored in the event queue.
 1h = Event is currently stored in the event queue. Event
 submission/prioritization logic will not prioritize additional events.
-
 
 #### 11.4.1.107 SECR Register (offset = 1040h) [reset = 0h]
 
@@ -8598,23 +7956,20 @@ the event register. The DMA channel registers are accessible via read/writes to 
 They are also accessible via read/writes to the shadow address range. The read/write ability to the
 registers in the shadow region are controlled by the DMA region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-146. SECR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-133. SECR Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     En                          W               0h             Secondary event clear register.
+Bit Field Type Reset Description
+31-0 En W 0h Secondary event clear register.
 0h = No effect.
 1h = Corresponding bit in the secondary event register (SER) is
 cleared (En = 0).
-
 
 #### 11.4.1.108 SECRH Register (offset = 1044h) [reset = 0h]
 
@@ -8631,23 +7986,20 @@ the event register. The DMA channel registers are accessible via read/writes to 
 They are also accessible via read/writes to the shadow address range. The read/write ability to the
 registers in the shadow region are controlled by the DMA region access registers (DRAEm/DRAEHm).
 
-
 **Figure 11-147. SECRH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 En
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-134. SECRH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       En                         W               0h             Secondary event clear register.
+Bit Field Type Reset Description
+31-0 En W 0h Secondary event clear register.
 0h = No effect.
 1h = Corresponding bit in the secondary event registers high (SERH)
 is cleared (En = 0).
-
 
 #### 11.4.1.109 IER Register (offset = 1050h) [reset = 0h]
 
@@ -8662,22 +8014,19 @@ appropriately configuring the PaRAM entry associated with the channels. This reg
 transfer completion interrupt reporting/generating by the EDMA3CC. For more details on EDMA3CC
 completion interrupt generation, see EDMA3 Interrupts.
 
-
 **Figure 11-148. IER Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1    0
-In_
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+In\_
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-135. IER Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     In_                         R               0h             Interrupt enable for channels 0 to 31.
+Bit Field Type Reset Description
+31-0 In\_ R 0h Interrupt enable for channels 0 to 31.
 0h = Interrupt is not enabled.
 1h = Interrupt is enabled.
-
 
 #### 11.4.1.110 IERH Register (offset = 1054h) [reset = 0h]
 
@@ -8692,22 +8041,19 @@ appropriately configuring the PaRAM entry associated with the channels. This reg
 transfer completion interrupt reporting/generating by the EDMA3CC. For more details on EDMA3CC
 completion interrupt generation, see EDMA3 Interrupts.
 
-
 **Figure 11-149. IERH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7    6   5   4   3   2   1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 In
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-136. IERH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       In                         R               0h             Interrupt enable for channels 32 to 63.
+Bit Field Type Reset Description
+31-0 In R 0h Interrupt enable for channels 32 to 63.
 0h = Interrupt is not enabled.
 1h = Interrupt is enabled.
-
 
 #### 11.4.1.111 IECR Register (offset = 1058h) [reset = 0h]
 
@@ -8719,23 +8065,20 @@ CPU on transfer completion, by appropriately configuring the PaRAM entry associa
 This register is used for the transfer completion interrupt reporting/generating by the EDMA3CC. For more
 details on EDMA3CC completion interrupt generation, see EDMA3 Interrupts.
 
-
 **Figure 11-150. IECR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6    5    4   3    2      1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 In
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-137. IECR Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     In                          W               0h             Interrupt enable clear for channels 0 to 31.
+Bit Field Type Reset Description
+31-0 In W 0h Interrupt enable clear for channels 0 to 31.
 0h = No effect.
 1h = Corresponding bit in the interrupt enable register (IER) is
 cleared (In = 0).
-
 
 #### 11.4.1.112 IECRH Register (offset = 105Ch) [reset = 0h]
 
@@ -8747,23 +8090,20 @@ CPU on transfer completion, by appropriately configuring the PaRAM entry associa
 This register is used for the transfer completion interrupt reporting/generating by the EDMA3CC. For more
 details on EDMA3CC completion interrupt generation, see EDMA3 Interrupts.
 
-
 **Figure 11-151. IECRH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6    5   4    3   2    1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 In
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-138. IECRH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       In                         W               0h             Interrupt enable clear for channels 32 to 63.
+Bit Field Type Reset Description
+31-0 In W 0h Interrupt enable clear for channels 32 to 63.
 0h = No effect.
 1h = Corresponding bit in the interrupt enable register high (IERH) is
 cleared (In = 0).
-
 
 #### 11.4.1.113 IESR Register (offset = 1060h) [reset = 0h]
 
@@ -8775,23 +8115,20 @@ CPU on transfer completion, by appropriately configuring the PaRAM entry associa
 This register is used for the transfer completion interrupt reporting/generating by the EDMA3CC. For more
 details on EDMA3CC completion interrupt generation, see EDMA3 Interrupts.
 
-
 **Figure 11-152. IESR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7    6    5   4    3   2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 In
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-139. IESR Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     In                          W               0h             Interrupt enable set for channels 0 to 31.
+Bit Field Type Reset Description
+31-0 In W 0h Interrupt enable set for channels 0 to 31.
 0h = No effect.
 1h = Corresponding bit in the interrupt enable register (IER) is set (In
 = 1).
-
 
 #### 11.4.1.114 IESRH Register (offset = 1064h) [reset = 0h]
 
@@ -8803,23 +8140,20 @@ CPU on transfer completion, by appropriately configuring the PaRAM entry associa
 This register is used for the transfer completion interrupt reporting/generating by the EDMA3CC. For more
 details on EDMA3CC completion interrupt generation, see EDMA3 Interrupts.
 
-
 **Figure 11-153. IESRH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6    5   4    3   2    1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 In
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-140. IESRH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       In                         W               0h             Interrupt enable clear for channels 32 to 63.
+Bit Field Type Reset Description
+31-0 In W 0h Interrupt enable clear for channels 32 to 63.
 0h = No effect.
 1h = Corresponding bit in the interrupt enable register high (IERH) is
 set (In = 1).
-
 
 #### 11.4.1.115 IPR Register (offset = 1068h) [reset = 0h]
 
@@ -8838,24 +8172,21 @@ the PaRAM entry associated with the channels. This register is used for the tran
 reporting/generating by the EDMA3CC. For more details on EDMA3CC completion interrupt generation,
 see EDMA3 Interrupts.
 
-
 **Figure 11-154. IPR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6    5   4    3   2       1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 In
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-141. IPR Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     In                          R               0h             Interrupt pending for TCC = 0 to 31.
+Bit Field Type Reset Description
+31-0 In R 0h Interrupt pending for TCC = 0 to 31.
 0h = Interrupt transfer completion code is not detected or was
 cleared.
 1h = Interrupt transfer completion code is detected (In = 1, n =
 EDMA3TC[2:0]).
-
 
 #### 11.4.1.116 IPRH Register (offset = 106Ch) [reset = 0h]
 
@@ -8874,24 +8205,21 @@ the PaRAM entry associated with the channels. This register is used for the tran
 reporting/generating by the EDMA3CC. For more details on EDMA3CC completion interrupt generation,
 see EDMA3 Interrupts.
 
-
 **Figure 11-155. IPRH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6    5   4    3   2       1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 In
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-142. IPRH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       In                         R               0h             Interrupt pending for TCC = 32 to 63.
+Bit Field Type Reset Description
+31-0 In R 0h Interrupt pending for TCC = 32 to 63.
 0h = Interrupt transfer completion code is not detected or was
 cleared.
 1h = Interrupt transfer completion code is detected (In = 1, n =
 EDMA3TC[2:0]).
-
 
 #### 11.4.1.117 ICR Register (offset = 1070h) [reset = 0h]
 
@@ -8904,23 +8232,20 @@ appropriately configuring the PaRAM entry associated with the channels. This reg
 transfer completion interrupt reporting/generating by the EDMA3CC. For more details on EDMA3CC
 completion interrupt generation, see EDMA3 Interrupts.
 
-
 **Figure 11-156. ICR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6    5   4    3   2    1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 In
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-143. ICR Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     In                          W               0h             Interrupt clear register for TCC = 0 to 31.
+Bit Field Type Reset Description
+31-0 In W 0h Interrupt clear register for TCC = 0 to 31.
 0h = No effect.
 1h = Corresponding bit in the interrupt pending register (IPR) is
 cleared (In = 0).
-
 
 #### 11.4.1.118 ICRH Register (offset = 1074h) [reset = 0h]
 
@@ -8933,23 +8258,20 @@ appropriately configuring the PaRAM entry associated with the channels. This reg
 transfer completion interrupt reporting/generating by the EDMA3CC. For more details on EDMA3CC
 completion interrupt generation, see EDMA3 Interrupts.
 
-
 **Figure 11-157. ICRH Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4    3   2    1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 In
 W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-144. ICRH Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       In                         W               0h             Interrupt clear register for TCC = 32 to 63.
+Bit Field Type Reset Description
+31-0 In W 0h Interrupt clear register for TCC = 32 to 63.
 0h = No effect.
 1h = Corresponding bit in the interrupt pending register high (IPRH)
 is cleared (In = 0).
-
 
 #### 11.4.1.119 IEVAL Register (offset = 1078h) [reset = 0h]
 
@@ -8963,30 +8285,28 @@ appropriately configuring the PaRAM entry associated with the channels. This reg
 transfer completion interrupt reporting/generating by the EDMA3CC. For more details on EDMA3CC
 completion interrupt generation, see EDMA3 Interrupts.
 
-
 **Figure 11-158. IEVAL Register**
 
-31               30                29                    28               27                    26           25                24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23               22                21                    20               19                    18           17                16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15               14                13                    12               11                    10            9                 8
+15 14 13 12 11 10 9 8
 RESERVED
 R-0h
-7              6                5                     4                 3                    2           1                   0
-RESERVED                                                       RESERVED              EVAL
-R-0h                                                           R-0h                W-0h
+7 6 5 4 3 2 1 0
+RESERVED RESERVED EVAL
+R-0h R-0h W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-145. IEVAL Register Field Descriptions**
 
-Bit       Field                      Type             Reset          Description
-31-2      RESERVED                   R                0h
-1        RESERVED                   R                0h
-0        EVAL                       W                0h             Interrupt evaluate.
+Bit Field Type Reset Description
+31-2 RESERVED R 0h
+1 RESERVED R 0h
+0 EVAL W 0h Interrupt evaluate.
 The EDMA3CC completion interrupt that is pulsed depends on which
 IEVAL is being exercised.
 For example, writing to the EVAL bit in IEVAL pulses the global
@@ -8996,7 +8316,6 @@ region 0 completion interrupt.
 1h = Causes EDMA3CC completion interrupt to be pulsed, if any
 enabled (IERn/IERHn = 1) interrupts are still pending (IPRn/IPRHn =
 1).
-
 
 #### 11.4.1.120 QER Register (offset = 1080h) [reset = 0h]
 
@@ -9023,24 +8342,21 @@ channel number. The QDMA channel registers are accessible via read/writes to the
 They are also accessible via read/writes to the shadow address range. The read/write accessibility in the
 shadow region address region is controlled by the QDMA region access registers (QRAEn/QRAEHn).
 
-
 **Figure 11-159. QER Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1   0
-RESERVED                                                                                   En
-R-0h                                                                                   R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED En
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-146. QER Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-8       RESERVED                   R               0h
-7-0    En                         R               0h             QDMA event for channels 0 to 7.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-0 En R 0h QDMA event for channels 0 to 7.
 0h = No effect.
 1h = Corresponding QDMA event is prioritized versus other pending
 DMA/QDMA events for submission to the EDMA3TC.
-
 
 #### 11.4.1.121 QEER Register (offset = 1084h) [reset = 0h]
 
@@ -9057,25 +8373,22 @@ The QDMA channel registers are accessible via read/writes to the global address 
 accessible via read/writes to the shadow address range. The read/write accessibility in the shadow region
 address region is controlled by the QDMA region access registers (QRAEn/QRAEHn).
 
-
 **Figure 11-160. QEER Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1    0
-RESERVED                                                                                   En
-R-0h                                                                                   R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED En
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-147. QEER Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-8     RESERVED                    R               0h
-7-0      En                          R               0h             QDMA event enable for channels 0 to 7.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-0 En R 0h QDMA event enable for channels 0 to 7.
 0h = QDMA channel n is not enabled. QDMA event will not be
 recognized and will not latch in the QDMA event register (QER).
 1h = QDMA channel n is enabled. QDMA events will be recognized
 and will get latched in the QDMA event register (QER).
-
 
 #### 11.4.1.122 QEECR Register (offset = 1088h) [reset = 0h]
 
@@ -9091,24 +8404,21 @@ the global address range. They are also accessible via read/writes to the shadow
 read/write accessibility in the shadow region address region is controlled by the QDMA region access
 registers (QRAEn/QRAEHn).
 
-
 **Figure 11-161. QEECR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1   0
-RESERVED                                                                                   En
-R-0h                                                                                   W-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED En
+R-0h W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-148. QEECR Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-8       RESERVED                   R               0h
-7-0    En                         W               0h             QDMA event enable clear for channels 0 to 7.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-0 En W 0h QDMA event enable clear for channels 0 to 7.
 0h = No effect.
 1h = QDMA event is disabled. Corresponding bit in the QDMA event
 enable register (QEER) is cleared (En = 0).
-
 
 #### 11.4.1.123 QEESR Register (offset = 108Ch) [reset = 0h]
 
@@ -9118,24 +8428,21 @@ software burden when multiple tasks are attempting to simultaneously modify thes
 event enable set register (QEESR) is used to enable events. Writes of 1 to the bits in QEESR set the
 corresponding QDMA channel bits in QEER; writes of 0 have no effect.
 
-
 **Figure 11-162. QEESR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1    0
-RESERVED                                                                                   En
-R-0h                                                                                   W-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED En
+R-0h W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-149. QEESR Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-8     RESERVED                    R               0h
-7-0      En                          W               0h             QDMA event enable set for channels 0 to 7.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-0 En W 0h QDMA event enable set for channels 0 to 7.
 0h = No effect.
 1h = QDMA event is enabled. Corresponding bit in the QDMA event
 enable register (QEER) is set (En = 1).
-
 
 #### 11.4.1.124 QSER Register (offset = 1090h) [reset = 0h]
 
@@ -9156,24 +8463,21 @@ accessible via read/writes to the global address range. They are also accessible
 shadow address range. The read/write accessibility in the shadow region address region is controlled by
 the QDMA region access registers (QRAEn/QRAEHn).
 
-
 **Figure 11-163. QSER Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1   0
-RESERVED                                                                                   En
-R-0h                                                                                   R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED En
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-150. QSER Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-8       RESERVED                   R               0h
-7-0    En                         R               0h             QDMA secondary event register for channels 0 to 7.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-0 En R 0h QDMA secondary event register for channels 0 to 7.
 0h = QDMA event is not currently stored in the event queue.
 1h = QDMA event is currently stored in the event queue. EDMA3CC
 will not prioritize additional events.
-
 
 #### 11.4.1.125 QSECR Register (offset = 1094h) [reset = 0h]
 
@@ -9189,24 +8493,21 @@ registers are accessible via read/writes to the global address range. They are a
 read/writes to the shadow address range. The read/write accessibility in the shadow region address region
 is controlled by the QDMA region access registers (QRAEn/QRAEHn).
 
-
 **Figure 11-164. QSECR Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                      9   8   7   6   5   4   3     2    1   0
-RESERVED                                                                                     En
-R-0h                                                                                     W-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED En
+R-0h W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-151. QSECR Register Field Descriptions**
 
-Bit       Field                      Type            Reset          Description
-31-8      RESERVED                   R               0h
-7-0       En                         W               0h             QDMA secondary event clear register for channels 0 to 7.
+Bit Field Type Reset Description
+31-8 RESERVED R 0h
+7-0 En W 0h QDMA secondary event clear register for channels 0 to 7.
 0h = No effect.
 1h = Corresponding bit in the QDMA secondary event register
 (QSER) and the QDMA event register (QER) is cleared (En = 0).
-
 
 ### 11.4.2 EDMA3TC Registers
 
@@ -9214,69 +8515,66 @@ Table 11-152 lists the memory-mapped registers for the EDMA3TC. All register off
 in Table 11-152 should be considered as reserved locations and the register contents should not be
 modified.
 
-
 **Table 11-152. EDMA3TC Registers**
 
-Offset     Acronym                                     Register Name                                                    Section
-0h      PID                                         Peripheral Identification Register                           Section 11.4.1.1
-4h      TCCFG                                       EDMA3TC Configuration Register                               Section 11.4.2.2
-10h      SYSCONFIG                                   EDMA3TC System Configuration Register                        Section 15.1.3.2
-100h     TCSTAT                                      EDMA3TC Channel Status Register                              Section 11.4.2.4
-120h     ERRSTAT                                     Error Register                                               Section 11.4.2.5
-124h     ERREN                                       Error Enable Register                                        Section 11.4.2.6
-128h     ERRCLR                                      Error Clear Register                                         Section 11.4.2.7
-12Ch     ERRDET                                      Error Details Register                                       Section 11.4.2.8
-130h     ERRCMD                                      Error Interrupt Command Register                             Section 11.4.2.9
-140h     RDRATE                                      Read Rate Register                                       Section 11.4.2.10
-240h     SAOPT                                       Source Active Options Register                           Section 11.4.2.11
-244h     SASRC                                       Source Active Source Address Register                    Section 11.4.2.12
-248h     SACNT                                       Source Active Count Register                             Section 11.4.2.13
-24Ch     SADST                                       Source Active Destination Address Register               Section 11.4.2.14
-250h     SABIDX                                      Source Active Source B-Index Register                    Section 11.4.2.15
-254h     SAMPPRXY                                    Source Active Memory Protection Proxy Register           Section 11.4.2.16
-258h     SACNTRLD                                    Source Active Count Reload Register                      Section 11.4.2.17
-
+Offset Acronym Register Name Section
+0h PID Peripheral Identification Register Section 11.4.1.1
+4h TCCFG EDMA3TC Configuration Register Section 11.4.2.2
+10h SYSCONFIG EDMA3TC System Configuration Register Section 15.1.3.2
+100h TCSTAT EDMA3TC Channel Status Register Section 11.4.2.4
+120h ERRSTAT Error Register Section 11.4.2.5
+124h ERREN Error Enable Register Section 11.4.2.6
+128h ERRCLR Error Clear Register Section 11.4.2.7
+12Ch ERRDET Error Details Register Section 11.4.2.8
+130h ERRCMD Error Interrupt Command Register Section 11.4.2.9
+140h RDRATE Read Rate Register Section 11.4.2.10
+240h SAOPT Source Active Options Register Section 11.4.2.11
+244h SASRC Source Active Source Address Register Section 11.4.2.12
+248h SACNT Source Active Count Register Section 11.4.2.13
+24Ch SADST Source Active Destination Address Register Section 11.4.2.14
+250h SABIDX Source Active Source B-Index Register Section 11.4.2.15
+254h SAMPPRXY Source Active Memory Protection Proxy Register Section 11.4.2.16
+258h SACNTRLD Source Active Count Reload Register Section 11.4.2.17
 
 **Table 11-152. EDMA3TC Registers (continued)**
 
-Offset    Acronym                                 Register Name                                            Section
-25Ch      SASRCBREF                               Source Active Source Address B-Reference Register    Section 11.4.2.18
-260h     SADSTBREF                               Source Active Destination Address B-Reference        Section 11.4.2.19
+Offset Acronym Register Name Section
+25Ch SASRCBREF Source Active Source Address B-Reference Register Section 11.4.2.18
+260h SADSTBREF Source Active Destination Address B-Reference Section 11.4.2.19
 Register
-280h     DFCNTRLD                                Destination FIFO Set Count Reload                    Section 11.4.2.20
-284h     DFSRCBREF                               Destination FIFO Set Destination Address B           Section 11.4.2.21
+280h DFCNTRLD Destination FIFO Set Count Reload Section 11.4.2.20
+284h DFSRCBREF Destination FIFO Set Destination Address B Section 11.4.2.21
 Reference Register
-288h     DFDSTBREF                               Destination FIFO Set Destination Address B           Section 11.4.2.22
+288h DFDSTBREF Destination FIFO Set Destination Address B Section 11.4.2.22
 Reference Register
-300h     DFOPT0                                  Destination FIFO Options Register 0                  Section 11.4.2.23
-304h     DFSRC0                                  Destination FIFO Source Address Register 0           Section 11.4.2.24
-308h     DFCNT0                                  Destination FIFO Count Register 0                    Section 11.4.2.25
-30Ch      DFDST0                                  Destination FIFO Destination Address Register 0      Section 11.4.2.26
-310h     DFBIDX0                                 Destination FIFO BIDX Register 0                     Section 11.4.2.27
-314h     DFMPPRXY0                               Destination FIFO Memory Protection Proxy Register    Section 11.4.2.28
+300h DFOPT0 Destination FIFO Options Register 0 Section 11.4.2.23
+304h DFSRC0 Destination FIFO Source Address Register 0 Section 11.4.2.24
+308h DFCNT0 Destination FIFO Count Register 0 Section 11.4.2.25
+30Ch DFDST0 Destination FIFO Destination Address Register 0 Section 11.4.2.26
+310h DFBIDX0 Destination FIFO BIDX Register 0 Section 11.4.2.27
+314h DFMPPRXY0 Destination FIFO Memory Protection Proxy Register Section 11.4.2.28
 0
-340h     DFOPT1                                  Destination FIFO Options Register 1                  Section 11.4.2.29
-344h     DFSRC1                                  Destination FIFO Source Address Register 1           Section 11.4.2.30
-348h     DFCNT1                                  Destination FIFO Count Register 1                    Section 11.4.2.31
-34Ch      DFDST1                                  Destination FIFO Destination Address Register 1      Section 11.4.2.32
-350h     DFBIDX1                                 Destination FIFO BIDX Register 1                     Section 11.4.2.33
-354h     DFMPPRXY1                               Destination FIFO Memory Protection Proxy Register    Section 11.4.2.34
+340h DFOPT1 Destination FIFO Options Register 1 Section 11.4.2.29
+344h DFSRC1 Destination FIFO Source Address Register 1 Section 11.4.2.30
+348h DFCNT1 Destination FIFO Count Register 1 Section 11.4.2.31
+34Ch DFDST1 Destination FIFO Destination Address Register 1 Section 11.4.2.32
+350h DFBIDX1 Destination FIFO BIDX Register 1 Section 11.4.2.33
+354h DFMPPRXY1 Destination FIFO Memory Protection Proxy Register Section 11.4.2.34
 1
-380h     DFOPT2                                  Destination FIFO Options Register 2                  Section 11.4.2.35
-384h     DFSRC2                                  Destination FIFO Source Address Register 2           Section 11.4.2.36
-388h     DFCNT2                                  Destination FIFO Count Register 2                    Section 11.4.2.37
-38Ch      DFDST2                                  Destination FIFO Destination Address Register 2      Section 11.4.2.38
-390h     DFBIDX2                                 Destination FIFO BIDX Register 2                     Section 11.4.2.39
-394h     DFMPPRXY2                               Destination FIFO Memory Protection Proxy Register    Section 11.4.2.40
+380h DFOPT2 Destination FIFO Options Register 2 Section 11.4.2.35
+384h DFSRC2 Destination FIFO Source Address Register 2 Section 11.4.2.36
+388h DFCNT2 Destination FIFO Count Register 2 Section 11.4.2.37
+38Ch DFDST2 Destination FIFO Destination Address Register 2 Section 11.4.2.38
+390h DFBIDX2 Destination FIFO BIDX Register 2 Section 11.4.2.39
+394h DFMPPRXY2 Destination FIFO Memory Protection Proxy Register Section 11.4.2.40
 2
-3C0h      DFOPT3                                  Destination FIFO Options Register 3                  Section 11.4.2.41
-3C4h      DFSRC3                                  Destination FIFO Source Address Register 3           Section 11.4.2.42
-3C8h      DFCNT3                                  Destination FIFO Count Register 3                    Section 11.4.2.43
-3CCh      DFDST3                                  Destination FIFO Destination Address Register 3      Section 11.4.2.44
-3D0h      DFBIDX3                                 Destination FIFO BIDX Register 3                     Section 11.4.2.45
-3D4h      DFMPPRXY3                               Destination FIFO Memory Protection Proxy Register    Section 11.4.2.46
+3C0h DFOPT3 Destination FIFO Options Register 3 Section 11.4.2.41
+3C4h DFSRC3 Destination FIFO Source Address Register 3 Section 11.4.2.42
+3C8h DFCNT3 Destination FIFO Count Register 3 Section 11.4.2.43
+3CCh DFDST3 Destination FIFO Destination Address Register 3 Section 11.4.2.44
+3D0h DFBIDX3 Destination FIFO BIDX Register 3 Section 11.4.2.45
+3D4h DFMPPRXY3 Destination FIFO Memory Protection Proxy Register Section 11.4.2.46
 3
-
 
 #### 11.4.2.1 PID Register (offset = 0h) [reset = 0h]
 
@@ -9284,63 +8582,58 @@ PID is shown in Figure 11-165 and described in Table 11-153.
 The peripheral identification register (PID) is a constant register that uniquely identifies the EDMA3TC and
 specific revision of the EDMA3TC.
 
-
 **Figure 11-165. PID Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8 7    6       5   4   3   2   1    0
-RESERVED                                                                               PID
-R-0h                                                                               R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED PID
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-153. PID Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-16     RESERVED                    R               0h
-15-0     PID                         R               0h             Peripheral identifier, value 0 to FFFF FFFFh.
+Bit Field Type Reset Description
+31-16 RESERVED R 0h
+15-0 PID R 0h Peripheral identifier, value 0 to FFFF FFFFh.
 Reset for PID[31] to PID[16] is 4000h.
 Reset for PID[15] to PID[0] is 7C00h.
-
 
 #### 11.4.2.2 TCCFG Register (offset = 4h) [reset = 224h]
 
 TCCFG is shown in Figure 11-166 and described in Table 11-154.
 
-
 **Figure 11-166. TCCFG Register**
 
-31                 30           29                    28               27                    26          25               24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23                 22           21                    20               19                    18          17               16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15                 14           13                    12               11                    10           9               8
-RESERVED                                                                DREGDEPTH
-R-0h                                                                     R-2h
-7                6            5                     4               3                      2           1                0
-RESERVED                        BUSWIDTH                    RESERVED                           FIFOSIZE
-R-0h                            R-2h                        R-0h                               R-4h
+15 14 13 12 11 10 9 8
+RESERVED DREGDEPTH
+R-0h R-2h
+7 6 5 4 3 2 1 0
+RESERVED BUSWIDTH RESERVED FIFOSIZE
+R-0h R-2h R-0h R-4h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-154. TCCFG Register Field Descriptions**
 
-Bit       Field                   Type             Reset          Description
-31-10         RESERVED                R                0h
-9-8       DREGDEPTH               R                2h             Destination register FIFO depth parameterization.
+Bit Field Type Reset Description
+31-10 RESERVED R 0h
+9-8 DREGDEPTH R 2h Destination register FIFO depth parameterization.
 0h = Reserved.
 1h = Reserved.
 2h = 4 entry (for TC0, TC1, and TC2)
 3h = Reserved.
-7-6       RESERVED                R                0h
-5-4       BUSWIDTH                R                2h             Bus width parameterization.
+7-6 RESERVED R 0h
+5-4 BUSWIDTH R 2h Bus width parameterization.
 0h = Reserved.
 1h = Reserved.
 2h = 128-bit.
 3h = Reserved.
-3         RESERVED                R                0h
-2-0       FIFOSIZE                R                4h             FIFO size
+3 RESERVED R 0h
+2-0 FIFOSIZE R 4h FIFO size
 0h = Reserved.
 1h = Reserved.
 2h = Reserved.
@@ -9350,34 +8643,31 @@ Bit       Field                   Type             Reset          Description
 6h = Reserved.
 7h = Reserved.
 
-
 #### 11.4.2.3 SYSCONFIG Register (offset = 10h) [reset = 28h]
 
 SYSCONFIG is shown in Figure 15-4 and described in Table 15-7.
 
-
 **Figure 11-167. SYSCONFIG Register**
 
-31               30                29                    28               27                    26            25                 24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23               22                21                    20               19                    18            17                 16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15               14                13                    12               11                    10             9                  8
+15 14 13 12 11 10 9 8
 RESERVED
 R-0h
-7                6                5           4                           3                    2              1                  0
-RESERVED                       STANDBYMODE                                IDLEMODE                            RESERVED
-R-0h                            R/W-2h                                    R/W-2h                              R-0h
+7 6 5 4 3 2 1 0
+RESERVED STANDBYMODE IDLEMODE RESERVED
+R-0h R/W-2h R/W-2h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-155. SYSCONFIG Register Field Descriptions**
 
-Bit      Field                       Type             Reset          Description
-31-6     RESERVED                    R                0h
-5-4      STANDBYMODE                 R/W              2h             Configuration of the local initiator state management mode.
+Bit Field Type Reset Description
+31-6 RESERVED R 0h
+5-4 STANDBYMODE R/W 2h Configuration of the local initiator state management mode.
 By definition, initiator may generate read/write transaction as long as
 it is out of STANDBY state.
 0h = Force-standby mode: local initiator is unconditionally placed in
@@ -9389,7 +8679,7 @@ local conditions, i.e., the module's functional requirement from the
 initiator. IP module should not generate (initiator-related) wakeup
 events.
 3h = Reserved.
-3-2      IDLEMODE                    R/W              2h             Configuration of the local target state management mode.
+3-2 IDLEMODE R/W 2h Configuration of the local target state management mode.
 By definition, target can handle read/write transaction as long as it is
 out of IDLE state.
 0h = Force-idle mode: local target's idle state follows (acknowledges)
@@ -9402,43 +8692,40 @@ mode, for debug only.
 module's internal requirements. IP module shall not generate (IRQ or
 DMA-request-related) wakeup events.
 3h = Reserved.
-1-0      RESERVED                    R                0h
-
+1-0 RESERVED R 0h
 
 #### 11.4.2.4 TCSTAT Register (offset = 100h) [reset = 100h]
 
 TCSTAT is shown in Figure 11-168 and described in Table 11-156.
 
-
 **Figure 11-168. TCSTAT Register**
 
-31              30              29                    28               27                    26            25                 24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23              22              21                    20               19                    18            17                 16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15              14              13                    12               11               10                  9                8
-RESERVED                        DFSTRTPTR                                       RESERVED                            RESERVED
-R-0h                             R-0h                                           R-0h                                R-1h
-7                   6             5                      4               3                 2                 1                 0
-RESERVED                           DSTACTV                               RESERVED            WSACTV           SRCACTV           PROGBUSY
-R-0h                               R-0h                                  R-0h               R-0h              R-0h              R-0h
+15 14 13 12 11 10 9 8
+RESERVED DFSTRTPTR RESERVED RESERVED
+R-0h R-0h R-0h R-1h
+7 6 5 4 3 2 1 0
+RESERVED DSTACTV RESERVED WSACTV SRCACTV PROGBUSY
+R-0h R-0h R-0h R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-156. TCSTAT Register Field Descriptions**
 
-Bit      Field                    Type             Reset          Description
-31-14        RESERVED                 R                0h
-13-12        DFSTRTPTR                R                0h             Destination FIFO start pointer.
+Bit Field Type Reset Description
+31-14 RESERVED R 0h
+13-12 DFSTRTPTR R 0h Destination FIFO start pointer.
 Represents the offset to the head entry of the destination register
 FIFO, in units of entries.
 Value 0 to 3h.
-11-9         RESERVED                 R                0h
-8        RESERVED                 R                1h
-7        RESERVED                 R                0h
-6-4      DSTACTV                  R                0h             Destination active state.
+11-9 RESERVED R 0h
+8 RESERVED R 1h
+7 RESERVED R 0h
+6-4 DSTACTV R 0h Destination active state.
 Specifies the number of transfer requests (TRs) that are resident in
 the destination register FIFO at a given instant.
 This bit field can be primarily used for advanced debugging.
@@ -9461,68 +8748,63 @@ completed.
 5h = Reserved.
 6h = Reserved.
 7h = Reserved.
-3        RESERVED                 R                0h
-2        WSACTV                   R                0h             Write status active
+3 RESERVED R 0h
+2 WSACTV R 0h Write status active
 0h = Write status is not pending. Write status has been received for
 all previously issued write commands.
 1h = Write status is pending. Write status has not been received for
 all previously issued write commands.
 
-
 **Table 11-156. TCSTAT Register Field Descriptions (continued)**
 
-Bit      Field                   Type            Reset          Description
-1       SRCACTV                 R               0h             Source active state
+Bit Field Type Reset Description
+1 SRCACTV R 0h Source active state
 0h = Source controller is idle. Source active register set contains a
 previously processed transfer request.
 1h = Source controller is busy servicing a transfer request.
-0       PROGBUSY                R               0h             Program register set busy
+0 PROGBUSY R 0h Program register set busy
 0h = Program set idle and is available for programming by the
 EDMA3CC.
 1h = Program set busy
-
 
 #### 11.4.2.5 ERRSTAT Register (offset = 120h) [reset = 0h]
 
 ERRSTAT is shown in Figure 11-169 and described in Table 11-157.
 
-
 **Figure 11-169. ERRSTAT Register**
 
-31              30              29                    28               27                    26            25                24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23              22              21                    20               19                    18            17                16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15              14              13                    12               11                    10            9                    8
+15 14 13 12 11 10 9 8
 RESERVED
 R-0h
-7             6               5                     4              3                   2                1                 0
-RESERVED                                     MMRAERR              TRERR          RESERVED           BUSERR
-R-0h                                         R-0h                R-0h            R-0h              R-0h
+7 6 5 4 3 2 1 0
+RESERVED MMRAERR TRERR RESERVED BUSERR
+R-0h R-0h R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-157. ERRSTAT Register Field Descriptions**
 
-Bit      Field                    Type             Reset          Description
-31-4         RESERVED                 R                0h
-3        MMRAERR                  R                0h             MMR address error.
+Bit Field Type Reset Description
+31-4 RESERVED R 0h
+3 MMRAERR R 0h MMR address error.
 0h = Condition is not detected.
 1h = User attempted to read or write to an invalid address in
 configuration memory map.
-2        TRERR                    R                0h             Transfer request (TR) error event.
+2 TRERR R 0h Transfer request (TR) error event.
 0h = Condition is not detected.
 1h = TR detected that violates constant addressing mode transfer
 (SAM or DAM is set) alignment rules or has ACNT or BCNT == 0.
-1        RESERVED                 R                0h
-0        BUSERR                   R                0h             Bus error event.
+1 RESERVED R 0h
+0 BUSERR R 0h Bus error event.
 0h = Condition is not detected.
 1h = EDMA3TC has detected an error at source or destination
 address. Error information can be read from the error details register
 (ERRDET).
-
 
 #### 11.4.2.6 ERREN Register (offset = 124h) [reset = 0h]
 
@@ -9530,128 +8812,120 @@ ERREN is shown in Figure 11-170 and described in Table 11-158.
 When any of the enable bits are set, a bit set in the corresponding ERRSTAT causes an assertion of the
 EDMA3TC interrupt.
 
-
 **Figure 11-170. ERREN Register**
 
-31               30                29                    28               27                    26         25                24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23               22                21                    20               19                    18         17                16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15               14                13                    12               11                    10         9                 8
+15 14 13 12 11 10 9 8
 RESERVED
 R-0h
-7              6                5                     4              3                   2              1               0
-RESERVED                                       MMRAERR              TRERR        RESERVED         BUSERR
-R-0h                                          R/W-0h              R/W-0h         R-0h            R/W-0h
+7 6 5 4 3 2 1 0
+RESERVED MMRAERR TRERR RESERVED BUSERR
+R-0h R/W-0h R/W-0h R-0h R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-158. ERREN Register Field Descriptions**
 
-Bit       Field                      Type             Reset          Description
-31-4      RESERVED                   R                0h
-3        MMRAERR                    R/W              0h             Interrupt enable for MMR address error (MMRAERR).
+Bit Field Type Reset Description
+31-4 RESERVED R 0h
+3 MMRAERR R/W 0h Interrupt enable for MMR address error (MMRAERR).
 0h = MMRAERR is disabled.
 1h = MMRAERR is enabled and contributes to the state of
 EDMA3TC error interrupt generation
-2        TRERR                      R/W              0h             Interrupt enable for transfer request error (TRERR).
+2 TRERR R/W 0h Interrupt enable for transfer request error (TRERR).
 0h = TRERR is disabled.
 1h = TRERR is enabled and contributes to the state of EDMA3TC
 error interrupt generation.
-1        RESERVED                   R                0h
-0        BUSERR                     R/W              0h             Interrupt enable for bus error (BUSERR).
+1 RESERVED R 0h
+0 BUSERR R/W 0h Interrupt enable for bus error (BUSERR).
 0h = BUSERR is disabled.
 1h = BUSERR is enabled and contributes to the state of EDMA3TC
 error interrupt generation.
-
 
 #### 11.4.2.7 ERRCLR Register (offset = 128h) [reset = 0h]
 
 ERRCLR is shown in Figure 11-171 and described in Table 11-159.
 
-
 **Figure 11-171. ERRCLR Register**
 
-31              30              29                    28               27                    26           25                24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23              22              21                    20               19                    18           17                16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15              14              13                    12               11                    10            9                 8
+15 14 13 12 11 10 9 8
 RESERVED
 R-0h
-7             6               5                     4              3                   2               1                 0
-RESERVED                                     MMRAERR              TRERR         RESERVED           BUSERR
-R-0h                                         W-0h                W-0h           R-0h              W-0h
+7 6 5 4 3 2 1 0
+RESERVED MMRAERR TRERR RESERVED BUSERR
+R-0h W-0h W-0h R-0h W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-159. ERRCLR Register Field Descriptions**
 
-Bit      Field                    Type             Reset          Description
-31-4         RESERVED                 R                0h
-3        MMRAERR                  W                0h             Interrupt enable clear for the MMRAERR bit in the error status
+Bit Field Type Reset Description
+31-4 RESERVED R 0h
+3 MMRAERR W 0h Interrupt enable clear for the MMRAERR bit in the error status
 register (ERRSTAT).
 0h = No effect.
 1h = Clears the MMRAERR bit in ERRSTAT but does not clear the
 error details register (ERRDET).
-2        TRERR                    W                0h             Interrupt enable clear for the TRERR bit in the error status register
+2 TRERR W 0h Interrupt enable clear for the TRERR bit in the error status register
 (ERRSTAT).
 0h = No effect.
 1h = Clears the TRERR bit in ERRSTAT but does not clear the error
 details register (ERRDET).
-1        RESERVED                 R                0h
-0        BUSERR                   W                0h             Interrupt clear for the BUSERR bit in the error status register
+1 RESERVED R 0h
+0 BUSERR W 0h Interrupt clear for the BUSERR bit in the error status register
 (ERRSTAT).
 0h = No effect.
 1h = Clears the BUSERR bit in ERRSTAT and clears the error
 details register (ERRDET).
 
-
 #### 11.4.2.8 ERRDET Register (offset = 12Ch) [reset = 0h]
 
 ERRDET is shown in Figure 11-172 and described in Table 11-160.
 
-
 **Figure 11-172. ERRDET Register**
 
-31                30               29                    28               27                    26             25                 24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23                22               21                    20               19                    18             17                16
-RESERVED                                                           TCCHEN            TCINTEN
-R-0h                                                               R-0h              R-0h
-15                14               13                    12               11                    10              9                  8
-RESERVED                                                                    TCC
-R-0h                                                                      R-0h
-7                6                5                     4                 3                    2               1                  0
-RESERVED                                                                      STAT
-R-0h                                                                        R-0h
+23 22 21 20 19 18 17 16
+RESERVED TCCHEN TCINTEN
+R-0h R-0h R-0h
+15 14 13 12 11 10 9 8
+RESERVED TCC
+R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED STAT
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-160. ERRDET Register Field Descriptions**
 
-Bit       Field                      Type             Reset          Description
-31-18      RESERVED                   R                0h
-17       TCCHEN                     R                0h             Transfer completion chaining enable.
+Bit Field Type Reset Description
+31-18 RESERVED R 0h
+17 TCCHEN R 0h Transfer completion chaining enable.
 Contains the TCCHEN value in the channel options parameter
 (OPT) programmed by the channel controller for the read or write
 transaction that resulted in an error.
-16       TCINTEN                    R                0h             Transfer completion interrupt enable.
+16 TCINTEN R 0h Transfer completion interrupt enable.
 Contains the TCINTEN value in the channel options parameter
 (OPT) programmed by the channel controller for the read or write
 transaction that resulted in an error.
-15-14      RESERVED                   R                0h
-13-8      TCC                        R                0h             Transfer complete code.
+15-14 RESERVED R 0h
+13-8 TCC R 0h Transfer complete code.
 Contains the TCC value in the channel options parameter (OPT)
 programmed by the channel controller for the read or write
 transaction that resulted in an error.
-7-4       RESERVED                   R                0h
-3-0       STAT                       R                0h             Transaction status.
+7-4 RESERVED R 0h
+3-0 STAT R 0h Transaction status.
 Stores the nonzero status/error code that was detected on the read
 status or write status bus.
 If read status and write status are returned on the same cycle, then
@@ -9661,39 +8935,35 @@ If both are nonzero, then the write status is treated as higher priority.
 1h = From 1h to 7h, Read error.
 8h = From 8h to Fh, Write error.
 
-
 #### 11.4.2.9 ERRCMD Register (offset = 130h) [reset = 0h]
 
 ERRCMD is shown in Figure 11-173 and described in Table 11-161.
 
-
 **Figure 11-173. ERRCMD Register**
 
-31              30              29                    28               27                    26           25                24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23              22              21                    20               19                    18           17                16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15              14              13                    12               11                    10            9                 8
+15 14 13 12 11 10 9 8
 RESERVED
 R-0h
-7             6               5                     4                 3                    2           1                   0
-RESERVED                                                       RESERVED              EVAL
-R-0h                                                           R-0h                W-0h
+7 6 5 4 3 2 1 0
+RESERVED RESERVED EVAL
+R-0h R-0h W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-161. ERRCMD Register Field Descriptions**
 
-Bit      Field                    Type             Reset          Description
-31-2         RESERVED                 R                0h
-1        RESERVED                 R                0h
-0        EVAL                     W                0h             Error evaluate
+Bit Field Type Reset Description
+31-2 RESERVED R 0h
+1 RESERVED R 0h
+0 EVAL W 0h Error evaluate
 0h = No effect
 1h = EDMA3TC error line is pulsed if any of the error status register
 (ERRSTAT) bits are set.
-
 
 #### 11.4.2.10 RDRATE Register (offset = 140h) [reset = 0h]
 
@@ -9709,23 +8979,21 @@ EDMA3TC cycles. Note: The RDRATE value for a transfer controller is expected to 
 decided based on the application requirement. It is not recommended to change the RDRATE value on
 the fly.
 
-
 **Figure 11-174. RDRATE Register**
 
-31       30           29   28     27         26        25       24      23         22       21      20       19       18       17       16
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15       14           13   12     11         10       9    8              7        6         5       4        3        2      1             0
-RESERVED                                                                  RDRATE
-R-0h                                                                    R/W-0h
+15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED RDRATE
+R-0h R/W-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-162. RDRATE Register Field Descriptions**
 
-Bit         Field                     Type            Reset          Description
-31-3        RESERVED                  R               0h
-2-0         RDRATE                    R/W             0h             Read rate.
+Bit Field Type Reset Description
+31-3 RESERVED R 0h
+2-0 RDRATE R/W 0h Read rate.
 Controls the number of cycles between read commands.
 This is a global setting that applies to all TRs for this EDMA3TC.
 0h = Reads issued as fast as possible.
@@ -9737,7 +9005,6 @@ This is a global setting that applies to all TRs for this EDMA3TC.
 6h = Reserved.
 7h = Reserved.
 
-
 #### 11.4.2.11 SAOPT Register (offset = 240h) [reset = 0h]
 
 SAOPT is shown in Figure 11-175 and described in Table 11-163.
@@ -9746,41 +9013,39 @@ register is part of the Source Active Register Set. It is read-only and provided
 providing a window into how the transfer controller (TC) was programmed by the channel controller (CC),
 as well as showing the status of the transfer controller (TC) during a transfer.
 
-
 **Figure 11-175. SAOPT Register**
 
-31                30               29                    28               27                    26            25                 24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23                     22              21                 20                  19                    18            17                 16
-RESERVED               TCCHEN          RESERVED           TCINTEN                     RESERVED                               TCC
-R-0h                   R-0h            R-0h               R-0h                        R-0h                                 R-0h
-15                14               13                    12             11                      10           9                   8
-TCC                                         RESERVED                               FWID
-R-0h                                          R-0h                                 R-0h
-7                    6                5                     4                 3                    2             1                 0
-RESERVED                                 PRI                                          RESERVED                      DAM               SAM
-R-0h                                   R-0h                                           R-0h                        R-0h              R-0h
+23 22 21 20 19 18 17 16
+RESERVED TCCHEN RESERVED TCINTEN RESERVED TCC
+R-0h R-0h R-0h R-0h R-0h R-0h
+15 14 13 12 11 10 9 8
+TCC RESERVED FWID
+R-0h R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED PRI RESERVED DAM SAM
+R-0h R-0h R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-163. SAOPT Register Field Descriptions**
 
-Bit       Field                      Type             Reset          Description
-31-23         RESERVED                   R                0h
-22        TCCHEN                     R                0h             Transfer complete chaining enable
+Bit Field Type Reset Description
+31-23 RESERVED R 0h
+22 TCCHEN R 0h Transfer complete chaining enable
 0h = Transfer complete chaining is disabled.
 1h = Transfer complete chaining is enabled.
-21        RESERVED                   R                0h
-20        TCINTEN                    R                0h             Transfer complete interrupt enable.
+21 RESERVED R 0h
+20 TCINTEN R 0h Transfer complete interrupt enable.
 0h = Transfer complete interrupt is disabled.
 1h = Transfer complete interrupt is enabled.
-19-18         RESERVED                   R                0h
-17-12         TCC                        R                0h             Transfer complete code.
+19-18 RESERVED R 0h
+17-12 TCC R 0h Transfer complete code.
 This 6 bit code is used to set the relevant bit in CER or IPR of the
 EDMA3PCC module.
-11        RESERVED                   R                0h
-10-8          FWID                       R                0h             FIFO width.
+11 RESERVED R 0h
+10-8 FWID R 0h FIFO width.
 Applies if either SAM or DAM is set to constant addressing mode.
 0h = FIFO width is 8-bit.
 1h = FIFO width is 16-bit.
@@ -9790,30 +9055,28 @@ Applies if either SAM or DAM is set to constant addressing mode.
 5h = FIFO width is 256-bit.
 6h = Reserved.
 7h = Reserved.
-7         RESERVED                   R                0h
-
+7 RESERVED R 0h
 
 **Table 11-163. SAOPT Register Field Descriptions (continued)**
 
-Bit      Field                   Type            Reset          Description
-6-4      PRI                     R               0h             Transfer priority.
+Bit Field Type Reset Description
+6-4 PRI R 0h Transfer priority.
 Reflects the values programmed in the QUEPRI register in the
 EDMACC.
 0h = Priority 0 - Highest priority
 1h = From 1h to 6h, Priority 1 to priority 6
 7h = Priority 7 - Lowest priority
-3-2      RESERVED                R               0h
-1       DAM                     R               0h             Destination address mode within an array
+3-2 RESERVED R 0h
+1 DAM R 0h Destination address mode within an array
 0h = Increment (INCR) mode. Destination addressing within an array
 increments.
 1h = Constant addressing (CONST) mode. Destination addressing
 within an array wraps around upon reaching FIFO width.
-0       SAM                     R               0h             Source address mode within an array
+0 SAM R 0h Source address mode within an array
 0h = Increment (INCR) mode. Source addressing within an array
 increments.
 1h = Constant addressing (CONST) mode. Source addressing within
 an array wraps around upon reaching FIFO width.
-
 
 #### 11.4.2.12 SASRC Register (offset = 244h) [reset = 0h]
 
@@ -9823,24 +9086,21 @@ channel register is part of the Source Active Register Set. It is read-only and 
 debugging by providing a window into how the transfer controller (TC) was programmed by the channel
 controller (CC), as well as showing the status of the transfer controller (TC) during a transfer.
 
-
 **Figure 11-176. SASRC Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 SADDR
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-164. SASRC Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       SADDR                      R               0h             Source address for Source Active Register Set.
+Bit Field Type Reset Description
+31-0 SADDR R 0h Source address for Source Active Register Set.
 EDMA3TC updates value according to source addressing mode
 (SAM bit in the source active options register, SAOPT).
 This register does not update during a transfer.
 Value 0 to FFFFh.
-
 
 #### 11.4.2.13 SACNT Register (offset = 248h) [reset = 0h]
 
@@ -9850,19 +9110,17 @@ register is part of the Source Active Register Set. It is read-only and provided
 providing a window into how the transfer controller (TC) was programmed by the channel controller (CC),
 as well as showing the status of the transfer controller (TC) during a transfer.
 
-
 **Figure 11-177. SACNT Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8 7    6   5   4   3   2   1      0
-BCNT                                                                                ACNT
-R-0h                                                                               R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+BCNT ACNT
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-165. SACNT Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-16     BCNT                        R               0h             B dimension count remaining for the Source Active Register Set.
+Bit Field Type Reset Description
+31-16 BCNT R 0h B dimension count remaining for the Source Active Register Set.
 Number of arrays to be transferred, where each array is ACNT in
 length.
 TC decrements BCNT as necessary after each read command is
@@ -9870,13 +9128,12 @@ issued.
 The final value should be 0 when TR is complete.
 Note that BCNT is always read as 0x0 in the Source Address
 Register Set.
-15-0     ACNT                        R               0h             A dimension count remaining for the Source Active Register Set.
+15-0 ACNT R 0h A dimension count remaining for the Source Active Register Set.
 Number of bytes to be transferred in first dimension.
 Represents the amount of data remaining to be read.
 TC decrements ACNT as necessary after each read command is
 issued.
 The final value should be 0 when TR is complete.
-
 
 #### 11.4.2.14 SADST Register (offset = 24Ch) [reset = 0h]
 
@@ -9887,20 +9144,17 @@ facilitate debugging by providing a window into how the transfer controller (TC)
 channel controller (CC), as well as showing the status of the transfer controller (TC) during a transfer.
 Note: Destination address is not applicable for Source Active Register Set. Read returns 0.
 
-
 **Figure 11-178. SADST Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 RESERVED
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-166. SADST Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       RESERVED                   R               0h
-
+Bit Field Type Reset Description
+31-0 RESERVED R 0h
 
 #### 11.4.2.15 SABIDX Register (offset = 250h) [reset = 0h]
 
@@ -9910,30 +9164,27 @@ EDMA3TC channel register is part of the Source Active Register Set. It is read-o
 facilitate debugging by providing a window into how the transfer controller (TC) was programmed by the
 channel controller (CC), as well as showing the status of the transfer controller (TC) during a transfer.
 
-
 **Figure 11-179. SABIDX Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8 7     6   5   4   3   2   1    0
-DBIDX                                                                               SBIDX
-R-0h                                                                                R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+DBIDX SBIDX
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-167. SABIDX Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-16     DBIDX                       R               0h             B-Index offset between destination arrays.
+Bit Field Type Reset Description
+31-16 DBIDX R 0h B-Index offset between destination arrays.
 Represents the offset in bytes between the starting address of each
 destination array (there are BCND arrays of ACNT elements).
 DBIDX is always used regardless of whether DAM is in Increment or
 FIFO mode.
-15-0     SBIDX                       R               0h             B-Index offset between source arrays.
+15-0 SBIDX R 0h B-Index offset between source arrays.
 Represents the offset in bytes between the starting address of each
 source array (there are BCNT arrays of ACNT elements).
 SBIDX is always used regardless of whether SAM is in Increment or
 FIFO mode.
 Value 0 to FFFFh.
-
 
 #### 11.4.2.16 SAMPPRXY Register (offset = 254h) [reset = 0h]
 
@@ -9943,29 +9194,27 @@ This EDMA3TC channel register is part of the Source Active Register Set. It is r
 facilitate debugging by providing a window into how the transfer controller (TC) was programmed by the
 channel controller (CC), as well as showing the status of the transfer controller (TC) during a transfer.
 
-
 **Figure 11-180. SAMPPRXY Register**
 
-31              30              29                    28               27                    26            25              24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23              22              21                    20               19                    18            17              16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15              14              13                12                   11                    10            9               8
-RESERVED                                                                   PRIV
-R-0h                                                                     R-0h
-7             6               5                     4                 3                    2             1                0
-RESERVED                                                                     PRIVID
-R-0h                                                                        R-0h
+15 14 13 12 11 10 9 8
+RESERVED PRIV
+R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED PRIVID
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-168. SAMPPRXY Register Field Descriptions**
 
-Bit      Field                    Type             Reset          Description
-31-9         RESERVED                 R                0h
-8        PRIV                     R                0h             Privilege level.
+Bit Field Type Reset Description
+31-9 RESERVED R 0h
+8 PRIV R 0h Privilege level.
 The privilege level used by the host to set up the parameter entry in
 the channel controller.
 This field is set up when the associated TR is submitted to the
@@ -9976,8 +9225,8 @@ protection checks based on the PRIV of the host that set up the
 DMA transaction.
 0h = User-level privilege.
 1h = Supervisor-level privilege.
-7-4      RESERVED                 R                0h
-3-0      PRIVID                   R                0h             Privilege ID.
+7-4 RESERVED R 0h
+3-0 PRIVID R 0h Privilege ID.
 This contains the privilege ID of the host that set up the parameter
 entry in the channel controller.
 This field is set up when the associated TR is submitted to the
@@ -9988,7 +9237,6 @@ memory protection checks based on the PRIVID of the host that set
 up the DMA transaction.
 Value 0 to Fh.
 
-
 #### 11.4.2.17 SACNTRLD Register (offset = 258h) [reset = 0h]
 
 SACNTRLD is shown in Figure 11-181 and described in Table 11-169.
@@ -9997,27 +9245,24 @@ EDMA3TC channel register is part of the Source Active Register Set. It is read-o
 facilitate debugging by providing a window into how the transfer controller (TC) was programmed by the
 channel controller (CC), as well as showing the status of the transfer controller (TC) during a transfer.
 
-
 **Figure 11-181. SACNTRLD Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9     8 7 6    5   4    3   2   1       0
-RESERVED                                                                              ACNTRLD
-R-0h                                                                                 R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ACNTRLD
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-169. SACNTRLD Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-16     RESERVED                    R               0h
-15-0     ACNTRLD                     R               0h             A-count reload value.
+Bit Field Type Reset Description
+31-16 RESERVED R 0h
+15-0 ACNTRLD R 0h A-count reload value.
 Represents the originally programmed value of ACNT.
 The reload value is used to reinitialize ACNT after each array is
 serviced (that is, ACNT decrements to 0) by the source offset in
 bytes between the starting address or each source array (there are
 BCNT arrays of ACNT bytes).
 Value 0 to FFFFh.
-
 
 #### 11.4.2.18 SASRCBREF Register (offset = 25Ch) [reset = 0h]
 
@@ -10028,24 +9273,21 @@ provided to facilitate debugging by providing a window into how the transfer con
 programmed by the channel controller (CC), as well as showing the status of the transfer controller (TC)
 during a transfer.
 
-
 **Figure 11-182. SASRCBREF Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5    4   3    2   1      0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 SADDRBREF
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-170. SASRCBREF Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       SADDRBREF                  R               0h             Source address B-reference.
+Bit Field Type Reset Description
+31-0 SADDRBREF R 0h Source address B-reference.
 Represents the starting address for the array currently being read.
 The next array's starting address is calculated as the reference
 address plus the source b-idx value.
 Value 0 to FFFF FFFFh.
-
 
 #### 11.4.2.19 SADSTBREF Register (offset = 260h) [reset = 0h]
 
@@ -10057,20 +9299,17 @@ programmed by the channel controller (CC), as well as showing the status of the 
 during a transfer.
 Note: Destination address is not applicable for Source Active Register Set. Read returns 0.
 
-
 **Figure 11-183. SADSTBREF Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 RESERVED
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-171. SADSTBREF Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     RESERVED                    R               0h
-
+Bit Field Type Reset Description
+31-0 RESERVED R 0h
 
 #### 11.4.2.20 DFCNTRLD Register (offset = 280h) [reset = 0h]
 
@@ -10083,27 +9322,24 @@ during a transfer. The number of destination FIFO register sets depends on the d
 TC0, TC1, and TC2 each have a destination FIFO depth of 4, so there are four sets of destination FIFO
 registers for each of these transfer controllers.
 
-
 **Figure 11-184. DFCNTRLD Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9     8 7 6    5   4    3   2   1       0
-RESERVED                                                                              ACNTRLD
-R-0h                                                                                 R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+RESERVED ACNTRLD
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-172. DFCNTRLD Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-16      RESERVED                   R               0h
-15-0       ACNTRLD                    R               0h             A-count reload value for the Destination FIFO Register Set.
+Bit Field Type Reset Description
+31-16 RESERVED R 0h
+15-0 ACNTRLD R 0h A-count reload value for the Destination FIFO Register Set.
 Represents the originally programmed value of ACNT.
 The reload value is used to reinitialize ACNT after each array is
 serviced (that is, ACNT decrements to 0) by the source offset in
 bytes between the starting address of each source array (there are
 BCNT arrays of ACNT bytes).
 Value 0 to FFFFh.
-
 
 #### 11.4.2.21 DFSRCBREF Register (offset = 284h) [reset = 0h]
 
@@ -10117,20 +9353,17 @@ TC0, TC1, and TC2 each have a destination FIFO depth of 4, so there are four set
 registers for each of these transfer controllers.
 Note: Source address reference is not applicable for Destination FIFO Register Set. Read returns 0.
 
-
 **Figure 11-185. DFSRCBREF Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 RESERVED
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-173. DFSRCBREF Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     RESERVED                    R               0h
-
+Bit Field Type Reset Description
+31-0 RESERVED R 0h
 
 #### 11.4.2.22 DFDSTBREF Register (offset = 288h) [reset = 0h]
 
@@ -10143,24 +9376,21 @@ during a transfer. The number of destination FIFO register sets depends on the d
 TC0, TC1, and TC2 each have a destination FIFO depth of 4, so there are four sets of destination FIFO
 registers for each of these transfer controllers.
 
-
 **Figure 11-186. DFDSTBREF Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6    5   4    3   2    1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 DADDRBREF
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-174. DFDSTBREF Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       DADDRBREF                  R               0h             Destination address reference for the destination FIFO register set.
+Bit Field Type Reset Description
+31-0 DADDRBREF R 0h Destination address reference for the destination FIFO register set.
 Represents the starting address for the array currently being written.
 The next array's starting address is calculated as the reference
 address plus the destination B-Index value.
 Value 0 to FFFF FFFFh.
-
 
 #### 11.4.2.23 DFOPT0 Register (offset = 300h) [reset = 0h]
 
@@ -10173,41 +9403,39 @@ number of destination FIFO register sets depends on the destination FIFO depth. 
 each have a destination FIFO depth of 4, so there are four sets of destination FIFO registers for each of
 these transfer controllers.
 
-
 **Figure 11-187. DFOPT0 Register**
 
-31                 30               29                    28               27                    26            25                 24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23                   22              21                 20                  19                    18            17                 16
-RESERVED             TCCHEN          RESERVED           TCINTEN                     RESERVED                               TCC
-R-0h                 R-0h            R-0h               R-0h                        R-0h                                 R-0h
-15                 14               13                    12             11                      10           9                   8
-TCC                                         RESERVED                               FWID
-R-0h                                          R-0h                                 R-0h
-7                  6                5                     4                 3                    2             1                 0
-RESERVED                               PRI                                          RESERVED                      DAM               SAM
-R-0h                                 R-0h                                           R-0h                        R-0h              R-0h
+23 22 21 20 19 18 17 16
+RESERVED TCCHEN RESERVED TCINTEN RESERVED TCC
+R-0h R-0h R-0h R-0h R-0h R-0h
+15 14 13 12 11 10 9 8
+TCC RESERVED FWID
+R-0h R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED PRI RESERVED DAM SAM
+R-0h R-0h R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-175. DFOPT0 Register Field Descriptions**
 
-Bit        Field                      Type             Reset          Description
-31-23       RESERVED                   R                0h
-22        TCCHEN                     R                0h             Transfer complete chaining enable
+Bit Field Type Reset Description
+31-23 RESERVED R 0h
+22 TCCHEN R 0h Transfer complete chaining enable
 0h = Transfer complete chaining is disabled
 1h = Transfer complete chaining is enabled
-21        RESERVED                   R                0h
-20        TCINTEN                    R                0h             Transfer complete interrupt enable.
+21 RESERVED R 0h
+20 TCINTEN R 0h Transfer complete interrupt enable.
 0h = Transfer complete interrupt is disabled.
 1h = Transfer complete interrupt is enabled.
-19-18       RESERVED                   R                0h
-17-12       TCC                        R                0h             Transfer complete code.
+19-18 RESERVED R 0h
+17-12 TCC R 0h Transfer complete code.
 This 6 bit code is used to set the relevant bit in CER or IPR of the
 EDMA3PCC module.
-11        RESERVED                   R                0h
-10-8       FWID                       R                0h             FIFO width.
+11 RESERVED R 0h
+10-8 FWID R 0h FIFO width.
 Applies if either SAM or DAM is set to constant addressing mode.
 0h = FIFO width is 8-bit.
 1h = FIFO width is 16-bit.
@@ -10217,28 +9445,26 @@ Applies if either SAM or DAM is set to constant addressing mode.
 5h = FIFO width is 256-bit.
 6h = Reserved.
 7h = Reserved.
-7         RESERVED                   R                0h
-
+7 RESERVED R 0h
 
 **Table 11-175. DFOPT0 Register Field Descriptions (continued)**
 
-Bit      Field                   Type            Reset          Description
-6-4      PRI                     R               0h             Transfer priority
+Bit Field Type Reset Description
+6-4 PRI R 0h Transfer priority
 0h = Priority 0 - Highest priority
 1h = From 1h to 6h, Priority 1 to priority 6
 7h = Priority 7 - Lowest priority
-3-2      RESERVED                R               0h
-1        DAM                     R               0h             Destination address mode within an array
+3-2 RESERVED R 0h
+1 DAM R 0h Destination address mode within an array
 0h = Increment (INCR) mode. Destination addressing within an array
 increments.
 1h = Constant addressing (CONST) mode. Destination addressing
 within an array wraps around upon reaching FIFO width.
-0        SAM                     R               0h             Source address mode within an array
+0 SAM R 0h Source address mode within an array
 0h = Increment (INCR) mode. Source addressing within an array
 increments.
 1h = Constant addressing (CONST) mode. Source addressing within
 an array wraps around upon reaching FIFO width.
-
 
 #### 11.4.2.24 DFSRC0 Register (offset = 304h) [reset = 0h]
 
@@ -10252,20 +9478,17 @@ TC0, TC1, and TC2 each have a destination FIFO depth of 4, so there are four set
 registers for each of these transfer controllers.
 Note: Source address reference is not applicable for Destination FIFO Register Set. Read returns 0.
 
-
 **Figure 11-188. DFSRC0 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 RESERVED
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-176. DFSRC0 Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     RESERVED                    R               0h
-
+Bit Field Type Reset Description
+31-0 RESERVED R 0h
 
 #### 11.4.2.25 DFCNT0 Register (offset = 308h) [reset = 0h]
 
@@ -10278,19 +9501,17 @@ destination FIFO register sets depends on the destination FIFO depth. TC0, TC1, 
 destination FIFO depth of 4, so there are four sets of destination FIFO registers for each of these transfer
 controllers.
 
-
 **Figure 11-189. DFCNT0 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8 7    6   5   4   3   2   1   0
-BCNT                                                                                ACNT
-R-0h                                                                               R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+BCNT ACNT
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-177. DFCNT0 Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-16      BCNT                       R               0h             B-dimension count remaining for Destination Register Set.
+Bit Field Type Reset Description
+31-16 BCNT R 0h B-dimension count remaining for Destination Register Set.
 Represents the amount of data remaining to be written.
 For the final TR in the Destination Register FIFO: TC decrements
 ACNT and BCNT as necessary after each write dataphase is issued.
@@ -10298,7 +9519,7 @@ The final value should be 0 when TR is complete.
 For a non-final TR in the Destination Register FIFO: CNT will hold
 the originally programmed value or the optimized BCNT value after
 2D optimization calculation.
-15-0       ACNT                       R               0h             A-dimension count remaining for Destination Register Set.
+15-0 ACNT R 0h A-dimension count remaining for Destination Register Set.
 Represents the amount of data remaining to be written.
 For the final TR in the Destination Register FIFO: TC decrements
 ACNT and BCNT as necessary after each write dataphase is issued.
@@ -10307,7 +9528,6 @@ For a non-final TR in the Destination Register FIFO: CNT will hold
 the originally programmed value or the optimized BCNT value after
 2D optimization calculation.
 Value 0 to FFFFh.
-
 
 #### 11.4.2.26 DFDST0 Register (offset = 30Ch) [reset = 0h]
 
@@ -10320,19 +9540,17 @@ during a transfer. The number of destination FIFO register sets depends on the d
 TC0, TC1, and TC2 each have a destination FIFO depth of 4, so there are four sets of destination FIFO
 registers for each of these transfer controllers.
 
-
 **Figure 11-190. DFDST0 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 DADDR
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-178. DFDST0 Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     DADDR                       R               0h             Destination address for the destination FIFO register set.
+Bit Field Type Reset Description
+31-0 DADDR R 0h Destination address for the destination FIFO register set.
 TC updates the value according to both the destination addressing
 mode (OPT.SAM) or destination index value (BIDX.DBIDX) after
 each write command is issued.
@@ -10342,7 +9560,6 @@ Note: If DAM == CONST, the 'active' address will increment
 internally as if the transfer were an 'Increment' transfer.
 The address issued on the write command interface will correctly
 issue the same address programmed by the user.
-
 
 #### 11.4.2.27 DFBIDX0 Register (offset = 310h) [reset = 0h]
 
@@ -10355,32 +9572,29 @@ number of destination FIFO register sets depends on the destination FIFO depth. 
 each have a destination FIFO depth of 4, so there are four sets of destination FIFO registers for each of
 these transfer controllers.
 
-
 **Figure 11-191. DFBIDX0 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8 7     6   5   4   3   2   1    0
-DBIDX                                                                               SBIDX
-R-0h                                                                                R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+DBIDX SBIDX
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-179. DFBIDX0 Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-16      DBIDX                      R               0h             B-Index offset between destination arrays for the Destination FIFO
+Bit Field Type Reset Description
+31-16 DBIDX R 0h B-Index offset between destination arrays for the Destination FIFO
 Register Set.
 Represents the offset in bytes between the starting address of each
 destination array (there are BCNT arrays of ACNT elements).
 DBIDX is always used regardless of whether DAM is in Increment or
 FIFO mode.
 Value 0 to FFFFh.
-15-0       SBIDX                      R               0h             B-Index offset between source arrays for the Destination FIFO
+15-0 SBIDX R 0h B-Index offset between source arrays for the Destination FIFO
 Register Set.
 Represents the offset in bytes between the starting address of each
 source array (there are BCNT arrays of ACNT elements).
 SBIDX is always used regardless of whether SAM is in Increment or
 FIFO mode.
-
 
 #### 11.4.2.28 DFMPPRXY0 Register (offset = 314h) [reset = 0h]
 
@@ -10393,29 +9607,27 @@ during a transfer. The number of destination FIFO register sets depends on the d
 TC0, TC1, and TC2 each have a destination FIFO depth of 4, so there are four sets of destination FIFO
 registers for each of these transfer controllers.
 
-
 **Figure 11-192. DFMPPRXY0 Register**
 
-31               30                29                    28               27                    26            25             24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23               22                21                    20               19                    18            17             16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15               14                13                12                   11                    10            9              8
-RESERVED                                                                  PRIV
-R-0h                                                                    R-0h
-7              6                5                     4                 3                    2             1               0
-RESERVED                                                                       PRIVID
-R-0h                                                                          R-0h
+15 14 13 12 11 10 9 8
+RESERVED PRIV
+R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED PRIVID
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-180. DFMPPRXY0 Register Field Descriptions**
 
-Bit       Field                      Type             Reset          Description
-31-9      RESERVED                   R                0h
-8        PRIV                       R                0h             Privilege level.
+Bit Field Type Reset Description
+31-9 RESERVED R 0h
+8 PRIV R 0h Privilege level.
 This contains the Privilege level used by the EDMA3 programmer to
 set up the parameter entry in the channel controller.
 This field is set up when the associated TR is submitted to the
@@ -10426,8 +9638,8 @@ protection checks based on the PRIV of the host that set up the
 DMA transaction.
 0h = User-level privilege
 1h = Supervisor-level privilege
-7-4       RESERVED                   R                0h
-3-0       PRIVID                     R                0h             Privilege ID.
+7-4 RESERVED R 0h
+3-0 PRIVID R 0h Privilege ID.
 This contains the Privilege ID of the EDMA3 programmer that set up
 the parameter entry in the channel controller.
 This field is set up when the associated TR is submitted to the
@@ -10437,7 +9649,6 @@ the target endpoints so that the target endpoints can perform
 memory protection checks based on the PRIVID of the host that set
 up the DMA transaction.
 Value 0 to Fh.
-
 
 #### 11.4.2.29 DFOPT1 Register (offset = 340h) [reset = 0h]
 
@@ -10450,41 +9661,39 @@ number of destination FIFO register sets depends on the destination FIFO depth. 
 each have a destination FIFO depth of 4, so there are four sets of destination FIFO registers for each of
 these transfer controllers.
 
-
 **Figure 11-193. DFOPT1 Register**
 
-31                30               29                    28               27                    26            25                 24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23                     22              21                 20                  19                    18            17                 16
-RESERVED               TCCHEN          RESERVED           TCINTEN                     RESERVED                               TCC
-R-0h                   R-0h            R-0h               R-0h                        R-0h                                 R-0h
-15                14               13                    12             11                      10           9                   8
-TCC                                         RESERVED                               FWID
-R-0h                                          R-0h                                 R-0h
-7                    6                5                     4                 3                    2             1                 0
-RESERVED                                 PRI                                          RESERVED                      DAM               SAM
-R-0h                                   R-0h                                           R-0h                        R-0h              R-0h
+23 22 21 20 19 18 17 16
+RESERVED TCCHEN RESERVED TCINTEN RESERVED TCC
+R-0h R-0h R-0h R-0h R-0h R-0h
+15 14 13 12 11 10 9 8
+TCC RESERVED FWID
+R-0h R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED PRI RESERVED DAM SAM
+R-0h R-0h R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-181. DFOPT1 Register Field Descriptions**
 
-Bit       Field                      Type             Reset          Description
-31-23         RESERVED                   R                0h
-22        TCCHEN                     R                0h             Transfer complete chaining enable
+Bit Field Type Reset Description
+31-23 RESERVED R 0h
+22 TCCHEN R 0h Transfer complete chaining enable
 0h = Transfer complete chaining is disabled
 1h = Transfer complete chaining is enabled
-21        RESERVED                   R                0h
-20        TCINTEN                    R                0h             Transfer complete interrupt enable.
+21 RESERVED R 0h
+20 TCINTEN R 0h Transfer complete interrupt enable.
 0h = Transfer complete interrupt is disabled.
 1h = Transfer complete interrupt is enabled.
-19-18         RESERVED                   R                0h
-17-12         TCC                        R                0h             Transfer complete code.
+19-18 RESERVED R 0h
+17-12 TCC R 0h Transfer complete code.
 This 6 bit code is used to set the relevant bit in CER or IPR of the
 EDMA3PCC module.
-11        RESERVED                   R                0h
-10-8          FWID                       R                0h             FIFO width.
+11 RESERVED R 0h
+10-8 FWID R 0h FIFO width.
 Applies if either SAM or DAM is set to constant addressing mode.
 0h = FIFO width is 8-bit.
 1h = FIFO width is 16-bit.
@@ -10494,28 +9703,26 @@ Applies if either SAM or DAM is set to constant addressing mode.
 5h = FIFO width is 256-bit.
 6h = Reserved.
 7h = Reserved.
-7         RESERVED                   R                0h
-
+7 RESERVED R 0h
 
 **Table 11-181. DFOPT1 Register Field Descriptions (continued)**
 
-Bit      Field                   Type            Reset          Description
-6-4      PRI                     R               0h             Transfer priority
+Bit Field Type Reset Description
+6-4 PRI R 0h Transfer priority
 0h = Priority 0 - Highest priority
 1h = From 1h to 6h, Priority 1 to priority 6
 7h = Priority 7 - Lowest priority
-3-2      RESERVED                R               0h
-1       DAM                     R               0h             Destination address mode within an array
+3-2 RESERVED R 0h
+1 DAM R 0h Destination address mode within an array
 0h = Increment (INCR) mode. Destination addressing within an array
 increments.
 1h = Constant addressing (CONST) mode. Destination addressing
 within an array wraps around upon reaching FIFO width.
-0       SAM                     R               0h             Source address mode within an array
+0 SAM R 0h Source address mode within an array
 0h = Increment (INCR) mode. Source addressing within an array
 increments.
 1h = Constant addressing (CONST) mode. Source addressing within
 an array wraps around upon reaching FIFO width.
-
 
 #### 11.4.2.30 DFSRC1 Register (offset = 344h) [reset = 0h]
 
@@ -10530,20 +9737,17 @@ registers for each of these transfer controllers. Note: Source address is not ap
 FIFO Register Set. Read returns 0.
 Note: Source address reference is not applicable for Destination FIFO Register Set. Read returns 0.
 
-
 **Figure 11-194. DFSRC1 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 RESERVED
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-182. DFSRC1 Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       RESERVED                   R               0h
-
+Bit Field Type Reset Description
+31-0 RESERVED R 0h
 
 #### 11.4.2.31 DFCNT1 Register (offset = 348h) [reset = 0h]
 
@@ -10556,19 +9760,17 @@ destination FIFO register sets depends on the destination FIFO depth. TC0, TC1, 
 destination FIFO depth of 4, so there are four sets of destination FIFO registers for each of these transfer
 controllers.
 
-
 **Figure 11-195. DFCNT1 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8 7    6   5   4   3   2   1    0
-BCNT                                                                                ACNT
-R-0h                                                                               R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+BCNT ACNT
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-183. DFCNT1 Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-16     BCNT                        R               0h             B-dimension count remaining for Destination Register Set.
+Bit Field Type Reset Description
+31-16 BCNT R 0h B-dimension count remaining for Destination Register Set.
 Represents the amount of data remaining to be written.
 For the final TR in the Destination Register FIFO: TC decrements
 ACNT and BCNT as necessary after each write dataphase is issued.
@@ -10576,7 +9778,7 @@ The final value should be 0 when TR is complete.
 For a non-final TR in the Destination Register FIFO: CNT will hold
 the originally programmed value or the optimized BCNT value after
 2D optimization calculation.
-15-0     ACNT                        R               0h             A-dimension count remaining for Destination Register Set.
+15-0 ACNT R 0h A-dimension count remaining for Destination Register Set.
 Represents the amount of data remaining to be written.
 For the final TR in the Destination Register FIFO: TC decrements
 ACNT and BCNT as necessary after each write dataphase is issued.
@@ -10585,7 +9787,6 @@ For a non-final TR in the Destination Register FIFO: CNT will hold
 the originally programmed value or the optimized BCNT value after
 2D optimization calculation.
 Value 0 to FFFFh.
-
 
 #### 11.4.2.32 DFDST1 Register (offset = 34Ch) [reset = 0h]
 
@@ -10598,24 +9799,21 @@ during a transfer. The number of destination FIFO register sets depends on the d
 TC0, TC1, and TC2 each have a destination FIFO depth of 4, so there are four sets of destination FIFO
 registers for each of these transfer controllers.
 
-
 **Figure 11-196. DFDST1 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1     0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 DADDR
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-184. DFDST1 Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       DADDR                      R               0h             ARRAY(0x245d830) Note: If DAM == CONST, the 'active' address
+Bit Field Type Reset Description
+31-0 DADDR R 0h ARRAY(0x245d830) Note: If DAM == CONST, the 'active' address
 will increment internally as if the transfer were an 'Increment'
 transfer.
 The address issued on the write command interface will correctly
 issue the same address programmed by the user.
-
 
 #### 11.4.2.33 DFBIDX1 Register (offset = 350h) [reset = 0h]
 
@@ -10628,32 +9826,29 @@ number of destination FIFO register sets depends on the destination FIFO depth. 
 each have a destination FIFO depth of 4, so there are four sets of destination FIFO registers for each of
 these transfer controllers.
 
-
 **Figure 11-197. DFBIDX1 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8 7     6   5   4   3   2   1    0
-DBIDX                                                                               SBIDX
-R-0h                                                                                R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+DBIDX SBIDX
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-185. DFBIDX1 Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-16     DBIDX                       R               0h             B-Index offset between destination arrays for the Destination FIFO
+Bit Field Type Reset Description
+31-16 DBIDX R 0h B-Index offset between destination arrays for the Destination FIFO
 Register Set.
 Represents the offset in bytes between the starting address of each
 destination array (there are BCNT arrays of ACNT elements).
 DBIDX is always used regardless of whether DAM is in Increment or
 FIFO mode.
 Value 0 to FFFFh.
-15-0     SBIDX                       R               0h             B-Index offset between source arrays for the Destination FIFO
+15-0 SBIDX R 0h B-Index offset between source arrays for the Destination FIFO
 Register Set.
 Represents the offset in bytes between the starting address of each
 source array (there are BCNT arrays of ACNT elements).
 SBIDX is always used regardless of whether SAM is in Increment or
 FIFO mode.
-
 
 #### 11.4.2.34 DFMPPRXY1 Register (offset = 354h) [reset = 0h]
 
@@ -10666,29 +9861,27 @@ during a transfer. The number of destination FIFO register sets depends on the d
 TC0, TC1, and TC2 each have a destination FIFO depth of 4, so there are four sets of destination FIFO
 registers for each of these transfer controllers.
 
-
 **Figure 11-198. DFMPPRXY1 Register**
 
-31              30              29                    28               27                    26            25             24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23              22              21                    20               19                    18            17             16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15              14              13                12                   11                    10            9              8
-RESERVED                                                                  PRIV
-R-0h                                                                    R-0h
-7             6               5                     4                 3                    2             1               0
-RESERVED                                                                     PRIVID
-R-0h                                                                        R-0h
+15 14 13 12 11 10 9 8
+RESERVED PRIV
+R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED PRIVID
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-186. DFMPPRXY1 Register Field Descriptions**
 
-Bit      Field                    Type             Reset          Description
-31-9         RESERVED                 R                0h
-8        PRIV                     R                0h             Privilege level.
+Bit Field Type Reset Description
+31-9 RESERVED R 0h
+8 PRIV R 0h Privilege level.
 This contains the Privilege level used by the EDMA3 programmer to
 set up the parameter entry in the channel controller.
 This field is set up when the associated TR is submitted to the
@@ -10699,8 +9892,8 @@ protection checks based on the PRIV of the host that set up the
 DMA transaction.
 0h = User-level privilege
 1h = Supervisor-level privilege
-7-4      RESERVED                 R                0h
-3-0      PRIVID                   R                0h             Privilege ID.
+7-4 RESERVED R 0h
+3-0 PRIVID R 0h Privilege ID.
 This contains the Privilege ID of the EDMA3 programmer that set up
 the parameter entry in the channel controller.
 This field is set up when the associated TR is submitted to the
@@ -10710,7 +9903,6 @@ the target endpoints so that the target endpoints can perform
 memory protection checks based on the PRIVID of the host that set
 up the DMA transaction.
 Value 0 to Fh.
-
 
 #### 11.4.2.35 DFOPT2 Register (offset = 380h) [reset = 0h]
 
@@ -10723,41 +9915,39 @@ number of destination FIFO register sets depends on the destination FIFO depth. 
 each have a destination FIFO depth of 4, so there are four sets of destination FIFO registers for each of
 these transfer controllers.
 
-
 **Figure 11-199. DFOPT2 Register**
 
-31                 30               29                    28               27                    26            25                 24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23                   22              21                 20                  19                    18            17                 16
-RESERVED             TCCHEN          RESERVED           TCINTEN                     RESERVED                               TCC
-R-0h                 R-0h            R-0h               R-0h                        R-0h                                 R-0h
-15                 14               13                    12             11                      10           9                   8
-TCC                                         RESERVED                               FWID
-R-0h                                          R-0h                                 R-0h
-7                  6                5                     4                 3                    2             1                 0
-RESERVED                               PRI                                          RESERVED                      DAM               SAM
-R-0h                                 R-0h                                           R-0h                        R-0h              R-0h
+23 22 21 20 19 18 17 16
+RESERVED TCCHEN RESERVED TCINTEN RESERVED TCC
+R-0h R-0h R-0h R-0h R-0h R-0h
+15 14 13 12 11 10 9 8
+TCC RESERVED FWID
+R-0h R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED PRI RESERVED DAM SAM
+R-0h R-0h R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-187. DFOPT2 Register Field Descriptions**
 
-Bit        Field                      Type             Reset          Description
-31-23       RESERVED                   R                0h
-22        TCCHEN                     R                0h             Transfer complete chaining enable
+Bit Field Type Reset Description
+31-23 RESERVED R 0h
+22 TCCHEN R 0h Transfer complete chaining enable
 0h = Transfer complete chaining is disabled
 1h = Transfer complete chaining is enabled
-21        RESERVED                   R                0h
-20        TCINTEN                    R                0h             Transfer complete interrupt enable.
+21 RESERVED R 0h
+20 TCINTEN R 0h Transfer complete interrupt enable.
 0h = Transfer complete interrupt is disabled.
 1h = Transfer complete interrupt is enabled.
-19-18       RESERVED                   R                0h
-17-12       TCC                        R                0h             Transfer complete code.
+19-18 RESERVED R 0h
+17-12 TCC R 0h Transfer complete code.
 This 6 bit code is used to set the relevant bit in CER or IPR of the
 EDMA3PCC module.
-11        RESERVED                   R                0h
-10-8       FWID                       R                0h             FIFO width.
+11 RESERVED R 0h
+10-8 FWID R 0h FIFO width.
 Applies if either SAM or DAM is set to constant addressing mode.
 0h = FIFO width is 8-bit.
 1h = FIFO width is 16-bit.
@@ -10767,28 +9957,26 @@ Applies if either SAM or DAM is set to constant addressing mode.
 5h = FIFO width is 256-bit.
 6h = Reserved.
 7h = Reserved.
-7         RESERVED                   R                0h
-
+7 RESERVED R 0h
 
 **Table 11-187. DFOPT2 Register Field Descriptions (continued)**
 
-Bit      Field                   Type            Reset          Description
-6-4      PRI                     R               0h             Transfer priority
+Bit Field Type Reset Description
+6-4 PRI R 0h Transfer priority
 0h = Priority 0 - Highest priority
 1h = From 1h to 6h, Priority 1 to priority 6
 7h = Priority 7 - Lowest priority
-3-2      RESERVED                R               0h
-1        DAM                     R               0h             Destination address mode within an array
+3-2 RESERVED R 0h
+1 DAM R 0h Destination address mode within an array
 0h = Increment (INCR) mode. Destination addressing within an array
 increments.
 1h = Constant addressing (CONST) mode. Destination addressing
 within an array wraps around upon reaching FIFO width.
-0        SAM                     R               0h             Source address mode within an array
+0 SAM R 0h Source address mode within an array
 0h = Increment (INCR) mode. Source addressing within an array
 increments.
 1h = Constant addressing (CONST) mode. Source addressing within
 an array wraps around upon reaching FIFO width.
-
 
 #### 11.4.2.36 DFSRC2 Register (offset = 384h) [reset = 0h]
 
@@ -10803,20 +9991,17 @@ registers for each of these transfer controllers. Note: Source address is not ap
 FIFO Register Set. Read returns 0.
 Note: Source address reference is not applicable for Destination FIFO Register Set. Read returns 0.
 
-
 **Figure 11-200. DFSRC2 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1    0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 RESERVED
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-188. DFSRC2 Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     RESERVED                    R               0h
-
+Bit Field Type Reset Description
+31-0 RESERVED R 0h
 
 #### 11.4.2.37 DFCNT2 Register (offset = 388h) [reset = 0h]
 
@@ -10829,19 +10014,17 @@ destination FIFO register sets depends on the destination FIFO depth. TC0, TC1, 
 destination FIFO depth of 4, so there are four sets of destination FIFO registers for each of these transfer
 controllers.
 
-
 **Figure 11-201. DFCNT2 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8 7    6   5   4   3   2   1   0
-BCNT                                                                                ACNT
-R-0h                                                                               R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+BCNT ACNT
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-189. DFCNT2 Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-16      BCNT                       R               0h             B-dimension count remaining for Destination Register Set.
+Bit Field Type Reset Description
+31-16 BCNT R 0h B-dimension count remaining for Destination Register Set.
 Represents the amount of data remaining to be written.
 For the final TR in the Destination Register FIFO: TC decrements
 ACNT and BCNT as necessary after each write dataphase is issued.
@@ -10849,7 +10032,7 @@ The final value should be 0 when TR is complete.
 For a non-final TR in the Destination Register FIFO: CNT will hold
 the originally programmed value or the optimized BCNT value after
 2D optimization calculation.
-15-0       ACNT                       R               0h             A-dimension count remaining for Destination Register Set.
+15-0 ACNT R 0h A-dimension count remaining for Destination Register Set.
 Represents the amount of data remaining to be written.
 For the final TR in the Destination Register FIFO: TC decrements
 ACNT and BCNT as necessary after each write dataphase is issued.
@@ -10858,7 +10041,6 @@ For a non-final TR in the Destination Register FIFO: CNT will hold
 the originally programmed value or the optimized BCNT value after
 2D optimization calculation.
 Value 0 to FFFFh.
-
 
 #### 11.4.2.38 DFDST2 Register (offset = 38Ch) [reset = 0h]
 
@@ -10871,24 +10053,21 @@ during a transfer. The number of destination FIFO register sets depends on the d
 TC0, TC1, and TC2 each have a destination FIFO depth of 4, so there are four sets of destination FIFO
 registers for each of these transfer controllers.
 
-
 **Figure 11-202. DFDST2 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1     0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 DADDR
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-190. DFDST2 Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-0     DADDR                       R               0h             ARRAY(0x248ac60) Note: If DAM == CONST, the 'active' address
+Bit Field Type Reset Description
+31-0 DADDR R 0h ARRAY(0x248ac60) Note: If DAM == CONST, the 'active' address
 will increment internally as if the transfer were an 'Increment'
 transfer.
 The address issued on the write command interface will correctly
 issue the same address programmed by the user.
-
 
 #### 11.4.2.39 DFBIDX2 Register (offset = 390h) [reset = 0h]
 
@@ -10901,32 +10080,29 @@ number of destination FIFO register sets depends on the destination FIFO depth. 
 each have a destination FIFO depth of 4, so there are four sets of destination FIFO registers for each of
 these transfer controllers.
 
-
 **Figure 11-203. DFBIDX2 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8 7     6   5   4   3   2   1    0
-DBIDX                                                                               SBIDX
-R-0h                                                                                R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+DBIDX SBIDX
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-191. DFBIDX2 Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-16      DBIDX                      R               0h             B-Index offset between destination arrays for the Destination FIFO
+Bit Field Type Reset Description
+31-16 DBIDX R 0h B-Index offset between destination arrays for the Destination FIFO
 Register Set.
 Represents the offset in bytes between the starting address of each
 destination array (there are BCNT arrays of ACNT elements).
 DBIDX is always used regardless of whether DAM is in Increment or
 FIFO mode.
 Value 0 to FFFFh.
-15-0       SBIDX                      R               0h             B-Index offset between source arrays for the Destination FIFO
+15-0 SBIDX R 0h B-Index offset between source arrays for the Destination FIFO
 Register Set.
 Represents the offset in bytes between the starting address of each
 source array (there are BCNT arrays of ACNT elements).
 SBIDX is always used regardless of whether SAM is in Increment or
 FIFO mode.
-
 
 #### 11.4.2.40 DFMPPRXY2 Register (offset = 394h) [reset = 0h]
 
@@ -10939,29 +10115,27 @@ during a transfer. The number of destination FIFO register sets depends on the d
 TC0, TC1, and TC2 each have a destination FIFO depth of 4, so there are four sets of destination FIFO
 registers for each of these transfer controllers.
 
-
 **Figure 11-204. DFMPPRXY2 Register**
 
-31               30                29                    28               27                    26            25             24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23               22                21                    20               19                    18            17             16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15               14                13                12                   11                    10            9              8
-RESERVED                                                                  PRIV
-R-0h                                                                    R-0h
-7              6                5                     4                 3                    2             1               0
-RESERVED                                                                       PRIVID
-R-0h                                                                          R-0h
+15 14 13 12 11 10 9 8
+RESERVED PRIV
+R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED PRIVID
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-192. DFMPPRXY2 Register Field Descriptions**
 
-Bit       Field                      Type             Reset          Description
-31-9      RESERVED                   R                0h
-8        PRIV                       R                0h             Privilege level.
+Bit Field Type Reset Description
+31-9 RESERVED R 0h
+8 PRIV R 0h Privilege level.
 This contains the Privilege level used by the EDMA3 programmer to
 set up the parameter entry in the channel controller.
 This field is set up when the associated TR is submitted to the
@@ -10972,8 +10146,8 @@ protection checks based on the PRIV of the host that set up the
 DMA transaction.
 0h = User-level privilege
 1h = Supervisor-level privilege
-7-4       RESERVED                   R                0h
-3-0       PRIVID                     R                0h             Privilege ID.
+7-4 RESERVED R 0h
+3-0 PRIVID R 0h Privilege ID.
 This contains the Privilege ID of the EDMA3 programmer that set up
 the parameter entry in the channel controller.
 This field is set up when the associated TR is submitted to the
@@ -10983,7 +10157,6 @@ the target endpoints so that the target endpoints can perform
 memory protection checks based on the PRIVID of the host that set
 up the DMA transaction.
 Value 0 to Fh.
-
 
 #### 11.4.2.41 DFOPT3 Register (offset = 3C0h) [reset = 0h]
 
@@ -10996,41 +10169,39 @@ number of destination FIFO register sets depends on the destination FIFO depth. 
 each have a destination FIFO depth of 4, so there are four sets of destination FIFO registers for each of
 these transfer controllers.
 
-
 **Figure 11-205. DFOPT3 Register**
 
-31                30               29                    28               27                    26            25                 24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23                     22              21                 20                  19                    18            17                 16
-RESERVED               TCCHEN          RESERVED           TCINTEN                     RESERVED                               TCC
-R-0h                   R-0h            R-0h               R-0h                        R-0h                                 R-0h
-15                14               13                    12             11                      10           9                   8
-TCC                                         RESERVED                               FWID
-R-0h                                          R-0h                                 R-0h
-7                    6                5                     4                 3                    2             1                 0
-RESERVED                                 PRI                                          RESERVED                      DAM               SAM
-R-0h                                   R-0h                                           R-0h                        R-0h              R-0h
+23 22 21 20 19 18 17 16
+RESERVED TCCHEN RESERVED TCINTEN RESERVED TCC
+R-0h R-0h R-0h R-0h R-0h R-0h
+15 14 13 12 11 10 9 8
+TCC RESERVED FWID
+R-0h R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED PRI RESERVED DAM SAM
+R-0h R-0h R-0h R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-193. DFOPT3 Register Field Descriptions**
 
-Bit       Field                      Type             Reset          Description
-31-23         RESERVED                   R                0h
-22        TCCHEN                     R                0h             Transfer complete chaining enable
+Bit Field Type Reset Description
+31-23 RESERVED R 0h
+22 TCCHEN R 0h Transfer complete chaining enable
 0h = Transfer complete chaining is disabled
 1h = Transfer complete chaining is enabled
-21        RESERVED                   R                0h
-20        TCINTEN                    R                0h             Transfer complete interrupt enable.
+21 RESERVED R 0h
+20 TCINTEN R 0h Transfer complete interrupt enable.
 0h = Transfer complete interrupt is disabled.
 1h = Transfer complete interrupt is enabled.
-19-18         RESERVED                   R                0h
-17-12         TCC                        R                0h             Transfer complete code.
+19-18 RESERVED R 0h
+17-12 TCC R 0h Transfer complete code.
 This 6 bit code is used to set the relevant bit in CER or IPR of the
 EDMA3PCC module.
-11        RESERVED                   R                0h
-10-8          FWID                       R                0h             FIFO width.
+11 RESERVED R 0h
+10-8 FWID R 0h FIFO width.
 Applies if either SAM or DAM is set to constant addressing mode.
 0h = FIFO width is 8-bit.
 1h = FIFO width is 16-bit.
@@ -11040,28 +10211,26 @@ Applies if either SAM or DAM is set to constant addressing mode.
 5h = FIFO width is 256-bit.
 6h = Reserved.
 7h = Reserved.
-7         RESERVED                   R                0h
-
+7 RESERVED R 0h
 
 **Table 11-193. DFOPT3 Register Field Descriptions (continued)**
 
-Bit      Field                   Type            Reset          Description
-6-4      PRI                     R               0h             Transfer priority
+Bit Field Type Reset Description
+6-4 PRI R 0h Transfer priority
 0h = Priority 0 - Highest priority
 1h = From 1h to 6h, Priority 1 to priority 6
 7h = Priority 7 - Lowest priority
-3-2      RESERVED                R               0h
-1       DAM                     R               0h             Destination address mode within an array
+3-2 RESERVED R 0h
+1 DAM R 0h Destination address mode within an array
 0h = Increment (INCR) mode. Destination addressing within an array
 increments.
 1h = Constant addressing (CONST) mode. Destination addressing
 within an array wraps around upon reaching FIFO width.
-0       SAM                     R               0h             Source address mode within an array
+0 SAM R 0h Source address mode within an array
 0h = Increment (INCR) mode. Source addressing within an array
 increments.
 1h = Constant addressing (CONST) mode. Source addressing within
 an array wraps around upon reaching FIFO width.
-
 
 #### 11.4.2.42 DFSRC3 Register (offset = 3C4h) [reset = 0h]
 
@@ -11076,20 +10245,17 @@ registers for each of these transfer controllers. Note: Source address is not ap
 FIFO Register Set. Read returns 0.
 Note: Source address reference is not applicable for Destination FIFO Register Set. Read returns 0.
 
-
 **Figure 11-206. DFSRC3 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1   0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 RESERVED
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-194. DFSRC3 Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       RESERVED                   R               0h
-
+Bit Field Type Reset Description
+31-0 RESERVED R 0h
 
 #### 11.4.2.43 DFCNT3 Register (offset = 3C8h) [reset = 0h]
 
@@ -11102,19 +10268,17 @@ destination FIFO register sets depends on the destination FIFO depth. TC0, TC1, 
 destination FIFO depth of 4, so there are four sets of destination FIFO registers for each of these transfer
 controllers.
 
-
 **Figure 11-207. DFCNT3 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8 7    6   5   4   3   2   1    0
-BCNT                                                                                ACNT
-R-0h                                                                               R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+BCNT ACNT
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-195. DFCNT3 Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-16     BCNT                        R               0h             B-dimension count remaining for Destination Register Set.
+Bit Field Type Reset Description
+31-16 BCNT R 0h B-dimension count remaining for Destination Register Set.
 Represents the amount of data remaining to be written.
 For the final TR in the Destination Register FIFO: TC decrements
 ACNT and BCNT as necessary after each write dataphase is issued.
@@ -11122,7 +10286,7 @@ The final value should be 0 when TR is complete.
 For a non-final TR in the Destination Register FIFO: CNT will hold
 the originally programmed value or the optimized BCNT value after
 2D optimization calculation.
-15-0     ACNT                        R               0h             A-dimension count remaining for Destination Register Set.
+15-0 ACNT R 0h A-dimension count remaining for Destination Register Set.
 Represents the amount of data remaining to be written.
 For the final TR in the Destination Register FIFO: TC decrements
 ACNT and BCNT as necessary after each write dataphase is issued.
@@ -11131,7 +10295,6 @@ For a non-final TR in the Destination Register FIFO: CNT will hold
 the originally programmed value or the optimized BCNT value after
 2D optimization calculation.
 Value 0 to FFFFh.
-
 
 #### 11.4.2.44 DFDST3 Register (offset = 3CCh) [reset = 0h]
 
@@ -11144,24 +10307,21 @@ during a transfer. The number of destination FIFO register sets depends on the d
 TC0, TC1, and TC2 each have a destination FIFO depth of 4, so there are four sets of destination FIFO
 registers for each of these transfer controllers.
 
-
 **Figure 11-208. DFDST3 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8   7   6   5   4   3   2   1     0
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 DADDR
 R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
 
-
 **Table 11-196. DFDST3 Register Field Descriptions**
 
-Bit    Field                      Type            Reset          Description
-31-0       DADDR                      R               0h             ARRAY(0x24b1d10) Note: If DAM == CONST, the 'active' address
+Bit Field Type Reset Description
+31-0 DADDR R 0h ARRAY(0x24b1d10) Note: If DAM == CONST, the 'active' address
 will increment internally as if the transfer were an 'Increment'
 transfer.
 The address issued on the write command interface will correctly
 issue the same address programmed by the user.
-
 
 #### 11.4.2.45 DFBIDX3 Register (offset = 3D0h) [reset = 0h]
 
@@ -11174,32 +10334,29 @@ number of destination FIFO register sets depends on the destination FIFO depth. 
 each have a destination FIFO depth of 4, so there are four sets of destination FIFO registers for each of
 these transfer controllers.
 
-
 **Figure 11-209. DFBIDX3 Register**
 
-31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10                                    9   8 7     6   5   4   3   2   1    0
-DBIDX                                                                               SBIDX
-R-0h                                                                                R-0h
+31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+DBIDX SBIDX
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-197. DFBIDX3 Register Field Descriptions**
 
-Bit      Field                       Type            Reset          Description
-31-16     DBIDX                       R               0h             B-Index offset between destination arrays for the Destination FIFO
+Bit Field Type Reset Description
+31-16 DBIDX R 0h B-Index offset between destination arrays for the Destination FIFO
 Register Set.
 Represents the offset in bytes between the starting address of each
 destination array (there are BCNT arrays of ACNT elements).
 DBIDX is always used regardless of whether DAM is in Increment or
 FIFO mode.
 Value 0 to FFFFh.
-15-0     SBIDX                       R               0h             B-Index offset between source arrays for the Destination FIFO
+15-0 SBIDX R 0h B-Index offset between source arrays for the Destination FIFO
 Register Set.
 Represents the offset in bytes between the starting address of each
 source array (there are BCNT arrays of ACNT elements).
 SBIDX is always used regardless of whether SAM is in Increment or
 FIFO mode.
-
 
 #### 11.4.2.46 DFMPPRXY3 Register (offset = 3D4h) [reset = 0h]
 
@@ -11212,29 +10369,27 @@ during a transfer. The number of destination FIFO register sets depends on the d
 TC0, TC1, and TC2 each have a destination FIFO depth of 4, so there are four sets of destination FIFO
 registers for each of these transfer controllers.
 
-
 **Figure 11-210. DFMPPRXY3 Register**
 
-31              30              29                    28               27                    26            25             24
+31 30 29 28 27 26 25 24
 RESERVED
 R-0h
-23              22              21                    20               19                    18            17             16
+23 22 21 20 19 18 17 16
 RESERVED
 R-0h
-15              14              13                12                   11                    10            9              8
-RESERVED                                                                  PRIV
-R-0h                                                                    R-0h
-7             6               5                     4                 3                    2             1               0
-RESERVED                                                                     PRIVID
-R-0h                                                                        R-0h
+15 14 13 12 11 10 9 8
+RESERVED PRIV
+R-0h R-0h
+7 6 5 4 3 2 1 0
+RESERVED PRIVID
+R-0h R-0h
 LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; -n = value after reset
-
 
 **Table 11-198. DFMPPRXY3 Register Field Descriptions**
 
-Bit      Field                    Type             Reset          Description
-31-9         RESERVED                 R                0h
-8        PRIV                     R                0h             Privilege level.
+Bit Field Type Reset Description
+31-9 RESERVED R 0h
+8 PRIV R 0h Privilege level.
 This contains the Privilege level used by the EDMA3 programmer to
 set up the parameter entry in the channel controller.
 This field is set up when the associated TR is submitted to the
@@ -11245,8 +10400,8 @@ protection checks based on the PRIV of the host that set up the
 DMA transaction.
 0h = User-level privilege
 1h = Supervisor-level privilege
-7-4      RESERVED                 R                0h
-3-0      PRIVID                   R                0h             Privilege ID.
+7-4 RESERVED R 0h
+3-0 PRIVID R 0h Privilege ID.
 This contains the Privilege ID of the EDMA3 programmer that set up
 the parameter entry in the channel controller.
 This field is set up when the associated TR is submitted to the
@@ -11257,164 +10412,152 @@ memory protection checks based on the PRIVID of the host that set
 up the DMA transaction.
 Value 0 to Fh.
 
-
 ## 11.5 Appendix A
-
 
 ### 11.5.1 Debug Checklist
 
 This section lists some tips to keep in mind while debugging applications using the EDMA3.
 The following table provides some common issues and their probable causes and resolutions.
 
-
 **Table 11-199. Debug List**
 
-Issue                                       Description/Solution
-The transfer associated with the channel    The EDMA3CC may not service a transfer request, even though the associated
-does not happen. The channel does not       PaRAM set is programmed appropriately. Check for the following:
-get serviced.                               1) Verify that events are enabled, i.e., if an external/peripheral event is latched in Event
+Issue Description/Solution
+The transfer associated with the channel The EDMA3CC may not service a transfer request, even though the associated
+does not happen. The channel does not PaRAM set is programmed appropriately. Check for the following:
+get serviced. 1) Verify that events are enabled, i.e., if an external/peripheral event is latched in Event
 Registers (ER/ERH), make sure that the event is enabled in the Event Enable
 Registers (EER/EERH). Similarly, for QDMA channels, make sure that QDMA events
-are appropriately enabled in the QDMA Event Enable Register (QEER).
-2) Verify that the DMA or QDMA Secondary Event Register (SER/SERH/QSERH) bits
+are appropriately enabled in the QDMA Event Enable Register (QEER). 2) Verify that the DMA or QDMA Secondary Event Register (SER/SERH/QSERH) bits
 corresponding to the particular event or channel are not set.
-The Secondary Event Registers bits are      It is possible that a trigger event was received when the parameter set associated with
-set, not allowing additional transfers to   the channel/event was a NULL set for a previous transfer on the channel. This is
-occur on a channel.                         typical in two cases:
-1) QDMA channels: Typically if the parameter set is non-static and expected to be
-terminated by a NULL set (i.e., OPT.STATIC = 0, LINK = 0xFFFF), the parameter set is
-updated with a NULL set after submission of the last TR. Because QDMA channels are
-auto-triggered, this update caused the generation of an event. An event generated for a
-NULL set causes an error condition and results in setting the bits corresponding to the
-QDMA channel in the QEMR and QSER. This will disable further prioritization of the
-channel.
-2) DMA channels used in a continuous mode: The peripheral may be set up to
-continuously generate infinite events (for instance, in case of McASP, every time the
-data shifts out from the DXR register, it generates an XEVT). The parameter set may
-be programmed to expect only a finite number of events and to be terminated by a
-NULL link. After the expected number of events, the parameter set is reloaded with a
-NULL parameter set. Because the peripheral will generate additional events, an error
-condition is set in the SER.Ex and EMR.Ex set, preventing further event prioritization.
-You must ensure that the number of events received is limited to the expected number
-of events for which the parameter set is programmed, or you must ensure that bits
-corresponding to particular channel or event are not set in the Secondary event
-registers (SER/SERH/QSER) and Event Missed Registers (EMR/EMRH/QEMR) before
-trying to perform subsequent transfers for the event/channel.
-Completion interrupts are not asserted, or You must ensure the following:
-no further interrupts are received after the 1) The interrupt generation is enabled in the OPT of the associated PaRAM set
-first completion interrupt.                  (TCINTEN = 1 and/or ITCINTEN = 1).
-2) The interrupts are enabled in the EDMA3 Channel Controller, via the Interrupt
-Enable Registers (IER/IERH).
-3) The corresponding interrupts are enabled in the device interrupt controller.
-4) The set interrupts are cleared in the interrupt pending registers (IPR/IPRH) before
-exiting the transfer completion interrupt service routine (ISR). See Section 11.3.9.1.2
-for details on writing EDMA3 ISRs.
-5) If working with shadow region interrupts, make sure that the DMA Region Access
-registers (DRAE/DRAEH) are set up properly, because the DRAE/DRAEH registers act
-as secondary enables for shadow region completion interrupts, along with the
-IER/IERH registers.
-If working with shadow region interrupts, make sure that the bits corresponding to the
-transfer completion code (TCC) value are also enabled in the DRAE/DRAEH registers.
-For instance, if the PaRAM set associated with Channel 0 returns a completion code of
-63 (OPT.TCC=63), ensure that DRAEH.E63 is also set for a shadow region completion
-interrupt because the interrupt pending register bit set will be IPRH.I63 (not IPR.I0).
+The Secondary Event Registers bits are It is possible that a trigger event was received when the parameter set associated with
+set, not allowing additional transfers to the channel/event was a NULL set for a previous transfer on the channel. This is
+occur on a channel. typical in two cases:
 
+1. QDMA channels: Typically if the parameter set is non-static and expected to be
+   terminated by a NULL set (i.e., OPT.STATIC = 0, LINK = 0xFFFF), the parameter set is
+   updated with a NULL set after submission of the last TR. Because QDMA channels are
+   auto-triggered, this update caused the generation of an event. An event generated for a
+   NULL set causes an error condition and results in setting the bits corresponding to the
+   QDMA channel in the QEMR and QSER. This will disable further prioritization of the
+   channel.
+2. DMA channels used in a continuous mode: The peripheral may be set up to
+   continuously generate infinite events (for instance, in case of McASP, every time the
+   data shifts out from the DXR register, it generates an XEVT). The parameter set may
+   be programmed to expect only a finite number of events and to be terminated by a
+   NULL link. After the expected number of events, the parameter set is reloaded with a
+   NULL parameter set. Because the peripheral will generate additional events, an error
+   condition is set in the SER.Ex and EMR.Ex set, preventing further event prioritization.
+   You must ensure that the number of events received is limited to the expected number
+   of events for which the parameter set is programmed, or you must ensure that bits
+   corresponding to particular channel or event are not set in the Secondary event
+   registers (SER/SERH/QSER) and Event Missed Registers (EMR/EMRH/QEMR) before
+   trying to perform subsequent transfers for the event/channel.
+   Completion interrupts are not asserted, or You must ensure the following:
+   no further interrupts are received after the 1) The interrupt generation is enabled in the OPT of the associated PaRAM set
+   first completion interrupt. (TCINTEN = 1 and/or ITCINTEN = 1).
+3. The interrupts are enabled in the EDMA3 Channel Controller, via the Interrupt
+   Enable Registers (IER/IERH).
+4. The corresponding interrupts are enabled in the device interrupt controller.
+5. The set interrupts are cleared in the interrupt pending registers (IPR/IPRH) before
+   exiting the transfer completion interrupt service routine (ISR). See Section 11.3.9.1.2
+   for details on writing EDMA3 ISRs.
+6. If working with shadow region interrupts, make sure that the DMA Region Access
+   registers (DRAE/DRAEH) are set up properly, because the DRAE/DRAEH registers act
+   as secondary enables for shadow region completion interrupts, along with the
+   IER/IERH registers.
+   If working with shadow region interrupts, make sure that the bits corresponding to the
+   transfer completion code (TCC) value are also enabled in the DRAE/DRAEH registers.
+   For instance, if the PaRAM set associated with Channel 0 returns a completion code of
+   63 (OPT.TCC=63), ensure that DRAEH.E63 is also set for a shadow region completion
+   interrupt because the interrupt pending register bit set will be IPRH.I63 (not IPR.I0).
 
 ### 11.5.2 Miscellaneous Programming/Debug Tips
 
 1. For several registers, the setting and clearing of bits needs to be done via separate dedicated
-registers. For example, the Event Register (ER/ERH) can only be cleared by writing a 1 to the
-corresponding bits in the Event Clear Registers (ECR/ECRH). Similarly, the Event Enable Register
-(EER/EERH) bits can only be set with writes of 1 to the Event Enable Set Registers (EESR/EESRH)
-and cleared with writes of 1 to the corresponding bits in the Event Enable Clear Register
-(EECR/EECRH).
+   registers. For example, the Event Register (ER/ERH) can only be cleared by writing a 1 to the
+   corresponding bits in the Event Clear Registers (ECR/ECRH). Similarly, the Event Enable Register
+   (EER/EERH) bits can only be set with writes of 1 to the Event Enable Set Registers (EESR/EESRH)
+   and cleared with writes of 1 to the corresponding bits in the Event Enable Clear Register
+   (EECR/EECRH).
 2. Writes to the shadow region memory maps are governed by region access registers
-(DRAE/DRAEH/QRAE). If the appropriate channels are not enabled in these registers, read/write
-access to the shadow region memory map is not enabled.
+   (DRAE/DRAEH/QRAE). If the appropriate channels are not enabled in these registers, read/write
+   access to the shadow region memory map is not enabled.
 3. When working with shadow region completion interrupts, ensure that the DMA Region Access
-Registers (DRAE/DRAEH) for every region are set in a mutually exclusive way (unless it is a
-requirement for an application). If there is an overlap in the allocated channels and transfer completion
-codes (setting of Interrupt Pending Register bits) in the region resource allocation, it results in multiple
-
+   Registers (DRAE/DRAEH) for every region are set in a mutually exclusive way (unless it is a
+   requirement for an application). If there is an overlap in the allocated channels and transfer completion
+   codes (setting of Interrupt Pending Register bits) in the region resource allocation, it results in multiple
 
 shadow region completion interrupts. For example, if DRAE0.E0 and DRAE1.E0 are both set, then on
 completion of a transfer that returns a TCC=0, they will generate both shadow region 0 and 1
-completion interrupts.
-4. While programming a non-dummy parameter set, ensure the CCNT is not left to zero.
-5. Enable the EDMA3CC error interrupt in the device controller and attach an interrupt service routine
+completion interrupts. 4. While programming a non-dummy parameter set, ensure the CCNT is not left to zero. 5. Enable the EDMA3CC error interrupt in the device controller and attach an interrupt service routine
 (ISR) to ensure that error conditions are not missed in an application and are appropriately addressed
-with the ISR.
-6. Depending on the application, you may want to break large transfers into smaller transfers and use
-self-chaining to prevent starvation of other events in an event queue.
-7. In applications where a large transfer is broken into sets of small transfers using chaining or other
+with the ISR. 6. Depending on the application, you may want to break large transfers into smaller transfers and use
+self-chaining to prevent starvation of other events in an event queue. 7. In applications where a large transfer is broken into sets of small transfers using chaining or other
 methods, you might choose to use the early chaining option to reduce the time between the sets of
 transfers and increase the throughput. However, keep in mind that with early completion, all data might
 have not been received at the end point when completion is reported because the EDMA3CC internally
 signals completion when the TR is submitted to the EDMA3TC, potentially before any data has been
-transferred.
-8. The event queue entries can be observed to determine the last few events if there is a system failure
+transferred. 8. The event queue entries can be observed to determine the last few events if there is a system failure
 (provided the entries were not bypassed).
-
 
 ### 11.5.3 Setting Up a Transfer
 
 The following list provides a quick guide for the typical steps involved in setting up a transfer.
 Step 1. Initiating a DMA/QDMA channel
+
 1. Determine the type of channel (QDMA or DMA) to be used.
 2. Channel mapping
-i. If using a QDMA channel, program the QCHMAP with the parameter set number to
-which the channel maps and the trigger word.
-ii. If using a DMA channel, program the DCHMAP with the parameter set number to
-which the channel maps.
+   i. If using a QDMA channel, program the QCHMAP with the parameter set number to
+   which the channel maps and the trigger word.
+   ii. If using a DMA channel, program the DCHMAP with the parameter set number to
+   which the channel maps.
 3. If the channel is being used in the context of a shadow region, ensure the DRAE/DRAEH
-for the region is properly set up to allow read write accesses to bits in the event registers
-and interrupt registers in the Shadow region memory map. The subsequent steps in this
-process should be done using the respective shadow region registers. (Shadow region
-descriptions and usage are provided in Section 11.3.7.1.)
+   for the region is properly set up to allow read write accesses to bits in the event registers
+   and interrupt registers in the Shadow region memory map. The subsequent steps in this
+   process should be done using the respective shadow region registers. (Shadow region
+   descriptions and usage are provided in Section 11.3.7.1.)
 4. Determine the type of triggering used.
-i. If external events are used for triggering (DMA channels), enable the respective
-event in EER/EERH by writing into EESR/EESRH.
-ii. If QDMA Channel is used, enable the channel in QEER by writing into QEESR.
+   i. If external events are used for triggering (DMA channels), enable the respective
+   event in EER/EERH by writing into EESR/EESRH.
+   ii. If QDMA Channel is used, enable the channel in QEER by writing into QEESR.
 5. Queue setup
-i. If a QDMA channel is used, set up the QDMAQNUM to map the channel to the
-respective event queue.
-ii. If a DMA channel is used, set up the DMAQNUM to map the event to the respective
-event queue.
-Step 2. Parameter set setup
-1. Program the PaRAM set number associated with the channel. Note that if it is a QDMA
-channel, the PaRAM entry that is configured as trigger word is written to last.
-Alternatively, enable the QDMA channel (step 1-b-ii above) just before the write to the
-trigger word.
-See Section 11.3.19 for parameter set field setups for different types of transfers. See the
-sections on chaining (Section 11.3.8) and interrupt completion (Section 11.3.9) on how to
-set up final/intermediate completion chaining and/or interrupts.
-Step 3. Interrupt setup
-1. Enable the interrupt in the IER/IERH by writing into IESR/IESRH.
-2. Ensure that the EDMA3CC completion interrupt (either the global or the shadow region
-interrupt) is enabled properly in the device interrupt controller.
-3. Ensure the EDMA3CC completion interrupt (this refers to either the Global interrupt or the
-shadow region interrupt) is enabled properly in the Device Interrupt controller.
-4. Set up the interrupt controller properly to receive the expected EDMA3 interrupt.
+   i. If a QDMA channel is used, set up the QDMAQNUM to map the channel to the
+   respective event queue.
+   ii. If a DMA channel is used, set up the DMAQNUM to map the event to the respective
+   event queue.
+   Step 2. Parameter set setup
+6. Program the PaRAM set number associated with the channel. Note that if it is a QDMA
+   channel, the PaRAM entry that is configured as trigger word is written to last.
+   Alternatively, enable the QDMA channel (step 1-b-ii above) just before the write to the
+   trigger word.
+   See Section 11.3.19 for parameter set field setups for different types of transfers. See the
+   sections on chaining (Section 11.3.8) and interrupt completion (Section 11.3.9) on how to
+   set up final/intermediate completion chaining and/or interrupts.
+   Step 3. Interrupt setup
+7. Enable the interrupt in the IER/IERH by writing into IESR/IESRH.
+8. Ensure that the EDMA3CC completion interrupt (either the global or the shadow region
+   interrupt) is enabled properly in the device interrupt controller.
+9. Ensure the EDMA3CC completion interrupt (this refers to either the Global interrupt or the
+   shadow region interrupt) is enabled properly in the Device Interrupt controller.
+10. Set up the interrupt controller properly to receive the expected EDMA3 interrupt.
 
+Step 4. Initiate transfer
 
-Step 4.   Initiate transfer
 1. This step is highly dependent on the event trigger source:
-i. If the source is an external event coming from a peripheral, the peripheral will be
-enabled to start generating relevant EDMA3 events that can be latched to the ER
-transfer.
-ii. For QDMA events, writes to the trigger word (step 2-a above) will initiate the transfer.
-iii. Manually triggered transfers will be initiated by writes to the Event Set Registers
-(ESR/ESRH).
-iv. Chained-trigger events initiate when a previous transfer returns a transfer completion
-code equal to the chained channel number.
-Step 5.   Wait for completion
+   i. If the source is an external event coming from a peripheral, the peripheral will be
+   enabled to start generating relevant EDMA3 events that can be latched to the ER
+   transfer.
+   ii. For QDMA events, writes to the trigger word (step 2-a above) will initiate the transfer.
+   iii. Manually triggered transfers will be initiated by writes to the Event Set Registers
+   (ESR/ESRH).
+   iv. Chained-trigger events initiate when a previous transfer returns a transfer completion
+   code equal to the chained channel number.
+   Step 5. Wait for completion
 1. If the interrupts are enabled as mentioned in step 3 above, then the EDMA3CC will
-generate a completion interrupt to the CPU whenever transfer completion results in
-setting the corresponding bits in the interrupt pending register (IPR/IPRH). The set bits
-must be cleared in the IPR\IPRH by writing to corresponding bit in ICR\ICRH.
-2. If polling for completion (interrupts not enabled in the device controller), then the
-application code can wait on the expected bits to be set in the IPR\IPRH. Again, the set
-bits in the IPR\IPRH must be manually cleared via ICR\ICRH before the next set of
-transfers is performed for the same transfer completion code values.
-
-
+   generate a completion interrupt to the CPU whenever transfer completion results in
+   setting the corresponding bits in the interrupt pending register (IPR/IPRH). The set bits
+   must be cleared in the IPR\IPRH by writing to corresponding bit in ICR\ICRH.
+1. If polling for completion (interrupts not enabled in the device controller), then the
+   application code can wait on the expected bits to be set in the IPR\IPRH. Again, the set
+   bits in the IPR\IPRH must be manually cleared via ICR\ICRH before the next set of
+   transfers is performed for the same transfer completion code values.

@@ -1,3 +1,11 @@
+---
+title: AM335x Chapter 22: McASP
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 22 Multichannel Audio Serial Port (McASP)
 
 This chapter describes the McASP of the device.

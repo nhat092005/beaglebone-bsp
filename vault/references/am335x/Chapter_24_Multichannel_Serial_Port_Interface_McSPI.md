@@ -1,3 +1,11 @@
+---
+title: AM335x Chapter 24 McSPI
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 24 Multichannel Serial Port Interface (McSPI)
 
 This chapter describes the McSPI of the device.

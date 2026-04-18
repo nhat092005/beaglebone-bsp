@@ -1,3 +1,11 @@
+---
+title: AM335x Chapter 14 Ethernet Subsystem
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 14 Ethernet Subsystem
 
 This chapter describes the ethernet subsystem of the device.

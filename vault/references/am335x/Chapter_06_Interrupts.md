@@ -1,3 +1,11 @@
+---
+title: AM335x Chapter 6 Interrupts
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 6 Interrupts
 
 **SPRUH73Q – October 2011 – Revised December 2019**

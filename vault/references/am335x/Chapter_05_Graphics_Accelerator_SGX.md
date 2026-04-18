@@ -1,9 +1,17 @@
+---
+title: AM335x Chapter 5 Graphics Accelerator SGX
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 5 Graphics Accelerator (SGX)
 
 This chapter describes the graphics accelerator for the device.
 
 | Topic |                        | Page |
-|-------|------------------------|------|
+| ----- | ---------------------- | ---- |
 | 5.1   | Integration            | 526  |
 | 5.2   | Functional Description | 528  |
 
@@ -21,7 +29,7 @@ POWERVR® and USSE™ are trademarks or registered trademarks of Imagination Tec
 
 The 2D/3D graphics accelerator (SGX) subsystem accelerates 2-dimensional (2D) and 3-dimensional (3D) graphics applications. The SGX subsystem is based on the POWERVR® SGX core from Imagination Technologies. SGX is a new generation of programmable POWERVR graphic cores. The POWERVR SGX530 v1.2.5 architecture is scalable and can target market segments, from portable devices to HMI.
 
-### *5.0.10 POWERVR SGX Main Features*
+### _5.0.10 POWERVR SGX Main Features_
 
 - 2D and 3D graphics
 - Tile-based architecture
@@ -36,7 +44,7 @@ The 2D/3D graphics accelerator (SGX) subsystem accelerates 2-dimensional (2D) an
 - Advanced and standard 2D operations [e.g., vector graphics, BLTs (block level transfers), ROPs (raster operations)]
 - 32K stride support
 
-### *5.0.11 SGX 3D Features*
+### _5.0.11 SGX 3D Features_
 
 - Deferred pixel shading
 - On-chip tile floating point depth buffer
@@ -76,7 +84,7 @@ The 2D/3D graphics accelerator (SGX) subsystem accelerates 2-dimensional (2D) an
 
 [www.ti.com](http://www.ti.com)
 
-### *5.0.12 Universal Scalable Shader Engine (USSE) – Key Features*
+### _5.0.12 Universal Scalable Shader Engine (USSE) – Key Features_
 
 The USSE is the engine core of the POWERVR SGX architecture and supports a broad range of instructions.
 
@@ -106,7 +114,7 @@ The USSE is the engine core of the POWERVR SGX architecture and supports a broad
   - Data fence facility
   - Dependent texture reads
 
-### *5.0.13 Unsupported Features*
+### _5.0.13 Unsupported Features_
 
 There are no unsupported SGX530 features for this device.
 
@@ -155,41 +163,41 @@ There are no unsupported SGX530 features for this device.
 
 **SGX530 Integration**
 
-### *5.1.1 SGX530 Connectivity Attributes*
+### _5.1.1 SGX530 Connectivity Attributes_
 
 The general connectivity attributes of the SGX530 are shown in the following table.
 
 **Table 5-1. SGX530 Connectivity Attributes**
 
-| Attributes          | Type                                |  |
-|---------------------|-------------------------------------|--|
-| Power domain        | GFX Domain                          |  |
-| Clock domain        | SGX_CLK                             |  |
-| Reset signals       | SGX_RST                             |  |
-| Idle/Wakeup signals | Smart Idle<br>Initiator Standby     |  |
-| Interrupt request   | THALIAIRQ (GFXINT) to MPU Subsystem |  |
-| DMA request         | None                                |  |
-| Physical address    | L3 Fast slave port                  |  |
+| Attributes          | Type                                |     |
+| ------------------- | ----------------------------------- | --- |
+| Power domain        | GFX Domain                          |     |
+| Clock domain        | SGX_CLK                             |     |
+| Reset signals       | SGX_RST                             |     |
+| Idle/Wakeup signals | Smart Idle<br>Initiator Standby     |     |
+| Interrupt request   | THALIAIRQ (GFXINT) to MPU Subsystem |     |
+| DMA request         | None                                |     |
+| Physical address    | L3 Fast slave port                  |     |
 
-### *5.1.2 SGX530 Clock and Reset Management*
+### _5.1.2 SGX530 Clock and Reset Management_
 
-The SGX530 uses separate functional and interface clocks. The SYSCLK is the clock for the slave interface and runs at the L3F frequency. The MEMCLK is the clock for the memories and master interface and also runs at the L3F frequency. The CORECLK is the functional clock. It can be sourced from either the L3F clock (CORE\_CLKOUTM4) or from the 192 MHz PER\_CLKOUTM2 and can optionally be divided by 2.
+The SGX530 uses separate functional and interface clocks. The SYSCLK is the clock for the slave interface and runs at the L3F frequency. The MEMCLK is the clock for the memories and master interface and also runs at the L3F frequency. The CORECLK is the functional clock. It can be sourced from either the L3F clock (CORE_CLKOUTM4) or from the 192 MHz PER_CLKOUTM2 and can optionally be divided by 2.
 
 **Table 5-2. SGX530 Clock Signals**
 
 | Clock signal                | Max Freq | Reference / Source               | Comments                        |
-|-----------------------------|----------|----------------------------------|---------------------------------|
+| --------------------------- | -------- | -------------------------------- | ------------------------------- |
 | SYSCLK<br>Interface clock   | 200 MHz  | CORE_CLKOUTM4                    | pd_gfx_gfx_l3_gclk<br>From PRCM |
 | MEMCLK<br>Memory Clock      | 200 MHz  | CORE_CLKOUTM4                    | pd_gfx_gfx_l3_gclk<br>From PRCM |
 | CORECLK<br>Functional clock | 200 MHz  | PER_CLKOUTM2 or<br>CORE_CLKOUTM4 | pd_gfx_gfx_fclk<br>From PRCM    |
 
-### *5.1.3 SGX530 Pin List*
+### _5.1.3 SGX530 Pin List_
 
 The SGX530 module does not include any external interface pins.
 
 ## **5.2 Functional Description**
 
-### *5.2.1 SGX Block Diagram*
+### _5.2.1 SGX Block Diagram_
 
 The SGX subsystem is based on the POWERVR® SGX530 core from Imagination Technologies. The architecture uses programmable and hard coded pipelines to perform various processing tasks required in 2D, 3D, and video processing. The SGX architecture comprises the following elements:
 
@@ -262,7 +270,7 @@ The SGX subsystem is based on the POWERVR® SGX530 core from Imagination Technol
 
 **Figure 5-1. SGX Block Diagram**
 
-### *5.2.2 SGX Elements Description*
+### _5.2.2 SGX Elements Description_
 
 The coarse grain scheduler (CGS) is the main system controller for the POWERVR SGX architecture. It consists of two stages, the DMS and the PDS. The DMS processes requests from the data masters and determines which tasks can be executed given the resource requirements. The PDS then controls the loading and processing of data on the USSE.
 

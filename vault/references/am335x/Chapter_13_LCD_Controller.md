@@ -1,9 +1,17 @@
+---
+title: AM335x Chapter 13 LCD Controller
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 13 LCD Controller
 
 This chapter describes the LCD controller of the device.
 
 | 13.1 | Introduction           | 1921 |
-|------|------------------------|------|
+| ---- | ---------------------- | ---- |
 | 13.2 | Integration            | 1923 |
 | 13.3 | Functional Description | 1925 |
 | 13.4 | Programming Model      | 1952 |
@@ -12,7 +20,7 @@ This chapter describes the LCD controller of the device.
 
 ## **13.1 Introduction**
 
-### *13.1.1 Purpose of the Peripheral*
+### _13.1.1 Purpose of the Peripheral_
 
 The LCD controller consists of two independent controllers, the Raster Controller and the LCD Interface Display Driver (LIDD) controller. Each controller operates independently from the other and only one of them is active at any given time.
 
@@ -102,7 +110,7 @@ r/w   +---------+---------+
 
 **Figure 13-1. LCD Controller**
 
-### *13.1.2 Features*
+### _13.1.2 Features_
 
 General features of the LCD Controller include:
 
@@ -168,7 +176,7 @@ The general connectivity attributes for the LCDC subsystems are shown in Table 1
 Table 13-1. LCD Controller Connectivity Attributes
 
 | Attributes          | Type                                                                                                          |
-|---------------------|---------------------------------------------------------------------------------------------------------------|
+| ------------------- | ------------------------------------------------------------------------------------------------------------- |
 | Power Domain        | Peripheral Domain                                                                                             |
 | Clock Domain        | PD_PER_LCD_L3_GCLK (OCP Master Clock) PD_PER_LCD_L3_GCLK (OCP Slave Clock) PD_PER_LCD_GCLK (Functional Clock) |
 | Reset Signals       | PER_DOM_RST_N                                                                                                 |
@@ -177,26 +185,26 @@ Table 13-1. LCD Controller Connectivity Attributes
 | DMA Requests        | None                                                                                                          |
 | Physical Address    | L4 Peripheral Slave Port                                                                                      |
 
-### *13.2.2 LCD Controller Clock and Reset Management*
+### _13.2.2 LCD Controller Clock and Reset Management_
 
-The LCDC module uses the following functional and OCP interface clocks. The L4 Slave interface runs at half the frequency of the L3 Master interface but uses the same clock. The clock is divided within the LCDC through the l4\_clkdiv input using the pd\_per\_lcd\_l4s\_gclk\_ien signal from the PRCM. The functional clock comes from the Display PLL. When the Display PLL is in bypass mode, its output is sourced by either CORE\_CLKOUTM6 or PER\_CLKOUTM2.
+The LCDC module uses the following functional and OCP interface clocks. The L4 Slave interface runs at half the frequency of the L3 Master interface but uses the same clock. The clock is divided within the LCDC through the l4_clkdiv input using the pd_per_lcd_l4s_gclk_ien signal from the PRCM. The functional clock comes from the Display PLL. When the Display PLL is in bypass mode, its output is sourced by either CORE_CLKOUTM6 or PER_CLKOUTM2.
 
 **Table 13-2. LCD Controller Clock Signals**
 
 | Clock Signal                     | Max Freq | Reference / Source                     | Comments                        |
-|----------------------------------|----------|----------------------------------------|---------------------------------|
+| -------------------------------- | -------- | -------------------------------------- | ------------------------------- |
 | l3_clk<br>Master Interface Clock | 200 MHz  | CORE_CLKOUTM4                          | pd_per_lcd_l3_gclk<br>From PRCM |
 | l4_clk<br>Slave Interface Clock  | 100 MHz  | CORE_CLKOUTM4<br>(divided within LCDC) | pd_per_lcd_l3_gclk<br>From PRCM |
 | lcd_clk<br>Functional Clock      | 200 MHz  | Display PLL CLKOUT                     | pd_per_lcd_gclk<br>From PRCM    |
 
-### *13.2.3 LCD Controller Pin List*
+### _13.2.3 LCD Controller Pin List_
 
 The LCD Controller external interface signals are shown in [Table](#page-97-0) 13-3.
 
 **Table 13-3. LCD Controller Pin List**
 
 | Pin               | Type | Description                                                                                                                 |
-|-------------------|------|-----------------------------------------------------------------------------------------------------------------------------|
+| ----------------- | ---- | --------------------------------------------------------------------------------------------------------------------------- |
 | lcd_cp            | O    | Pixel Clock in Raster model Read Strobe<br>or Read/Write Strobe in LIDD mode                                                |
 | lcd_pixel_i[15:0] | I    | LCD Data Bus input (for LIDD mode only)                                                                                     |
 | lcd_pixel_o[23:0] | O    | LCD Data Bus output                                                                                                         |
@@ -226,26 +234,26 @@ Figure 13-3. Input and Output Clocks
       LCD_CLK
 ```
 
-#### 13.3.1.1 Pixel Clock (LCD\_PCLK)
+#### 13.3.1.1 Pixel Clock (LCD_PCLK)
 
-The pixel clock (LCD\_PCLK) frequency is derived from LCD\_CLK, the reference clock to this LCD module (see Figure 13-3). The pixel clock is used by the LCD display to clock the pixel data into the line shift register.
+The pixel clock (LCD_PCLK) frequency is derived from LCD_CLK, the reference clock to this LCD module (see Figure 13-3). The pixel clock is used by the LCD display to clock the pixel data into the line shift register.
 
 $$\mathsf{LCD\_PCLK} = \frac{\mathsf{LCD\_CLK}}{\mathsf{CLKDIV}}$$
 
-where CLKDIV is a field in the LCD\_CTRL register and should not be 0 or 1.
+where CLKDIV is a field in the LCD_CTRL register and should not be 0 or 1.
 
-- Passive (STN) mode. LCD\_PCLK only transitions when valid data is available for output. It does not transition when the horizontal clock (HSYNC) is asserted or during wait state insertion.
-- Active (TFT) mode. LCD\_PCLK continuously toggles as long as the Raster Controller is enabled.
+- Passive (STN) mode. LCD_PCLK only transitions when valid data is available for output. It does not transition when the horizontal clock (HSYNC) is asserted or during wait state insertion.
+- Active (TFT) mode. LCD_PCLK continuously toggles as long as the Raster Controller is enabled.
 
-#### **13.3.1.2 Horizontal Clock (LCD\_HSYNC)**
+#### **13.3.1.2 Horizontal Clock (LCD_HSYNC)**
 
-LCD\_HSYNC toggles after all pixels in a horizontal line have been transmitted to the LCD and a programmable number of pixel clock wait states has elapsed both at the beginning and end of each line.
+LCD_HSYNC toggles after all pixels in a horizontal line have been transmitted to the LCD and a programmable number of pixel clock wait states has elapsed both at the beginning and end of each line.
 
-The RASTER\_TIMING\_0 register fully defines the behavior of this signal.
+The RASTER_TIMING_0 register fully defines the behavior of this signal.
 
-LCD\_HSYNC can be programmed to be synchronized with the rising or falling edge of LCD\_PCLK. The configuration field is bits 24 and 25 in the RASTER\_TIMING\_2 register.
+LCD_HSYNC can be programmed to be synchronized with the rising or falling edge of LCD_PCLK. The configuration field is bits 24 and 25 in the RASTER_TIMING_2 register.
 
-**Active (TFT) mode:** The horizontal clock or the line clock is also used by TFT displays as the horizontal synchronization signal (LCD\_HSYNC).
+**Active (TFT) mode:** The horizontal clock or the line clock is also used by TFT displays as the horizontal synchronization signal (LCD_HSYNC).
 
 The timings of the horizontal clock (line clock) pins are programmable to support:
 
@@ -253,35 +261,35 @@ The timings of the horizontal clock (line clock) pins are programmable to suppor
 - Line clock polarity.
 - Line clock pulse width, driven on rising or falling edge of pixel clock.
 
-#### **13.3.1.3 Vertical Clock (LCD\_VSYNC)**
+#### **13.3.1.3 Vertical Clock (LCD_VSYNC)**
 
-LCD\_VSYNC toggles after all lines in a frame have been transmitted to the LCD and a programmable number of line clock cycles has elapsed both at the beginning and end of each frame.
+LCD_VSYNC toggles after all lines in a frame have been transmitted to the LCD and a programmable number of line clock cycles has elapsed both at the beginning and end of each frame.
 
-The RASTER\_TIMING\_1 register fully defines the behavior of this signal.
+The RASTER_TIMING_1 register fully defines the behavior of this signal.
 
-LCD\_VSYNC can be programmed to be synchronized with the rising or falling edge of LCD\_PCLK. The configuration field is bits 24 and 25 in the RASTER\_TIMING\_2 register.
+LCD_VSYNC can be programmed to be synchronized with the rising or falling edge of LCD_PCLK. The configuration field is bits 24 and 25 in the RASTER_TIMING_2 register.
 
 - **Passive (STN) mode.** The vertical, or frame, clock toggles during the first line of the screen.
-- **Active (TFT) mode.** The vertical, or frame, clock is also used by TFT displays as the vertical synchronization signal (LCD\_VSYNC).
+- **Active (TFT) mode.** The vertical, or frame, clock is also used by TFT displays as the vertical synchronization signal (LCD_VSYNC).
 
 The timings of the vertical clock pins are programmable to support:
 
 - Delay insertion both at the beginning and end of each frame
 - Frame clock polarity
 
-#### **13.3.1.4 LCD\_AC\_BIAS\_EN**
+#### **13.3.1.4 LCD_AC_BIAS_EN**
 
-- **Passive (STN) mode.** To prevent a dc charge within the screen pixels, the power and ground supplies of the display are periodically switched. The Raster Controller signals the LCD to switch the polarity by toggling this pin (LCD\_AC\_BIAS\_EN).
-- **Active (TFT) mode.** This signal acts as an output enable (OE) signal. It is used to signal the external LCD that the data is valid on the data bus (LCD\_DATA).
+- **Passive (STN) mode.** To prevent a dc charge within the screen pixels, the power and ground supplies of the display are periodically switched. The Raster Controller signals the LCD to switch the polarity by toggling this pin (LCD_AC_BIAS_EN).
+- **Active (TFT) mode.** This signal acts as an output enable (OE) signal. It is used to signal the external LCD that the data is valid on the data bus (LCD_DATA).
 
-### *13.3.2 LCD External I/O Signals*
+### _13.3.2 LCD External I/O Signals_
 
 [Table](#page-100-0) 13-4 shows the details of the LCD controller external signals.
 
 #### **Table 13-4. LCD External I/O Signals**
 
 | Signal         | Type         | Description                                                                                                                                                                                                                                                                                                                                                                   |
-|----------------|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | LCD_VSYNC      | OUT          | Raster controller: Frame clock the LCD uses to signal the start of a new frame of pixels.<br>Also used by TFT displays as the vertical synchronization signal.                                                                                                                                                                                                                |
 |                |              | LIDD character: Register select (RS) or address latch enable (ALE)                                                                                                                                                                                                                                                                                                            |
 |                |              | LIDD graphics: Address bit 0 (A0) or command/data select (C/D)                                                                                                                                                                                                                                                                                                                |
@@ -306,11 +314,11 @@ The timings of the vertical clock pins are programmable to support:
 |                | LIDD: OUT/IN | LIDD character: LCD_DATA[15:0] Read and write the command and data registers.                                                                                                                                                                                                                                                                                                 |
 |                |              |                                                                                                                                                                                                                                                                                                                                                                               |
 
-### *13.3.3 Pin Mapping and Color Assignments*
+### _13.3.3 Pin Mapping and Color Assignments_
 
 Due to a silicon bug, pin mapping for the data signals for RGB888 and RGB565 are not as designed. Refer to the AM335x Silicon Errata [\(SPRZ360\)](http://www.ti.com/lit/pdf/SPRZ360) for proper pin mapping and color assignments when using these modes with an LCD panel.
 
-### *13.3.4 DMA Engine*
+### _13.3.4 DMA Engine_
 
 The DMA engine provides the capability to output graphics data to constantly refresh LCDs, without burdening the CPU, via interrupts or a firmware timer. It operates on one or two frame buffers, which are set up during initialization. Using two frame buffers (ping-pong buffers) enables the simultaneous operation of outputting the current video frame to the external display and updating the next video frame. The ping-pong buffering approach is preferred in most applications.
 
@@ -320,10 +328,10 @@ When the LIDD Controller is used, the DMA engine accesses the LIDD Controller's 
 
 To program the DMA engine, configure the following registers, as shown in [Table](#page-101-0) 13-5.
 
-registers will not be used.) LCDDMA\_FB1\_CEILING
+registers will not be used.) LCDDMA_FB1_CEILING
 
 | Register           | Configuration                                                          |
-|--------------------|------------------------------------------------------------------------|
+| ------------------ | ---------------------------------------------------------------------- |
 | LCDDMA_CTRL        | Configure DMA data format                                              |
 | LCDDMA_FB0_BASE    | Configure frame buffer 0                                               |
 | LCDDMA_FB0_CEILING |                                                                        |
@@ -331,9 +339,9 @@ registers will not be used.) LCDDMA\_FB1\_CEILING
 
 **Table 13-5. Register Configuration for DMA Engine Programming**
 
-In addition, the LIDD\_CTRL register (for LIDD Controller) or the RASTER\_CTRL register (for Raster Controller) should also be configured appropriately, along with all the timing registers.
+In addition, the LIDD_CTRL register (for LIDD Controller) or the RASTER_CTRL register (for Raster Controller) should also be configured appropriately, along with all the timing registers.
 
-To enable DMA transfers, the LIDD\_DMA\_EN bit (in the LIDD\_CTRL register) or the LCDEN bit (in the RASTER\_CTRL register) should be written with 1.
+To enable DMA transfers, the LIDD_DMA_EN bit (in the LIDD_CTRL register) or the LCDEN bit (in the RASTER_CTRL register) should be written with 1.
 
 **CAUTION**
 
@@ -343,46 +351,46 @@ Writes to RAM will fail when they are in the vicinity of where the DMA Engine is
 
 Interrupts in this LCD module are related to DMA engine operation. Four registers are used to control and monitor the interrupts:
 
-- The IRQENABLE\_SET register allows the user to enable any of the interrupt sources.
-- The IRQENABLE\_CLEAR register allows the user to disable interrupts sources.
-- The IRQSTATUS\_RAW register collects all the interrupt status information.
+- The IRQENABLE_SET register allows the user to enable any of the interrupt sources.
+- The IRQENABLE_CLEAR register allows the user to disable interrupts sources.
+- The IRQSTATUS_RAW register collects all the interrupt status information.
 
-• The IRQSTATUS register collects the interrupt status information for all enabled interrupts. Any interrupt source not enabled in the IRQENABLE\_SET register is masked out.
+• The IRQSTATUS register collects the interrupt status information for all enabled interrupts. Any interrupt source not enabled in the IRQENABLE_SET register is masked out.
 
-#### *13.3.4.1.1 LIDD Mode*
+#### _13.3.4.1.1 LIDD Mode_
 
 When operating in LIDD mode, the DMA engine generates one interrupt signal every time the specified frame buffer has been transferred completely.
 
-- The DONE bit in the LIDD\_CTRL register specifies if the interrupt signal is delivered to the system interrupt controller, which in turn may or may not generate an interrupt to CPU.
-- The EOF1, EOF0, and DONE bits in the IRQSTATUS\_RAW register reflect the interrupt signal, regardless of being delivered to the system interrupt controller or not.
+- The DONE bit in the LIDD_CTRL register specifies if the interrupt signal is delivered to the system interrupt controller, which in turn may or may not generate an interrupt to CPU.
+- The EOF1, EOF0, and DONE bits in the IRQSTATUS_RAW register reflect the interrupt signal, regardless of being delivered to the system interrupt controller or not.
 
-#### *13.3.4.1.2 Raster Mode*
+#### _13.3.4.1.2 Raster Mode_
 
 When operating in Raster mode, the DMA engine can generate the interrupts in the following scenarios:
 
-- 1. **Output FIFO under-run**. This occurs when the DMA engine cannot keep up with the data rate consumed by the LCD (which is determined by the LCD\_PCLK.) This is likely due to a system memory throughput issue or an incorrect LCD\_PCLK setting. The FUF bit in IRQSTATUS\_RAW is set when this error occurs. This bit is cleared by writing a 1 to the FUF bit in the IRQSTATUS register.
-- 2. **Frame synchronization lost**. This error happens when the DMA engine attempts to read what it believes to be the first word of the video buffer but it cannot be recognized as such. This could be caused by an invalid frame buffer address or an invalid BPP value (for more details, see Section [13.3.6.2](#page-110-0)). The SYNC bit in the IRQSTATUS\_RAW register is set when such an error is detected. This bit is cleared by writing a 1 to the SYNC bit in the IRQSTATUS register.
-- 3. **Palette loaded**. When using palette-only or palette+data modes, the PL bit in the IRQSTATUS\_RAW register will be set when the palette portion of a DMA transfer has been loaded into palette RAM. This interrupt can be cleared by writing a '1' to the PL bit in the IRQSTATUS register.
-- 4. **AC bias transition**. If the ACB\_I bit in the RASTER\_TIMING\_2 register is programmed with a nonzero value, an internal counter will be loaded with this value and starts to decrement each time LCD\_AC\_BIAS\_EN (AC-bias signal) switches its state. When the counter reaches zero, the ACB bit in the IRQSTATUS\_RAW register is set, which will deliver an interrupt signal to the system interrupt controller (if the interrupt is enabled.) The counter reloads the value in field ACB\_I, but does not start to decrement until the ACB bit is cleared by writing 1 to this bit in the IRQSTATUS register.
-- 5. **Frame transfer completed**. When one frame of data is transferred completely, the DONE bit in the IRQSTATUS\_RAW register is set. Note that the EOF0 and EOF1 bits in the IRQSTATUS\_RAW register will be set accordingly. This bit is cleared by writing a 1 to the corresponding interrupt in the IRQSTATUS register.
+- 1. **Output FIFO under-run**. This occurs when the DMA engine cannot keep up with the data rate consumed by the LCD (which is determined by the LCD_PCLK.) This is likely due to a system memory throughput issue or an incorrect LCD_PCLK setting. The FUF bit in IRQSTATUS_RAW is set when this error occurs. This bit is cleared by writing a 1 to the FUF bit in the IRQSTATUS register.
+- 2. **Frame synchronization lost**. This error happens when the DMA engine attempts to read what it believes to be the first word of the video buffer but it cannot be recognized as such. This could be caused by an invalid frame buffer address or an invalid BPP value (for more details, see Section [13.3.6.2](#page-110-0)). The SYNC bit in the IRQSTATUS_RAW register is set when such an error is detected. This bit is cleared by writing a 1 to the SYNC bit in the IRQSTATUS register.
+- 3. **Palette loaded**. When using palette-only or palette+data modes, the PL bit in the IRQSTATUS_RAW register will be set when the palette portion of a DMA transfer has been loaded into palette RAM. This interrupt can be cleared by writing a '1' to the PL bit in the IRQSTATUS register.
+- 4. **AC bias transition**. If the ACB_I bit in the RASTER_TIMING_2 register is programmed with a nonzero value, an internal counter will be loaded with this value and starts to decrement each time LCD_AC_BIAS_EN (AC-bias signal) switches its state. When the counter reaches zero, the ACB bit in the IRQSTATUS_RAW register is set, which will deliver an interrupt signal to the system interrupt controller (if the interrupt is enabled.) The counter reloads the value in field ACB_I, but does not start to decrement until the ACB bit is cleared by writing 1 to this bit in the IRQSTATUS register.
+- 5. **Frame transfer completed**. When one frame of data is transferred completely, the DONE bit in the IRQSTATUS_RAW register is set. Note that the EOF0 and EOF1 bits in the IRQSTATUS_RAW register will be set accordingly. This bit is cleared by writing a 1 to the corresponding interrupt in the IRQSTATUS register.
 
-Note that the interrupt enable bits are in the IRQENABLE\_SET register. The corresponding enable bit must be set in order to generate an interrupt to the CPU. However, the IRQSTATUS\_RAW register reflects the interrupt signal regardless of the interrupt enable bits settings.
+Note that the interrupt enable bits are in the IRQENABLE_SET register. The corresponding enable bit must be set in order to generate an interrupt to the CPU. However, the IRQSTATUS_RAW register reflects the interrupt signal regardless of the interrupt enable bits settings.
 
-#### *13.3.4.1.3 Interrupt Handling*
+#### _13.3.4.1.3 Interrupt Handling_
 
-See Chapter 6, *Interrupts*, for information about LCD interrupt number to CPU. The interrupt service routine needs to determine the interrupt source by examining the IRQSTATUS\_RAW register and clearing the interrupt properly.
+See Chapter 6, _Interrupts_, for information about LCD interrupt number to CPU. The interrupt service routine needs to determine the interrupt source by examining the IRQSTATUS_RAW register and clearing the interrupt properly.
 
-### *13.3.5 LIDD Controller*
+### _13.3.5 LIDD Controller_
 
 The LIDD Controller is designed to support LCD panels with a memory-mapped interface. The types of displays range from low-end character monochrome LCD panels to high-end TFT smart LCD panels.
 
-LIDD mode (and the use of this logic) is enabled by clearing the MODESEL bit in the LCD control register (LCD\_CTRL).
+LIDD mode (and the use of this logic) is enabled by clearing the MODESEL bit in the LCD control register (LCD_CTRL).
 
 LIDD Controller operation is summarized as follows:
 
-• During initialization, the LCD LIDD CS0/CS1 configuration registers (LIDD\_CS0\_CONF and LIDD\_CS1\_CONF) are configured to match the requirements of the LCD panel being used.
+• During initialization, the LCD LIDD CS0/CS1 configuration registers (LIDD_CS0_CONF and LIDD_CS1_CONF) are configured to match the requirements of the LCD panel being used.
 
-• During normal operation, the CPU writes display data to the LCD data registers (LIDD\_CS0\_DATA and LIDD\_CS1\_DATA). The LIDD interface converts the CPU write into the proper signal transition sequence for the display, as programmed earlier. Note that the first CPU write should send the beginning address of the update to the LCD panel and the subsequent writes update data at display locations starting from the first address and continuing sequentially. Note that DMA may be used instead of CPU.
+• During normal operation, the CPU writes display data to the LCD data registers (LIDD_CS0_DATA and LIDD_CS1_DATA). The LIDD interface converts the CPU write into the proper signal transition sequence for the display, as programmed earlier. Note that the first CPU write should send the beginning address of the update to the LCD panel and the subsequent writes update data at display locations starting from the first address and continuing sequentially. Note that DMA may be used instead of CPU.
 
 • The LIDD Controller is also capable of reading back status or data from the LCD panel, if the latter has this capability. This is set up and activated in a similar manner to the write function described above.
 
@@ -390,12 +398,12 @@ LIDD Controller operation is summarized as follows:
 
 See your device-specific data manual to check the LIDD features supported by the LCD controller.
 
-[Table](#page-103-0) 13-6 describes how the signals are used to interface external LCD modules, which are configured by the LIDD\_CTRL register.
+[Table](#page-103-0) 13-6 describes how the signals are used to interface external LCD modules, which are configured by the LIDD_CTRL register.
 
 **Table 13-6. LIDD I/O Name Map**
 
 | Display Type                       | Interface<br>Type | Data<br>Bits | LIDD_CTRL<br>[2:0] | I/O Name       | Display I/O<br>Name | Comment                                     |
-|------------------------------------|-------------------|--------------|--------------------|----------------|---------------------|---------------------------------------------|
+| ---------------------------------- | ----------------- | ------------ | ------------------ | -------------- | ------------------- | ------------------------------------------- |
 | Character<br>Display               | HD44780<br>Type   | 4            | 100                | LCD_DATA[7:4]  | DATA[7:4]           | Data Bus (length defined by<br>Instruction) |
 |                                    |                   |              |                    | LCD_AC_BIAS_EN | E (or E0)           | Enable Strobe (first display)               |
 |                                    |                   |              |                    | LCD_HSYNC      | R/W                 | Read/Write                                  |
@@ -421,9 +429,9 @@ See your device-specific data manual to check the LIDD features supported by the
 |                                    |                   |              |                    | LCD_MCLK       | CS1                 | Chip Select (second display<br>optional)    |
 |                                    |                   |              | 010                | LCD_MCLK       | None                | Synchronous Clock (optional)                |
 
-The timing parameters are defined by the LIDD\_CS0\_CONF and LIDD\_CS1\_CONF registers, which are described in and .
+The timing parameters are defined by the LIDD_CS0_CONF and LIDD_CS1_CONF registers, which are described in and .
 
-The timing configuration is based on an internal reference clock, MCLK. The MCLK is generated out of LCD\_CLK, which is determined by the CLKDIV bit in the LCD\_CTRL register.
+The timing configuration is based on an internal reference clock, MCLK. The MCLK is generated out of LCD_CLK, which is determined by the CLKDIV bit in the LCD_CTRL register.
 
 $$\begin{split} & \text{MCLK} = \text{LCD\_CLK} \text{ when CLKDIV} = 0. \\ & \text{MCLK} = \frac{\text{LCD\_CLK}}{\text{CLKDIV}} \text{ when CLKDIV} \neq 0. \end{split}$$
 
@@ -655,16 +663,16 @@ Right-side labels (as shown):
 - LCD_PCLK                 : RD
 ```
 
-**NOTE:** The CS\_DELAY in above figures is same as bit field TA in LCDLIDDCS0CONFIG.
+**NOTE:** The CS_DELAY in above figures is same as bit field TA in LCDLIDDCS0CONFIG.
 
-### *13.3.6 Raster Controller*
+### _13.3.6 Raster Controller_
 
-Raster mode (and the use of this logic) is enabled by setting the MODESEL bit in the LCD control register (LCD\_CTRL). [Table](#page-108-1) 13-7 shows the active external signals when this mode is active.
+Raster mode (and the use of this logic) is enabled by setting the MODESEL bit in the LCD control register (LCD_CTRL). [Table](#page-108-1) 13-7 shows the active external signals when this mode is active.
 
 **Table 13-7. Operation Modes Supported by Raster Controller**
 
 | Interface           | Data Bus<br>Width | Register Bits<br>RASTER_CTRL[9, 7, 1] | Signal Name    | Description                  |
-|---------------------|-------------------|---------------------------------------|----------------|------------------------------|
+| ------------------- | ----------------- | ------------------------------------- | -------------- | ---------------------------- |
 | Passive (STN) Mono  | 4                 | 001                                   | LCD_DATA[3:0]  | Data bus                     |
 | 4-bit               |                   |                                       | LCD_PCLK       | Pixel clock                  |
 |                     |                   |                                       | LCD_HSYNC      | Horizontal clock(Line Clock) |
@@ -770,13 +778,13 @@ A frame buffer is a contiguous memory block, storing enough data to fill a full 
 #### **1, 2, 4, 12, 16, 24 BPP Modes**
 
 | Palette  | Pixel Data |
-|----------|------------|
+| -------- | ---------- |
 | 32 bytes | x bytes    |
 
 #### **8 BPP Mode**
 
 | Palette   | Pixel Data |
-|-----------|------------|
+| --------- | ---------- |
 | 512 bytes | x bytes    |
 
 **NOTE:**
@@ -791,7 +799,7 @@ A frame buffer is a contiguous memory block, storing enough data to fill a full 
 **Table 13-8. Bits-Per-Pixel Encoding for Palette Entry 0 Buffer**
 
 | Bit   | Name | Value | Description(1) (2) (3)                                              |
-|-------|------|-------|---------------------------------------------------------------------|
+| ----- | ---- | ----- | ------------------------------------------------------------------- |
 | 14-12 | BPP  |       | Bits-per-pixel.                                                     |
 |       |      | 000   | 1 BPP                                                               |
 |       |      | 001   | 2 BPP                                                               |
@@ -811,7 +819,7 @@ The equations shown in [Table](#page-111-1) 13-9 are used to calculate the total
 **Table 13-9. Frame Buffer Size According to BPP**
 
 | BPP   | Frame Buffer Size          |
-|-------|----------------------------|
+| ----- | -------------------------- |
 | 1     | 32 + (Lines × Columns)/8   |
 | 2     | 32 + (Lines × Columns)/4   |
 | 4     | 32 + (Lines × Columns)/2   |
@@ -820,25 +828,25 @@ The equations shown in [Table](#page-111-1) 13-9 are used to calculate the total
 
 <sup>(2)</sup> For STN565, see the 16 BPP STN mode bit ().
 
-<sup>(3)</sup> For Raw Data (12/16/24 bpp) framebuffers, no Palette lookup is employed therefore PALMODE = 0x10 in RASTER\_CTRL.
+<sup>(3)</sup> For Raw Data (12/16/24 bpp) framebuffers, no Palette lookup is employed therefore PALMODE = 0x10 in RASTER_CTRL.
 
 **Figure 13-14. 16-Entry Palette/Buffer Format (1, 2, 4, 12, 16 BPP)**
 
-| Individual Palette Entry |        |    |            |    |                    |         |   |   |   |   |           |   |   |          |   |   |
-|--------------------------|--------|----|------------|----|--------------------|---------|---|---|---|---|-----------|---|---|----------|---|---|
-| Bit                      | 15     | 14 | 13         | 12 | 11                 | 10      | 9 | 8 | 7 | 6 | 5         | 4 | 3 | 2        | 1 | 0 |
-| Color                    | Unused |    | (A)<br>BPP |    |                    | Red (R) |   |   |   |   | Green (G) |   |   | Blue (B) |   |   |
-| Bit                      | 15     | 14 | 13         | 12 | 11                 | 10      | 9 | 8 | 7 | 6 | 5         | 4 | 3 | 2        | 1 | 0 |
-| Mono                     | Unused |    | BPP(A)     |    | Unused<br>Mono (M) |         |   |   |   |   |           |   |   |          |   |   |
+| Individual Palette Entry |        |     |            |     |                    |         |     |     |     |     |           |     |     |          |     |     |
+| ------------------------ | ------ | --- | ---------- | --- | ------------------ | ------- | --- | --- | --- | --- | --------- | --- | --- | -------- | --- | --- |
+| Bit                      | 15     | 14  | 13         | 12  | 11                 | 10      | 9   | 8   | 7   | 6   | 5         | 4   | 3   | 2        | 1   | 0   |
+| Color                    | Unused |     | (A)<br>BPP |     |                    | Red (R) |     |     |     |     | Green (G) |     |     | Blue (B) |     |     |
+| Bit                      | 15     | 14  | 13         | 12  | 11                 | 10      | 9   | 8   | 7   | 6   | 5         | 4   | 3   | 2        | 1   | 0   |
+| Mono                     | Unused |     | BPP(A)     |     | Unused<br>Mono (M) |         |     |     |     |     |           |     |     |          |     |     |
 
-| Bit        | 15              | 16-Entry Palette Buffer | 0 |
-|------------|-----------------|-------------------------|---|
-| Base + 0   |                 | Palette Entry 0         |   |
-| Base + 2   | Palette Entry 1 |                         |   |
-|            |                 |                         |   |
-|            |                 |                         |   |
-| Base + 1Ch |                 | Palette Entry 14        |   |
-| Base + 1Eh |                 | Palette Entry 15        |   |
+| Bit        | 15              | 16-Entry Palette Buffer | 0   |
+| ---------- | --------------- | ----------------------- | --- |
+| Base + 0   |                 | Palette Entry 0         |     |
+| Base + 2   | Palette Entry 1 |                         |     |
+|            |                 |                         |     |
+|            |                 |                         |     |
+| Base + 1Ch |                 | Palette Entry 14        |     |
+| Base + 1Eh |                 | Palette Entry 15        |     |
 
 A. Bits-per-pixels (BPP) is only contained within the first palette entry (palette entry 0).
 
@@ -890,9 +898,9 @@ Bits 12, 13, and 14 of the first palette entry select the number of bits-per-pix
 
 **Figure 13-16. 16-BPP Data Memory Organization (TFT Mode Only)—Little Endian**
 
-| Bit           | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|---------------|----|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-| 16 bits/pixel |    |    | R  |    |    |    |   | G |   |   |   |   |   | B |   |   |
+| Bit           | 15  | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| ------------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 16 bits/pixel |     |     | R   |     |     |     |     | G   |     |     |     |     |     | B   |     |     |
 
 ```
 (page_113 Figure_10) – Pixel buffer (16-bit per pixel)
@@ -908,9 +916,9 @@ Base + 02h    +--------------------------------------------------------+
 
 #### **Figure 13-17. 12-BPP Data Memory Organization—Little Endian**
 
-| Bit           | 15 | 14     | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|---------------|----|--------|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-| 12 bits/pixel |    | Unused |    |    |    | R  |   |   |   | G |   |   |   | B |   |   |
+| Bit           | 15  | 14     | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| ------------- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 12 bits/pixel |     | Unused |     |     |     | R   |     |     |     | G   |     |     |     | B   |     |     |
 
 ```
 (page_114 Figure_4) – Pixel buffer (16-bit per pixel)
@@ -955,9 +963,9 @@ Base + 02h   +--------------------------------------------------------+
 
 **Figure 13-19. 4-BPP Data Memory Organization**
 
-| Bit          | 3 | 2         | 1 | 0 |
-|--------------|---|-----------|---|---|
-| 4 bits/pixel |   | Data[3:0] |   |   |
+| Bit          | 3   | 2         | 1   | 0   |
+| ------------ | --- | --------- | --- | --- |
+| 4 bits/pixel |     | Data[3:0] |     |     |
 
 ```
 (page_114 Figure_11) – 4 bpp pixel buffer (2 pixels per byte)
@@ -973,44 +981,44 @@ Base + 02h    |   Pixel 4    |   Pixel 5  |
 
 #### **Figure 13-20. 2-BPP Data Memory Organization**
 
-| Bit      | 7 | 6       | 5       | 4       | 3       | 2       | 1 | 0       |  |          |  |          |
-|----------|---|---------|---------|---------|---------|---------|---|---------|--|----------|--|----------|
-| Base     |   | Pixel 0 | Pixel 1 |         | Pixel 2 |         |   | Pixel 3 |  |          |  |          |
-| Base + 1 |   | Pixel 4 |         | Pixel 5 |         | Pixel 6 |   | Pixel 7 |  |          |  |          |
-| Base + 2 |   | Pixel 8 | Pixel 9 |         |         |         |   |         |  | Pixel 10 |  | Pixel 11 |
+| Bit      | 7   | 6       | 5       | 4       | 3       | 2       | 1   | 0       |     |          |     |          |
+| -------- | --- | ------- | ------- | ------- | ------- | ------- | --- | ------- | --- | -------- | --- | -------- |
+| Base     |     | Pixel 0 | Pixel 1 |         | Pixel 2 |         |     | Pixel 3 |     |          |     |          |
+| Base + 1 |     | Pixel 4 |         | Pixel 5 |         | Pixel 6 |     | Pixel 7 |     |          |     |          |
+| Base + 2 |     | Pixel 8 | Pixel 9 |         |         |         |     |         |     | Pixel 10 |     | Pixel 11 |
 
 ### **Figure 13-21. 1-BPP Data Memory Organization**
 
-| Bit      | 7  | 6  | 5   | 4   | 3   | 2   | 1   | 0   |
-|----------|----|----|-----|-----|-----|-----|-----|-----|
-| Base     | P0 | P1 | P2  | P3  | P4  | P5  | P6  | P7  |
-| Base + 1 | P8 | P9 | P10 | P11 | P12 | P13 | P14 | P15 |
+| Bit      | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| -------- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Base     | P0  | P1  | P2  | P3  | P4  | P5  | P6  | P7  |
+| Base + 1 | P8  | P9  | P10 | P11 | P12 | P13 | P14 | P15 |
 
 #### **13.3.6.3 Palette**
 
 As explained in the previous section, the pixel data is an index of palette entry (when palette is used). The number of colors supported is given by 2 number of BPP . However, due to a limitation of the grayscaler/serializer block, fewer grayscales or colors may be supported.
 
-The PLM field (in RASTER\_CTRL) affects the palette loading:
+The PLM field (in RASTER_CTRL) affects the palette loading:
 
 - If PLM is 00b (palette-plus-data mode) or 01b (palette-only mode), the palette is loaded by the DMA engine at the very beginning, which is followed by the loading of pixel data.
 - If PLM is 10b (data-only mode), the palette is not loaded. Instead, the DMA engine loads the pixel data immediately.
 
 #### **13.3.6.4 Gray-Scaler/Serializer**
 
-#### *13.3.6.4.1 Passive (STN) Mode*
+#### _13.3.6.4.1 Passive (STN) Mode_
 
 Once a palette entry is selected from the look-up palette by the pixel data, its content is sent to the grayscaler/serializer. If it is monochrome data, it is encoded as 4 bits. If it is color data, it is encoded as 4 bits (Red), 4 bits (Green), and 4 bits (Blue).
 
 These 4-bit values are used to select one of the 16 intensity levels, as shown in Table [13-10.](#page-116-0) A patented algorithm is used during this processing to provide an optimized intensity value that matches the eye's visual perception of color/gray gradations.
 
-#### *13.3.6.4.2 Active (TFT) Mode*
+#### _13.3.6.4.2 Active (TFT) Mode_
 
 The gray-scaler/serializer is bypassed.
 
 **Table 13-10. Color/Grayscale Intensities and Modulation Rates**
 
 | Dither Value<br>(4-Bit Value from Palette) | Intensity<br>(0% is White) | Modulation Rate<br>(Ratio of ON to ON+OFF Pixels) |
-|--------------------------------------------|----------------------------|---------------------------------------------------|
+| ------------------------------------------ | -------------------------- | ------------------------------------------------- |
 | 0000                                       | 0.0%                       | 0                                                 |
 | 0001                                       | 14.3%                      | 1/7                                               |
 | 0010                                       | 20.0%                      | 1/5                                               |
@@ -1028,12 +1036,12 @@ The gray-scaler/serializer is bypassed.
 | 1110                                       | 93.3%                      | 14/15                                             |
 | 1111                                       | 100.0%                     | 1                                                 |
 
-#### *13.3.6.4.3 Summary of Color Depth*
+#### _13.3.6.4.3 Summary of Color Depth_
 
 **Table 13-11. Number of Colors/Shades of Gray Available on Screen**
 
 | Number of |                                                                                                                    | Passive Mode (LCDTFT = 0)                                   | Active Mode (LCDTFT = 1)                                     |
-|-----------|--------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|--------------------------------------------------------------|
+| --------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------------------------ |
 | BPP       | Monochrome (LCDBW = 1)                                                                                             | Color (LCDBW = 0)                                           | Color Only (LCDBW = 0)                                       |
 | 1         | 2 palette entries to select within<br>15 grayscales                                                                | 2 palette entries to select within<br>3375 possible colors  | 2 palette entries to select within<br>4096 possible colors   |
 | 2         | 4 palette entries to select within<br>15 grayscales                                                                | 4 palette entries to select within<br>3375 possible colors  | 4 palette entries to select within<br>4096 possible colors   |
@@ -1045,13 +1053,13 @@ The gray-scaler/serializer is bypassed.
 
 #### **13.3.6.5 Output Format**
 
-#### *13.3.6.5.1 Passive (STN) Mode*
+#### _13.3.6.5.1 Passive (STN) Mode_
 
 As shown in [Figure](#page-109-0) 13-12, the pixel data stored in frame buffers go through palette (if applicable) and gray-scaler/serializer before reaching the Output FIFO. As a result, it is likely that the data fed to the Output FIFO is numerically different from the data in the frame buffers. (However, they represent the same color or grayscale.)
 
 The output FIFO formats the received data according to display modes (see [Table](#page-108-1) 13-7). [Figure](#page-117-1) 13-22 shows the actual data output on the external pins.
 
-#### *13.3.6.5.2 Active (TFT) Mode*
+#### _13.3.6.5.2 Active (TFT) Mode_
 
 As shown in [Figure](#page-109-0) 13-12, the gray-scaler/serializer and output FIFO are bypassed in active (TFT) mode. Namely, at each pixel clock, one pixel data (16 bits) is output to the external LCD.
 
@@ -1107,9 +1115,9 @@ Pixel clock:  __|‾‾|__|‾‾|__|‾‾|__
 
 #### **13.3.6.6 Subpicture Feature**
 
-A feature exists in the LCD to cover either the top or lower portion of the display with a default color. This feature is called a subpicture and is illustrated in [Figure](#page-118-0) 13-23. Subpictures are only allowed for Active Matrix mode (cfg\_lcdtft = '1').
+A feature exists in the LCD to cover either the top or lower portion of the display with a default color. This feature is called a subpicture and is illustrated in [Figure](#page-118-0) 13-23. Subpictures are only allowed for Active Matrix mode (cfg_lcdtft = '1').
 
-Subpictures reduce the bandwith to the DDR since lines containing default pixel data are not read from memory. For example, suppose the panel has 100 lines of which 50 are default pixel data lines. Then, only 50 lines of data are DMAed from DDR for this subpicture setup. That is, the cfg\_fbx\_base and cfg\_fbx\_ceiling registers only encompass 50 lines of data instead of 100.
+Subpictures reduce the bandwith to the DDR since lines containing default pixel data are not read from memory. For example, suppose the panel has 100 lines of which 50 are default pixel data lines. Then, only 50 lines of data are DMAed from DDR for this subpicture setup. That is, the cfg_fbx_base and cfg_fbx_ceiling registers only encompass 50 lines of data instead of 100.
 
 **Figure 13-23. Example of Subpicture**
 
@@ -1223,11 +1231,11 @@ LCD_DATA
  [15:0]     [1,1][2,1]...[P,1]  (blank)        (blank)           (blank)        [1,2][2,2]...[P,2]
 ```
 
-### *13.3.7 Interrupt Conditions*
+### _13.3.7 Interrupt Conditions_
 
 #### **13.3.7.1 Highlander 0.8 Interrupts**
 
-#### *13.3.7.1.1 Highlander Interrupt Basics*
+#### _13.3.7.1.1 Highlander Interrupt Basics_
 
 The interrupt mechanism is Highlander 0.8-compliant and relies on the ipgvmodirq IP Generic. The ipgvmodirq module supports hardware-initiated interrupts, each of which can also be individually triggered by software. An interrupt mask function allows each interrupt to be masked or enabled. The software can read all of the raw interrupts or only those that are unmasked.
 
@@ -1238,14 +1246,14 @@ The Interrupt Module registers are described in the following table.
 **Table 13-12. Highlander 0.8 Interrupt Module Control Registers**
 
 | Address Offset | Name  | Description                      |
-|----------------|-------|----------------------------------|
+| -------------- | ----- | -------------------------------- |
 | 0x58           | Reg22 | Interrupt Raw Status Register    |
 | 0x5C           | Reg23 | Interrupt Masked Status Register |
 | 0x60           | Reg24 | Interrupt Enable Set (Unmask)    |
 | 0x64           | Reg25 | Interrupt Enable Clear (Mask)    |
 | 0x68           | Reg26 | End of Interrupt Indicator       |
 
-#### *13.3.7.1.2 Raw Status Register*
+#### _13.3.7.1.2 Raw Status Register_
 
 Interrupts are associated with a bit position. For instance, Hardware Interrupt 0 is physically connected to bit 0 of the interrupt controller and all Sets, Clears, and Masks to this interrupt will reference the Bit 0 location of the interrupt vector. Likewise, Hardware Interrupt 1 is referenced by bit 1 of the interrupt vector, and so on.
 
@@ -1253,25 +1261,25 @@ The Host CPU can see all the interrupts that have been set, regardless of the in
 
 If the Host CPU writes a '1' to a bit position in Reg 22, it will do a software set for the interrupt associated with that bit position.
 
-#### *13.3.7.1.3 Masked Status Register*
+#### _13.3.7.1.3 Masked Status Register_
 
 The Masked Status Register contains all the pending interrupts that are unmasked (enabled). The Interrupt Service Routine should read this register to determine which interrupts must be serviced.
 
-#### *13.3.7.1.4 Interrupt Enable Set Register*
+#### _13.3.7.1.4 Interrupt Enable Set Register_
 
 To unmask an interrupt, the Host CPU writes a '1' to the appropriate bit position of the Enable Set (Unmask) register.
 
-#### *13.3.7.1.5 Interrupt Enable Clear Register*
+#### _13.3.7.1.5 Interrupt Enable Clear Register_
 
 To mask an interrupt, the Host CPU writes a '1' to the appropriate bit position of the Enable Clear (Mask) register.
 
-#### *13.3.7.1.6 End of Interrupt Register*
+#### _13.3.7.1.6 End of Interrupt Register_
 
 The ipgvmodirq module supports level or pulse interrupts to the CPU. For pulse interrupts, the Host must write to an end-of-interrupt (EOI), memory-mapped address to indicate that the Interrupt Service Routine has completed and is exiting. Any pending interrupts that have not been serviced will trigger another interrupt pulse to the Host CPU.
 
 #### **13.3.7.2 Interrupt Sources**
 
-#### *13.3.7.2.1 Overview of Interrupt Sources*
+#### _13.3.7.2.1 Overview of Interrupt Sources_
 
 The interrupt sources include:
 
@@ -1284,43 +1292,43 @@ The interrupt sources include:
 - Recurrent Frame Done
 - LIDD or Raster Frame Done
 
-#### *13.3.7.2.1.1 DMA End of Frame 0 and End of Frame 1 Interrupt*
+#### _13.3.7.2.1.1 DMA End of Frame 0 and End of Frame 1 Interrupt_
 
-The DMA End of Frame 0 and End of Frame 1 interrupts are triggered when the DMA module has completed transferring the contents of a frame buffer bounded by cfg\_fb0\_base/cfg\_bf0\_ceil or cfg\_fb1\_base/cfg\_fb1\_ceil.
+The DMA End of Frame 0 and End of Frame 1 interrupts are triggered when the DMA module has completed transferring the contents of a frame buffer bounded by cfg_fb0_base/cfg_bf0_ceil or cfg_fb1_base/cfg_fb1_ceil.
 
-#### *13.3.7.2.1.2 Palette Loaded Interrupt*
+#### _13.3.7.2.1.2 Palette Loaded Interrupt_
 
-When cfg\_palmode is set to Palette-only or Palette+data, the Palette Loaded interrupt is triggered when the palette portion of the DMA transfer has been stored in the Palette RAM.
+When cfg_palmode is set to Palette-only or Palette+data, the Palette Loaded interrupt is triggered when the palette portion of the DMA transfer has been stored in the Palette RAM.
 
-#### *13.3.7.2.1.3 FIFO Underflow Interrupt*
+#### _13.3.7.2.1.3 FIFO Underflow Interrupt_
 
 The FIFO Underflow interrupt is triggered when the real-time output needs to send a value for pixel data but one cannot be found in the FIFO.
 
-#### *13.3.7.2.1.4 AC Bias Count Interrupt*
+#### _13.3.7.2.1.4 AC Bias Count Interrupt_
 
 For Passive Matrix displays, a count can be kept of the number of times the AC Bias line toggles. Once the specified number of transitions has been seen, the AC Bias Count interrupt is triggered. The module will not post any further interrupts or keep counting AC Bias transitions until the interrupt has been cleared.
 
-#### *13.3.7.2.1.5 Sync Lost Interrupt*
+#### _13.3.7.2.1.5 Sync Lost Interrupt_
 
-When the DMA module reads a frame buffer and stores it in the FIFO, it sets a start frame and an end frame indicator embedded with the data. On retrieving the data from the FIFO in the lcd\_clk domain, the Sync Lost interrupt is triggered if the start indicator is not found at the first pixel of a new frame.
+When the DMA module reads a frame buffer and stores it in the FIFO, it sets a start frame and an end frame indicator embedded with the data. On retrieving the data from the FIFO in the lcd_clk domain, the Sync Lost interrupt is triggered if the start indicator is not found at the first pixel of a new frame.
 
-#### *13.3.7.2.1.6 Recurrent Frame Done Interrupt*
+#### _13.3.7.2.1.6 Recurrent Frame Done Interrupt_
 
 In raster mode, the Recurrent Frame Done interrupt is triggered each time a complete frame has been sent to the interface pins.
 
-#### *13.3.7.2.1.7 LIDD or Raster Frame Done Interrupt*
+#### _13.3.7.2.1.7 LIDD or Raster Frame Done Interrupt_
 
 In LIDD DMA mode, a frame buffer of data is sent. When the frame buffer has completed, the LIDD Frame Done interrupt is triggered. In order to do another LIDD DMA, the DMA engine must be disabled and then re-enabled.
 
-In Raster mode, the interrupt is triggered after cfg\_lcden is set to '0' and after the last frame is sent to the pins. After the Raster mode DMA is running, the interrupt occurs only once after the module is disabled.
+In Raster mode, the interrupt is triggered after cfg_lcden is set to '0' and after the last frame is sent to the pins. After the Raster mode DMA is running, the interrupt occurs only once after the module is disabled.
 
-### *13.3.8 DMA*
+### _13.3.8 DMA_
 
 DDR access is handled internally by the DMA module. For Character Displays, the DMA module can transfer a sequence of data transactions from the DDR to LCD panel. By using the DMA instead of the Host CPU, the Host will not be stalled waiting for the slow external peripheral to complete.
 
 For Passive and Active Matrix displays, the DMA is used to read frame buffers with associated palette information from DDR. The DMA parses the frame buffer according to the frame buffer type and supplies the raster processing chain with Palette information and pixel data as needed.
 
-### *13.3.9 Power Management*
+### _13.3.9 Power Management_
 
 Power management within the DSS can be accomplished in several ways:
 
@@ -1329,7 +1337,7 @@ Power management within the DSS can be accomplished in several ways:
 - 3. Within the Clock Control register, there are clock enable registers to disable the clock networks to all major internal functional paths.
 - 4. Power Compiler clock gates are automatically instantiated within datapaths to minimize active power.
 
-Items 1 and 2 are accomplished using the standard IDLE (for L4) and STANDBY (for L3) IPGeneric modules. When these modules are instructed to disable clocks for the internal L3 or L4 (MMR) clock domains, the internal clock networks will be shut down. This shutdown applies to the external clock pins l3\_clk and l4\_clk.
+Items 1 and 2 are accomplished using the standard IDLE (for L4) and STANDBY (for L3) IPGeneric modules. When these modules are instructed to disable clocks for the internal L3 or L4 (MMR) clock domains, the internal clock networks will be shut down. This shutdown applies to the external clock pins l3_clk and l4_clk.
 
 All other internal clock domains (Item 3) can only be shut down by writing the appropriate register bit within the Clock Enable register. This software clock control applies to all other clock inputs.
 
@@ -1339,54 +1347,54 @@ Because the LCD normally drives displays, and because all video is sourced from 
 
 ## **13.4 Programming Model**
 
-### *13.4.1 LCD Character Displays*
+### _13.4.1 LCD Character Displays_
 
 #### **13.4.1.1 Configuration Registers, Setup, and Settings**
 
-#### *13.4.1.1.1 Configuration Registers*
+#### _13.4.1.1.1 Configuration Registers_
 
 Set the following to appropriate values for the target LCD character panel:
 
-- cfg\_cs1\_e1\_pol
-- cfg\_cs0\_e0\_pol
-- ws\_dir\_pol
-- cfg\_rs\_en\_pol
-- cfg\_alepol
+- cfg_cs1_e1_pol
+- cfg_cs0_e0_pol
+- ws_dir_pol
+- cfg_rs_en_pol
+- cfg_alepol
 
-cfg\_lidd\_mode\_sel[2:0] defines the type of CPU bus that will be used in interfacing with the LCD character panel. Note that the clocked bus styles only support a single panel using CS0 since the clock pin takes a device pin that is otherwise used for CS1.
+cfg_lidd_mode_sel[2:0] defines the type of CPU bus that will be used in interfacing with the LCD character panel. Note that the clocked bus styles only support a single panel using CS0 since the clock pin takes a device pin that is otherwise used for CS1.
 
 Set the following to appropriate bus timing parameters for the target LCD character panel:
 
-- cfg\_w\_su
-- cfg\_w\_strobe
-- cfg\_w\_hold, cfg\_r\_su
-- cfg\_r\_strobe
-- cfg\_r\_hold
-- cfg\_ta
+- cfg_w_su
+- cfg_w_strobe
+- cfg_w_hold, cfg_r_su
+- cfg_r_strobe
+- cfg_r_hold
+- cfg_ta
 
 A set of bus timing parameters are individually available for CS0 and CS1 such that the bus transactions can be customized for each of the two supported LCD character displays.
 
-#### *13.4.1.1.2 Defining Panel Commands and Panel Data*
+#### _13.4.1.1.2 Defining Panel Commands and Panel Data_
 
-In the Hitachi interface mode used for the example panel, whether the Character Panel understands a data transfer as Command or Data depends on the state of the REGSEL input pin. Writing to the cfg\_adr\_indx register will output a Command transfer. Writing to the cfg\_data register will result in a Data transfer.
+In the Hitachi interface mode used for the example panel, whether the Character Panel understands a data transfer as Command or Data depends on the state of the REGSEL input pin. Writing to the cfg_adr_indx register will output a Command transfer. Writing to the cfg_data register will result in a Data transfer.
 
-Functionally, the ALE (lcd\_fp pin) from the LCD controller is tied to the REGSEL input of the character panel.
+Functionally, the ALE (lcd_fp pin) from the LCD controller is tied to the REGSEL input of the character panel.
 
-For example, to send byte 0xAB as a command to the previously described character panel, the CPU would write 0x00AB to the adr\_indx register. To send byte 0xAB as data, the CPU would write 0x00AB to the data register.
+For example, to send byte 0xAB as a command to the previously described character panel, the CPU would write 0x00AB to the adr_indx register. To send byte 0xAB as data, the CPU would write 0x00AB to the data register.
 
 #### **13.4.1.2 CPU Initiated Data Bus Transactions**
 
-#### *13.4.1.2.1 Initiating Data Bus Transactions*
+#### _13.4.1.2.1 Initiating Data Bus Transactions_
 
-Writing to cfg\_cs0\_data will initiate a write transfer to the CS0 panel. Reading from cfg\_cs0\_data will initiate a read transfer from the CS0 panel.
+Writing to cfg_cs0_data will initiate a write transfer to the CS0 panel. Reading from cfg_cs0_data will initiate a read transfer from the CS0 panel.
 
-Writing to cfg\_cs1\_data will initiate a write transfer to the CS1 panel. Reading from cfg\_cs1\_data will initiate a read transfer from the CS0 panel.
+Writing to cfg_cs1_data will initiate a write transfer to the CS1 panel. Reading from cfg_cs1_data will initiate a read transfer from the CS0 panel.
 
-**NOTE:** Writes to CS1 translate to valid bus transactions only if cfg\_lidd\_mode\_sel[2:0] is configured for an asynchronous mode.
+**NOTE:** Writes to CS1 translate to valid bus transactions only if cfg_lidd_mode_sel[2:0] is configured for an asynchronous mode.
 
 #### **13.4.1.3 DMA Initiated Data Bus Transactions for LIDD**
 
-#### *13.4.1.3.1 DMA Overview for MPU Bus Output*
+#### _13.4.1.3.1 DMA Overview for MPU Bus Output_
 
 Writing a long sequence of data to the Character Display Panel will ensure that the CPU will be occupied for a long time. However, the DMA module supports a mode in which this sequence of data elements can first be written in DRAM by the CPU.
 
@@ -1396,15 +1404,15 @@ Functionally, in this DMA LIDD mode, the DMA module sends the sequence of data t
 
 The DMA can only perform write bus transactions. It cannot read from the external character panel a series of data elements and store them in the DRAM.
 
-When the LIDD module is controlled by the DMA module by setting cfg\_lidd\_dma\_en = '1', CPU reads or writes to cfg\_adr\_index and cfg\_data are not allowed.
+When the LIDD module is controlled by the DMA module by setting cfg_lidd_dma_en = '1', CPU reads or writes to cfg_adr_index and cfg_data are not allowed.
 
-The fb0\_base and fb0\_ceil registers define the address boundary of data elements to be sent out the character display by the DMA engine. Setting cfg\_lidd\_dma\_en from '0' to '1' will initiate the DMA as if a virtual CPU is reading data from the DDR and writing the values to Reg6 or Reg9. cfg\_dma\_cs0\_cs1 determines whether the virtual CPU writes to Reg6 (CS0) or Reg7 (CS1).
+The fb0_base and fb0_ceil registers define the address boundary of data elements to be sent out the character display by the DMA engine. Setting cfg_lidd_dma_en from '0' to '1' will initiate the DMA as if a virtual CPU is reading data from the DDR and writing the values to Reg6 or Reg9. cfg_dma_cs0_cs1 determines whether the virtual CPU writes to Reg6 (CS0) or Reg7 (CS1).
 
-**NOTE:** Writes to CS1 translate to valid bus transactions only if cfg\_lidd\_mode\_sel[2:0] is configured for an asynchronous mode.
+**NOTE:** Writes to CS1 translate to valid bus transactions only if cfg_lidd_mode_sel[2:0] is configured for an asynchronous mode.
 
 The DMA module requires the start and end DDR addresses to be on word-aligned byte addresses. The MPU/LIDD bus is a halfword (16 bit) output, so both the upper and lower halfwords of the DDR memory will be sent out. Thus, the number of data elements sent to the LIDD by the DMA must always result in an even number of bus MPU bus transactions. In other words, a transfer of three 32-bit words from DDR will result in six 16-bit bus transactions.
 
-#### *13.4.1.3.2 MCU/LIDD DMA Setup: Example Pseudo Code*
+#### _13.4.1.3.2 MCU/LIDD DMA Setup: Example Pseudo Code_
 
 Suppose we want to send by DMA a section of DDR memory from byte address 0x4 to byte address 0x3C to the MCU bus using chip select 0. The pseudo code for such an operation is listed below.
 
@@ -1429,43 +1437,43 @@ wr 000C 0000_010C // Flip LIDD DMA enable bit
 
 Once the DMA completes sending data to the Async FIFO, the Eof0 interrupt will occur. The Done interrupt will occur when the last word is written out the MPU bus.
 
-The CPU must bring cfg\_lidd\_dma\_en low before the CPU can directly initiate MPU bus transactions or for the DMA module to start again.
+The CPU must bring cfg_lidd_dma_en low before the CPU can directly initiate MPU bus transactions or for the DMA module to start again.
 
 #### **13.4.1.4 Passive Matrix**
 
-#### *13.4.1.4.1 Monochrome Bitrate Awareness*
+#### _13.4.1.4.1 Monochrome Bitrate Awareness_
 
-In a mostly testbench related note, care must be taken when configuring the module for Passive Matrix (cfg\_lcdtft = '0') monochrome (cfg\_lcdbw = '1') modes. In passive matrix mode, the Blue component of the Grayscaler output is used as the quantized value for each scan order pixel.
+In a mostly testbench related note, care must be taken when configuring the module for Passive Matrix (cfg_lcdtft = '0') monochrome (cfg_lcdbw = '1') modes. In passive matrix mode, the Blue component of the Grayscaler output is used as the quantized value for each scan order pixel.
 
-When cfg\_mono8b='1', eight pixel values must be sent through the grayscaler before one 8-bit output is ready. This output data represents the passive matrix output states for eight pixels.
+When cfg_mono8b='1', eight pixel values must be sent through the grayscaler before one 8-bit output is ready. This output data represents the passive matrix output states for eight pixels.
 
-Likewise, when cfg\_mono8b='0', four pixel values must be sent through the grayscaler before one 4-bit output is ready. This output data represents the passive matrix output states for four pixels.
+Likewise, when cfg_mono8b='0', four pixel values must be sent through the grayscaler before one 4-bit output is ready. This output data represents the passive matrix output states for four pixels.
 
-The problem arises when the output clock is fast (cfg\_clkdiv=0x2). The data path must output a value every two system clocks. However, it takes four or eight system clocks to generate a data element to be output. In this case, the LCD module returns an underflow interrupt.
+The problem arises when the output clock is fast (cfg_clkdiv=0x2). The data path must output a value every two system clocks. However, it takes four or eight system clocks to generate a data element to be output. In this case, the LCD module returns an underflow interrupt.
 
 In practice, such a situation does not occur because passive matrix panels are slow by design.
 
-### *13.4.2 Active Matrix Displays*
+### _13.4.2 Active Matrix Displays_
 
 #### **13.4.2.1 Interfacing to Dual LVDS Transmitters**
 
 The pixel clock rate for HD-sized pictures is approximately 148.5 MHz. At this speed, the LVDS link requires a double-wide data bus for transferring the even and odd pixels at half the pixel rate. The LCD Controller outputs one pixel per pixel clock cycle. Some LVDS transmitters accept a high speed, single pixel input and output to dual LVDS drivers, in which case external glue logic is unnecessary. For those LVDS transmitters that require the even and odd pixel to enter the LVDS transmitter at half the pixel clock rate, external logic is required.
 
-### *13.4.3 System Interaction*
+### _13.4.3 System Interaction_
 
 #### **13.4.3.1 DMA End of Frame Interrupts**
 
 The LCD module works with the DMA such that data is fetched from DDR and sent to a FIFO memory. The DMA module does this fetching independently of the logic on the output side of the FIFO.
 
-For LIDD mode DMA, the module fetches frame buffer 0. When the last word of frame buffer 0 is stored in the FIFO memory, the Eof0 interrupt is triggered (if cfg\_eof\_inten='1') and the DMA stops. The CPU has to set cfg\_lidd\_dma\_en='0', followed by a cfg\_lidd\_dma\_en='1', before the next burst from frame buffer 0 is read from DDR.
+For LIDD mode DMA, the module fetches frame buffer 0. When the last word of frame buffer 0 is stored in the FIFO memory, the Eof0 interrupt is triggered (if cfg_eof_inten='1') and the DMA stops. The CPU has to set cfg_lidd_dma_en='0', followed by a cfg_lidd_dma_en='1', before the next burst from frame buffer 0 is read from DDR.
 
-For Raster mode DMA, the module fetches frame buffer 0. When the last word of frame buffer 0 is stored in the FIFO memory, the Eof0 interrupt is triggered (if cfg\_eof\_inten='1') but the DMA does not stop. The DMA module ping pongs immediately to frame buffer 1 if cfg\_frame\_mode='1'. Otherwise, the DMA fetches the frame buffer 0 address range from DDR. When the DMA module fetches frame buffer 1, and the last word of frame buffer 1 is stored in the FIFO memory, the Eof1 interrupt is triggered (if cfg\_eof\_inten='1'). This pattern would repeat.
+For Raster mode DMA, the module fetches frame buffer 0. When the last word of frame buffer 0 is stored in the FIFO memory, the Eof0 interrupt is triggered (if cfg_eof_inten='1') but the DMA does not stop. The DMA module ping pongs immediately to frame buffer 1 if cfg_frame_mode='1'. Otherwise, the DMA fetches the frame buffer 0 address range from DDR. When the DMA module fetches frame buffer 1, and the last word of frame buffer 1 is stored in the FIFO memory, the Eof1 interrupt is triggered (if cfg_eof_inten='1'). This pattern would repeat.
 
-### *13.4.4 Palette Lookup*
+### _13.4.4 Palette Lookup_
 
-For Active Matrix and Passive Matrix modes, the 12-bit Palette RAM Lookup can be used. For Active Matrix (cfg\_lcdtft = '1'), palette lookup is enabled when cfg\_tft24 = '0' and the bpp field in the Palette RAM is set to "000," "001," "010," or "011" (1, 2, 4, or 8 bpp). Palette lookup cannot used when the bpp field is set to "100" (12/16 bpp).
+For Active Matrix and Passive Matrix modes, the 12-bit Palette RAM Lookup can be used. For Active Matrix (cfg_lcdtft = '1'), palette lookup is enabled when cfg_tft24 = '0' and the bpp field in the Palette RAM is set to "000," "001," "010," or "011" (1, 2, 4, or 8 bpp). Palette lookup cannot used when the bpp field is set to "100" (12/16 bpp).
 
-For Passive Matrix (cfg\_lcdtft = '0'), palette lookup is enabled when the bpp field in the Palette RAM is set to "000," "001," "010," or "011" (1, 2, 4, or 8 bpp). Palette lookup cannot be used when the bpp field is set to "100" (12/16 bpp).
+For Passive Matrix (cfg_lcdtft = '0'), palette lookup is enabled when the bpp field in the Palette RAM is set to "000," "001," "010," or "011" (1, 2, 4, or 8 bpp). Palette lookup cannot be used when the bpp field is set to "100" (12/16 bpp).
 
 Palette lookup scenarios are illustrated in [Figure](#page-129-0) 13-28.
 
@@ -1530,63 +1538,63 @@ Palette RAM selection examples (output: 12 bits)
             -> 12 bits
 ```
 
-A 16-bit halfword is read from the DDR frame buffer. This halfword can be byte lane and halfword swapped using the DMA configuration values cfg\_byte\_swap and cfg\_bigendian. This section will deal with the frame buffer data as it is returned post swapped from the DMA module.
+A 16-bit halfword is read from the DDR frame buffer. This halfword can be byte lane and halfword swapped using the DMA configuration values cfg_byte_swap and cfg_bigendian. This section will deal with the frame buffer data as it is returned post swapped from the DMA module.
 
-The DMA module actually outputs a 32-bit word. The Palette Lookup logic uses the lower halfword first, followed by the upper halfword. The cfg\_rdorder and cfg\_nibmode registers determine the raster read ordering of the frame buffer data to be sent to the palette lookup table.
+The DMA module actually outputs a 32-bit word. The Palette Lookup logic uses the lower halfword first, followed by the upper halfword. The cfg_rdorder and cfg_nibmode registers determine the raster read ordering of the frame buffer data to be sent to the palette lookup table.
 
 There are precedence rules for the hardware as it parses each 16-bit word from the frame buffer.
 
-- 1. If cfg\_rdorder = '0', the data halfword is parsed from the least significant bit to the most significant bit.
-- 2. Else, if cfg\_nibmode = '1', the data halfword is parsed byte swapped with the scan order going from the most significant bit of each byte to the least significant bit of each byte.
+- 1. If cfg_rdorder = '0', the data halfword is parsed from the least significant bit to the most significant bit.
+- 2. Else, if cfg_nibmode = '1', the data halfword is parsed byte swapped with the scan order going from the most significant bit of each byte to the least significant bit of each byte.
 - 3. Otherwise, the data halfword is parsed from the most significant bit to the least significant bit.
 
 The bitwise scan order for each halfword fetched from the frame buffer is shown in the following lists. The bitfields returned are used to determine the addressing of the Palette RAM.
 
 #### **Frame buffer halfword scan order for 1 bpp**
 
-- 1. If cfg\_rdorder = 0, scan order is [0] [1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11][ 12] [13] [14] [15]
-- 2. Else if cfg\_nibmode=1, scan order is [7] [6] [5] [4] [3] [2] [1] [0] [15] [14] [13] [12] [11] [10] [9] [8]
+- 1. If cfg_rdorder = 0, scan order is [0] [1] [2] [3] [4] [5] [6] [7] [8] [9] [10] [11][ 12] [13] [14] [15]
+- 2. Else if cfg_nibmode=1, scan order is [7] [6] [5] [4] [3] [2] [1] [0] [15] [14] [13] [12] [11] [10] [9] [8]
 - 3. Otherwise, scan order is [15] [14] [13] [12] [11] [10] [9] [8] [7] [6] [5] [4] [3] [2] [1] [0]
 
 ### **Frame buffer halfword scan order for 2 bpp**
 
-- 1. If cfg\_rdorder = 0, scan order is [1:0] [3:2] [5:4] [7:6] [9:8] [11:10][ 13:12] [15:14]
-- 2. Else if cfg\_nibmode=1, scan order is [7:6] [5:4] [3:2] [1:0] [15:14] [13:12] [11:10] [9:8]
+- 1. If cfg_rdorder = 0, scan order is [1:0] [3:2] [5:4] [7:6] [9:8] [11:10][ 13:12] [15:14]
+- 2. Else if cfg_nibmode=1, scan order is [7:6] [5:4] [3:2] [1:0] [15:14] [13:12] [11:10] [9:8]
 - 3. Otherwise, scan order is [15:14] [13:12] [11:10] [9:8] [7:6] [5:4] [3:2] [1:0]
 
 #### **Frame buffer halfword scan order for 4 bpp**
 
-- 1. If cfg\_rdorder = 0, scan order is [3:0] [7:4] [11:8] [15:12]
-- 2. Else if cfg\_nibmode=1, scan order is [7:4] [3:0] [15:12] [11:8]
+- 1. If cfg_rdorder = 0, scan order is [3:0] [7:4] [11:8] [15:12]
+- 2. Else if cfg_nibmode=1, scan order is [7:4] [3:0] [15:12] [11:8]
 - 3. Otherwise, scan order is [15:12] [11:8] [7:4] [3:0]
 
 ### **Frame buffer halfword scan order for 8 bpp**
 
-- 1. If cfg\_rdorder = 0, scan order is [7:0] [15:8]
-- 2. Else if cfg\_nibmode=1, scan order is [7:0] [15:8]
+- 1. If cfg_rdorder = 0, scan order is [7:0] [15:8]
+- 2. Else if cfg_nibmode=1, scan order is [7:0] [15:8]
 - 3. Otherwise, scan order is [15:8] [7:0]
 
-### *13.4.5 Test Logic*
+### _13.4.5 Test Logic_
 
-### *13.4.6 Disable and Software Reset Sequence*
+### _13.4.6 Disable and Software Reset Sequence_
 
-In Raster Modes, the module must be disabled before applying a software reset. When cfg\_lcden is set to '0' to disable the module, the output continues to the end of the current frame.
+In Raster Modes, the module must be disabled before applying a software reset. When cfg_lcden is set to '0' to disable the module, the output continues to the end of the current frame.
 
 The Done interrupt will trigger once the frame is complete. The software reset can then be applied to the module.
 
-The software reset will clear all the frame information in the FIFO. Upon a restart, the L3 DMA will fetch from the fb0\_base address.
+The software reset will clear all the frame information in the FIFO. Upon a restart, the L3 DMA will fetch from the fb0_base address.
 
 ### To summarize:
 
-- Set cfg\_lcden='0'.
+- Set cfg_lcden='0'.
 - Wait for the Done interrupt.
-- Set the software reset bits high (cfg\_main\_rst='1' or [cfg\_dma\_rst='1' and cfg\_core\_rst='1']) for several cycles.
+- Set the software reset bits high (cfg_main_rst='1' or [cfg\_dma\_rst='1' and cfg\_core\_rst='1']) for several cycles.
 - Set the resets back low.
-- Set cfg\_lcden='1'.
+- Set cfg_lcden='1'.
 
 The disable and reset sequence must be done in this order to properly operate the LCD module and the EMIF.
 
-### *13.4.7 Precedence Order for Determining Frame Buffer Type*
+### _13.4.7 Precedence Order for Determining Frame Buffer Type_
 
 The precedence order for determining frame buffer type is specified as follows:
 
@@ -1625,14 +1633,14 @@ else // passive matrix
 
 ## **13.5 Registers**
 
-### *13.5.1 LCD Registers*
+### _13.5.1 LCD Registers_
 
 Table [13-13](#page-132-1) lists the memory-mapped registers for the LCD. All register offset addresses not listed in Table [13-13](#page-132-1) should be considered as reserved locations and the register contents should not be modified.
 
 **Table 13-13. LCD Registers**
 
 | Offset | Acronym            | Register Name | Section           |
-|--------|--------------------|---------------|-------------------|
+| ------ | ------------------ | ------------- | ----------------- |
 | 0h     | PID                |               | Section 13.5.1.1  |
 | 4h     | CTRL               |               | Section 13.5.1.2  |
 | Ch     | LIDD_CTRL          |               | Section 13.5.1.3  |
@@ -1667,27 +1675,27 @@ PID is shown in [Figure](#page-133-1) 13-29 and described in Table [13-14.](#pag
 
 #### **Figure 13-29. PID Register**
 
-| 31     | 30     | 29   | 28       | 27   | 26    | 25    | 24 |  |  |
-|--------|--------|------|----------|------|-------|-------|----|--|--|
-| scheme |        |      | RESERVED | func |       |       |    |  |  |
-|        | R-0h   |      | R-0h     | R-0h |       |       |    |  |  |
-| 23     | 22     | 21   | 20       | 19   | 18    | 17    | 16 |  |  |
-|        |        |      | func     |      |       |       |    |  |  |
-|        |        |      | R-0h     |      |       |       |    |  |  |
-| 15     | 14     | 13   | 12       | 11   | 10    | 9     | 8  |  |  |
-|        |        | rtl  |          |      |       | major |    |  |  |
-|        |        | R-0h |          |      |       | R-0h  |    |  |  |
-| 7      | 6      | 5    | 4        | 3    | 2     | 1     | 0  |  |  |
-|        | custom |      |          |      | minor |       |    |  |  |
-|        | R-0h   |      |          |      | R-0h  |       |    |  |  |
-|        |        |      |          |      |       |       |    |  |  |
+| 31     | 30     | 29   | 28       | 27   | 26    | 25    | 24  |     |     |
+| ------ | ------ | ---- | -------- | ---- | ----- | ----- | --- | --- | --- |
+| scheme |        |      | RESERVED | func |       |       |     |     |     |
+|        | R-0h   |      | R-0h     | R-0h |       |       |     |     |     |
+| 23     | 22     | 21   | 20       | 19   | 18    | 17    | 16  |     |     |
+|        |        |      | func     |      |       |       |     |     |     |
+|        |        |      | R-0h     |      |       |       |     |     |     |
+| 15     | 14     | 13   | 12       | 11   | 10    | 9     | 8   |     |     |
+|        |        | rtl  |          |      |       | major |     |     |     |
+|        |        | R-0h |          |      |       | R-0h  |     |     |     |
+| 7      | 6      | 5    | 4        | 3    | 2     | 1     | 0   |     |     |
+|        | custom |      |          |      | minor |       |     |     |     |
+|        | R-0h   |      |          |      | R-0h  |       |     |     |     |
+|        |        |      |          |      |       |       |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 13-14. PID Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                              |
-|-------|----------|------|-------|--------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ------------------------------------------------------------------------ |
 | 31-30 | scheme   | R    | 0h    | The scheme of the register used.<br>This field indicates the 3.5 Method. |
 | 29-28 | RESERVED | R    | 0h    |                                                                          |
 | 27-16 | func     | R    | 0h    | The function of the module being used.                                   |
@@ -1702,58 +1710,58 @@ CTRL is shown in [Figure](#page-134-1) 13-30 and described in Table [13-15](#pag
 
 **Figure 13-30. CTRL Register**
 
-| 31 | 30 | 29 | 28       | 27       | 26 | 25                     | 24      |
-|----|----|----|----------|----------|----|------------------------|---------|
-|    |    |    |          | RESERVED |    |                        |         |
-|    |    |    |          | R-0h     |    |                        |         |
-| 23 | 22 | 21 | 20       | 19       | 18 | 17                     | 16      |
-|    |    |    |          | RESERVED |    |                        |         |
-|    |    |    |          | R-0h     |    |                        |         |
-| 15 | 14 | 13 | 12       | 11       | 10 | 9                      | 8       |
-|    |    |    |          | clkdiv   |    |                        |         |
-|    |    |    |          | R/W-0h   |    |                        |         |
-| 7  | 6  | 5  | 4        | 3        | 2  | 1                      | 0       |
-|    |    |    | RESERVED |          |    | auto_uflow_rest<br>art | modesel |
-|    |    |    | R/W-0h   |          |    | R/W-0h                 | R/W-0h  |
+| 31  | 30  | 29  | 28       | 27       | 26  | 25                     | 24      |
+| --- | --- | --- | -------- | -------- | --- | ---------------------- | ------- |
+|     |     |     |          | RESERVED |     |                        |         |
+|     |     |     |          | R-0h     |     |                        |         |
+| 23  | 22  | 21  | 20       | 19       | 18  | 17                     | 16      |
+|     |     |     |          | RESERVED |     |                        |         |
+|     |     |     |          | R-0h     |     |                        |         |
+| 15  | 14  | 13  | 12       | 11       | 10  | 9                      | 8       |
+|     |     |     |          | clkdiv   |     |                        |         |
+|     |     |     |          | R/W-0h   |     |                        |         |
+| 7   | 6   | 5   | 4        | 3        | 2   | 1                      | 0       |
+|     |     |     | RESERVED |          |     | auto_uflow_rest<br>art | modesel |
+|     |     |     | R/W-0h   |          |     | R/W-0h                 | R/W-0h  |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 13-15. CTRL Register Field Descriptions**
 
 | Bit   | Field              | Type | Reset | Description                                                                                                                                                                                                                                                                                |
-|-------|--------------------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ------------------ | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 31-16 | RESERVED           | R    | 0h    |                                                                                                                                                                                                                                                                                            |
 | 15-8  | clkdiv             | R/W  | 0h    | Clock divisor.<br>Raster mode: Values of 2 through 255 are permitted and resulting<br>pixel clock is lcd_clk/2 through lcd_clk/255.<br>LIDD mode: Values of 0 through 255 are permitted with resulting<br>MCLK of lcd_clk/1 through lcd_clk/255 where both 0 and 1 result in<br>lcd_clk/1. |
 | 7-2   | RESERVED           | R/W  | 0h    |                                                                                                                                                                                                                                                                                            |
 | 1     | auto_uflow_restart | R/W  | 0h    | 0 = On an underflow, the software has to restart the module.<br>1 = On an underflow, the hardware will restart on the next frame.                                                                                                                                                          |
 | 0     | modesel            | R/W  | 0h    | LCD Mode select.<br>0 = LCD Controller in LIDD Mode.<br>1 = LCD Controller in Raster Mode.                                                                                                                                                                                                 |
 
-#### **13.5.1.3 LIDD\_CTRL Register (offset = Ch) [reset = 0h]**
+#### **13.5.1.3 LIDD_CTRL Register (offset = Ch) [reset = 0h]**
 
-LIDD\_CTRL is shown in [Figure](#page-135-1) 13-31 and described in Table [13-16.](#page-135-2)
+LIDD_CTRL is shown in [Figure](#page-135-1) 13-31 and described in Table [13-16.](#page-135-2)
 
-**Figure 13-31. LIDD\_CTRL Register**
+**Figure 13-31. LIDD_CTRL Register**
 
-| 31         | 30         | 29         | 28        | 27       | 26 | 25            | 24          |
-|------------|------------|------------|-----------|----------|----|---------------|-------------|
-|            |            |            |           | RESERVED |    |               |             |
-|            |            |            |           | R-0h     |    |               |             |
-| 23         | 22         | 21         | 20        | 19       | 18 | 17            | 16          |
-|            |            |            |           | RESERVED |    |               |             |
-|            |            |            |           | R-0h     |    |               |             |
-| 15         | 14         | 13         | 12        | 11       | 10 | 9             | 8           |
-|            |            | RESERVED   |           |          |    | dma_cs0_cs1   | lidd_dma_en |
-|            |            | R-0h       |           |          |    | R/W-0h        | R/W-0h      |
-| 7          | 6          | 5          | 4         | 3        | 2  | 1             | 0           |
-| cs1_e1_pol | cs0_e0_pol | ws_dir_pol | rs_en_pol | alepol   |    | lidd_mode_sel |             |
-| R/W-0h     | R/W-0h     | R/W-0h     | R/W-0h    | R/W-0h   |    | R/W-0h        |             |
+| 31         | 30         | 29         | 28        | 27       | 26  | 25            | 24          |
+| ---------- | ---------- | ---------- | --------- | -------- | --- | ------------- | ----------- |
+|            |            |            |           | RESERVED |     |               |             |
+|            |            |            |           | R-0h     |     |               |             |
+| 23         | 22         | 21         | 20        | 19       | 18  | 17            | 16          |
+|            |            |            |           | RESERVED |     |               |             |
+|            |            |            |           | R-0h     |     |               |             |
+| 15         | 14         | 13         | 12        | 11       | 10  | 9             | 8           |
+|            |            | RESERVED   |           |          |     | dma_cs0_cs1   | lidd_dma_en |
+|            |            | R-0h       |           |          |     | R/W-0h        | R/W-0h      |
+| 7          | 6          | 5          | 4         | 3        | 2   | 1             | 0           |
+| cs1_e1_pol | cs0_e0_pol | ws_dir_pol | rs_en_pol | alepol   |     | lidd_mode_sel |             |
+| R/W-0h     | R/W-0h     | R/W-0h     | R/W-0h    | R/W-0h   |     | R/W-0h        |             |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-16. LIDD\_CTRL Register Field Descriptions**
+### **Table 13-16. LIDD_CTRL Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                  |
-|-------|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-10 | RESERVED    | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | 9     | dma_cs0_cs1 | R/W  | 0h    | CS0/CS1 Select for LIDD DMA writes.<br>0 = DMA writes to LIDD CS0.<br>1 = DMA writes for LIDD CS1.                                                                                                                                                                                                                                                                                                                           |
 | 8     | lidd_dma_en | R/W  | 0h    | LIDD DMA Enable.<br>0 = Deactivate DMA control of LIDD interface.<br>DMA control is released upon completion of transfer of the current<br>frame of data (LIDD Frame Done) after this bit is cleared.<br>The MPU has direct read/write access to the panel in this mode.<br>1 = Activate DMA to drive LIDD interface to support streaming data<br>to smart panels.<br>The MPU cannot access the panel directly in this mode. |
@@ -1763,32 +1771,32 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 4     | rs_en_pol   | R/W  | 0h    | Read Strobe/Direction Polarity Control.<br>0 = Do Not Invert Read Strobe/Direction.<br>Read Strobe/Direction is active low/write low by default.<br>1 = Invert Read Strobe/Direction.                                                                                                                                                                                                                                        |
 | 3     | alepol      | R/W  | 0h    | Address Latch Enable (ALE) Polarity Control.<br>0 = Do Not Invert ALE.<br>ALE is active low by default.<br>1 = Invert.                                                                                                                                                                                                                                                                                                       |
 
-**Table 13-16. LIDD\_CTRL Register Field Descriptions (continued)**
+**Table 13-16. LIDD_CTRL Register Field Descriptions (continued)**
 
 | Bit | Field         | Type | Reset | Description                                                                                                                                                                                                                                         |
-|-----|---------------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | ------------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2-0 | lidd_mode_sel | R/W  | 0h    | LIDD Mode Select.<br>Selects type of LCD display interface for the LIDD to drive.<br>000b = Sync MPU68.<br>001b = Async MPU68.<br>010b = Sync MPU80.<br>011b = Async MPU80.<br>100b = Hitachi (Async).<br>101b = N/A.<br>110b = N/A.<br>111b = N/A. |
 
-#### **13.5.1.4 LIDD\_CS0\_CONF Register (offset = 10h) [reset = 0h]**
+#### **13.5.1.4 LIDD_CS0_CONF Register (offset = 10h) [reset = 0h]**
 
-LIDD\_CS0\_CONF is shown in [Figure](#page-137-1) 13-32 and described in Table [13-17.](#page-137-2)
+LIDD_CS0_CONF is shown in [Figure](#page-137-1) 13-32 and described in Table [13-17.](#page-137-2)
 
-### **Figure 13-32. LIDD\_CS0\_CONF Register**
+### **Figure 13-32. LIDD_CS0_CONF Register**
 
-| 31 | 30 | 29     | 28 | 27 | 26 | 25 | 24       | 23       | 22 | 21 | 20 | 19     | 18     | 17 | 16        |
-|----|----|--------|----|----|----|----|----------|----------|----|----|----|--------|--------|----|-----------|
-|    |    | w_su   |    |    |    |    |          | w_strobe |    |    |    |        | w_hold |    | r_su      |
-|    |    | R/W-0h |    |    |    |    |          | R/W-0h   |    |    |    |        | R/W-0h |    | R/W<br>0h |
-| 15 | 14 | 13     | 12 | 11 | 10 | 9  | 8        | 7        | 6  | 5  | 4  | 3      | 2      | 1  | 0         |
-|    |    | r_su   |    |    |    |    | r_strobe |          |    |    |    | r_hold |        |    | ta        |
-|    |    | R/W-0h |    |    |    |    | R/W-0h   |          |    |    |    | R/W-0h |        |    | R/W-0h    |
+| 31  | 30  | 29     | 28  | 27  | 26  | 25  | 24       | 23       | 22  | 21  | 20  | 19     | 18     | 17  | 16        |
+| --- | --- | ------ | --- | --- | --- | --- | -------- | -------- | --- | --- | --- | ------ | ------ | --- | --------- |
+|     |     | w_su   |     |     |     |     |          | w_strobe |     |     |     |        | w_hold |     | r_su      |
+|     |     | R/W-0h |     |     |     |     |          | R/W-0h   |     |     |     |        | R/W-0h |     | R/W<br>0h |
+| 15  | 14  | 13     | 12  | 11  | 10  | 9   | 8        | 7        | 6   | 5   | 4   | 3      | 2      | 1   | 0         |
+|     |     | r_su   |     |     |     |     | r_strobe |          |     |     |     | r_hold |        |     | ta        |
+|     |     | R/W-0h |     |     |     |     | R/W-0h   |          |     |     |     | R/W-0h |        |     | R/W-0h    |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-17. LIDD\_CS0\_CONF Register Field Descriptions**
+### **Table 13-17. LIDD_CS0_CONF Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                     |
-|-------|----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-27 | w_su     | R/W  | 0h    | Write Strobe Set-Up cycles.<br>When performing a write access, this field defines the number of<br>memclk cycles that Data Bus/Pad Output Enable, the Direction bit,<br>and Chip Select 0 have to be ready before the Write Strobe is<br>asserted.<br>The minimum value is 0x0. |
 | 26-21 | w_strobe | R/W  | 0h    | Write Strobe Duration cycles.<br>Field value defines the number of memclk cycles for which the Write<br>Strobe is held active when performing a write access.<br>The minimum value is 0x1.                                                                                      |
 | 20-17 | w_hold   | R/W  | 0h    | Write Strobe Hold cycles.<br>Field value defines the number of memclk cycles for which Data<br>Bus/Pas Output Enable, ALE, the Direction bit, and Chip Select 0<br>are held after the Write Strobe is de-asserted when performing write<br>access.<br>The minimum value is 0x1. |
@@ -1797,66 +1805,66 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 5-2   | r_hold   | R/W  | 0h    | Read Strobe Hold cycles.<br>Field value defines the number of memclk cycles for which Data<br>Bus/Pad Output Enable, the Direction bit, and Chip Select 0 are held<br>after the Read Strobe is deasserted when performing a read access.<br>The minimum value is 0x1.           |
 | 1-0   | ta       | R/W  | 0h    | Field value defines the number of memclk (ta+1) cycles between the<br>end of one CS0 device access and the start of another CS0 device<br>access unless the two accesses are both Reads.<br>In this case, this delay is not incurred.<br>The minimum value is 0x0.              |
 
-#### **13.5.1.5 LIDD\_CS0\_ADDR Register (offset = 14h) [reset = 0h]**
+#### **13.5.1.5 LIDD_CS0_ADDR Register (offset = 14h) [reset = 0h]**
 
-LIDD\_CS0\_ADDR is shown in [Figure](#page-138-1) 13-33 and described in Table [13-18.](#page-138-2)
+LIDD_CS0_ADDR is shown in [Figure](#page-138-1) 13-33 and described in Table [13-18.](#page-138-2)
 
-### **Figure 13-33. LIDD\_CS0\_ADDR Register**
+### **Figure 13-33. LIDD_CS0_ADDR Register**
 
-| 31 | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23       | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7        | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|----|----|----|----|----|----|----|----------|----|----|----|----|----|----|----|----|----|----|----|----|----|---|---|----------|---|---|---|---|---|---|---|
-|    |    |    |    |    |    |    |    | RESERVED |    |    |    |    |    |    |    |    |    |    |    |    |    |   |   | adr_indx |   |   |   |   |   |   |   |
-|    |    |    |    |    |    |    |    | R-0h     |    |    |    |    |    |    |    |    |    |    |    |    |    |   |   | R/W-0h   |   |   |   |   |   |   |   |
+| 31  | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23       | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15  | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7        | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | --- | --- | --- | --- | --- | --- | --- | -------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | -------- | --- | --- | --- | --- | --- | --- | --- |
+|     |     |     |     |     |     |     |     | RESERVED |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | adr_indx |     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |     | R-0h     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R/W-0h   |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-18. LIDD\_CS0\_ADDR Register Field Descriptions**
+### **Table 13-18. LIDD_CS0_ADDR Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-|-------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-16 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 15-0  | adr_indx | R/W  | 0h    | The LCD Controller supports a shared Address/Data output bus.<br>A write to this register would initiate a bus write transaction.<br>A read from this register would initiate a bus read transaction.<br>CPU reads and writes to this register are not permitted if the LIDD<br>module is in DMA mode (cfg_lidd_dma_en = 1).<br>If the LIDD is being used as a generic bus interface, writing to this<br>register can store adr_indx to an external transparent latch holding a<br>16-bit address.<br>If the LIDD is being used to interface with a character based LCD<br>panel in configuration mode, reading and writing to this register can<br>be used to access the command instruction area of the panel. |
 
-#### **13.5.1.6 LIDD\_CS0\_DATA Register (offset = 18h) [reset = 0h]**
+#### **13.5.1.6 LIDD_CS0_DATA Register (offset = 18h) [reset = 0h]**
 
-LIDD\_CS0\_DATA is shown in [Figure](#page-139-1) 13-34 and described in Table [13-19](#page-139-2).
+LIDD_CS0_DATA is shown in [Figure](#page-139-1) 13-34 and described in Table [13-19](#page-139-2).
 
-### **Figure 13-34. LIDD\_CS0\_DATA Register**
+### **Figure 13-34. LIDD_CS0_DATA Register**
 
-| 31 | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23       | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8      | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|----|----|----|----|----|----|----|----------|----|----|----|----|----|----|----|----|----|----|----|----|----|---|--------|---|---|---|---|---|---|---|---|
-|    |    |    |    |    |    |    |    | RESERVED |    |    |    |    |    |    |    |    |    |    |    |    |    |   | data   |   |   |   |   |   |   |   |   |
-|    |    |    |    |    |    |    |    | R-0h     |    |    |    |    |    |    |    |    |    |    |    |    |    |   | R/W-0h |   |   |   |   |   |   |   |   |
+| 31  | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23       | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15  | 14  | 13  | 12  | 11  | 10  | 9   | 8      | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | --- | --- | --- | --- | --- | --- | --- | -------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- |
+|     |     |     |     |     |     |     |     | RESERVED |     |     |     |     |     |     |     |     |     |     |     |     |     |     | data   |     |     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |     | R-0h     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 13-19. LIDD\_CS0\_DATA Register Field Descriptions**
+#### **Table 13-19. LIDD_CS0_DATA Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-|-------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-16 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 15-0  | data     | R/W  | 0h    | The LCD Controller supports a shared Address/Data output bus.<br>A write to this register would initiate a bus write transaction.<br>A read from this register would initiate a bus read transaction.<br>CPU reads and writes to this register are not permitted if the LIDD<br>module is in DMA mode (cfg_lidd_dma_en = 1).<br>If the LIDD is being used as a generic bus interface, writing to this<br>register can store adr_indx to an external transparent latch holding a<br>16-bit address.<br>If the LIDD is being used to interface with a character based LCD<br>panel in configuration mode, reading and writing to this register can<br>be used to access the command instruction area of the panel. |
 
-#### **13.5.1.7 LIDD\_CS1\_CONF Register (offset = 1Ch) [reset = 0h]**
+#### **13.5.1.7 LIDD_CS1_CONF Register (offset = 1Ch) [reset = 0h]**
 
-LIDD\_CS1\_CONF is shown in [Figure](#page-140-1) 13-35 and described in Table [13-20.](#page-140-2)
+LIDD_CS1_CONF is shown in [Figure](#page-140-1) 13-35 and described in Table [13-20.](#page-140-2)
 
-#### **Figure 13-35. LIDD\_CS1\_CONF Register**
+#### **Figure 13-35. LIDD_CS1_CONF Register**
 
-| 31 | 30 | 29     | 28 | 27 | 26 | 25 | 24       | 23       | 22 | 21 | 20 | 19     | 18     | 17 | 16        |
-|----|----|--------|----|----|----|----|----------|----------|----|----|----|--------|--------|----|-----------|
-|    |    | w_su   |    |    |    |    |          | w_strobe |    |    |    |        | w_hold |    | r_su      |
-|    |    | R/W-0h |    |    |    |    |          | R/W-0h   |    |    |    |        | R/W-0h |    | R/W<br>0h |
-| 15 | 14 | 13     | 12 | 11 | 10 | 9  | 8        | 7        | 6  | 5  | 4  | 3      | 2      | 1  | 0         |
-|    |    | r_su   |    |    |    |    | r_strobe |          |    |    |    | r_hold |        |    | ta        |
-|    |    | R/W-0h |    |    |    |    | R/W-0h   |          |    |    |    | R/W-0h |        |    | R/W-0h    |
+| 31  | 30  | 29     | 28  | 27  | 26  | 25  | 24       | 23       | 22  | 21  | 20  | 19     | 18     | 17  | 16        |
+| --- | --- | ------ | --- | --- | --- | --- | -------- | -------- | --- | --- | --- | ------ | ------ | --- | --------- |
+|     |     | w_su   |     |     |     |     |          | w_strobe |     |     |     |        | w_hold |     | r_su      |
+|     |     | R/W-0h |     |     |     |     |          | R/W-0h   |     |     |     |        | R/W-0h |     | R/W<br>0h |
+| 15  | 14  | 13     | 12  | 11  | 10  | 9   | 8        | 7        | 6   | 5   | 4   | 3      | 2      | 1   | 0         |
+|     |     | r_su   |     |     |     |     | r_strobe |          |     |     |     | r_hold |        |     | ta        |
+|     |     | R/W-0h |     |     |     |     | R/W-0h   |          |     |     |     | R/W-0h |        |     | R/W-0h    |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 13-20. LIDD\_CS1\_CONF Register Field Descriptions**
+#### **Table 13-20. LIDD_CS1_CONF Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                       |
-|-------|----------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-27 | w_su     | R/W  | 0h    | Write Strobe Set-Up cycles.<br>When performing a write access, this field defines the number of<br>memclk cycles that Data Bus/Pad Output Enable, , the Direction bit,<br>and Chip Select 1 have to be ready before the Write Strobe is<br>asserted.<br>The minimum value is 0x0. |
 | 26-21 | w_strobe | R/W  | 0h    | Write Strobe Duration cycles.<br>Field value defines the number of memclk cycles for which the Write<br>Strobe is held active when performing a write access.<br>The minimum value is 0x1.                                                                                        |
 | 20-17 | w_hold   | R/W  | 0h    | Write Strobe Hold cycles.<br>Field value defines the number of memclk cycles for which Data<br>Bus/Pad Output Enable, ALE, the Direction bit, and Chip Select 1<br>are held after the Write Strobe is deasserted when performing a<br>write access.<br>The minimum value is 0x1.  |
@@ -1865,80 +1873,80 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 5-2   | r_hold   | R/W  | 0h    | Read Strobe Hold cycles.<br>Field value defines the number of memclk cycles for which Data<br>Bus/Pad Output Enable, , the Direction bit, and Chip Select 1 are<br>held after the Read Strobe is deasserted when performing a read<br>access.<br>The minimum value is 0x1.        |
 | 1-0   | ta       | R/W  | 0h    | Field value defines the number of memclk (ta+1) cycles between the<br>end of one CS1 device access and the start of another CS1 device<br>access unless the two accesses are both Reads.<br>In this case, this delay is not incurred.<br>The minimum value is 0x0.                |
 
-#### **13.5.1.8 LIDD\_CS1\_ADDR Register (offset = 20h) [reset = 0h]**
+#### **13.5.1.8 LIDD_CS1_ADDR Register (offset = 20h) [reset = 0h]**
 
-LIDD\_CS1\_ADDR is shown in [Figure](#page-141-1) 13-36 and described in Table [13-21.](#page-141-2)
+LIDD_CS1_ADDR is shown in [Figure](#page-141-1) 13-36 and described in Table [13-21.](#page-141-2)
 
-#### **Figure 13-36. LIDD\_CS1\_ADDR Register**
+#### **Figure 13-36. LIDD_CS1_ADDR Register**
 
-| 31 | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23       | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7        | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|----|----|----|----|----|----|----|----------|----|----|----|----|----|----|----|----|----|----|----|----|----|---|---|----------|---|---|---|---|---|---|---|
-|    |    |    |    |    |    |    |    | RESERVED |    |    |    |    |    |    |    |    |    |    |    |    |    |   |   | adr_indx |   |   |   |   |   |   |   |
-|    |    |    |    |    |    |    |    | R-0h     |    |    |    |    |    |    |    |    |    |    |    |    |    |   |   | R/W-0h   |   |   |   |   |   |   |   |
+| 31  | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23       | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15  | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7        | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | --- | --- | --- | --- | --- | --- | --- | -------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | -------- | --- | --- | --- | --- | --- | --- | --- |
+|     |     |     |     |     |     |     |     | RESERVED |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | adr_indx |     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |     | R-0h     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R/W-0h   |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-21. LIDD\_CS1\_ADDR Register Field Descriptions**
+### **Table 13-21. LIDD_CS1_ADDR Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-|-------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-16 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 15-0  | adr_indx | R/W  | 0h    | The LCD Controller supports a shared Address/Data output bus.<br>A write to this register would initiate a bus write transaction.<br>A read from this register would initiate a bus read transaction.<br>CPU reads and writes to this register are not permitted if the LIDD<br>module is in DMA mode (cfg_lidd_dma_en = 1).<br>If the LIDD is being used as a generic bus interface, writing to this<br>register can store adr_indx to an external transparent latch holding a<br>16-bit address.<br>If the LIDD is being used to interface with a character based LCD<br>panel in configuration mode, reading and writing to this register can<br>be used to access the command instruction area of the panel. |
 
-#### **13.5.1.9 LIDD\_CS1\_DATA Register (offset = 24h) [reset = 0h]**
+#### **13.5.1.9 LIDD_CS1_DATA Register (offset = 24h) [reset = 0h]**
 
-LIDD\_CS1\_DATA is shown in [Figure](#page-142-1) 13-37 and described in Table [13-22](#page-142-2).
+LIDD_CS1_DATA is shown in [Figure](#page-142-1) 13-37 and described in Table [13-22](#page-142-2).
 
-### **Figure 13-37. LIDD\_CS1\_DATA Register**
+### **Figure 13-37. LIDD_CS1_DATA Register**
 
-| 31 | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23       | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8      | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|----|----|----|----|----|----|----|----------|----|----|----|----|----|----|----|----|----|----|----|----|----|---|--------|---|---|---|---|---|---|---|---|
-|    |    |    |    |    |    |    |    | RESERVED |    |    |    |    |    |    |    |    |    |    |    |    |    |   | data   |   |   |   |   |   |   |   |   |
-|    |    |    |    |    |    |    |    | R-0h     |    |    |    |    |    |    |    |    |    |    |    |    |    |   | R/W-0h |   |   |   |   |   |   |   |   |
+| 31  | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23       | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15  | 14  | 13  | 12  | 11  | 10  | 9   | 8      | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | --- | --- | --- | --- | --- | --- | --- | -------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- |
+|     |     |     |     |     |     |     |     | RESERVED |     |     |     |     |     |     |     |     |     |     |     |     |     |     | data   |     |     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |     | R-0h     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 13-22. LIDD\_CS1\_DATA Register Field Descriptions**
+#### **Table 13-22. LIDD_CS1_DATA Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-|-------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-16 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 15-0  | data     | R/W  | 0h    | The LCD Controller supports a shared Address/Data output bus.<br>A write to this register would initiate a bus write transaction.<br>A read from this register would initiate a bus read transaction.<br>CPU reads and writes to this register are not permitted if the LIDD<br>module is in DMA mode (cfg_lidd_dma_en = 1).<br>If the LIDD is being used as a generic bus interface, writing to this<br>register can store adr_indx to an external transparent latch holding a<br>16-bit address.<br>If the LIDD is being used to interface with a character based LCD<br>panel in configuration mode, reading and writing to this register can<br>be used to access the command instruction area of the panel. |
 
-#### **13.5.1.10 RASTER\_CTRL Register (offset = 28h) [reset = 0h]**
+#### **13.5.1.10 RASTER_CTRL Register (offset = 28h) [reset = 0h]**
 
-RASTER\_CTRL is shown in [Figure](#page-143-1) 13-38 and described in Table [13-23](#page-143-2).
+RASTER_CTRL is shown in [Figure](#page-143-1) 13-38 and described in Table [13-23](#page-143-2).
 
-#### **Figure 13-38. RASTER\_CTRL Register**
+#### **Figure 13-38. RASTER_CTRL Register**
 
-| 31     | 30      | 29       | 28       | 27 | 26            | 25     | 24      |
-|--------|---------|----------|----------|----|---------------|--------|---------|
-|        |         | RESERVED |          |    | tft24unpacked | tft24  | stn565  |
-|        |         | R/W-0h   |          |    | R/W-0h        | R/W-0h | R/W-0h  |
-| 23     | 22      | 21       | 20       | 19 | 18            | 17     | 16      |
-| tftmap | nibmode |          | palmode  |    | reqdly        |        |         |
-| R/W-0h | R/W-0h  |          | R/W-0h   |    | R/W-0h        |        |         |
-| 15     | 14      | 13       | 12       | 11 | 10            | 9      | 8       |
-|        |         | reqdly   |          |    | RESERVED      | mono8b | rdorder |
-|        |         | R/W-0h   |          |    | R/W-0h        | R/W-0h | R/W-0h  |
-| 7      | 6       | 5        | 4        | 3  | 2             | 1      | 0       |
-| lcdtft |         |          | RESERVED |    |               | lcdbw  | lcden   |
-| R/W-0h |         |          | R/W-0h   |    |               | R/W-0h | R/W-0h  |
+| 31     | 30      | 29       | 28       | 27  | 26            | 25     | 24      |
+| ------ | ------- | -------- | -------- | --- | ------------- | ------ | ------- |
+|        |         | RESERVED |          |     | tft24unpacked | tft24  | stn565  |
+|        |         | R/W-0h   |          |     | R/W-0h        | R/W-0h | R/W-0h  |
+| 23     | 22      | 21       | 20       | 19  | 18            | 17     | 16      |
+| tftmap | nibmode |          | palmode  |     | reqdly        |        |         |
+| R/W-0h | R/W-0h  |          | R/W-0h   |     | R/W-0h        |        |         |
+| 15     | 14      | 13       | 12       | 11  | 10            | 9      | 8       |
+|        |         | reqdly   |          |     | RESERVED      | mono8b | rdorder |
+|        |         | R/W-0h   |          |     | R/W-0h        | R/W-0h | R/W-0h  |
+| 7      | 6       | 5        | 4        | 3   | 2             | 1      | 0       |
+| lcdtft |         |          | RESERVED |     |               | lcdbw  | lcden   |
+| R/W-0h |         |          | R/W-0h   |     |               | R/W-0h | R/W-0h  |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-23. RASTER\_CTRL Register Field Descriptions**
+### **Table 13-23. RASTER_CTRL Register Field Descriptions**
 
 | Bit   | Field         | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-|-------|---------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ------------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-27 | RESERVED      | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 26    | tft24unpacked | R/W  | 0h    | 24 bit Mode Packing.<br>Only used when cfg_tft<br>24=1 and cfg_lcdtft=1.<br>0 =<br>24-bit pixels are packed into 32 bit boundaries, which means 4 pixels<br>are saved in every three words.<br>Word<br>0: pix1<br>[7:0], pix0<br>[23:0].<br>Word<br>1: pix2<br>[15:0], pix1<br>[23:8].<br>Word<br>2: pix3<br>[23:0], pix2<br>[23:16].<br>1 =<br>24-bit pixels are stored unpacked in with the uppermost byte unused.<br>Word<br>0: Unused<br>[7:0], pix0<br>[23:0].<br>Word<br>1: Unused<br>[7:0], pix1<br>[23:0].<br>Word<br>2: Unused<br>[7:0], pix2<br>[23:0].<br>Word<br>3: Unused<br>[7:0], pix3<br>[23:0]. |
 | 25    | tft24         | R/W  | 0h    | 24 bit mode.<br>0 = off<br>1 = on (<br>24-bit data in active mode).<br>The format of the framebuffer data depends on cfg_tft24unpacked.                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
-**Table 13-23. RASTER\_CTRL Register Field Descriptions (continued)**
+**Table 13-23. RASTER_CTRL Register Field Descriptions (continued)**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-|-------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 24    | stn565   | R/W  | 0h    | Passive Matrix Mode only (cfg_lcdtft='0') and 16 bpp raw data<br>framebuffers (bpp = '00').<br>If the bpp field in the framebuffer palette header is '00' (12/16/24 bpp<br>source), then the DDR contains raw data and the palette lookup is<br>bypassed.<br>Only for this case, this bit selects whether the framebuffer format is<br>16 bpp 565 or 12 bpp.<br>The Grayscaler can only take 12 bits per pixel.<br>The framebuffer data is 16 bits per pixel 565 when stn565 is set to<br>'1' and only the 4 most significant bits of each color component are<br>sent to the Grayscaler input.<br>0 = Framebuffer is 12 bpp packed in bits<br>[11:0].<br>1 = Framebuffer is 16 bpp 565.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 23    | tftmap   | R/W  | 0h    | TFT Mode Alternate Signal Mapping for Palettized framebuffer.<br>Must be '0' for all 12/16/24 bpp raw data formats.<br>Can only be '1' for 1/2/4/8 bpp Palette Lookup data.<br>Valid only in Active Matrix mode when cfg_lcdtft='1'.<br>0 = 4 bits per component output data for 1, 2, 4, and 8 bpp modes<br>will be right aligned on lcd_pins (<br>11:0).<br>1 = 4 bits per component output data for 1, 2, 4, and 8 bpp will be<br>converted to 5,6,5, format and use pins (<br>15:0) R3 R2 R1 R0 R3 G3 G2 G1 G0 G3 G2 B3 B2 B1 B0 B3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 22    | nibmode  | R/W  | 0h    | Nibble Mode.<br>This bit is used to determine palette indexing and is used in<br>conjunction with cfg_rdorder.<br>0 = Nibble mode is disabled.<br>1 = Nibble mode is enabled.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -1946,10 +1954,10 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 19-12 | reqdly   | R/W  | 0h    | Palette Loading Delay When loading the Palette from DDR, palette<br>data is burst into the internal Palette SRAM from the Async FIFO.<br>1-,<br>2-, and<br>4-bit per pixel framebuffer encodings use a fixed<br>16-word entry palette residing above the video data.<br>The 8 bit per pixel framebuffer encoding uses a<br>256-word entry palette residing above the video data.<br>Likewise, 12, 16, and 24 bit per pixel framebuffer encodings also<br>define a<br>256-word entry palette even though these encodings will not do a full<br>bit-depth palette lookup.<br>However, the<br>256-word palette entry must still be read from DDR as a framebuffer<br>is fetched.<br>Bursting in 256 words in sequential lcd_clk cycles may cause the<br>Async FIFO to underflow depending on the SOC DDR burst<br>bandwidth.<br>This<br>8-bit reqdly parameter pauses reading of the Palette data from the<br>Async FIFO between each burst of 16 words.<br>The delay is in terms of lcd_clk (system clock) cycles.<br>Value (<br>0-255) used to specify the number of system clock cycles that<br>should be paused between bursts of 16 word reads from the Async<br>FIFO while loading the Palette SRAM.<br>Programming reqdly=00h disables this pause when loading the<br>palette table. |
 | 11-10 | RESERVED | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
-**Table 13-23. RASTER\_CTRL Register Field Descriptions (continued)**
+**Table 13-23. RASTER_CTRL Register Field Descriptions (continued)**
 
 | Bit | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-|-----|----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | -------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 |     |          |      |       |                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | 9   | mono8b   | R/W  | 0h    | Mono 8 bit.<br>0 = lcd_pixel_o<br>[3:0] is used to output four pixel values to the panel each pixel clock<br>transition.<br>1 = lcd_pixel_o<br>[7:0] is used to output eight pixel values to the panel each pixel clock<br>transition.<br>This bit is ignored in all other modes.                                                                                                                                                                 |
 | 8   | rdorder  | R/W  | 0h    | Raster Data Order Select.<br>0 = The frame buffer parsing for Palette Data lookup is from Bit 0 to<br>bit 31 of the input word from the DMA output.<br>1 = The fame buffer parsing for Palette Data lookup is from Bit 31 to<br>Bit 0 of the input word from the DMA output.<br>This bit has no effect on raw data framebuffers (12/16/24 bpp).<br>This bit is used to determine palette indexing and is used in<br>conjunction with cfg_nibmode. |
@@ -1958,69 +1966,69 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 1   | lcdbw    | R/W  | 0h    | Only Applies for Passive Matrix Panels LCD Monochrome.<br>0 = Color operation enabled.<br>1 = Monochrome operation enabled.                                                                                                                                                                                                                                                                                                                       |
 | 0   | lcden    | R/W  | 0h    | LCD Controller Enable.<br>0 = LCD controller disabled.<br>1 = LCD controller enabled.                                                                                                                                                                                                                                                                                                                                                             |
 
-#### **13.5.1.11 RASTER\_TIMING\_0 Register (offset = 2Ch) [reset = 0h]**
+#### **13.5.1.11 RASTER_TIMING_0 Register (offset = 2Ch) [reset = 0h]**
 
-RASTER\_TIMING\_0 is shown in [Figure](#page-146-1) 13-39 and described in Table [13-24](#page-146-2).
+RASTER_TIMING_0 is shown in [Figure](#page-146-1) 13-39 and described in Table [13-24](#page-146-2).
 
-**Figure 13-39. RASTER\_TIMING\_0 Register**
+**Figure 13-39. RASTER_TIMING_0 Register**
 
-| 31 | 30 | 29     | 28     | 27     | 26 | 25       | 24     |
-|----|----|--------|--------|--------|----|----------|--------|
-|    |    |        |        | hbp    |    |          |        |
-|    |    |        |        | R/W-0h |    |          |        |
-| 23 | 22 | 21     | 20     | 19     | 18 | 17       | 16     |
-|    |    |        |        | hfp    |    |          |        |
-|    |    |        |        | R/W-0h |    |          |        |
-| 15 | 14 | 13     | 12     | 11     | 10 | 9        | 8      |
-|    |    |        | hsw    |        |    |          | ppllsb |
-|    |    |        | R/W-0h |        |    |          | R/W-0h |
-| 7  | 6  | 5      | 4      | 3      | 2  | 1        | 0      |
-|    |    | ppllsb |        | pplmsb |    | RESERVED |        |
-|    |    | R/W-0h |        | R/W-0h |    | R-0h     |        |
+| 31  | 30  | 29     | 28     | 27     | 26  | 25       | 24     |
+| --- | --- | ------ | ------ | ------ | --- | -------- | ------ |
+|     |     |        |        | hbp    |     |          |        |
+|     |     |        |        | R/W-0h |     |          |        |
+| 23  | 22  | 21     | 20     | 19     | 18  | 17       | 16     |
+|     |     |        |        | hfp    |     |          |        |
+|     |     |        |        | R/W-0h |     |          |        |
+| 15  | 14  | 13     | 12     | 11     | 10  | 9        | 8      |
+|     |     |        | hsw    |        |     |          | ppllsb |
+|     |     |        | R/W-0h |        |     |          | R/W-0h |
+| 7   | 6   | 5      | 4      | 3      | 2   | 1        | 0      |
+|     |     | ppllsb |        | pplmsb |     | RESERVED |        |
+|     |     | R/W-0h |        | R/W-0h |     | R-0h     |        |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-**Table 13-24. RASTER\_TIMING\_0 Register Field Descriptions**
+**Table 13-24. RASTER_TIMING_0 Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-|-------|----------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 31-24 | hbp      | R/W  | 0h    | Horizontal Back Porch Lowbits Bits 7 to 0 of the horizontal back<br>porch field.<br>Encoded value (from<br>1-1024) used to specify the number of pixel clock periods to add to<br>the beginning of a line transmission before the first set of pixels is<br>output to the display (programmed value plus 1).<br>Note that pixel clock is held in its inactive state during the beginning<br>of the line wait period in passive display mode, and is permitted to<br>transition in active display mode. |
 | 23-16 | hfp      | R/W  | 0h    | Horizontal Front Porch Lowbits Encoded value (from 1 to 1024) used<br>to specify the number of pixel clock periods to add to the end of a<br>line transmission before line clock is asserted (programmed value<br>plus 1).<br>Note that pixel clock is held in its inactive state during the end of line<br>wait period in passive display mode, and is permitted to transition in<br>active display mode.                                                                                             |
 | 15-10 | hsw      | R/W  | 0h    | Horizontal Sync Pulse Width Lowbits Bits 5 to 0 of the horizontal<br>sync pulse width field.<br>Encoded value (from<br>1-1024) used to specify the number of pixel clock periods to pulse<br>the line clock at the end of each line (programmed value plus 1).<br>Note that pixel clock is held in its inactive state during the generation<br>of line clock in passive display mode, and is permitted to transition in<br>active display mode.                                                        |
-| 9-4   | ppllsb   | R/W  | 0h    | Pixels-per-line LSB<br>[9:4].<br>Encoded LSB value (from<br>1-1024) used to specify the number of pixels contained within each<br>line on the LCD display (programmed to value minus one).<br>PPL = 11'b{pplmsb, ppllsb, 4'b1111} + 1 ex: pplmsb=1'b1,<br>pppllsb=6'0001000 PPL = 11'b{1, 000100, 1111}+<br>1 = 1104d (decimal) pixels per line.<br>In other words, PPL = 16*({pplmsb, ppllsb}+1).                                                                                                     |
+| 9-4   | ppllsb   | R/W  | 0h    | Pixels-per-line LSB<br>[9:4].<br>Encoded LSB value (from<br>1-1024) used to specify the number of pixels contained within each<br>line on the LCD display (programmed to value minus one).<br>PPL = 11'b{pplmsb, ppllsb, 4'b1111} + 1 ex: pplmsb=1'b1,<br>pppllsb=6'0001000 PPL = 11'b{1, 000100, 1111}+<br>1 = 1104d (decimal) pixels per line.<br>In other words, PPL = 16\*({pplmsb, ppllsb}+1).                                                                                                    |
 | 3     | pplmsb   | R/W  | 0h    | Pixels-per-line MSB[10].<br>Needed in order to support up to 2048 ppl.                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 2-0   | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
-#### **13.5.1.12 RASTER\_TIMING\_1 Register (offset = 30h) [reset = 0h]**
+#### **13.5.1.12 RASTER_TIMING_1 Register (offset = 30h) [reset = 0h]**
 
-RASTER\_TIMING\_1 is shown in [Figure](#page-147-1) 13-40 and described in Table [13-25](#page-147-2).
+RASTER_TIMING_1 is shown in [Figure](#page-147-1) 13-40 and described in Table [13-25](#page-147-2).
 
-#### **Figure 13-40. RASTER\_TIMING\_1 Register**
+#### **Figure 13-40. RASTER_TIMING_1 Register**
 
-| 31 | 30 | 29 | 28     | 27 | 26 | 25 | 24 | 23 | 22 | 21 | 20     | 19 | 18 | 17 | 16 | 15 | 14 | 13     | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4      | 3 | 2 | 1 | 0 |
-|----|----|----|--------|----|----|----|----|----|----|----|--------|----|----|----|----|----|----|--------|----|----|----|---|---|---|---|---|--------|---|---|---|---|
-|    |    |    | vbp    |    |    |    |    |    |    |    | vfp    |    |    |    |    |    |    | vsw    |    |    |    |   |   |   |   |   | lpp    |   |   |   |   |
-|    |    |    | R/W-0h |    |    |    |    |    |    |    | R/W-0h |    |    |    |    |    |    | R/W-0h |    |    |    |   |   |   |   |   | R/W-0h |   |   |   |   |
+| 31  | 30  | 29  | 28     | 27  | 26  | 25  | 24  | 23  | 22  | 21  | 20     | 19  | 18  | 17  | 16  | 15  | 14  | 13     | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4      | 3   | 2   | 1   | 0   |
+| --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- |
+|     |     |     | vbp    |     |     |     |     |     |     |     | vfp    |     |     |     |     |     |     | vsw    |     |     |     |     |     |     |     |     | lpp    |     |     |     |     |
+|     |     |     | R/W-0h |     |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     |     |     | R/W-0h |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-25. RASTER\_TIMING\_1 Register Field Descriptions**
+### **Table 13-25. RASTER_TIMING_1 Register Field Descriptions**
 
 | Bit   | Field | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-|-------|-------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 31-24 | vbp   | R/W  | 0h    | Vertical Back Porch Value (from<br>0-255) use to specify the number of line clock periods to add to the<br>beginning of a frame before the first set of pixels is output to the<br>display.<br>Note that line clock transitions during the insertion of the extra line<br>clock periods.                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | 23-16 | vfp   | R/W  | 0h    | Vertical Front Porch Value (from<br>0-255) used to specify the number of line clock periods to add to the<br>end of each frame.<br>Note that the line clock transitions during the insertion of the extra<br>line clock periods.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 15-10 | vsw   | R/W  | 0h    | Vertical Sync Width Pulse In active mode (lcdtft=1), encoded value<br>(from<br>1-64) used to specify the number of line clock periods to set the<br>lcd_fp pin active at the end of each frame after the (vfp) period<br>elapses.<br>The number of clock cycles is programmed value plus one.<br>The frame clock is used as the VSYNC signal in active mode.<br>In passive mode (lcdtft=0), encoded value (from<br>1-64) used to specify the number of extra line clock periods to insert<br>after the vertical front porch (vfp) period has elapsed.<br>Note that the width of lcd_fp is not affected by vsw in passive mode<br>and line clock transitions during the insertion of the extra line clock<br>periods (programmed value plus one). |
 | 9-0   | lpp   | R/W  | 0h    | Lines Per Panel Encoded value (programmed value range of {<br>0:2047} represents an actual range of {<br>1:2048}) used to specify the number of lines per panel.<br>It represents the total number of lines on the LCD (programmed<br>value plus one).<br>Bit 10 of this field is in RASTER_TIMING_2.                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 
-#### **13.5.1.13 RASTER\_TIMING\_2 Register (offset = 34h) [reset = 0h]**
+#### **13.5.1.13 RASTER_TIMING_2 Register (offset = 34h) [reset = 0h]**
 
-RASTER\_TIMING\_2 is shown in [Figure](#page-148-1) 13-41 and described in Table [13-26](#page-148-2).
+RASTER_TIMING_2 is shown in [Figure](#page-148-1) 13-41 and described in Table [13-26](#page-148-2).
 
-**Figure 13-41. RASTER\_TIMING\_2 Register**
+**Figure 13-41. RASTER_TIMING_2 Register**
 
 | 31       | 30       | 29     | 28           | 27     | 26       | 25           | 24       |
-|----------|----------|--------|--------------|--------|----------|--------------|----------|
+| -------- | -------- | ------ | ------------ | ------ | -------- | ------------ | -------- |
 | RESERVED |          |        | hsw_highbits |        | lpp_b10  | phsvs_on_off | phsvs_rf |
 | R-0h     |          |        | R/W-0h       |        | R/W-0h   | R/W-0h       | R/W-0h   |
 | 23       | 22       | 21     | 20           | 19     | 18       | 17           | 16       |
@@ -2033,12 +2041,12 @@ RASTER\_TIMING\_2 is shown in [Figure](#page-148-1) 13-41 and described in Table
 |          | RESERVED |        | hbp_highbits |        | RESERVED | hfp_highbits |          |
 |          | R-0h     |        | R/W-0h       |        | R-0h     | R/W-0h       |          |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 13-26. RASTER\_TIMING\_2 Register Field Descriptions**
+#### **Table 13-26. RASTER_TIMING_2 Register Field Descriptions**
 
 | Bit   | Field        | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-|-------|--------------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ------------ | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31    | RESERVED     | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | 30-27 | hsw_highbits | R/W  | 0h    | Bits 9 to 6 of the horizontal sync width field.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | 26    | lpp_b10      | R/W  | 0h    | Lines Per Panel Bit 10.<br>Bit 10 of the lpp field in RASTER_TIMING_1.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
@@ -2048,10 +2056,10 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 22    | ipc          | R/W  | 0h    | Invert Pixel Clock.<br>0 = Data is driven on the LCD's data lines on the rising edge of<br>lcd_cp.<br>1 = Data is driven on the LCD's data lines in the falling edge of<br>lcd_cp.<br>For Active Matrix output (cfg_lcdtft='1'), the Output Pixel Clock is a<br>free running clock in that it transitions in horizontal blanking<br>(including horizontal front porch, horizontal back porch) areas and all<br>vertical blanking times.<br>For Passive Matrix output (cfg_lcdtft='0'), the Output Pixel Clock on<br>occurs when an output data value is written.<br>It is in a return-to-zero state when cfg_ipc='0' and a return-to-one<br>state when cfg_ipc='1'. |
 | 21    | ihs          | R/W  | 0h    | Invert Hsync.<br>0 = lcd_lp pin is active high and inactive low.<br>1 = lcd_lp pin is active low and inactive high.<br>Active and passive mode: horizontal sync pulse/line clock active<br>between lines, after the end of line wait period                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
-**Table 13-26. RASTER\_TIMING\_2 Register Field Descriptions (continued)**
+**Table 13-26. RASTER_TIMING_2 Register Field Descriptions (continued)**
 
 | Bit   | Field        | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                    |
-|-------|--------------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ------------ | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 20    | ivs          | R/W  | 0h    | Invert Vsync.<br>0 = lcd_fp pin is active high and inactive low.<br>1 = lcd_fp pin is active low and inactive high.<br>Active mode: vertical sync pulse active between frames, after end of<br>frame wait period.<br>Passive mode: frame clock active during first line of each frame.                                                                         |
 | 19-16 | acbi         | R/W  | 0h    | AC Bias Pins Transitions per Interrupt.<br>Value (from 0 to 15) used to specify the number of AC Bias pin<br>transitions to count before setting the line count status (lcs) bit,<br>signaling an interrupt request.<br>Counter frozen when lcd is set, and is restarted when lcs is cleared<br>by software.<br>This function is disabled when acbi = b'0000'. |
 | 15-8  | acb          | R/W  | 0h    | AC Bias Pin Frequency.<br>Value (from<br>0-255) used to specify the number of line clocks to count before<br>transitioning the AC Bias pin.<br>This pin is used to periodically invert the polarity of the power supply<br>to prevent DC charge build-up within the display.<br>acb = Number of line clocks/toggle of the lcd_ac pin.                          |
@@ -2060,33 +2068,33 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 3-2   | RESERVED     | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                |
 | 1-0   | hfp_highbits | R/W  | 0h    | Bits<br>9:8 of the horizontal front porch field.                                                                                                                                                                                                                                                                                                               |
 
-#### **13.5.1.14 RASTER\_SUBPANEL Register (offset = 38h) [reset = 0h]**
+#### **13.5.1.14 RASTER_SUBPANEL Register (offset = 38h) [reset = 0h]**
 
-RASTER\_SUBPANEL is shown in [Figure](#page-150-1) 13-42 and described in Table [13-27.](#page-150-2)
+RASTER_SUBPANEL is shown in [Figure](#page-150-1) 13-42 and described in Table [13-27.](#page-150-2)
 
-#### **Figure 13-42. RASTER\_SUBPANEL Register**
+#### **Figure 13-42. RASTER_SUBPANEL Register**
 
-| 31     | 30       | 29     | 28               | 27     | 26 | 25 | 24 |  |  |
-|--------|----------|--------|------------------|--------|----|----|----|--|--|
-| spen   | RESERVED | hols   | RESERVED<br>lppt |        |    |    |    |  |  |
-| R/W-0h | R-0h     | R/W-0h | R/W-0h<br>R/W-0h |        |    |    |    |  |  |
-| 23     | 22       | 21     | 20               | 19     | 18 | 17 | 16 |  |  |
-|        | lppt     |        |                  |        |    |    |    |  |  |
-| R/W-0h |          |        |                  |        |    |    |    |  |  |
-| 15     | 14       | 13     | 12               | 11     | 10 | 9  | 8  |  |  |
-|        |          |        |                  | dpdlsb |    |    |    |  |  |
-|        |          |        |                  | R/W-0h |    |    |    |  |  |
-| 7      | 6        | 5      | 4                | 3      | 2  | 1  | 0  |  |  |
-|        |          |        |                  | dpdlsb |    |    |    |  |  |
-|        |          |        |                  | R/W-0h |    |    |    |  |  |
-|        |          |        |                  |        |    |    |    |  |  |
+| 31     | 30       | 29     | 28               | 27     | 26  | 25  | 24  |     |     |
+| ------ | -------- | ------ | ---------------- | ------ | --- | --- | --- | --- | --- |
+| spen   | RESERVED | hols   | RESERVED<br>lppt |        |     |     |     |     |     |
+| R/W-0h | R-0h     | R/W-0h | R/W-0h<br>R/W-0h |        |     |     |     |     |     |
+| 23     | 22       | 21     | 20               | 19     | 18  | 17  | 16  |     |     |
+|        | lppt     |        |                  |        |     |     |     |     |     |
+| R/W-0h |          |        |                  |        |     |     |     |     |     |
+| 15     | 14       | 13     | 12               | 11     | 10  | 9   | 8   |     |     |
+|        |          |        |                  | dpdlsb |     |     |     |     |     |
+|        |          |        |                  | R/W-0h |     |     |     |     |     |
+| 7      | 6        | 5      | 4                | 3      | 2   | 1   | 0   |     |     |
+|        |          |        |                  | dpdlsb |     |     |     |     |     |
+|        |          |        |                  | R/W-0h |     |     |     |     |     |
+|        |          |        |                  |        |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-27. RASTER\_SUBPANEL Register Field Descriptions**
+### **Table 13-27. RASTER_SUBPANEL Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                        |
-|-------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31    | spen     | R/W  | 0h    | Sub Panel Enable.<br>0 = function disabled.<br>1 = sub-panel function mode enabled.                                                                                                                                                                                                                                                                                                                                                |
 | 30    | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | 29    | hols     | R/W  | 0h    | High or Low Signal This field indicates the position of the sub-panel<br>based on the LPPT value.<br>0 = Default Pixel Data lines are at the top of the screen and the<br>active video lines are at the bottom of the screen.<br>1 = Active video lines are at the top of the screen and Default Pixel<br>Data lines are at the bottom of the screen.                                                                              |
@@ -2094,63 +2102,63 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 25-16 | lppt     | R/W  | 0h    | Line Per Panel Threshold Encoded value (programmed value range<br>of {<br>0:2047} represents an actual range of {<br>1:2048}) used to specify the number of lines on the bottom part of<br>the panel.<br>Bit10 of this field is in RASTER_SUBPANEL2.<br>Hols determines whether Default Pixel Data is on the top (hols=''0')<br>or on the bottom (hols='1').<br>Lppt defines the number of lines on the bottom part of the output. |
 | 15-0  | dpdlsb   | R/W  | 0h    | Default Pixel Data LSB<br>[15:0] DPD defines the default value of the pixel data sent to the<br>panel for the lines until LPPT is reach or after passing LPPT.                                                                                                                                                                                                                                                                     |
 
-#### **13.5.1.15 RASTER\_SUBPANEL2 Register (offset = 3Ch) [reset = 0h]**
+#### **13.5.1.15 RASTER_SUBPANEL2 Register (offset = 3Ch) [reset = 0h]**
 
-RASTER\_SUBPANEL2 is shown in [Figure](#page-151-1) 13-43 and described in Table [13-28](#page-151-2).
+RASTER_SUBPANEL2 is shown in [Figure](#page-151-1) 13-43 and described in Table [13-28](#page-151-2).
 
-**Figure 13-43. RASTER\_SUBPANEL2 Register**
+**Figure 13-43. RASTER_SUBPANEL2 Register**
 
-| 31       | 30       | 29 | 28       | 27     | 26 | 25 | 24       |  |  |  |
-|----------|----------|----|----------|--------|----|----|----------|--|--|--|
-|          | RESERVED |    |          |        |    |    |          |  |  |  |
-|          | R-0h     |    |          |        |    |    |          |  |  |  |
-| 23       | 22       | 21 | 20       | 19     | 18 | 17 | 16       |  |  |  |
-| RESERVED |          |    |          |        |    |    |          |  |  |  |
-|          | R-0h     |    |          |        |    |    |          |  |  |  |
-| 15       | 14       | 13 | 12       | 11     | 10 | 9  | 8        |  |  |  |
-|          |          |    | RESERVED |        |    |    | lppt_b10 |  |  |  |
-|          |          |    | R-0h     |        |    |    | R/W-0h   |  |  |  |
-| 7        | 6        | 5  | 4        | 3      | 2  | 1  | 0        |  |  |  |
-|          |          |    |          | dpdmsb |    |    |          |  |  |  |
-|          |          |    |          | R/W-0h |    |    |          |  |  |  |
-|          |          |    |          |        |    |    |          |  |  |  |
+| 31       | 30       | 29  | 28       | 27     | 26  | 25  | 24       |     |     |     |
+| -------- | -------- | --- | -------- | ------ | --- | --- | -------- | --- | --- | --- |
+|          | RESERVED |     |          |        |     |     |          |     |     |     |
+|          | R-0h     |     |          |        |     |     |          |     |     |     |
+| 23       | 22       | 21  | 20       | 19     | 18  | 17  | 16       |     |     |     |
+| RESERVED |          |     |          |        |     |     |          |     |     |     |
+|          | R-0h     |     |          |        |     |     |          |     |     |     |
+| 15       | 14       | 13  | 12       | 11     | 10  | 9   | 8        |     |     |     |
+|          |          |     | RESERVED |        |     |     | lppt_b10 |     |     |     |
+|          |          |     | R-0h     |        |     |     | R/W-0h   |     |     |     |
+| 7        | 6        | 5   | 4        | 3      | 2   | 1   | 0        |     |     |     |
+|          |          |     |          | dpdmsb |     |     |          |     |     |     |
+|          |          |     |          | R/W-0h |     |     |          |     |     |     |
+|          |          |     |          |        |     |     |          |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 13-28. RASTER\_SUBPANEL2 Register Field Descriptions**
+#### **Table 13-28. RASTER_SUBPANEL2 Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                           |
-|------|----------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-9 | RESERVED | R    | 0h    |                                                                                                                                                                       |
 | 8    | lppt_b10 | R/W  | 0h    | Lines Per Panel Threshold Bit 10 This register is Bit 10 of the lppt<br>field in RASTER_SUBPANEL.                                                                     |
 | 7-0  | dpdmsb   | R/W  | 0h    | Default Pixel Data MSB<br>[23:16] DPD defines the default value of the pixel data sent to the<br>panel for the lines until LPPT is reached or after passing the LPPT. |
 
-#### **13.5.1.16 LCDDMA\_CTRL Register (offset = 40h) [reset = 0h]**
+#### **13.5.1.16 LCDDMA_CTRL Register (offset = 40h) [reset = 0h]**
 
-LCDDMA\_CTRL is shown in [Figure](#page-152-1) 13-44 and described in Table [13-29.](#page-152-2)
+LCDDMA_CTRL is shown in [Figure](#page-152-1) 13-44 and described in Table [13-29.](#page-152-2)
 
-#### **Figure 13-44. LCDDMA\_CTRL Register**
+#### **Figure 13-44. LCDDMA_CTRL Register**
 
-| 31       | 30       | 29         | 28              | 27        | 26            | 25        | 24         |  |  |
-|----------|----------|------------|-----------------|-----------|---------------|-----------|------------|--|--|
-|          | RESERVED |            |                 |           |               |           |            |  |  |
-|          | R/W-0h   |            |                 |           |               |           |            |  |  |
-| 23       | 22       | 21         | 20              | 19        | 18            | 17        | 16         |  |  |
-|          |          | RESERVED   | dma_master_prio |           |               |           |            |  |  |
-|          |          | R/W-0h     |                 |           | R/W-0h        |           |            |  |  |
-| 15       | 14       | 13         | 12              | 11        | 10            | 9         | 8          |  |  |
-|          |          | RESERVED   |                 |           | th_fifo_ready |           |            |  |  |
-|          |          | R/W-0h     |                 |           |               | R/W-0h    |            |  |  |
-| 7        | 6        | 5          | 4               | 3         | 2             | 1         | 0          |  |  |
-| RESERVED |          | burst_size |                 | byte_swap | RESERVED      | bigendian | frame_mode |  |  |
-| R/W-0h   | R/W-0h   |            |                 | R/W-0h    | R-0h          | R/W-0h    | R/W-0h     |  |  |
+| 31       | 30       | 29         | 28              | 27        | 26            | 25        | 24         |     |     |
+| -------- | -------- | ---------- | --------------- | --------- | ------------- | --------- | ---------- | --- | --- |
+|          | RESERVED |            |                 |           |               |           |            |     |     |
+|          | R/W-0h   |            |                 |           |               |           |            |     |     |
+| 23       | 22       | 21         | 20              | 19        | 18            | 17        | 16         |     |     |
+|          |          | RESERVED   | dma_master_prio |           |               |           |            |     |     |
+|          |          | R/W-0h     |                 |           | R/W-0h        |           |            |     |     |
+| 15       | 14       | 13         | 12              | 11        | 10            | 9         | 8          |     |     |
+|          |          | RESERVED   |                 |           | th_fifo_ready |           |            |     |     |
+|          |          | R/W-0h     |                 |           |               | R/W-0h    |            |     |     |
+| 7        | 6        | 5          | 4               | 3         | 2             | 1         | 0          |     |     |
+| RESERVED |          | burst_size |                 | byte_swap | RESERVED      | bigendian | frame_mode |     |     |
+| R/W-0h   | R/W-0h   |            |                 | R/W-0h    | R-0h          | R/W-0h    | R/W-0h     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-29. LCDDMA\_CTRL Register Field Descriptions**
+### **Table 13-29. LCDDMA_CTRL Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-|-------|-----------------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-19 | RESERVED        | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | 18-16 | dma_master_prio | R/W  | 0h    | Priority for the L3 OCP Master Bus.<br>000b = Highest priority.<br>111b = Lowest priority.                                                                                                                                                                                                                                                                                                                                                                                              |
 | 15-11 | RESERVED        | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
@@ -2161,126 +2169,126 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 2     | RESERVED        | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 |       |                 |      |       |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
-**Table 13-29. LCDDMA\_CTRL Register Field Descriptions (continued)**
+**Table 13-29. LCDDMA_CTRL Register Field Descriptions (continued)**
 
 | Bit | Field      | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                               |
-|-----|------------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | ---------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1   | bigendian  | R/W  | 0h    | Big Endian Enable.<br>Use this bit when the processor is operating in Big Endian mode<br>AND writes to the frame buffer(s) are less than 32 bits wide.<br>Only in this scenario do we need to change the byte alignment for<br>data coming into the FIFO from the frame buffer(s).<br>0 = Big Endian data reordering disabled.<br>1 = Big Endian data reordering enabled. |
 | 0   | frame_mode | R/W  | 0h    | Frame Mode.<br>0 = one frame buffer (FB0 only) used.<br>1 = two frame buffers used DMA ping-pongs between FB0 and FB1<br>in this mode.                                                                                                                                                                                                                                    |
 
-#### **13.5.1.17 LCDDMA\_FB0\_BASE Register (offset = 44h) [reset = 0h]**
+#### **13.5.1.17 LCDDMA_FB0_BASE Register (offset = 44h) [reset = 0h]**
 
-LCDDMA\_FB0\_BASE is shown in [Figure](#page-154-1) 13-45 and described in Table [13-30](#page-154-2).
+LCDDMA_FB0_BASE is shown in [Figure](#page-154-1) 13-45 and described in Table [13-30](#page-154-2).
 
-#### **Figure 13-45. LCDDMA\_FB0\_BASE Register**
+#### **Figure 13-45. LCDDMA_FB0_BASE Register**
 
-| 31     | 30       | 29       | 28 | 27       | 26 | 25 | 24       |  |  |
-|--------|----------|----------|----|----------|----|----|----------|--|--|
-|        | fb0_base |          |    |          |    |    |          |  |  |
-| R/W-0h |          |          |    |          |    |    |          |  |  |
-| 23     | 22       | 21       | 20 | 19       | 18 | 17 | 16       |  |  |
-|        |          |          |    | fb0_base |    |    |          |  |  |
-| R/W-0h |          |          |    |          |    |    |          |  |  |
-| 15     | 14       | 13       | 12 | 11       | 10 | 9  | 8        |  |  |
-|        |          |          |    | fb0_base |    |    |          |  |  |
-|        |          |          |    | R/W-0h   |    |    |          |  |  |
-| 7      | 6        | 5        | 4  | 3        | 2  | 1  | 0        |  |  |
-|        |          | fb0_base |    |          |    |    | RESERVED |  |  |
-|        |          |          |    | R-0h     |    |    |          |  |  |
+| 31     | 30       | 29       | 28  | 27       | 26  | 25  | 24       |     |     |
+| ------ | -------- | -------- | --- | -------- | --- | --- | -------- | --- | --- |
+|        | fb0_base |          |     |          |     |     |          |     |     |
+| R/W-0h |          |          |     |          |     |     |          |     |     |
+| 23     | 22       | 21       | 20  | 19       | 18  | 17  | 16       |     |     |
+|        |          |          |     | fb0_base |     |     |          |     |     |
+| R/W-0h |          |          |     |          |     |     |          |     |     |
+| 15     | 14       | 13       | 12  | 11       | 10  | 9   | 8        |     |     |
+|        |          |          |     | fb0_base |     |     |          |     |     |
+|        |          |          |     | R/W-0h   |     |     |          |     |     |
+| 7      | 6        | 5        | 4   | 3        | 2   | 1   | 0        |     |     |
+|        |          | fb0_base |     |          |     |     | RESERVED |     |     |
+|        |          |          |     | R-0h     |     |     |          |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 13-30. LCDDMA\_FB0\_BASE Register Field Descriptions**
+#### **Table 13-30. LCDDMA_FB0_BASE Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                          |
-|------|----------|------|-------|--------------------------------------|
+| ---- | -------- | ---- | ----- | ------------------------------------ |
 | 31-2 | fb0_base | R/W  | 0h    | Frame Buffer 0 Base Address pointer. |
 | 1-0  | RESERVED | R    | 0h    |                                      |
 
-#### **13.5.1.18 LCDDMA\_FB0\_CEILING Register (offset = 48h) [reset = 0h]**
+#### **13.5.1.18 LCDDMA_FB0_CEILING Register (offset = 48h) [reset = 0h]**
 
-LCDDMA\_FB0\_CEILING is shown in [Figure](#page-155-1) 13-46 and described in Table [13-31.](#page-155-2)
+LCDDMA_FB0_CEILING is shown in [Figure](#page-155-1) 13-46 and described in Table [13-31.](#page-155-2)
 
-**Figure 13-46. LCDDMA\_FB0\_CEILING Register**
+**Figure 13-46. LCDDMA_FB0_CEILING Register**
 
-| 31 | 30       | 29 | 28 | 27       | 26 | 25 | 24       |
-|----|----------|----|----|----------|----|----|----------|
-|    |          |    |    | fb0_ceil |    |    |          |
-|    |          |    |    | R/W-0h   |    |    |          |
-| 23 | 22       | 21 | 20 | 19       | 18 | 17 | 16       |
-|    |          |    |    | fb0_ceil |    |    |          |
-|    |          |    |    | R/W-0h   |    |    |          |
-| 15 | 14       | 13 | 12 | 11       | 10 | 9  | 8        |
-|    |          |    |    | fb0_ceil |    |    |          |
-|    |          |    |    | R/W-0h   |    |    |          |
-| 7  | 6        | 5  | 4  | 3        | 2  | 1  | 0        |
-|    | fb0_ceil |    |    |          |    |    | RESERVED |
-|    |          |    |    | R-0h     |    |    |          |
+| 31  | 30       | 29  | 28  | 27       | 26  | 25  | 24       |
+| --- | -------- | --- | --- | -------- | --- | --- | -------- |
+|     |          |     |     | fb0_ceil |     |     |          |
+|     |          |     |     | R/W-0h   |     |     |          |
+| 23  | 22       | 21  | 20  | 19       | 18  | 17  | 16       |
+|     |          |     |     | fb0_ceil |     |     |          |
+|     |          |     |     | R/W-0h   |     |     |          |
+| 15  | 14       | 13  | 12  | 11       | 10  | 9   | 8        |
+|     |          |     |     | fb0_ceil |     |     |          |
+|     |          |     |     | R/W-0h   |     |     |          |
+| 7   | 6        | 5   | 4   | 3        | 2   | 1   | 0        |
+|     | fb0_ceil |     |     |          |     |     | RESERVED |
+|     |          |     |     | R-0h     |     |     |          |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-31. LCDDMA\_FB0\_CEILING Register Field Descriptions**
+### **Table 13-31. LCDDMA_FB0_CEILING Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                             |
-|------|----------|------|-------|-----------------------------------------|
+| ---- | -------- | ---- | ----- | --------------------------------------- |
 | 31-2 | fb0_ceil | R/W  | 0h    | Frame Buffer 0 Ceiling Address pointer. |
 | 1-0  | RESERVED | R    | 0h    |                                         |
 
-#### **13.5.1.19 LCDDMA\_FB1\_BASE Register (offset = 4Ch) [reset = 0h]**
+#### **13.5.1.19 LCDDMA_FB1_BASE Register (offset = 4Ch) [reset = 0h]**
 
-LCDDMA\_FB1\_BASE is shown in [Figure](#page-156-1) 13-47 and described in Table [13-32](#page-156-2).
+LCDDMA_FB1_BASE is shown in [Figure](#page-156-1) 13-47 and described in Table [13-32](#page-156-2).
 
-#### **Figure 13-47. LCDDMA\_FB1\_BASE Register**
+#### **Figure 13-47. LCDDMA_FB1_BASE Register**
 
-| 31     | 30 | 29 | 28       | 27       | 26 | 25 | 24       |  |
-|--------|----|----|----------|----------|----|----|----------|--|
-|        |    |    |          | fb1_base |    |    |          |  |
-| R/W-0h |    |    |          |          |    |    |          |  |
-| 23     | 22 | 21 | 20       | 19       | 18 | 17 | 16       |  |
-|        |    |    |          | fb1_base |    |    |          |  |
-| R/W-0h |    |    |          |          |    |    |          |  |
-| 15     | 14 | 13 | 12       | 11       | 10 | 9  | 8        |  |
-|        |    |    |          | fb1_base |    |    |          |  |
-|        |    |    |          | R/W-0h   |    |    |          |  |
-| 7      | 6  | 5  | 4        | 3        | 2  | 1  | 0        |  |
-|        |    |    | fb1_base |          |    |    | RESERVED |  |
-|        |    |    |          | R-0h     |    |    |          |  |
+| 31     | 30  | 29  | 28       | 27       | 26  | 25  | 24       |     |
+| ------ | --- | --- | -------- | -------- | --- | --- | -------- | --- |
+|        |     |     |          | fb1_base |     |     |          |     |
+| R/W-0h |     |     |          |          |     |     |          |     |
+| 23     | 22  | 21  | 20       | 19       | 18  | 17  | 16       |     |
+|        |     |     |          | fb1_base |     |     |          |     |
+| R/W-0h |     |     |          |          |     |     |          |     |
+| 15     | 14  | 13  | 12       | 11       | 10  | 9   | 8        |     |
+|        |     |     |          | fb1_base |     |     |          |     |
+|        |     |     |          | R/W-0h   |     |     |          |     |
+| 7      | 6   | 5   | 4        | 3        | 2   | 1   | 0        |     |
+|        |     |     | fb1_base |          |     |     | RESERVED |     |
+|        |     |     |          | R-0h     |     |     |          |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 13-32. LCDDMA\_FB1\_BASE Register Field Descriptions**
+#### **Table 13-32. LCDDMA_FB1_BASE Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                          |
-|------|----------|------|-------|--------------------------------------|
+| ---- | -------- | ---- | ----- | ------------------------------------ |
 | 31-2 | fb1_base | R/W  | 0h    | Frame Buffer 1 Base Address pointer. |
 | 1-0  | RESERVED | R    | 0h    |                                      |
 
-#### **13.5.1.20 LCDDMA\_FB1\_CEILING Register (offset = 50h) [reset = 0h]**
+#### **13.5.1.20 LCDDMA_FB1_CEILING Register (offset = 50h) [reset = 0h]**
 
-LCDDMA\_FB1\_CEILING is shown in [Figure](#page-157-1) 13-48 and described in Table [13-33.](#page-157-2)
+LCDDMA_FB1_CEILING is shown in [Figure](#page-157-1) 13-48 and described in Table [13-33.](#page-157-2)
 
-**Figure 13-48. LCDDMA\_FB1\_CEILING Register**
+**Figure 13-48. LCDDMA_FB1_CEILING Register**
 
-| 31     | 30       | 29 | 28 | 27       | 26 | 25 | 24       |  |  |
-|--------|----------|----|----|----------|----|----|----------|--|--|
-|        |          |    |    | fb1_ceil |    |    |          |  |  |
-| R/W-0h |          |    |    |          |    |    |          |  |  |
-| 23     | 22       | 21 | 20 | 19       | 18 | 17 | 16       |  |  |
-|        |          |    |    | fb1_ceil |    |    |          |  |  |
-|        |          |    |    | R/W-0h   |    |    |          |  |  |
-| 15     | 14       | 13 | 12 | 11       | 10 | 9  | 8        |  |  |
-|        |          |    |    | fb1_ceil |    |    |          |  |  |
-|        |          |    |    | R/W-0h   |    |    |          |  |  |
-| 7      | 6        | 5  | 4  | 3        | 2  | 1  | 0        |  |  |
-|        | fb1_ceil |    |    |          |    |    | RESERVED |  |  |
-| R/W-0h |          |    |    |          |    |    | R-0h     |  |  |
+| 31     | 30       | 29  | 28  | 27       | 26  | 25  | 24       |     |     |
+| ------ | -------- | --- | --- | -------- | --- | --- | -------- | --- | --- |
+|        |          |     |     | fb1_ceil |     |     |          |     |     |
+| R/W-0h |          |     |     |          |     |     |          |     |     |
+| 23     | 22       | 21  | 20  | 19       | 18  | 17  | 16       |     |     |
+|        |          |     |     | fb1_ceil |     |     |          |     |     |
+|        |          |     |     | R/W-0h   |     |     |          |     |     |
+| 15     | 14       | 13  | 12  | 11       | 10  | 9   | 8        |     |     |
+|        |          |     |     | fb1_ceil |     |     |          |     |     |
+|        |          |     |     | R/W-0h   |     |     |          |     |     |
+| 7      | 6        | 5   | 4   | 3        | 2   | 1   | 0        |     |     |
+|        | fb1_ceil |     |     |          |     |     | RESERVED |     |     |
+| R/W-0h |          |     |     |          |     |     | R-0h     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-33. LCDDMA\_FB1\_CEILING Register Field Descriptions**
+### **Table 13-33. LCDDMA_FB1_CEILING Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                             |
-|------|----------|------|-------|-----------------------------------------|
+| ---- | -------- | ---- | ----- | --------------------------------------- |
 | 31-2 | fb1_ceil | R/W  | 0h    | Frame Buffer 1 Ceiling Address pointer. |
 | 1-0  | RESERVED | R    | 0h    |                                         |
 
@@ -2290,69 +2298,69 @@ SYSCONFIG is shown in Figure 15-4 and described in Table 15-7.
 
 #### **Figure 13-49. SYSCONFIG Register**
 
-| 31       | 30                      | 29     | 28       | 27       | 26       | 25     | 24 |  |  |  |
-|----------|-------------------------|--------|----------|----------|----------|--------|----|--|--|--|
-| RESERVED |                         |        |          |          |          |        |    |  |  |  |
-| R-0h     |                         |        |          |          |          |        |    |  |  |  |
-| 23       | 22                      | 21     | 20       | 19       | 18       | 17     | 16 |  |  |  |
-|          | RESERVED                |        |          |          |          |        |    |  |  |  |
-| R-0h     |                         |        |          |          |          |        |    |  |  |  |
-| 15       | 14                      | 13     | 12       | 11       | 10       | 9      | 8  |  |  |  |
-|          |                         |        | RESERVED |          |          |        |    |  |  |  |
-|          |                         |        | R-0h     |          |          |        |    |  |  |  |
-| 7        | 6                       | 5      | 4        | 3        | 2        | 1      | 0  |  |  |  |
-|          | RESERVED<br>standbymode |        |          | idlemode | RESERVED |        |    |  |  |  |
-|          | R-0h                    | R/W-0h |          | R/W-0h   |          | R/W-0h |    |  |  |  |
+| 31       | 30                      | 29     | 28       | 27       | 26       | 25     | 24  |     |     |     |
+| -------- | ----------------------- | ------ | -------- | -------- | -------- | ------ | --- | --- | --- | --- |
+| RESERVED |                         |        |          |          |          |        |     |     |     |     |
+| R-0h     |                         |        |          |          |          |        |     |     |     |     |
+| 23       | 22                      | 21     | 20       | 19       | 18       | 17     | 16  |     |     |     |
+|          | RESERVED                |        |          |          |          |        |     |     |     |     |
+| R-0h     |                         |        |          |          |          |        |     |     |     |     |
+| 15       | 14                      | 13     | 12       | 11       | 10       | 9      | 8   |     |     |     |
+|          |                         |        | RESERVED |          |          |        |     |     |     |     |
+|          |                         |        | R-0h     |          |          |        |     |     |     |     |
+| 7        | 6                       | 5      | 4        | 3        | 2        | 1      | 0   |     |     |     |
+|          | RESERVED<br>standbymode |        |          | idlemode | RESERVED |        |     |     |     |     |
+|          | R-0h                    | R/W-0h |          | R/W-0h   |          | R/W-0h |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 13-34. SYSCONFIG Register Field Descriptions**
 
 | Bit  | Field       | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-|------|-------------|------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----------- | ---- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-6 | RESERVED    | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | 5-4  | standbymode | R/W  | 0h    | Configuration of the local initiator state management mode.<br>By definition, initiator may generate read/write transaction as long as<br>it is out of STANDBY state.<br>0 = Force-standby mode: local initiator is unconditionally placed in<br>standby state.<br>Backup mode, for debug only.<br>1 = No-standby mode: local initiator is unconditionally placed out of<br>standby state.<br>Backup mode, for debug only.<br>2 = Smart-standby mode: local initiator standby status depends on<br>local conditions, that is, the module's functional requirement from the<br>initiator.<br>IP module shall not generate (initiator-related) wakeup events.<br>3 = Reserved.                                                                          |
 | 3-2  | idlemode    | R/W  | 0h    | Configuration of the local target state management mode.<br>By definition, target can handle read/write transaction as long as it is<br>out of IDLE state.<br>0 = Force-idle mode: local target's idle state follows (acknowledges)<br>the system's idle requests unconditionally, i.e.<br>regardless of the IP module's internal requirements.<br>Backup mode, for debug only.<br>1 = No-idle mode: local target never enters idle state.<br>Backup mode, for debug only.<br>2 = Smart-idle mode: local target's idle state eventually follows<br>(acknowledges) the system's idle requests, depending on the IP<br>module's internal requirements.<br>IP module shall not generate (IRQ- or DMA-request-related) wakeup<br>events.<br>3 = Reserved. |
 | 1-0  | RESERVED    | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
-#### **13.5.1.22 IRQSTATUS\_RAW Register (offset = 58h) [reset = 0h]**
+#### **13.5.1.22 IRQSTATUS_RAW Register (offset = 58h) [reset = 0h]**
 
-IRQSTATUS\_RAW is shown in Figure 20-9 and described in Table 20-14.
+IRQSTATUS_RAW is shown in Figure 20-9 and described in Table 20-14.
 
-#### **Figure 13-50. IRQSTATUS\_RAW Register**
+#### **Figure 13-50. IRQSTATUS_RAW Register**
 
-| 31       | 30         | 29          | 28       | 27          | 26           | 25                                | 24           |  |  |  |  |
-|----------|------------|-------------|----------|-------------|--------------|-----------------------------------|--------------|--|--|--|--|
-|          | RESERVED   |             |          |             |              |                                   |              |  |  |  |  |
-| R/W-0h   |            |             |          |             |              |                                   |              |  |  |  |  |
-| 23       | 22         | 21          | 20       | 19          | 18           | 17                                | 16           |  |  |  |  |
-|          | RESERVED   |             |          |             |              |                                   |              |  |  |  |  |
-|          | R/W-0h     |             |          |             |              |                                   |              |  |  |  |  |
-| 15       | 14         | 13          | 12       | 11          | 10           | 9                                 | 8            |  |  |  |  |
-|          |            |             | RESERVED |             |              | eof1_raw_set                      | eof0_raw_set |  |  |  |  |
-|          |            |             | R/W-0h   |             |              | R/W-0h                            | R/W-0h       |  |  |  |  |
-| 7        | 6          | 5           | 4        | 3           | 2            | 1                                 | 0            |  |  |  |  |
-| RESERVED | pl_raw_set | fuf_raw_set | RESERVED | acb_raw_set | sync_raw_set | recurrent_raster<br>_done_raw_set | done_raw_set |  |  |  |  |
-| R/W-0h   | R/W-0h     | R/W-0h      | R-0h     | R/W-0h      | R/W-0h       | R/W-0h                            | R/W-0h       |  |  |  |  |
+| 31       | 30         | 29          | 28       | 27          | 26           | 25                                 | 24           |     |     |     |     |
+| -------- | ---------- | ----------- | -------- | ----------- | ------------ | ---------------------------------- | ------------ | --- | --- | --- | --- |
+|          | RESERVED   |             |          |             |              |                                    |              |     |     |     |     |
+| R/W-0h   |            |             |          |             |              |                                    |              |     |     |     |     |
+| 23       | 22         | 21          | 20       | 19          | 18           | 17                                 | 16           |     |     |     |     |
+|          | RESERVED   |             |          |             |              |                                    |              |     |     |     |     |
+|          | R/W-0h     |             |          |             |              |                                    |              |     |     |     |     |
+| 15       | 14         | 13          | 12       | 11          | 10           | 9                                  | 8            |     |     |     |     |
+|          |            |             | RESERVED |             |              | eof1_raw_set                       | eof0_raw_set |     |     |     |     |
+|          |            |             | R/W-0h   |             |              | R/W-0h                             | R/W-0h       |     |     |     |     |
+| 7        | 6          | 5           | 4        | 3           | 2            | 1                                  | 0            |     |     |     |     |
+| RESERVED | pl_raw_set | fuf_raw_set | RESERVED | acb_raw_set | sync_raw_set | recurrent_raster<br>\_done_raw_set | done_raw_set |     |     |     |     |
+| R/W-0h   | R/W-0h     | R/W-0h      | R-0h     | R/W-0h      | R/W-0h       | R/W-0h                             | R/W-0h       |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 13-35. IRQSTATUS\_RAW Register Field Descriptions**
+#### **Table 13-35. IRQSTATUS_RAW Register Field Descriptions**
 
-| Bit   | Field        | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                             |  |  |  |
-|-------|--------------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--|--|--|
-| 31-10 | RESERVED     | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                         |  |  |  |
-| 9     | eof1_raw_set | R/W  | 0h    | DMA End-of-Frame 1 Raw Interrupt Status and Set Read indicates<br>raw status.<br>0 = Inactive.<br>1 = Active.<br>Writing 1 will set status.<br>Writing 0 has no effect.                                                                                                                                                                                 |  |  |  |
-| 8     | eof0_raw_set | R/W  | 0h    | DMA End-of-Frame 0 Raw Interrupt Status and Set Read indicates<br>raw status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will set status.<br>Writing 0 has no effect.                                                                                                                                                                                 |  |  |  |
-| 7     | RESERVED     | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                         |  |  |  |
-| 6     | pl_raw_set   | R/W  | 0h    | DMA Palette Loaded Raw Interrupt Status and Set Read indicates<br>raw status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will set status.<br>Writing 0 has no effect.                                                                                                                                                                                 |  |  |  |
-| 5     | fuf_raw_set  | R/W  | 0h    | DMA FIFO Underflow Raw Interrupt Status and Set LCD dithering<br>logic not supplying data to FIFO at a sufficient rate, FIFO has<br>completely emptied and data pin driver logic has attempted to take<br>added data from FIFO.<br>Read indicates raw status.<br>0 = Inactive.<br>1 = Active.<br>Writing 1 will set status.<br>Writing 0 has no effect. |  |  |  |
-| 4     | RESERVED     | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                         |  |  |  |
+| Bit   | Field        | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                             |     |     |     |
+| ----- | ------------ | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- | --- |
+| 31-10 | RESERVED     | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                         |     |     |     |
+| 9     | eof1_raw_set | R/W  | 0h    | DMA End-of-Frame 1 Raw Interrupt Status and Set Read indicates<br>raw status.<br>0 = Inactive.<br>1 = Active.<br>Writing 1 will set status.<br>Writing 0 has no effect.                                                                                                                                                                                 |     |     |     |
+| 8     | eof0_raw_set | R/W  | 0h    | DMA End-of-Frame 0 Raw Interrupt Status and Set Read indicates<br>raw status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will set status.<br>Writing 0 has no effect.                                                                                                                                                                                 |     |     |     |
+| 7     | RESERVED     | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                         |     |     |     |
+| 6     | pl_raw_set   | R/W  | 0h    | DMA Palette Loaded Raw Interrupt Status and Set Read indicates<br>raw status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will set status.<br>Writing 0 has no effect.                                                                                                                                                                                 |     |     |     |
+| 5     | fuf_raw_set  | R/W  | 0h    | DMA FIFO Underflow Raw Interrupt Status and Set LCD dithering<br>logic not supplying data to FIFO at a sufficient rate, FIFO has<br>completely emptied and data pin driver logic has attempted to take<br>added data from FIFO.<br>Read indicates raw status.<br>0 = Inactive.<br>1 = Active.<br>Writing 1 will set status.<br>Writing 0 has no effect. |     |     |     |
+| 4     | RESERVED     | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                         |     |     |     |
 
-**Table 13-35. IRQSTATUS\_RAW Register Field Descriptions (continued)**
+**Table 13-35. IRQSTATUS_RAW Register Field Descriptions (continued)**
 
 | Bit | Field                             | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-|-----|-----------------------------------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------------------------------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 3   | acb_raw_set                       | R/W  | 0h    | For Passive Matrix Panels Only AC Bias Count Raw Interrupt Status<br>and Set AC bias transition counter has decremented to zero,<br>indicating that the lcd_ac_o line has transitioned the number of times<br>which is specified by the acbi control bit-field.<br>The counter is reloaded with the value in acbi but it is disabled until<br>the user clears ABC.<br>Read indicates raw status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will set status.<br>Writing 0 has no effect. |
 | 2   | sync_raw_set                      | R/W  | 0h    | Frame Synchronization Lost Raw Interrupt Status and Set Read<br>indicates raw status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will set status.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                            |
 | 1   | recurrent_raster_done_ra<br>w_set | R/W  | 0h    | Raster Mode Frame Done Interrupt.<br>Read indicates raw status.<br>0 = Inactive.<br>1 = Active.<br>Writing 1 will set status.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                                                  |
@@ -2364,26 +2372,26 @@ IRQSTATUS is shown in Figure 20-10 and described in Table 20-15.
 
 #### **Figure 13-51. IRQSTATUS Register**
 
-| 31       | 30        | 29         | 28       | 27         | 26          | 25                               | 24          |  |  |  |  |
-|----------|-----------|------------|----------|------------|-------------|----------------------------------|-------------|--|--|--|--|
-|          | RESERVED  |            |          |            |             |                                  |             |  |  |  |  |
-|          | R/W-0h    |            |          |            |             |                                  |             |  |  |  |  |
-| 23       | 22        | 21         | 20       | 19         | 18          | 17                               | 16          |  |  |  |  |
-|          |           |            |          | RESERVED   |             |                                  |             |  |  |  |  |
-|          | R/W-0h    |            |          |            |             |                                  |             |  |  |  |  |
-| 15       | 14        | 13         | 10       | 9          | 8           |                                  |             |  |  |  |  |
-|          |           |            | RESERVED |            |             | eof1_en_clr                      | eof0_en_clr |  |  |  |  |
-|          |           |            | R/W-0h   |            |             | R/W-0h                           | R/W-0h      |  |  |  |  |
-| 7        | 6         | 5          | 4        | 3          | 2           | 1                                | 0           |  |  |  |  |
-| RESERVED | pl_en_clr | fuf_en_clr | RESERVED | acb_en_clr | sync_en_clr | recurrent_raster<br>_done_en_clr | done_en_clr |  |  |  |  |
-| R/W-0h   | R/W-0h    | R/W-0h     | R/W-0h   | R/W-0h     | R/W-0h      | R/W-0h                           | R/W-0h      |  |  |  |  |
+| 31       | 30        | 29         | 28       | 27         | 26          | 25                                | 24          |     |     |     |     |
+| -------- | --------- | ---------- | -------- | ---------- | ----------- | --------------------------------- | ----------- | --- | --- | --- | --- |
+|          | RESERVED  |            |          |            |             |                                   |             |     |     |     |     |
+|          | R/W-0h    |            |          |            |             |                                   |             |     |     |     |     |
+| 23       | 22        | 21         | 20       | 19         | 18          | 17                                | 16          |     |     |     |     |
+|          |           |            |          | RESERVED   |             |                                   |             |     |     |     |     |
+|          | R/W-0h    |            |          |            |             |                                   |             |     |     |     |     |
+| 15       | 14        | 13         | 10       | 9          | 8           |                                   |             |     |     |     |     |
+|          |           |            | RESERVED |            |             | eof1_en_clr                       | eof0_en_clr |     |     |     |     |
+|          |           |            | R/W-0h   |            |             | R/W-0h                            | R/W-0h      |     |     |     |     |
+| 7        | 6         | 5          | 4        | 3          | 2           | 1                                 | 0           |     |     |     |     |
+| RESERVED | pl_en_clr | fuf_en_clr | RESERVED | acb_en_clr | sync_en_clr | recurrent_raster<br>\_done_en_clr | done_en_clr |     |     |     |     |
+| R/W-0h   | R/W-0h    | R/W-0h     | R/W-0h   | R/W-0h     | R/W-0h      | R/W-0h                            | R/W-0h      |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 13-36. IRQSTATUS Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                     |
-|-------|-------------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-10 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                                                 |
 | 9     | eof1_en_clr | R/W  | 0h    | DMA End-of-Frame 1 Enabled Interrupt and Clear Read indicates<br>enabled (masked) status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                 |
 | 8     | eof0_en_clr | R/W  | 0h    | DMA End-of-Frame 0 Enabled Interrupt and Clear Read indicates<br>enabled (masked) status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                 |
@@ -2394,82 +2402,82 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 
 **Table 13-36. IRQSTATUS Register Field Descriptions (continued)**
 
-| Bit | Field                            | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-|-----|----------------------------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 3   | acb_en_clr                       | R/W  | 0h    | For Passive Matrix Panels Only.<br>AC Bias Count Enabled Interrupt and Clear AC bias transition<br>counter has decremented to zero, indicating that the lcd_ac_o line<br>has transitioned the number of times which is specified by the acbi<br>control bit-field.<br>The counter is reloaded with the value in acbi but it is disabled until<br>the user clears ABC.<br>Read indicates enabled (masked) status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect. |
-| 2   | sync_en_clr                      | R/W  | 0h    | Frame Synchronization Lost Enabled Interrupt and Clear Read<br>indicates enabled status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                                         |
-| 1   | recurrent_raster_done_en<br>_clr | R/W  | 0h    | Raster Frame Done Interrupt.<br>Read indicates enabled status.<br>0 = Inactive.<br>1 = Active.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                                                                   |
-| 0   | done_en_clr                      | R/W  | 0h    | Raster or LIDD Frame Done (shared, depends on whether Raster or<br>LIDD mode enabled) Enabled Interrupt and Clear Read indicates<br>enabled status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                              |
+| Bit | Field                             | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| --- | --------------------------------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 3   | acb_en_clr                        | R/W  | 0h    | For Passive Matrix Panels Only.<br>AC Bias Count Enabled Interrupt and Clear AC bias transition<br>counter has decremented to zero, indicating that the lcd_ac_o line<br>has transitioned the number of times which is specified by the acbi<br>control bit-field.<br>The counter is reloaded with the value in acbi but it is disabled until<br>the user clears ABC.<br>Read indicates enabled (masked) status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect. |
+| 2   | sync_en_clr                       | R/W  | 0h    | Frame Synchronization Lost Enabled Interrupt and Clear Read<br>indicates enabled status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                                         |
+| 1   | recurrent_raster_done_en<br>\_clr | R/W  | 0h    | Raster Frame Done Interrupt.<br>Read indicates enabled status.<br>0 = Inactive.<br>1 = Active.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                                                                   |
+| 0   | done_en_clr                       | R/W  | 0h    | Raster or LIDD Frame Done (shared, depends on whether Raster or<br>LIDD mode enabled) Enabled Interrupt and Clear Read indicates<br>enabled status.<br>0 = inactive.<br>1 = active.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                              |
 
-#### **13.5.1.24 IRQENABLE\_SET Register (offset = 60h) [reset = 0h]**
+#### **13.5.1.24 IRQENABLE_SET Register (offset = 60h) [reset = 0h]**
 
-IRQENABLE\_SET is shown in Figure 20-11 and described in Table 20-16.
+IRQENABLE_SET is shown in Figure 20-11 and described in Table 20-16.
 
-### **Figure 13-52. IRQENABLE\_SET Register**
+### **Figure 13-52. IRQENABLE_SET Register**
 
-| 31       | 30        | 29         | 28       | 27         | 26          | 25                               | 24          |  |  |  |  |
-|----------|-----------|------------|----------|------------|-------------|----------------------------------|-------------|--|--|--|--|
-|          | RESERVED  |            |          |            |             |                                  |             |  |  |  |  |
-|          | R/W-0h    |            |          |            |             |                                  |             |  |  |  |  |
-| 23       | 22        | 21         | 20       | 19         | 18          | 17                               | 16          |  |  |  |  |
-|          | RESERVED  |            |          |            |             |                                  |             |  |  |  |  |
-|          | R/W-0h    |            |          |            |             |                                  |             |  |  |  |  |
-| 15       | 14        | 13         | 12       | 11         | 10          | 9                                | 8           |  |  |  |  |
-|          |           |            | RESERVED |            |             | eof1_en_set                      | eof0_en_set |  |  |  |  |
-|          |           |            | R/W-0h   |            |             | R/W-0h                           | R/W-0h      |  |  |  |  |
-| 7        | 6         | 5          | 4        | 3          | 2           | 1                                | 0           |  |  |  |  |
-| RESERVED | pl_en_set | fuf_en_set | RESERVED | acb_en_set | sync_en_set | recurrent_raster<br>_done_en_set | done_en_set |  |  |  |  |
-| R/W-0h   | R/W-0h    | R/W-0h     | R-0h     | R/W-0h     | R/W-0h      | R/W-0h                           | R/W-0h      |  |  |  |  |
+| 31       | 30        | 29         | 28       | 27         | 26          | 25                                | 24          |     |     |     |     |
+| -------- | --------- | ---------- | -------- | ---------- | ----------- | --------------------------------- | ----------- | --- | --- | --- | --- |
+|          | RESERVED  |            |          |            |             |                                   |             |     |     |     |     |
+|          | R/W-0h    |            |          |            |             |                                   |             |     |     |     |     |
+| 23       | 22        | 21         | 20       | 19         | 18          | 17                                | 16          |     |     |     |     |
+|          | RESERVED  |            |          |            |             |                                   |             |     |     |     |     |
+|          | R/W-0h    |            |          |            |             |                                   |             |     |     |     |     |
+| 15       | 14        | 13         | 12       | 11         | 10          | 9                                 | 8           |     |     |     |     |
+|          |           |            | RESERVED |            |             | eof1_en_set                       | eof0_en_set |     |     |     |     |
+|          |           |            | R/W-0h   |            |             | R/W-0h                            | R/W-0h      |     |     |     |     |
+| 7        | 6         | 5          | 4        | 3          | 2           | 1                                 | 0           |     |     |     |     |
+| RESERVED | pl_en_set | fuf_en_set | RESERVED | acb_en_set | sync_en_set | recurrent_raster<br>\_done_en_set | done_en_set |     |     |     |     |
+| R/W-0h   | R/W-0h    | R/W-0h     | R-0h     | R/W-0h     | R/W-0h      | R/W-0h                            | R/W-0h      |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-37. IRQENABLE\_SET Register Field Descriptions**
+### **Table 13-37. IRQENABLE_SET Register Field Descriptions**
 
-| Bit   | Field       | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                           |  |  |
-|-------|-------------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--|--|
-| 31-10 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                                       |  |  |
-| 9     | eof1_en_set | R/W  | 0h    | DMA End-of-Frame 1 Interrupt Enable Set Read indicates enabled<br>(mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                 |  |  |
-| 8     | eof0_en_set | R/W  | 0h    | DMA End-of-Frame 0 Interrupt Enable Set Read indicates enabled<br>(mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                 |  |  |
-| 7     | RESERVED    | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                                       |  |  |
-| 6     | pl_en_set   | R/W  | 0h    | DMA Palette Loaded Interrupt Enable Set Read indicates enabled<br>(mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                 |  |  |
-| 5     | fuf_en_set  | R/W  | 0h    | DMA FIFO Underflow Interrupt Enable Set LCD dithering logic not<br>supplying data to FIFO at a sufficient rate, FIFO has completely<br>emptied and data pin driver logic has attempted to take added data<br>from FIFO.<br>Read indicates enabled (mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect. |  |  |
-| 4     | RESERVED    | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                       |  |  |
+| Bit   | Field       | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                           |     |     |
+| ----- | ----------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- |
+| 31-10 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                                       |     |     |
+| 9     | eof1_en_set | R/W  | 0h    | DMA End-of-Frame 1 Interrupt Enable Set Read indicates enabled<br>(mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                 |     |     |
+| 8     | eof0_en_set | R/W  | 0h    | DMA End-of-Frame 0 Interrupt Enable Set Read indicates enabled<br>(mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                 |     |     |
+| 7     | RESERVED    | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                                       |     |     |
+| 6     | pl_en_set   | R/W  | 0h    | DMA Palette Loaded Interrupt Enable Set Read indicates enabled<br>(mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                 |     |     |
+| 5     | fuf_en_set  | R/W  | 0h    | DMA FIFO Underflow Interrupt Enable Set LCD dithering logic not<br>supplying data to FIFO at a sufficient rate, FIFO has completely<br>emptied and data pin driver logic has attempted to take added data<br>from FIFO.<br>Read indicates enabled (mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect. |     |     |
+| 4     | RESERVED    | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                       |     |     |
 
-**Table 13-37. IRQENABLE\_SET Register Field Descriptions (continued)**
+**Table 13-37. IRQENABLE_SET Register Field Descriptions (continued)**
 
-| Bit | Field                            | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-|-----|----------------------------------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 3   | acb_en_set                       | R/W  | 0h    | For Passive Matrix Panels Only AC Bias Count Interrupt Enable Set<br>AC bias transition counter has decremented to zero, indicating that<br>the lcd_ac_o line has transitioned the number of times which is<br>specified by the acbi control bit-field.<br>The counter is reloaded with the value in acbi but it is disabled until<br>the user clears ABC.<br>Read indicates enabled (mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect. |
-| 2   | sync_en_set                      | R/W  | 0h    | Frame Synchronization Lost Interrupt Enable Set Read indicates<br>enabled (mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                            |
-| 1   | recurrent_raster_done_en<br>_set | R/W  | 0h    | Raster Done Interrupt Enable Set.<br>Read indicates enabled (mask) status.<br>0 = Disabled.<br>1 = Enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                                          |
-| 0   | done_en_set                      | R/W  | 0h    | Raster or LIDD Frame Done (shared, depends on whether Raster or<br>LIDD mode enabled) Interrupt Enable Set Read indicates enabled<br>(mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.                                                                                                                                                                                                                                                                             |
+| Bit | Field                             | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| --- | --------------------------------- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 3   | acb_en_set                        | R/W  | 0h    | For Passive Matrix Panels Only AC Bias Count Interrupt Enable Set<br>AC bias transition counter has decremented to zero, indicating that<br>the lcd_ac_o line has transitioned the number of times which is<br>specified by the acbi control bit-field.<br>The counter is reloaded with the value in acbi but it is disabled until<br>the user clears ABC.<br>Read indicates enabled (mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect. |
+| 2   | sync_en_set                       | R/W  | 0h    | Frame Synchronization Lost Interrupt Enable Set Read indicates<br>enabled (mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                            |
+| 1   | recurrent_raster_done_en<br>\_set | R/W  | 0h    | Raster Done Interrupt Enable Set.<br>Read indicates enabled (mask) status.<br>0 = Disabled.<br>1 = Enabled.<br>Writing 1 will set interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                                          |
+| 0   | done_en_set                       | R/W  | 0h    | Raster or LIDD Frame Done (shared, depends on whether Raster or<br>LIDD mode enabled) Interrupt Enable Set Read indicates enabled<br>(mask) status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will set interrupt enable.                                                                                                                                                                                                                                                                             |
 
-#### **13.5.1.25 IRQENABLE\_CLEAR Register (offset = 64h) [reset = 0h]**
+#### **13.5.1.25 IRQENABLE_CLEAR Register (offset = 64h) [reset = 0h]**
 
-IRQENABLE\_CLEAR is shown in [Figure](#page-165-1) 13-53 and described in Table [13-38](#page-165-2).
+IRQENABLE_CLEAR is shown in [Figure](#page-165-1) 13-53 and described in Table [13-38](#page-165-2).
 
-#### **Figure 13-53. IRQENABLE\_CLEAR Register**
+#### **Figure 13-53. IRQENABLE_CLEAR Register**
 
-| 31       | 30        | 29         | 28       | 27         | 26          | 25                               | 24          |  |  |  |  |
-|----------|-----------|------------|----------|------------|-------------|----------------------------------|-------------|--|--|--|--|
-|          | RESERVED  |            |          |            |             |                                  |             |  |  |  |  |
-| R/W-0h   |           |            |          |            |             |                                  |             |  |  |  |  |
-| 23       | 22        | 21         | 20       | 19         | 18          | 17                               | 16          |  |  |  |  |
-|          |           |            |          | RESERVED   |             |                                  |             |  |  |  |  |
-|          | R/W-0h    |            |          |            |             |                                  |             |  |  |  |  |
-| 15       | 14        | 13         | 12       | 11         | 10          | 9                                | 8           |  |  |  |  |
-|          |           |            | RESERVED |            |             | eof1_en_clr                      | eof0_en_clr |  |  |  |  |
-|          |           |            | R/W-0h   |            |             | R/W-0h                           | R/W-0h      |  |  |  |  |
-| 7        | 6         | 5          | 4        | 3          | 2           | 1                                | 0           |  |  |  |  |
-| RESERVED | pl_en_clr | fuf_en_clr | RESERVED | acb_en_clr | sync_en_clr | recurrent_raster<br>_done_en_clr | done_en_clr |  |  |  |  |
-| R/W-0h   | R/W-0h    | R/W-0h     | R/W-0h   | R/W-0h     | R/W-0h      | R/W-0h                           | R/W-0h      |  |  |  |  |
+| 31       | 30        | 29         | 28       | 27         | 26          | 25                                | 24          |     |     |     |     |
+| -------- | --------- | ---------- | -------- | ---------- | ----------- | --------------------------------- | ----------- | --- | --- | --- | --- |
+|          | RESERVED  |            |          |            |             |                                   |             |     |     |     |     |
+| R/W-0h   |           |            |          |            |             |                                   |             |     |     |     |     |
+| 23       | 22        | 21         | 20       | 19         | 18          | 17                                | 16          |     |     |     |     |
+|          |           |            |          | RESERVED   |             |                                   |             |     |     |     |     |
+|          | R/W-0h    |            |          |            |             |                                   |             |     |     |     |     |
+| 15       | 14        | 13         | 12       | 11         | 10          | 9                                 | 8           |     |     |     |     |
+|          |           |            | RESERVED |            |             | eof1_en_clr                       | eof0_en_clr |     |     |     |     |
+|          |           |            | R/W-0h   |            |             | R/W-0h                            | R/W-0h      |     |     |     |     |
+| 7        | 6         | 5          | 4        | 3          | 2           | 1                                 | 0           |     |     |     |     |
+| RESERVED | pl_en_clr | fuf_en_clr | RESERVED | acb_en_clr | sync_en_clr | recurrent_raster<br>\_done_en_clr | done_en_clr |     |     |     |     |
+| R/W-0h   | R/W-0h    | R/W-0h     | R/W-0h   | R/W-0h     | R/W-0h      | R/W-0h                            | R/W-0h      |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-38. IRQENABLE\_CLEAR Register Field Descriptions**
+### **Table 13-38. IRQENABLE_CLEAR Register Field Descriptions**
 
 | Bit   | Field       | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                         |
-|-------|-------------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | ----------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-10 | RESERVED    | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                                     |
 | 9     | eof1_en_clr | R/W  | 0h    | DMA End-of-Frame 1 Interrupt Enable Clear.<br>Read indicates enabled status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                 |
 | 8     | eof0_en_clr | R/W  | 0h    | DMA End-of-Frame 0 Interrupt Enable Clear.<br>Read indicates enabled status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                 |
@@ -2478,72 +2486,72 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 5     | fuf_en_clr  | R/W  | 0h    | DMA FIFO Underflow Interrupt Enable Clear.<br>LCD dithering logic not supplying data to FIFO at a sufficient rate,<br>FIFO has completely emptied and data pin driver logic has<br>attempted to take added data from FIFO.<br>Read indicates enabled status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect. |
 | 4     | RESERVED    | R/W  | 0h    |                                                                                                                                                                                                                                                                                                                                                                     |
 
-**Table 13-38. IRQENABLE\_CLEAR Register Field Descriptions (continued)**
+**Table 13-38. IRQENABLE_CLEAR Register Field Descriptions (continued)**
 
-| Bit | Field                            | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-|-----|----------------------------------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 3   | acb_en_clr                       | R/W  | 0h    | For Passive Matrix Panels Only.<br>AC Bias Count Interrupt Enable Clear AC bias transition counter has<br>decremented to zero, indicating that the lcd_ac_o line has<br>transitioned the number of times which is specified by the acbi<br>control bit-field.<br>The counter is reloaded with the value in acbi but it is disabled until<br>the user clears ABC.<br>Read indicates enabled status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect. |
-| 2   | sync_en_clr                      | R/W  | 0h    | Frame Synchronization Lost Interrupt Enable Clear Read indicates<br>enabled status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                                |
-| 1   | recurrent_raster_done_en<br>_clr | R/W  | 0h    | Raster Done Interrupt Enable Clear.<br>Read indicates enabled status.<br>0 = Disabled.<br>1 = Enabled.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                                              |
-| 0   | done_en_clr                      | R/W  | 0h    | Raster or LIDD Frame Done (shared, depends on whether Raster or<br>LIDD mode enabled) Interrupt Enable Clear.<br>Read indicates enabled status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                    |
+| Bit | Field                             | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| --- | --------------------------------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 3   | acb_en_clr                        | R/W  | 0h    | For Passive Matrix Panels Only.<br>AC Bias Count Interrupt Enable Clear AC bias transition counter has<br>decremented to zero, indicating that the lcd_ac_o line has<br>transitioned the number of times which is specified by the acbi<br>control bit-field.<br>The counter is reloaded with the value in acbi but it is disabled until<br>the user clears ABC.<br>Read indicates enabled status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect. |
+| 2   | sync_en_clr                       | R/W  | 0h    | Frame Synchronization Lost Interrupt Enable Clear Read indicates<br>enabled status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                                |
+| 1   | recurrent_raster_done_en<br>\_clr | R/W  | 0h    | Raster Done Interrupt Enable Clear.<br>Read indicates enabled status.<br>0 = Disabled.<br>1 = Enabled.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                                                                                              |
+| 0   | done_en_clr                       | R/W  | 0h    | Raster or LIDD Frame Done (shared, depends on whether Raster or<br>LIDD mode enabled) Interrupt Enable Clear.<br>Read indicates enabled status.<br>0 = disabled.<br>1 = enabled.<br>Writing 1 will clear interrupt enable.<br>Writing 0 has no effect.                                                                                                                                                                                                                                                    |
 
-#### **13.5.1.26 CLKC\_ENABLE Register (offset = 6Ch) [reset = 0h]**
+#### **13.5.1.26 CLKC_ENABLE Register (offset = 6Ch) [reset = 0h]**
 
-CLKC\_ENABLE is shown in [Figure](#page-167-1) 13-54 and described in Table [13-39.](#page-167-2)
+CLKC_ENABLE is shown in [Figure](#page-167-1) 13-54 and described in Table [13-39.](#page-167-2)
 
-#### **Figure 13-54. CLKC\_ENABLE Register**
+#### **Figure 13-54. CLKC_ENABLE Register**
 
-| 31       | 30 | 29       | 28         | 27          | 26          | 25     | 24     |
-|----------|----|----------|------------|-------------|-------------|--------|--------|
-|          |    |          |            | RESERVED    |             |        |        |
-| R-0h     |    |          |            |             |             |        |        |
-| 23       | 22 | 21       | 20         | 19          | 18          | 17     | 16     |
-|          |    |          |            | RESERVED    |             |        |        |
-| R-0h     |    |          |            |             |             |        |        |
-| 15       | 14 | 13       | 12         | 11          | 10          | 9      | 8      |
-| RESERVED |    |          |            |             |             |        |        |
-| R-0h     |    |          |            |             |             |        |        |
-| 7        | 6  | 5        | 4          | 3           | 2           | 1      | 0      |
-|          |    | RESERVED | dma_clk_en | lidd_clk_en | core_clk_en |        |        |
-| R-0h     |    |          |            |             | R/W-0h      | R/W-0h | R/W-0h |
+| 31       | 30  | 29       | 28         | 27          | 26          | 25     | 24     |
+| -------- | --- | -------- | ---------- | ----------- | ----------- | ------ | ------ |
+|          |     |          |            | RESERVED    |             |        |        |
+| R-0h     |     |          |            |             |             |        |        |
+| 23       | 22  | 21       | 20         | 19          | 18          | 17     | 16     |
+|          |     |          |            | RESERVED    |             |        |        |
+| R-0h     |     |          |            |             |             |        |        |
+| 15       | 14  | 13       | 12         | 11          | 10          | 9      | 8      |
+| RESERVED |     |          |            |             |             |        |        |
+| R-0h     |     |          |            |             |             |        |        |
+| 7        | 6   | 5        | 4          | 3           | 2           | 1      | 0      |
+|          |     | RESERVED | dma_clk_en | lidd_clk_en | core_clk_en |        |        |
+| R-0h     |     |          |            |             | R/W-0h      | R/W-0h | R/W-0h |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-### **Table 13-39. CLKC\_ENABLE Register Field Descriptions**
+### **Table 13-39. CLKC_ENABLE Register Field Descriptions**
 
 | Bit  | Field       | Type | Reset | Description                                                                                                                                                        |
-|------|-------------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 31-3 | RESERVED    | R    | 0h    |                                                                                                                                                                    |
 | 2    | dma_clk_en  | R/W  | 0h    | Software Clock Enable for the DMA submodule.<br>The DMA submodule runs on the L3 Clock domain.                                                                     |
 | 1    | lidd_clk_en | R/W  | 0h    | Software Clock Enable for the LIDD submodule (character displays).<br>The LIDD submodule runs on the System Clock (lcd_clk) domain                                 |
 | 0    | core_clk_en | R/W  | 0h    | Software Clock Enable for the Core, which encompasses the Raster<br>Active Matrix and Passive Matrix logic.<br>The Core runs on the System Clock (lcd_clk) domain. |
 
-#### **13.5.1.27 CLKC\_RESET Register (offset = 70h) [reset = 0h]**
+#### **13.5.1.27 CLKC_RESET Register (offset = 70h) [reset = 0h]**
 
-CLKC\_RESET is shown in [Figure](#page-168-1) 13-55 and described in Table [13-40.](#page-168-2)
+CLKC_RESET is shown in [Figure](#page-168-1) 13-55 and described in Table [13-40.](#page-168-2)
 
-#### **Figure 13-55. CLKC\_RESET Register**
+#### **Figure 13-55. CLKC_RESET Register**
 
-| 31       | 30       | 29 | 28 | 27       | 26      | 25       | 24       |
-|----------|----------|----|----|----------|---------|----------|----------|
-|          |          |    |    | RESERVED |         |          |          |
-| R/W-0h   |          |    |    |          |         |          |          |
-| 23       | 22       | 21 | 20 | 19       | 18      | 17       | 16       |
-|          |          |    |    | RESERVED |         |          |          |
-| R/W-0h   |          |    |    |          |         |          |          |
-| 15       | 14       | 13 | 12 | 11       | 10      | 9        | 8        |
-| RESERVED |          |    |    |          |         |          |          |
-| R/W-0h   |          |    |    |          |         |          |          |
-| 7        | 6        | 5  | 4  | 3        | 2       | 1        | 0        |
-|          | RESERVED |    |    | main_rst | dma_rst | lidd_rst | core_rst |
-| R/W-0h   |          |    |    | R/W-0h   | R/W-0h  | R/W-0h   | R/W-0h   |
+| 31       | 30       | 29  | 28  | 27       | 26      | 25       | 24       |
+| -------- | -------- | --- | --- | -------- | ------- | -------- | -------- |
+|          |          |     |     | RESERVED |         |          |          |
+| R/W-0h   |          |     |     |          |         |          |          |
+| 23       | 22       | 21  | 20  | 19       | 18      | 17       | 16       |
+|          |          |     |     | RESERVED |         |          |          |
+| R/W-0h   |          |     |     |          |         |          |          |
+| 15       | 14       | 13  | 12  | 11       | 10      | 9        | 8        |
+| RESERVED |          |     |     |          |         |          |          |
+| R/W-0h   |          |     |     |          |         |          |          |
+| 7        | 6        | 5   | 4   | 3        | 2       | 1        | 0        |
+|          | RESERVED |     |     | main_rst | dma_rst | lidd_rst | core_rst |
+| R/W-0h   |          |     |     | R/W-0h   | R/W-0h  | R/W-0h   | R/W-0h   |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
-#### **Table 13-40. CLKC\_RESET Register Field Descriptions**
+#### **Table 13-40. CLKC_RESET Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                     |
-|------|----------|------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-4 | RESERVED | R/W  | 0h    |                                                                                                                                                 |
 | 3    | main_rst | R/W  | 0h    | Software Reset for the entire LCD module.<br>1 = Reset Enable.<br>0 = Reset Disable.                                                            |
 | 2    | dma_rst  | R/W  | 0h    | Software Reset for the DMA submodule.<br>1 = Reset Enable.<br>0 = Reset Disable.                                                                |

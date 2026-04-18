@@ -1,9 +1,17 @@
+---
+title: AM335x Chapter 15 Pulse-Width Modulation Subsystem (PWMSS)
+tags:
+  - am335x
+  - reference
+date: 2026-04-18
+---
+
 # 15 Pulse-Width Modulation Subsystem (PWMSS)
 
 This chapter describes the PWMSS of the device.
 
 | Topic |              |                                                                        | Page         |
-|-------|--------------|------------------------------------------------------------------------|--------------|
+| ----- | ------------ | ---------------------------------------------------------------------- | ------------ |
 |       |              |                                                                        |              |
 |       | 15.1<br>15.2 | Pulse-Width Modulation Subsystem (PWMSS)<br>Enhanced PWM (ePWM) Module | 2321<br>2330 |
 |       | 15.3         | Enhanced Capture (eCAP) Module                                         | 2465         |
@@ -11,7 +19,7 @@ This chapter describes the PWMSS of the device.
 
 ## **15.1 Pulse-Width Modulation Subsystem (PWMSS)**
 
-### *15.1.1 Introduction*
+### _15.1.1 Introduction_
 
 #### **15.1.1.1 Features**
 
@@ -60,7 +68,7 @@ The PWMSS module features not supported are shown in [Table](#page-2-0) 15-1.
 #### **Table 15-1. Unsupported Features**
 
 | Feature                  | Reason                           |
-|--------------------------|----------------------------------|
+| ------------------------ | -------------------------------- |
 | ePWM inputs              | Not pinned out                   |
 | ePWM tripzone 1-5 inputs | Only Tripzone0 is pinned out     |
 | ePWM digital comparators | Inputs not connected             |
@@ -68,7 +76,7 @@ The PWMSS module features not supported are shown in [Table](#page-2-0) 15-1.
 | eCAP3–5                  | Module not used                  |
 | eQEP3–5                  | Module not used                  |
 
-### *15.1.2 Integration*
+### _15.1.2 Integration_
 
 The Pulse Width Modulation Subsystem (PWMSS) includes a single instance of the Enhanced High Resolution Pulse Width Modulator (eHRPWM), Enhanced Capture (eCAP), and Enhanced Quadrature Encoded Pulse (eQEP) modules. This device includes three instantiations of the PWMSS.
 
@@ -116,13 +124,14 @@ Device
                                                        |                                               |<-- [STROBE]
                                                        +-----------------------------------------------+
 ```
+
 **Figure 15-1. PWMSS Integration**
 
 #### **15.1.2.1 PWMSS Synchronization Detail**
 
 The PWM (eHRPWM) and capture (eCAP) components of the PWMSS provide synchronization signals to allow them to be synchronized to other modules or events. On this device, these signals are connected in a daisy-chain fashion as shown in [Figure](#page-4-0) 15-2.
 
-The eCAP capture events may be selected from among 31 different pins or internal interrupt signals. The event is selected using the corresponding ECAPx\_EVTCAPT field of the ECAP\_EVT\_CAP register in the Control Module.
+The eCAP capture events may be selected from among 31 different pins or internal interrupt signals. The event is selected using the corresponding ECAPx_EVTCAPT field of the ECAP_EVT_CAP register in the Control Module.
 
 ```
 eHRPWM_sync_i (Chip Input)  --->
@@ -164,7 +173,7 @@ The general connectivity attributes for the PWMSS module are shown in [Table](#p
 **Table 15-2. PWMSS Connectivity Attributes Attributes Type**
 
 | Attributes          | Type                                                                                                                            |
-|---------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | Power Domain        | Peripheral Domain                                                                                                               |
 | Clock Domain        | PD_PER_L4LS_GCLK                                                                                                                |
 | Reset Signals       | PER_DOM_RST_N                                                                                                                   |
@@ -180,7 +189,7 @@ The general connectivity attributes for the PWMSS module are shown in [Table](#p
 ## **Table 15-2. PWMSS Connectivity Attributes (continued)**
 
 | Attributes       | Type                                                 |
-|------------------|------------------------------------------------------|
+| ---------------- | ---------------------------------------------------- |
 | DMA Requests     | Interrupt requests are redirected as DMA requests:   |
 |                  | •<br>1 DMA request from ePWM per instance (ePWMEVTx) |
 |                  | •<br>1 DMA request from eCAP per instance (eCAPEVTx) |
@@ -194,7 +203,7 @@ The PWMSS controllers have separate bus interface and functional clocks.
 ### **Table 15-3. PWMSS Clock Signals**
 
 | Clock Signal                                  | Max Freq | Reference / Source | Comments                      |
-|-----------------------------------------------|----------|--------------------|-------------------------------|
+| --------------------------------------------- | -------- | ------------------ | ----------------------------- |
 | PWMSS_ocp_clk<br>Interface / Functional clock | 100 MHz  | CORE_CLKOUTM4 / 2  | pd_per_l4ls_gclk<br>from PRCM |
 
 #### **15.1.2.4 PWMSS Pin list**
@@ -204,7 +213,7 @@ The external signals for the PWMSS module are shown in the following table.
 #### **Table 15-4. PWMSS Pin List**
 
 | Pin                | Type | Description                     |
-|--------------------|------|---------------------------------|
+| ------------------ | ---- | ------------------------------- |
 | EPWMxA             | O    | PWM output A                    |
 | EPWMxB             | O    | PWM output B                    |
 | EPWM_SYNCIN        | I    | PWM Sync input                  |
@@ -216,14 +225,14 @@ The external signals for the PWMSS module are shown in the following table.
 | EQEP_INDEX         | I/O  | eQEP Index input/output         |
 | EQEP_STROBE        | I/O  | eQEP Strobe input/output        |
 
-### *15.1.3 PWMSS Registers*
+### _15.1.3 PWMSS Registers_
 
 [Table](#page-5-0) 15-5 lists the memory-mapped registers for the PWMSS. All register offset addresses not listed in [Table](#page-5-0) 15-5 should be considered as reserved locations and the register contents should not be modified.
 
 **Table 15-5. PWMSS Registers**
 
 | Offset | Acronym   | Register Name                 | Section          |
-|--------|-----------|-------------------------------|------------------|
+| ------ | --------- | ----------------------------- | ---------------- |
 | 0h     | IDVER     | IP Revision Register          | Section 15.1.3.1 |
 | 4h     | SYSCONFIG | System Configuration Register | Section 15.1.3.2 |
 | 8h     | CLKCONFIG | Clock Configuration Register  | Section 15.1.3.3 |
@@ -237,27 +246,27 @@ The IP revision register is used by software to track features, bugs, and compat
 
 #### **Figure 15-3. IDVER Register**
 
-| 31     | 30 | 29       | 28   | 27 | 26      | 25      | 24 |
-|--------|----|----------|------|----|---------|---------|----|
-| SCHEME |    | RESERVED |      |    | FUNC    |         |    |
-| R-1h   |    | R-0h     |      |    | R-0h    |         |    |
-| 23     | 22 | 21       | 20   | 19 | 18      | 17      | 16 |
-|        |    |          | FUNC |    |         |         |    |
-|        |    |          | R-0h |    |         |         |    |
-| 15     | 14 | 13       | 12   | 11 | 10      | 9       | 8  |
-|        |    | R_RTL    |      |    |         | X_MAJOR |    |
-|        |    | R-0h     |      |    |         | R-0h    |    |
-| 7      | 6  | 5        | 4    | 3  | 2       | 1       | 0  |
-| CUSTOM |    |          |      |    | Y_MINOR |         |    |
-| R-0h   |    |          |      |    | R-0h    |         |    |
-|        |    |          |      |    |         |         |    |
+| 31     | 30  | 29       | 28   | 27  | 26      | 25      | 24  |
+| ------ | --- | -------- | ---- | --- | ------- | ------- | --- |
+| SCHEME |     | RESERVED |      |     | FUNC    |         |     |
+| R-1h   |     | R-0h     |      |     | R-0h    |         |     |
+| 23     | 22  | 21       | 20   | 19  | 18      | 17      | 16  |
+|        |     |          | FUNC |     |         |         |     |
+|        |     |          | R-0h |     |         |         |     |
+| 15     | 14  | 13       | 12   | 11  | 10      | 9       | 8   |
+|        |     | R_RTL    |      |     |         | X_MAJOR |     |
+|        |     | R-0h     |      |     |         | R-0h    |     |
+| 7      | 6   | 5        | 4    | 3   | 2       | 1       | 0   |
+| CUSTOM |     |          |      |     | Y_MINOR |         |     |
+| R-0h   |     |          |      |     | R-0h    |         |     |
+|        |     |          |      |     |         |         |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-6. IDVER Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                             |
-|-------|----------|------|-------|---------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ------------------------------------------------------- |
 | 31-30 | SCHEME   | R    | 1h    | Used to distinguish between the old scheme and current. |
 | 29-28 | RESERVED | R    | 0h    |                                                         |
 | 27-16 | FUNC     | R    | 0h    | FUNC                                                    |
@@ -300,12 +309,12 @@ The system configuration register is used for clock management configuration.
 +--------+-----------------+-----------------+--------+----------+
 ```
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-7. SYSCONFIG Register Field Descriptions**
 
 | Bit  | Field       | Type | Reset | Description                                                                                                                                                                                                                                                           |
-|------|-------------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-6 | RESERVED    | R    | 0h    |                                                                                                                                                                                                                                                                       |
 | 5-4  | STANDBYMODE | R/W  | 2h    | Configuration of the local initiator state management mode.<br>By definition, initiator may generate read/write transaction as long as<br>it is out of STANDBY state.                                                                                                 |
 |      |             |      |       | 0h = Force-standby mode: local initiator is unconditionally placed in<br>standby state. Backup mode, for debug only.                                                                                                                                                  |
@@ -325,30 +334,30 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 
 CLKCONFIG is shown in [Figure](#page-8-1) 15-5 and described in [Table](#page-8-2) 15-8.
 
-The clock configuration register is used in the PWMSS submodule for clkstop req and clk\_en control.
+The clock configuration register is used in the PWMSS submodule for clkstop req and clk_en control.
 
 **Figure 15-5. CLKCONFIG Register**
 
-| 31       | 30 | 29                  | 28         | 27       | 26   | 25                  | 24         |
-|----------|----|---------------------|------------|----------|------|---------------------|------------|
-|          |    |                     | RESERVED   |          |      |                     |            |
-|          |    |                     | R-0h       |          |      |                     |            |
-| 23       | 22 | 21                  | 20         | 19       | 18   | 17                  | 16         |
-|          |    |                     | RESERVED   |          |      |                     |            |
-|          |    |                     | R-0h       |          |      |                     |            |
-| 15       | 14 | 13                  | 12         | 11       | 10   | 9                   | 8          |
-|          |    | RESERVED            |            |          |      | ePWMCLKSTO<br>P_REQ | ePWMCLK_EN |
-|          |    | R-0h                |            |          |      | R/W-0h              | R/W-1h     |
-| 7        | 6  | 5                   | 4          | 3        | 2    | 1                   | 0          |
-| RESERVED |    | eQEPCLKSTO<br>P_REQ | eQEPCLK_EN | RESERVED |      | eCAPCLKSTO<br>P_REQ | eCAPCLK_EN |
-| R-0h     |    | R/W-0h              | R/W-1h     |          | R-0h | R/W-0h              | R/W-1h     |
+| 31       | 30  | 29                  | 28         | 27       | 26   | 25                  | 24         |
+| -------- | --- | ------------------- | ---------- | -------- | ---- | ------------------- | ---------- |
+|          |     |                     | RESERVED   |          |      |                     |            |
+|          |     |                     | R-0h       |          |      |                     |            |
+| 23       | 22  | 21                  | 20         | 19       | 18   | 17                  | 16         |
+|          |     |                     | RESERVED   |          |      |                     |            |
+|          |     |                     | R-0h       |          |      |                     |            |
+| 15       | 14  | 13                  | 12         | 11       | 10   | 9                   | 8          |
+|          |     | RESERVED            |            |          |      | ePWMCLKSTO<br>P_REQ | ePWMCLK_EN |
+|          |     | R-0h                |            |          |      | R/W-0h              | R/W-1h     |
+| 7        | 6   | 5                   | 4          | 3        | 2    | 1                   | 0          |
+| RESERVED |     | eQEPCLKSTO<br>P_REQ | eQEPCLK_EN | RESERVED |      | eCAPCLKSTO<br>P_REQ | eCAPCLK_EN |
+| R-0h     |     | R/W-0h              | R/W-1h     |          | R-0h | R/W-0h              | R/W-1h     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-8. CLKCONFIG Register Field Descriptions**
 
 | Bit   | Field           | Type | Reset | Description                                                 |
-|-------|-----------------|------|-------|-------------------------------------------------------------|
+| ----- | --------------- | ---- | ----- | ----------------------------------------------------------- |
 | 31-10 | RESERVED        | R    | 0h    |                                                             |
 | 9     | ePWMCLKSTOP_REQ | R/W  | 0h    | This bit controls the clkstop_req input to the ePWM module. |
 | 8     | ePWMCLK_EN      | R/W  | 1h    | This bit controls the clk_en input to the ePWM module.      |
@@ -363,7 +372,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 
 CLKSTATUS is shown in [Figure](#page-9-1) 15-6 and described in [Table](#page-9-2) 15-9.
 
-The clock status register is used in the PWMSS submodule for clkstop ack and clk\_en ack status.
+The clock status register is used in the PWMSS submodule for clkstop ack and clk_en ack status.
 
 **Figure 15-6. CLKSTATUS Register**
 
@@ -395,12 +404,12 @@ The clock status register is used in the PWMSS submodule for clkstop ack and clk
                  (bits7:6)             (bit5)            (bit4)   (bits3:2)        (bit1)            (bit0)
 ```
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ## **Table 15-9. CLKSTATUS Register Field Descriptions**
 
 | Bit   | Field            | Type | Reset | Description                                                       |
-|-------|------------------|------|-------|-------------------------------------------------------------------|
+| ----- | ---------------- | ---- | ----- | ----------------------------------------------------------------- |
 | 31-10 | RESERVED         | R    | 0h    |                                                                   |
 | 9     | ePWM_CLKSTOP_ACK | R    | 0h    | This bit is the clkstop_req_ack status output of the ePWM module. |
 | 8     | ePWM_CLK_EN_ACK  | R    | 0h    | This bit is the clk_en status output of the ePWM module.          |
@@ -413,7 +422,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 
 ## **15.2 Enhanced PWM (ePWM) Module**
 
-### *15.2.1 Introduction*
+### _15.2.1 Introduction_
 
 An effective PWM peripheral must be able to generate complex pulse width waveforms with minimal CPU overhead or intervention. It needs to be highly programmable and very flexible while being easy to understand and use. The ePWM unit described here addresses these requirements by allocating all needed timing and control resources on a per PWM channel basis. Cross coupling or sharing of resources has been avoided; instead, the ePWM is built up from smaller single channel modules with separate resources and that can operate together as required to form a system. This modular approach results in an orthogonal architecture and provides a more transparent view of the peripheral structure, helping users to understand its operation quickly.
 
@@ -496,9 +505,9 @@ From each ePWM module to the GPIO MUX:
 
 **Figure 15-7. Multiple ePWM Modules**
 
-NOTE: [Figure](#page-11-0) 15-7 is a generic block diagram. For specific implementation, see Section [15.1.2.1](#page-3-1), *PWMSS Synchronization Detail*.
+NOTE: [Figure](#page-11-0) 15-7 is a generic block diagram. For specific implementation, see Section [15.1.2.1](#page-3-1), _PWMSS Synchronization Detail_.
 
-> *[Diagram — signal/block labels not renderable in text format]*
+> _[Diagram — signal/block labels not renderable in text format]_
 
 **Figure 15-8. Submodules and Signal Connections for an ePWM Module**
 
@@ -511,11 +520,11 @@ NOTE: [Figure](#page-11-0) 15-7 is a generic block diagram. For specific impleme
 
 [Figure](#page-13-0) 15-9 also shows the key internal submodule interconnect signals. Each submodule is described in [Section](#page-14-0) 15.2.2.
 
-> *[Diagram — signal/block labels not renderable in text format]*
+> _[Diagram — signal/block labels not renderable in text format]_
 
 **Figure 15-9. ePWM Submodules and Critical Internal Signal Interconnects**
 
-### *15.2.2 Functional Description*
+### _15.2.2 Functional Description_
 
 Seven submodules are included in every ePWM peripheral. There are some instances that include a highresolution submodule that allows more precise control of the PWM outputs. Each of these submodules performs specific tasks that can be configured by software.
 
@@ -526,7 +535,7 @@ Table [15-10](#page-14-1) lists the eight key submodules together with a list of
 **Table 15-10. Submodule Configuration Parameters**
 
 | Submodule             | Configuration Parameter or Option                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-|-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Time-base (TB)        | •<br>Scale the time-base clock (TBCLK) relative to the system clock (SYSCLKOUT).<br>•<br>Configure the PWM time-base counter (TBCNT) frequency or period.<br>•<br>Set the mode for the time-base counter:<br>–<br>count-up mode: used for asymmetric PWM<br>–<br>count-down mode: used for asymmetric PWM<br>–<br>count-up-and-down mode: used for symmetric PWM<br>•<br>Configure the time-base phase relative to another ePWM module.<br>•<br>Synchronize the time-base counter between modules through hardware or software.<br>•<br>Configure the direction (up or down) of the time-base counter after a synchronization event.<br>•<br>Configure how the time-base counter will behave when the device is halted by an emulator.<br>•<br>Specify the source for the synchronization output of the ePWM module:<br>–<br>Synchronization input signal<br>–<br>Time-base counter equal to zero |
 |                       | –<br>Time-base counter equal to counter-compare B (CMPB)<br>–<br>No output synchronization signal generated.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | Counter-compare (CC)  | •<br>Specify the PWM duty cycle for output EPWMxA and/or output EPWMxB<br>•<br>Specify the time at which switching events occur on the EPWMxA or EPWMxB output                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -537,7 +546,7 @@ Table [15-10](#page-14-1) lists the eight key submodules together with a list of
 **Table 15-10. Submodule Configuration Parameters (continued)**
 
 | Submodule                      | Configuration Parameter or Option                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-|--------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Trip-zone (TZ)                 | •<br>Configure the ePWM module to react to one, all, or none of the trip-zone pins.<br>•<br>Specify the tripping action taken when a fault occurs:<br>–<br>Force EPWMxA and/or EPWMxB high<br>–<br>Force EPWMxA and/or EPWMxB low<br>–<br>Force EPWMxA and/or EPWMxB to a high-impedance state<br>–<br>Configure EPWMxA and/or EPWMxB to ignore any trip condition.<br>•<br>Configure how often the ePWM will react to each trip-zone pin:<br>–<br>One-shot<br>–<br>Cycle-by-cycle |
 |                                | •<br>Enable the trip-zone to initiate an interrupt.<br>•<br>Bypass the trip-zone module entirely.                                                                                                                                                                                                                                                                                                                                                                                  |
 | Event-trigger (ET)             | •<br>Enable the ePWM events that will trigger an interrupt.<br>•<br>Specify the rate at which events cause triggers (every occurrence or every second or third<br>occurrence)<br>•<br>Poll, set, or clear event flags                                                                                                                                                                                                                                                              |
@@ -545,7 +554,7 @@ Table [15-10](#page-14-1) lists the eight key submodules together with a list of
 
 Code examples are provided in the remainder of this chapter that show how to implement various ePWM module configurations. These examples use the constant definitions shown in [Example](#page-15-0) 15-1.
 
-#### *Example 15-1. Constant Definitions Used in the Code Examples*
+#### _Example 15-1. Constant Definitions Used in the Code Examples_
 
 ```
 // TBCTL (Time-Base Control)
@@ -583,72 +592,72 @@ Code examples are provided in the remainder of this chapter that show how to imp
 // SHDWAMODE and SHDWBMODE bits
 ```
 
-## *Example 15-1. Constant Definitions Used in the Code Examples (continued)*
+## _Example 15-1. Constant Definitions Used in the Code Examples (continued)_
 
-| #define                      | CC_SHADOW                                                                                  | 0x0        |  |
-|------------------------------|--------------------------------------------------------------------------------------------|------------|--|
-| #define                      | CC_IMMEDIATE                                                                               | 0x1        |  |
-|                              | // AQCTLA and AQCTLB (Action-qualifier Control)                                            |            |  |
-|                              | // = = = = = = = = = = = = = = = = = = = = = = = = = =                                     |            |  |
-|                              | // ZRO, PRD, CAU, CAD, CBU, CBD bits                                                       |            |  |
-| #define                      | AQ_NO_ACTION                                                                               | 0x0        |  |
-| #define                      | AQ_CLEAR                                                                                   | 0x1        |  |
-| #define                      | AQ_SET                                                                                     | 0x2        |  |
-| #define                      | AQ_TOGGLE                                                                                  | 0x3        |  |
-| // DBCTL (Dead-Band Control) |                                                                                            |            |  |
-|                              | // = = = = = = = = = = = = = = = = = = = = = = = = = =                                     |            |  |
-| // MODE bits                 |                                                                                            |            |  |
-| #define                      | DB_DISABLE                                                                                 | 0x0        |  |
-| #define                      | DBA_ENABLE                                                                                 | 0x1        |  |
-| #define                      | DBB_ENABLE                                                                                 | 0x2        |  |
-| #define DB_FULL_ENABLE 0x3   |                                                                                            |            |  |
-| // POLSEL bits               |                                                                                            |            |  |
-| #define<br>#define           | DB_ACTV_HI<br>DB_ACTV_LOC                                                                  | 0x0<br>0x1 |  |
-| #define                      | DB_ACTV_HIC                                                                                | 0x2        |  |
-| #define                      | DB_ACTV_LO                                                                                 | 0x3        |  |
-| // PCCTL (chopper control)   |                                                                                            |            |  |
-|                              | // = = = = = = = = = = = = = = = = = = = = = = = = = =                                     |            |  |
-| // CHPEN bit                 |                                                                                            |            |  |
-| #define                      | CHP_ENABLE                                                                                 | 0x0        |  |
-| #define CHP_DISABLE 0x1      |                                                                                            |            |  |
-| // CHPFREQ bits              |                                                                                            |            |  |
-| #define                      | CHP_DIV1                                                                                   | 0x0        |  |
-| #define                      | CHP_DIV2                                                                                   | 0x1        |  |
-| #define                      | CHP_DIV3                                                                                   | 0x2        |  |
-| #define                      | CHP_DIV4                                                                                   | 0x3        |  |
-| #define                      | CHP_DIV5                                                                                   | 0x4        |  |
-| #define                      | CHP_DIV6                                                                                   | 0x5        |  |
-| #define                      | CHP_DIV7                                                                                   | 0x6        |  |
-| #define                      | CHP_DIV8                                                                                   | 0x7        |  |
-| // CHPDUTY bits              |                                                                                            |            |  |
-| #define                      | CHP1_8TH                                                                                   | 0x0        |  |
-| #define                      | CHP2_8TH                                                                                   | 0x1        |  |
-| #define                      | CHP3_8TH                                                                                   | 0x2        |  |
-| #define                      | CHP4_8TH                                                                                   | 0x3        |  |
-| #define                      | CHP5_8TH                                                                                   | 0x4        |  |
-| #define                      | CHP6_8TH                                                                                   | 0x5        |  |
-| #define                      | CHP7_8TH                                                                                   | 0x6        |  |
-| // TZSEL (Trip-zone Select)  |                                                                                            |            |  |
-|                              | // = = = = = = = = = = = = = = = = = = = = = = = = = =                                     |            |  |
-| // CBCn and OSHTn bits       |                                                                                            |            |  |
-| #define                      | TZ_ENABLE                                                                                  | 0x0        |  |
-| #define                      | TZ_DISABLE                                                                                 | 0x1        |  |
-| // TZCTL (Trip-zone Control) |                                                                                            |            |  |
-|                              | // = = = = = = = = = = = = = = = = = = = = = = = = = =                                     |            |  |
-| // TZA and TZB bits          |                                                                                            |            |  |
-| #define                      | TZ_HIZ                                                                                     | 0x0        |  |
-| #define                      | TZ_FORCE_HI                                                                                | 0x1        |  |
-| #define                      | TZ_FORCE_LO                                                                                | 0x2        |  |
-| #define                      | TZ_DISABLE                                                                                 | 0x3        |  |
-|                              | // ETSEL (Event-trigger Select)                                                            |            |  |
-|                              | // = = = = = = = = = = = = = = = = = = = = = = = = = =<br>// INTSEL, SOCASEL, SOCBSEL bits |            |  |
-| #define                      | ET_CTR_ZERO                                                                                | 0x1        |  |
-| #define                      | ET_CTR_PRD                                                                                 | 0x2        |  |
-| #define                      | ET_CTRU_CMPA                                                                               | 0x4        |  |
-| #define                      | ET_CTRD_CMPA                                                                               | 0x5        |  |
-| #define                      | ET_CTRU_CMPB                                                                               | 0x6        |  |
-| #define                      | ET_CTRD_CMPB                                                                               | 0x7        |  |
-|                              |                                                                                            |            |  |
+| #define                      | CC_SHADOW                                                                                  | 0x0        |     |
+| ---------------------------- | ------------------------------------------------------------------------------------------ | ---------- | --- |
+| #define                      | CC_IMMEDIATE                                                                               | 0x1        |     |
+|                              | // AQCTLA and AQCTLB (Action-qualifier Control)                                            |            |     |
+|                              | // = = = = = = = = = = = = = = = = = = = = = = = = = =                                     |            |     |
+|                              | // ZRO, PRD, CAU, CAD, CBU, CBD bits                                                       |            |     |
+| #define                      | AQ_NO_ACTION                                                                               | 0x0        |     |
+| #define                      | AQ_CLEAR                                                                                   | 0x1        |     |
+| #define                      | AQ_SET                                                                                     | 0x2        |     |
+| #define                      | AQ_TOGGLE                                                                                  | 0x3        |     |
+| // DBCTL (Dead-Band Control) |                                                                                            |            |     |
+|                              | // = = = = = = = = = = = = = = = = = = = = = = = = = =                                     |            |     |
+| // MODE bits                 |                                                                                            |            |     |
+| #define                      | DB_DISABLE                                                                                 | 0x0        |     |
+| #define                      | DBA_ENABLE                                                                                 | 0x1        |     |
+| #define                      | DBB_ENABLE                                                                                 | 0x2        |     |
+| #define DB_FULL_ENABLE 0x3   |                                                                                            |            |     |
+| // POLSEL bits               |                                                                                            |            |     |
+| #define<br>#define           | DB_ACTV_HI<br>DB_ACTV_LOC                                                                  | 0x0<br>0x1 |     |
+| #define                      | DB_ACTV_HIC                                                                                | 0x2        |     |
+| #define                      | DB_ACTV_LO                                                                                 | 0x3        |     |
+| // PCCTL (chopper control)   |                                                                                            |            |     |
+|                              | // = = = = = = = = = = = = = = = = = = = = = = = = = =                                     |            |     |
+| // CHPEN bit                 |                                                                                            |            |     |
+| #define                      | CHP_ENABLE                                                                                 | 0x0        |     |
+| #define CHP_DISABLE 0x1      |                                                                                            |            |     |
+| // CHPFREQ bits              |                                                                                            |            |     |
+| #define                      | CHP_DIV1                                                                                   | 0x0        |     |
+| #define                      | CHP_DIV2                                                                                   | 0x1        |     |
+| #define                      | CHP_DIV3                                                                                   | 0x2        |     |
+| #define                      | CHP_DIV4                                                                                   | 0x3        |     |
+| #define                      | CHP_DIV5                                                                                   | 0x4        |     |
+| #define                      | CHP_DIV6                                                                                   | 0x5        |     |
+| #define                      | CHP_DIV7                                                                                   | 0x6        |     |
+| #define                      | CHP_DIV8                                                                                   | 0x7        |     |
+| // CHPDUTY bits              |                                                                                            |            |     |
+| #define                      | CHP1_8TH                                                                                   | 0x0        |     |
+| #define                      | CHP2_8TH                                                                                   | 0x1        |     |
+| #define                      | CHP3_8TH                                                                                   | 0x2        |     |
+| #define                      | CHP4_8TH                                                                                   | 0x3        |     |
+| #define                      | CHP5_8TH                                                                                   | 0x4        |     |
+| #define                      | CHP6_8TH                                                                                   | 0x5        |     |
+| #define                      | CHP7_8TH                                                                                   | 0x6        |     |
+| // TZSEL (Trip-zone Select)  |                                                                                            |            |     |
+|                              | // = = = = = = = = = = = = = = = = = = = = = = = = = =                                     |            |     |
+| // CBCn and OSHTn bits       |                                                                                            |            |     |
+| #define                      | TZ_ENABLE                                                                                  | 0x0        |     |
+| #define                      | TZ_DISABLE                                                                                 | 0x1        |     |
+| // TZCTL (Trip-zone Control) |                                                                                            |            |     |
+|                              | // = = = = = = = = = = = = = = = = = = = = = = = = = =                                     |            |     |
+| // TZA and TZB bits          |                                                                                            |            |     |
+| #define                      | TZ_HIZ                                                                                     | 0x0        |     |
+| #define                      | TZ_FORCE_HI                                                                                | 0x1        |     |
+| #define                      | TZ_FORCE_LO                                                                                | 0x2        |     |
+| #define                      | TZ_DISABLE                                                                                 | 0x3        |     |
+|                              | // ETSEL (Event-trigger Select)                                                            |            |     |
+|                              | // = = = = = = = = = = = = = = = = = = = = = = = = = =<br>// INTSEL, SOCASEL, SOCBSEL bits |            |     |
+| #define                      | ET_CTR_ZERO                                                                                | 0x1        |     |
+| #define                      | ET_CTR_PRD                                                                                 | 0x2        |     |
+| #define                      | ET_CTRU_CMPA                                                                               | 0x4        |     |
+| #define                      | ET_CTRD_CMPA                                                                               | 0x5        |     |
+| #define                      | ET_CTRU_CMPB                                                                               | 0x6        |     |
+| #define                      | ET_CTRD_CMPB                                                                               | 0x7        |     |
+|                              |                                                                                            |            |     |
 
 #### Example 15-1. Constant Definitions Used in the Code Examples (continued)
 
@@ -718,7 +727,7 @@ EPWMxSYNCI  ----> +------------------+ <---- EPWMxSYNCO
 
 Figure 15-10. Time-Base Submodule Block Diagram
 
-#### *15.2.2.3.1 Purpose of the Time-Base Submodule*
+#### _15.2.2.3.1 Purpose of the Time-Base Submodule_
 
 You can configure the time-base submodule for the following:
 
@@ -738,7 +747,7 @@ Table 15-11 lists the registers used to control and monitor the time-base submod
 Table 15-11. Time-Base Submodule Registers
 
 | Acronym | Register Description               | Address Offset | Shadowed |
-|---------|------------------------------------|----------------|----------|
+| ------- | ---------------------------------- | -------------- | -------- |
 | TBCTL   | Time-Base Control Register         | 0h             | No       |
 | TBSTS   | Time-Base Status Register          | 2h             | No       |
 | TBPHSHR | HRPWM extension Phase Register (1) | 4h             | No       |
@@ -816,7 +825,7 @@ TBCTL[SWFSYNC] ----> (OR) --------------+----> sync pulse node ----+
 ## **Table 15-12. Key Time-Base Signals**
 
 | Signal     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-|------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | EPWMxSYNCI | Time-base synchronization input.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 |            | Input pulse used to synchronize the time-base counter with the counter of ePWM module earlier in the<br>synchronization chain. An ePWM peripheral can be configured to use or ignore this signal. For example, this<br>signal could come from a device pin for the first ePWM module (ePWM0). For subsequent ePWM modules this<br>signal could be passed from another ePWM peripheral, such that EPWM1SYNCI is generated by the ePWM0<br>peripheral, EPWM2SYNCI is generated by ePWM1, and so forth. See Section 15.1.2 for information on the<br>synchronization order of a particular device. |
 | EPWMxSYNCO | Time-base synchronization output.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
@@ -837,7 +846,7 @@ TBCTL[SWFSYNC] ----> (OR) --------------+----> sync pulse node ----+
 | TBCLK      | Time-base clock.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 |            | This is a prescaled version of the system clock (SYSCLKOUT) and is used by all submodules within the<br>ePWM. This clock determines the rate at which time-base counter increments or decrements.                                                                                                                                                                                                                                                                                                                                                                                               |
 
-#### *15.2.2.3.3 Calculating PWM Period and Frequency*
+#### _15.2.2.3.3 Calculating PWM Period and Frequency_
 
 The frequency of PWM events is controlled by the time-base period (TBPRD) register and the mode of the time-base counter. [Figure](#page-21-0) 15-12 shows the period (Tpwm) and frequency (Fpwm) relationships for the upcount, down-count, and up-down-count time-base counter modes when when the period is set to 4 (TBPRD = 4). The time increment for each step is defined by the time-base clock (TBCLK) which is a prescaled version of the system clock (SYSCLKOUT).
 
@@ -886,11 +895,12 @@ For Up-down count:
 T_PWM = 2 × TBPRD × T_TBCLK
 F_PWM = 1 / T_PWM
 ```
+
 **Figure 15-12. Time-Base Frequency and Period**
 
-#### *15.2.2.3.3.1 Time-Base Period Shadow Register*
+#### _15.2.2.3.3.1 Time-Base Period Shadow Register_
 
-CTR\_dir
+CTR_dir
 
 The time-base period register (TBPRD) has a shadow register. Shadowing allows the register update to be synchronized with the hardware. The following definitions are used to describe all shadow registers in the ePWM module:
 
@@ -902,7 +912,7 @@ The memory address of the shadow period register is the same as the active regis
 - **Time-Base Period Shadow Mode:** The TBPRD shadow register is enabled when TBCTL[PRDLD] = 0. Reads from and writes to the TBPRD memory address go to the shadow register. The shadow register contents are transferred to the active register (TBPRD (Active) ← TBPRD (shadow)) when the time-base counter equals zero (TBCNT = 0000h). By default the TBPRD shadow register is enabled.
 - **Time-Base Period Immediate Load Mode:** If immediate load mode is selected (TBCTL[PRDLD] = 1), then a read from or a write to the TBPRD memory address goes directly to the active register.
 
-#### *15.2.2.3.3.2 Time-Base Counter Synchronization*
+#### _15.2.2.3.3.2 Time-Base Counter Synchronization_
 
 A time-base synchronization scheme connects all of the ePWM modules on a device. Each ePWM module has a synchronization input (EPWMxSYNCI) and a synchronization output (EPWMxSYNCO). The synchronization input can come from an external pin or another ePWM module. An example of synchronization connections for the remaining ePWM modules is shown in [Section](#page-3-0) 15.1.2.
 
@@ -919,16 +929,16 @@ This feature enables the ePWM module to be automatically synchronized to the tim
 
 Clearing the TBCTL[PHSEN] bit configures the ePWM to ignore the synchronization input pulse. The synchronization pulse can still be allowed to flow-through to the EPWMxSYNCO and be used to synchronize other ePWM modules. In this way, you can set up a master time-base (for example, ePWM0) and downstream modules (ePWM1 – ePWMx) may elect to run in synchronization with the master.
 
-#### *15.2.2.3.4 Phase Locking the Time-Base Clocks of Multiple ePWM Modules*
+#### _15.2.2.3.4 Phase Locking the Time-Base Clocks of Multiple ePWM Modules_
 
-The TBCLKEN bit in the PWMSS\_CTRL register in the Control Module can be used to globally synchronize the time-base clocks of all enabled ePWM modules on a device. The TBCLKEN bit is part of the chip configuration registers and is described in Chapter 9. When TBCLKEN = 0, the time-base clock of all ePWM modules is stopped (default). When TBCLKEN = 1, all ePWM time-base clocks are started with the rising edge of TBCLK aligned. For perfectly synchronized TBCLKs, the prescaler bits in the TBCTL register of each ePWM module must be set identically. The proper procedure for enabling the ePWM clocks is as follows:
+The TBCLKEN bit in the PWMSS_CTRL register in the Control Module can be used to globally synchronize the time-base clocks of all enabled ePWM modules on a device. The TBCLKEN bit is part of the chip configuration registers and is described in Chapter 9. When TBCLKEN = 0, the time-base clock of all ePWM modules is stopped (default). When TBCLKEN = 1, all ePWM time-base clocks are started with the rising edge of TBCLK aligned. For perfectly synchronized TBCLKs, the prescaler bits in the TBCTL register of each ePWM module must be set identically. The proper procedure for enabling the ePWM clocks is as follows:
 
 - 1. Enable the ePWM module clocks.
 - 2. Set TBCLKEN = 0. This will stop the time-base clock within any enabled ePWM module.
 - 3. Configure the prescaler values and desired ePWM modes.
 - 4. Set TBCLKEN = 1.
 
-#### *15.2.2.3.5 Time-Base Counter Modes and Timing Waveforms*
+#### _15.2.2.3.5 Time-Base Counter Modes and Timing Waveforms_
 
 The time-base counter operates in one of four modes:
 
@@ -973,6 +983,7 @@ Notes shown in plot:
 - Dashed vertical markers align the `CTR=0` and `CTR=PRD` pulses with the TBCNT sawtooth edges.
 - One `EPWMxSYNCI` pulse occurs mid-stream and causes the brief phase jump in `TBCNT` (reload toward `TBPHS` level).
 ```
+
 **Figure 15-14. Time-Base Up-Count Mode Waveforms**
 
 **Figure 15-15. Time-Base Down-Count Mode Waveforms**
@@ -1195,7 +1206,7 @@ Figure 15-19. Counter-Compare Submodule Signals and Registers
                                                                                                            +------------------------+
 ```
 
-#### *15.2.2.4.1 Purpose of the Counter-Compare Submodule*
+#### _15.2.2.4.1 Purpose of the Counter-Compare Submodule_
 
 The counter-compare submodule takes as input the time-base counter value. This value is continuously compared to the counter-compare A (CMPA) and counter-compare B (CMPB) registers. When the timebase counter is equal to one of the compare registers, the counter-compare unit generates an appropriate event.
 
@@ -1207,14 +1218,14 @@ The counter-compare submodule:
 - Controls the PWM duty cycle if the action-qualifier submodule is configured appropriately
 - Shadows new compare values to prevent corruption or glitches during the active PWM cycle
 
-#### *15.2.2.4.2 Controlling and Monitoring the Counter-Compare Submodule*
+#### _15.2.2.4.2 Controlling and Monitoring the Counter-Compare Submodule_
 
 Table [15-13](#page-28-0) lists the registers used to control and monitor the counter-compare submodule. Table [15-14](#page-28-1) lists the key signals associated with the counter-compare submodule.
 
 **Table 15-13. Counter-Compare Submodule Registers**
 
 | Acronym | Register Description                           | Address Offset | Shadowed |
-|---------|------------------------------------------------|----------------|----------|
+| ------- | ---------------------------------------------- | -------------- | -------- |
 | CMPCTL  | Counter-Compare Control Register.              | Eh             | No       |
 | CMPAHR  | HRPWM Counter-Compare A Extension Register (1) | 10h            | Yes      |
 | CMPA    | Counter-Compare A Register                     | 12h            | Yes      |
@@ -1225,13 +1236,13 @@ Table [15-13](#page-28-0) lists the registers used to control and monitor the co
 **Table 15-14. Counter-Compare Submodule Key Signals**
 
 | Signal     | Description of Event                                                                                                            | Registers Compared |
-|------------|---------------------------------------------------------------------------------------------------------------------------------|--------------------|
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
 | CTR = CMPA | Time-base counter equal to the active counter-compare A value                                                                   | TBCNT = CMPA       |
 | CTR = CMPB | Time-base counter equal to the active counter-compare B value                                                                   | TBCNT = CMPB       |
 | CTR = PRD  | Time-base counter equal to the active period.<br>Used to load active counter-compare A and B registers from the shadow register | TBCNT = TBPRD      |
 | CTR = 0    | Time-base counter equal to zero.<br>Used to load active counter-compare A and B registers from the shadow register              | TBCNT = 0000h      |
 
-#### *15.2.2.4.3 Operational Highlights for the Counter-Compare Submodule*
+#### _15.2.2.4.3 Operational Highlights for the Counter-Compare Submodule_
 
 The counter-compare submodule is responsible for generating two independent compare events based on two compare registers:
 
@@ -1254,7 +1265,7 @@ Which of these three events is specified by the CMPCTL[LOADAMODE] and CMPCTL[LOA
 
 • **Immediate Load Mode:** If immediate load mode is selected (TBCTL[SHADWAMODE] = 1 or TBCTL[SHADWBMODE] = 1), then a read from or a write to the register will go directly to the active register.
 
-#### *15.2.2.4.4 Count Mode Timing Waveforms*
+#### _15.2.2.4.4 Count Mode Timing Waveforms_
 
 The counter-compare module can generate compare events in all three count modes:
 
@@ -1269,6 +1280,7 @@ To best illustrate the operation of the first three modes, the timing diagrams i
 **Figure 15-20. Counter-Compare Event Waveforms in Up-Count Mode**
 
 NOTE: An EPWMxSYNCI external synchronization event can cause a discontinuity in the TBCNT count sequence. This can lead to a compare event being skipped. This skipping is considered normal operation and must be taken into account.
+
 ```
 Figure 6 — Counter compare events in DOWN-count mode (text waveform)
 
@@ -1372,7 +1384,7 @@ Legend:
 
 Figure 15-24 shows the action-qualifier (AQ) submodule (see shaded block) in the ePWM system. The action-qualifier submodule has the most important role in waveform construction and PWM generation. It decides which events are converted into various action types, thereby producing the required switched waveforms at the EPWMxA and EPWMxB outputs.
 
-CTR = PRD Event CTR = 0Trigger Action **EPWMxINT** Interrupt CTR = CMPA and Qualifier **EPWMxSYNCI** controller CTR = PRD <sup>⊥</sup> Interrupt (AQ) CTR = CMPB CTR = 0 <sup>⊥</sup> Time-Base (ET) CTR\_Dir **FPWMxSYNCO** (TB) CTR Dir **EPWMxA** EPWMxA | Dead PWM-Trip Band choppei Zone CTR = CMPA <sup>⊥</sup> (DB) **GPIO** (PC) (TZ) Counter **EPWMxB** MUX Compare **EPWMxB** CTR = CMPB L (CC) CTR = 0TZ1 to TZn **EPWMxTZINT** Interrupt controller
+CTR = PRD Event CTR = 0Trigger Action **EPWMxINT** Interrupt CTR = CMPA and Qualifier **EPWMxSYNCI** controller CTR = PRD <sup>⊥</sup> Interrupt (AQ) CTR = CMPB CTR = 0 <sup>⊥</sup> Time-Base (ET) CTR_Dir **FPWMxSYNCO** (TB) CTR Dir **EPWMxA** EPWMxA | Dead PWM-Trip Band choppei Zone CTR = CMPA <sup>⊥</sup> (DB) **GPIO** (PC) (TZ) Counter **EPWMxB** MUX Compare **EPWMxB** CTR = CMPB L (CC) CTR = 0TZ1 to TZn **EPWMxTZINT** Interrupt controller
 
 Figure 15-24. Action-Qualifier Submodule
 
@@ -1396,7 +1408,7 @@ Table 15-15. Action-Qualifier Submodule Registers
 \nister Description Address Of
 
 | Acronym | Register Description                                    | Address Offset | Shadowed |
-|---------|---------------------------------------------------------|----------------|----------|
+| ------- | ------------------------------------------------------- | -------------- | -------- |
 | AQCTLA  | Action-Qualifier Control Register For Output A (EPWMxA) | 16h            | No       |
 | AQCTLB  | Action-Qualifier Control Register For Output B (EPWMxB) | 18h            | No       |
 | AQSFRC  | Action-Qualifier Software Force Register                | 1Ah            | No       |
@@ -1456,7 +1468,7 @@ CTR_dir  -------------------------------------------->                   |      
 **Table 15-16. Action-Qualifier Submodule Possible Input Events**
 
 | Signal                | Description                                      | Registers Compared |
-|-----------------------|--------------------------------------------------|--------------------|
+| --------------------- | ------------------------------------------------ | ------------------ |
 | CTR = PRD             | Time-base counter equal to the period value      | TBCNT = TBPRD      |
 | CTR = 0               | Time-base counter equal to zero                  | TBCNT = 0000h      |
 | CTR = CMPA            | Time-base counter equal to the counter-compare A | TBCNT = CMPA       |
@@ -1481,21 +1493,21 @@ For clarity, the drawings in this chapter use a set of symbolic actions. These s
 **Figure 15-26. Possible Action-Qualifier Actions for EPWMxA and EPWMxB Outputs**
 
 | S/W     | TB Counter equals: |           |           | Actions |            |
-|---------|--------------------|-----------|-----------|---------|------------|
+| ------- | ------------------ | --------- | --------- | ------- | ---------- |
 | force   | Zero               | Comp<br>A | Comp<br>B | Period  |            |
 | SW      | Z                  | CA        | CB        | P       | Do Nothing |
 | SW      | Z                  | CA        | CB        | P       | Clear Low  |
 | SW      | Z                  | CA        | CB        | P       | Set High   |
 | SW<br>T | Z<br>T             | CA<br>T   | CB<br>T   | P<br>T  | Toggle     |
 
-#### *15.2.2.5.3 Action-Qualifier Event Priority*
+#### _15.2.2.5.3 Action-Qualifier Event Priority_
 
 It is possible for the ePWM action qualifier to receive more than one event at the same time. In this case events are assigned a priority by the hardware. The general rule is events occurring later in time have a higher priority and software forced events always have the highest priority. The event priority levels for updown-count mode are shown in Table [15-17](#page-35-0). A priority level of 1 is the highest priority and level 7 is the lowest. The priority changes slightly depending on the direction of TBCNT.
 
 **Table 15-17. Action-Qualifier Event Priority for Up-Down-Count Mode**
 
 | Priority Level | Event if TBCNT is Incrementing<br>TBCNT = 0 up to TBCNT = TBPRD | Event if TBCNT is Decrementing<br>TBCNT = TBPRD down to TBCNT = 1 |
-|----------------|-----------------------------------------------------------------|-------------------------------------------------------------------|
+| -------------- | --------------------------------------------------------------- | ----------------------------------------------------------------- |
 | 1 (Highest)    | Software forced event                                           | Software forced event                                             |
 | 2              | Counter equals CMPB on up-count (CBU)                           | Counter equals CMPB on down-count (CBD)                           |
 | 3              | Counter equals CMPA on up-count (CAU)                           | Counter equals CMPA on down-count (CAD)                           |
@@ -1510,7 +1522,7 @@ Table [15-18](#page-35-1) shows the action-qualifier priority for up-count mode.
 **Table 15-18. Action-Qualifier Event Priority for Up-Count Mode**
 
 | Priority Level | Event                                   |
-|----------------|-----------------------------------------|
+| -------------- | --------------------------------------- |
 | 1 (Highest)    | Software forced event                   |
 | 2              | Counter equal to period (TBPRD)         |
 | 3              | Counter equal to CMPB on up-count (CBU) |
@@ -1522,7 +1534,7 @@ Table [15-19](#page-35-2) shows the action-qualifier priority for down-count mod
 **Table 15-19. Action-Qualifier Event Priority for Down-Count Mode**
 
 | Priority Level | Event                                     |
-|----------------|-------------------------------------------|
+| -------------- | ----------------------------------------- |
 | 1 (Highest)    | Software forced event                     |
 | 2              | Counter equal to Zero                     |
 | 3              | Counter equal to CMPB on down-count (CBD) |
@@ -1534,7 +1546,7 @@ It is possible to set the compare value greater than the period. In this case th
 **Table 15-20. Behavior if CMPA/CMPB is Greater than the Period**
 
 | Counter Mode          | Compare on Up-Count Event CAU/CBU                                                                                       | Compare on Down-Count Event CAU/CBU                                                                                     |
-|-----------------------|-------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | Up-Count Mode         | If CMPA/CMPB ≤ TBPRD period, then the event<br>occurs on a compare match (TBCNT = CMPA or<br>CMPB).                     | Never occurs.                                                                                                           |
 |                       | If CMPA/CMPB > TBPRD, then the event will not<br>occur.                                                                 |                                                                                                                         |
 | Down-Count Mode       | Never occurs.                                                                                                           | If CMPA/CMPB < TBPRD, the event will occur on a<br>compare match (TBCNT = CMPA or CMPB).                                |
@@ -1542,7 +1554,7 @@ It is possible to set the compare value greater than the period. In this case th
 | Up-Down-Count<br>Mode | If CMPA/CMPB < TBPRD and the counter is<br>incrementing, the event occurs on a compare match<br>(TBCNT = CMPA or CMPB). | If CMPA/CMPB < TBPRD and the counter is<br>decrementing, the event occurs on a compare match<br>(TBCNT = CMPA or CMPB). |
 |                       | If CMPA/CMPB is ≥ TBPRD, the event will occur on a<br>period match (TBCNT = TBPRD).                                     | If CMPA/CMPB ≥ TBPRD, the event occurs on a<br>period match (TBCNT = TBPRD).                                            |
 
-#### *15.2.2.5.4 Waveforms for Common Configurations*
+#### _15.2.2.5.4 Waveforms for Common Configurations_
 
 **NOTE:** The waveforms in this chapter show the ePWMs behavior for a static compare register value. In a running system, the active compare registers (CMPA and CMPB) are typically updated from their respective shadow registers once every period. The user specifies when the update will take place; either when the time-base counter reaches zero or when the timebase counter reaches period. There are some cases when the action based on the new value can be delayed by one period or the action based on the old value can take effect for an extra period. Some PWM configurations avoid this situation. These include, but are not limited to, the following:
 
@@ -1628,7 +1640,7 @@ EPWMxB   ___|‾‾‾‾|_____________|‾‾‾‾|_____________|‾‾‾‾|
 ## **Table 15-21. EPWMx Initialization for [Figure](#page-38-0) 15-28**
 
 | Register | Bit       | Value           | Comments                     |
-|----------|-----------|-----------------|------------------------------|
+| -------- | --------- | --------------- | ---------------------------- |
 | TBPRD    | TBPRD     | 600 (258h)      | Period = 601 TBCLK counts    |
 | TBPHS    | TBPHS     | 0               | Clear Phase Register to 0    |
 | TBCNT    | TBCNT     | 0               | Clear TB counter             |
@@ -1652,7 +1664,7 @@ EPWMxB   ___|‾‾‾‾|_____________|‾‾‾‾|_____________|‾‾‾‾|
 **Table 15-22. EPWMx Run Time Changes for [Figure](#page-38-0) 15-28**
 
 | Register | Bit  | Value  | Comments                      |
-|----------|------|--------|-------------------------------|
+| -------- | ---- | ------ | ----------------------------- |
 | CMPA     | CMPA | Duty1A | Adjust duty for output EPWM1A |
 | CMPB     | CMPB | Duty1B | Adjust duty for output EPWM1B |
 
@@ -1696,32 +1708,32 @@ EPWMxB    ____|______|‾‾‾‾‾‾‾‾‾‾‾‾‾‾|______|______|�
 
 ## **Table 15-23. EPWMx Initialization for [Figure](#page-40-0) 15-29**
 
-| Register | Bit       | Value           | Comments                     |  |  |
-|----------|-----------|-----------------|------------------------------|--|--|
-| TBPRD    | TBPRD     | 600 (258h)      | Period = 601 TBCLK counts    |  |  |
-| TBPHS    | TBPHS     | 0               | Clear Phase Register to 0    |  |  |
-| TBCNT    | TBCNT     | 0               | Clear TB counter             |  |  |
-| TBCTL    | CTRMODE   | TB_UP           |                              |  |  |
-|          | PHSEN     | TB_DISABLE      | Phase loading disabled       |  |  |
-|          | PRDLD     | TB_SHADOW       |                              |  |  |
-|          | SYNCOSEL  | TB_SYNC_DISABLE |                              |  |  |
-|          | HSPCLKDIV | TB_DIV1         | TBCLK = SYSCLK               |  |  |
-|          | CLKDIV    | TB_DIV1         |                              |  |  |
-| CMPA     | CMPA      | 350 (15Eh)      | Compare A = 350 TBCLK counts |  |  |
-| CMPB     | CMPB      | 200 (C8h)       | Compare B = 200 TBCLK counts |  |  |
-| CMPCTL   | SHDWAMODE | CC_SHADOW       |                              |  |  |
-|          | SHDWBMODE | CC_SHADOW       |                              |  |  |
-|          | LOADAMODE | CC_CTR_ZERO     | Load on CTR = 0              |  |  |
-|          | LOADBMODE | CC_CTR_ZERO     | Load on CTR = 0              |  |  |
-| AQCTLA   | PRD       | AQ_CLEAR        |                              |  |  |
-|          | CAU       | AQ_SET          |                              |  |  |
-| AQCTLB   | PRD       | AQ_CLEAR        |                              |  |  |
-|          | CBU       | AQ_SET          |                              |  |  |
+| Register | Bit       | Value           | Comments                     |     |     |
+| -------- | --------- | --------------- | ---------------------------- | --- | --- |
+| TBPRD    | TBPRD     | 600 (258h)      | Period = 601 TBCLK counts    |     |     |
+| TBPHS    | TBPHS     | 0               | Clear Phase Register to 0    |     |     |
+| TBCNT    | TBCNT     | 0               | Clear TB counter             |     |     |
+| TBCTL    | CTRMODE   | TB_UP           |                              |     |     |
+|          | PHSEN     | TB_DISABLE      | Phase loading disabled       |     |     |
+|          | PRDLD     | TB_SHADOW       |                              |     |     |
+|          | SYNCOSEL  | TB_SYNC_DISABLE |                              |     |     |
+|          | HSPCLKDIV | TB_DIV1         | TBCLK = SYSCLK               |     |     |
+|          | CLKDIV    | TB_DIV1         |                              |     |     |
+| CMPA     | CMPA      | 350 (15Eh)      | Compare A = 350 TBCLK counts |     |     |
+| CMPB     | CMPB      | 200 (C8h)       | Compare B = 200 TBCLK counts |     |     |
+| CMPCTL   | SHDWAMODE | CC_SHADOW       |                              |     |     |
+|          | SHDWBMODE | CC_SHADOW       |                              |     |     |
+|          | LOADAMODE | CC_CTR_ZERO     | Load on CTR = 0              |     |     |
+|          | LOADBMODE | CC_CTR_ZERO     | Load on CTR = 0              |     |     |
+| AQCTLA   | PRD       | AQ_CLEAR        |                              |     |     |
+|          | CAU       | AQ_SET          |                              |     |     |
+| AQCTLB   | PRD       | AQ_CLEAR        |                              |     |     |
+|          | CBU       | AQ_SET          |                              |     |     |
 
 ### **Table 15-24. EPWMx Run Time Changes for [Figure](#page-40-0) 15-29**
 
 | Register | Bit  | Value  | Comments                      |
-|----------|------|--------|-------------------------------|
+| -------- | ---- | ------ | ----------------------------- |
 | CMPA     | CMPA | Duty1A | Adjust duty for output EPWM1A |
 | CMPB     | CMPB | Duty1B | Adjust duty for output EPWM1B |
 
@@ -1763,31 +1775,31 @@ EPWMxB    ___|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾|______________
 
 #### **Table 15-25. EPWMx Initialization for [Figure](#page-42-0) 15-30**
 
-| Register | Bit       | Value           | Comments                     |  |  |
-|----------|-----------|-----------------|------------------------------|--|--|
-| TBPRD    | TBPRD     | 600 (258h)      | Period = 601 TBCLK counts    |  |  |
-| TBPHS    | TBPHS     | 0               | Clear Phase Register to 0    |  |  |
-| TBCNT    | TBCNT     | 0               | Clear TB counter             |  |  |
-| TBCTL    | CTRMODE   | TB_UP           |                              |  |  |
-|          | PHSEN     | TB_DISABLE      | Phase loading disabled       |  |  |
-|          | PRDLD     | TB_SHADOW       |                              |  |  |
-|          | SYNCOSEL  | TB_SYNC_DISABLE |                              |  |  |
-|          | HSPCLKDIV | TB_DIV1         | TBCLK = SYSCLK               |  |  |
-|          | CLKDIV    | TB_DIV1         |                              |  |  |
-| CMPA     | CMPA      | 200 (C8h)       | Compare A = 200 TBCLK counts |  |  |
-| CMPB     | CMPB      | 400 (190h)      | Compare B = 400 TBCLK counts |  |  |
-| CMPCTL   | SHDWAMODE | CC_SHADOW       |                              |  |  |
-|          | SHDWBMODE | CC_SHADOW       |                              |  |  |
-|          | LOADAMODE | CC_CTR_ZERO     | Load on CTR = 0              |  |  |
-|          | LOADBMODE | CC_CTR_ZERO     | Load on CTR = 0              |  |  |
-| AQCTLA   | CAU       | AQ_SET          |                              |  |  |
-|          | CBU       | AQ_CLEAR        |                              |  |  |
-| AQCTLB   | ZRO       | AQ_TOGGLE       |                              |  |  |
+| Register | Bit       | Value           | Comments                     |     |     |
+| -------- | --------- | --------------- | ---------------------------- | --- | --- |
+| TBPRD    | TBPRD     | 600 (258h)      | Period = 601 TBCLK counts    |     |     |
+| TBPHS    | TBPHS     | 0               | Clear Phase Register to 0    |     |     |
+| TBCNT    | TBCNT     | 0               | Clear TB counter             |     |     |
+| TBCTL    | CTRMODE   | TB_UP           |                              |     |     |
+|          | PHSEN     | TB_DISABLE      | Phase loading disabled       |     |     |
+|          | PRDLD     | TB_SHADOW       |                              |     |     |
+|          | SYNCOSEL  | TB_SYNC_DISABLE |                              |     |     |
+|          | HSPCLKDIV | TB_DIV1         | TBCLK = SYSCLK               |     |     |
+|          | CLKDIV    | TB_DIV1         |                              |     |     |
+| CMPA     | CMPA      | 200 (C8h)       | Compare A = 200 TBCLK counts |     |     |
+| CMPB     | CMPB      | 400 (190h)      | Compare B = 400 TBCLK counts |     |     |
+| CMPCTL   | SHDWAMODE | CC_SHADOW       |                              |     |     |
+|          | SHDWBMODE | CC_SHADOW       |                              |     |     |
+|          | LOADAMODE | CC_CTR_ZERO     | Load on CTR = 0              |     |     |
+|          | LOADBMODE | CC_CTR_ZERO     | Load on CTR = 0              |     |     |
+| AQCTLA   | CAU       | AQ_SET          |                              |     |     |
+|          | CBU       | AQ_CLEAR        |                              |     |     |
+| AQCTLB   | ZRO       | AQ_TOGGLE       |                              |     |     |
 
 ### **Table 15-26. EPWMx Run Time Changes for [Figure](#page-42-0) 15-30**
 
 | Register | Bit  | Value    | Comments                      |
-|----------|------|----------|-------------------------------|
+| -------- | ---- | -------- | ----------------------------- |
 | CMPA     | CMPA | EdgePosA | Adjust duty for output EPWM1A |
 | CMPB     | CMPB | EdgePosB | Adjust duty for output EPWM1B |
 
@@ -1831,32 +1843,32 @@ EPWMxB      ________________|‾‾‾‾|___________________ ____________|‾�
 
 #### **Table 15-27. EPWMx Initialization for [Figure](#page-44-0) 15-31**
 
-| Register | Bit       | Value           | Comments                     |  |  |
-|----------|-----------|-----------------|------------------------------|--|--|
-| TBPRD    | TBPRD     | 600 (258h)      | Period = 601 TBCLK counts    |  |  |
-| TBPHS    | TBPHS     | 0               | Clear Phase Register to 0    |  |  |
-| TBCNT    | TBCNT     | 0               | Clear TB counter             |  |  |
-| TBCTL    | CTRMODE   | TB_UPDOWN       |                              |  |  |
-|          | PHSEN     | TB_DISABLE      | Phase loading disabled       |  |  |
-|          | PRDLD     | TB_SHADOW       |                              |  |  |
-|          | SYNCOSEL  | TB_SYNC_DISABLE |                              |  |  |
-|          | HSPCLKDIV | TB_DIV1         | TBCLK = SYSCLK               |  |  |
-|          | CLKDIV    | TB_DIV1         |                              |  |  |
-| CMPA     | CMPA      | 400 (190h)      | Compare A = 400 TBCLK counts |  |  |
-| CMPB     | CMPB      | 500 (1F4h)      | Compare B = 500 TBCLK counts |  |  |
-| CMPCTL   | SHDWAMODE | CC_SHADOW       |                              |  |  |
-|          | SHDWBMODE | CC_SHADOW       |                              |  |  |
-|          | LOADAMODE | CC_CTR_ZERO     | Load on CTR = 0              |  |  |
-|          | LOADBMODE | CC_CTR_ZERO     | Load on CTR = 0              |  |  |
-| AQCTLA   | CAU       | AQ_SET          |                              |  |  |
-|          | CAD       | AQ_CLEAR        |                              |  |  |
-| AQCTLB   | CBU       | AQ_SET          |                              |  |  |
-|          | CBD       | AQ_CLEAR        |                              |  |  |
+| Register | Bit       | Value           | Comments                     |     |     |
+| -------- | --------- | --------------- | ---------------------------- | --- | --- |
+| TBPRD    | TBPRD     | 600 (258h)      | Period = 601 TBCLK counts    |     |     |
+| TBPHS    | TBPHS     | 0               | Clear Phase Register to 0    |     |     |
+| TBCNT    | TBCNT     | 0               | Clear TB counter             |     |     |
+| TBCTL    | CTRMODE   | TB_UPDOWN       |                              |     |     |
+|          | PHSEN     | TB_DISABLE      | Phase loading disabled       |     |     |
+|          | PRDLD     | TB_SHADOW       |                              |     |     |
+|          | SYNCOSEL  | TB_SYNC_DISABLE |                              |     |     |
+|          | HSPCLKDIV | TB_DIV1         | TBCLK = SYSCLK               |     |     |
+|          | CLKDIV    | TB_DIV1         |                              |     |     |
+| CMPA     | CMPA      | 400 (190h)      | Compare A = 400 TBCLK counts |     |     |
+| CMPB     | CMPB      | 500 (1F4h)      | Compare B = 500 TBCLK counts |     |     |
+| CMPCTL   | SHDWAMODE | CC_SHADOW       |                              |     |     |
+|          | SHDWBMODE | CC_SHADOW       |                              |     |     |
+|          | LOADAMODE | CC_CTR_ZERO     | Load on CTR = 0              |     |     |
+|          | LOADBMODE | CC_CTR_ZERO     | Load on CTR = 0              |     |     |
+| AQCTLA   | CAU       | AQ_SET          |                              |     |     |
+|          | CAD       | AQ_CLEAR        |                              |     |     |
+| AQCTLB   | CBU       | AQ_SET          |                              |     |     |
+|          | CBD       | AQ_CLEAR        |                              |     |     |
 
 ### **Table 15-28. EPWMx Run Time Changes for [Figure](#page-44-0) 15-31**
 
 | Register | Bit  | Value  | Comments                      |
-|----------|------|--------|-------------------------------|
+| -------- | ---- | ------ | ----------------------------- |
 | CMPA     | CMPA | Duty1A | Adjust duty for output EPWM1A |
 | CMPB     | CMPB | Duty1B | Adjust duty for output EPWM1B |
 
@@ -1902,7 +1914,7 @@ EPWMxB      __________________|____|‾‾‾‾‾‾‾‾‾‾‾‾‾|____
 #### **Table 15-29. EPWMx Initialization for [Figure](#page-46-0) 15-32**
 
 | Register | Bit       | Value           | Comments                     |
-|----------|-----------|-----------------|------------------------------|
+| -------- | --------- | --------------- | ---------------------------- |
 | TBPRD    | TBPRD     | 600 (258h)      | Period = 601 TBCLK counts    |
 | TBPHS    | TBPHS     | 0               | Clear Phase Register to 0    |
 | TBCNT    | TBCNT     | 0               | Clear TB counter             |
@@ -1926,7 +1938,7 @@ EPWMxB      __________________|____|‾‾‾‾‾‾‾‾‾‾‾‾‾|____
 ### **Table 15-30. EPWMx Run Time Changes for [Figure](#page-46-0) 15-32**
 
 | Register | Bit  | Value  | Comments                      |
-|----------|------|--------|-------------------------------|
+| -------- | ---- | ------ | ----------------------------- |
 | CMPA     | CMPA | Duty1A | Adjust duty for output EPWM1A |
 | CMPB     | CMPB | Duty1B | Adjust duty for output EPWM1B |
 
@@ -1972,32 +1984,32 @@ EPWMxB    __|______________|‾‾‾‾‾‾‾‾‾‾‾|__|______________|
 
 ## **Table 15-31. EPWMx Initialization for [Figure](#page-48-0) 15-33**
 
-| Register | Bit       | Value           | Comments                     |  |  |
-|----------|-----------|-----------------|------------------------------|--|--|
-| TBPRD    | TBPRD     | 600 (258h)      | Period = 601 TBCLK counts    |  |  |
-| TBPHS    | TBPHS     | 0               | Clear Phase Register to 0    |  |  |
-| TBCNT    | TBCNT     | 0               | Clear TB counter             |  |  |
-| TBCTL    | CTRMODE   | TB_UPDOWN       |                              |  |  |
-|          | PHSEN     | TB_DISABLE      | Phase loading disabled       |  |  |
-|          | PRDLD     | TB_SHADOW       |                              |  |  |
-|          | SYNCOSEL  | TB_SYNC_DISABLE |                              |  |  |
-|          | HSPCLKDIV | TB_DIV1         | TBCLK = SYSCLK               |  |  |
-|          | CLKDIV    | TB_DIV1         |                              |  |  |
-| CMPA     | CMPA      | 250 (FAh)       | Compare A = 250 TBCLK counts |  |  |
-| CMPB     | CMPB      | 450 (1C2h)      | Compare B = 450 TBCLK counts |  |  |
-| CMPCTL   | SHDWAMODE | CC_SHADOW       |                              |  |  |
-|          | SHDWBMODE | CC_SHADOW       |                              |  |  |
-|          | LOADAMODE | CC_CTR_ZERO     | Load on CTR = 0              |  |  |
-|          | LOADBMODE | CC_CTR_ZERO     | Load on CTR = 0              |  |  |
-| AQCTLA   | CAU       | AQ_SET          |                              |  |  |
-|          | CBD       | AQ_CLEAR        |                              |  |  |
-| AQCTLB   | ZRO       | AQ_CLEAR        |                              |  |  |
-|          | PRD       | AQ_SET          |                              |  |  |
+| Register | Bit       | Value           | Comments                     |     |     |
+| -------- | --------- | --------------- | ---------------------------- | --- | --- |
+| TBPRD    | TBPRD     | 600 (258h)      | Period = 601 TBCLK counts    |     |     |
+| TBPHS    | TBPHS     | 0               | Clear Phase Register to 0    |     |     |
+| TBCNT    | TBCNT     | 0               | Clear TB counter             |     |     |
+| TBCTL    | CTRMODE   | TB_UPDOWN       |                              |     |     |
+|          | PHSEN     | TB_DISABLE      | Phase loading disabled       |     |     |
+|          | PRDLD     | TB_SHADOW       |                              |     |     |
+|          | SYNCOSEL  | TB_SYNC_DISABLE |                              |     |     |
+|          | HSPCLKDIV | TB_DIV1         | TBCLK = SYSCLK               |     |     |
+|          | CLKDIV    | TB_DIV1         |                              |     |     |
+| CMPA     | CMPA      | 250 (FAh)       | Compare A = 250 TBCLK counts |     |     |
+| CMPB     | CMPB      | 450 (1C2h)      | Compare B = 450 TBCLK counts |     |     |
+| CMPCTL   | SHDWAMODE | CC_SHADOW       |                              |     |     |
+|          | SHDWBMODE | CC_SHADOW       |                              |     |     |
+|          | LOADAMODE | CC_CTR_ZERO     | Load on CTR = 0              |     |     |
+|          | LOADBMODE | CC_CTR_ZERO     | Load on CTR = 0              |     |     |
+| AQCTLA   | CAU       | AQ_SET          |                              |     |     |
+|          | CBD       | AQ_CLEAR        |                              |     |     |
+| AQCTLB   | ZRO       | AQ_CLEAR        |                              |     |     |
+|          | PRD       | AQ_SET          |                              |     |     |
 
 ### **Table 15-32. EPWMx Run Time Changes for [Figure](#page-48-0) 15-33**
 
 | Register | Bit  | Value    | Comments                      |
-|----------|------|----------|-------------------------------|
+| -------- | ---- | -------- | ----------------------------- |
 | CMPA     | CMPA | EdgePosA | Adjust duty for output EPWM1A |
 | CMPB     | CMPB | EdgePosB |                               |
 
@@ -2088,18 +2100,18 @@ The dead-band generator submodule operation is controlled and monitored via the 
 Table 15-33. Dead-Band Generator Submodule Registers
 
 | Acronym | Register Description                        | Address Offset | Shadowed |
-|---------|---------------------------------------------|----------------|----------|
+| ------- | ------------------------------------------- | -------------- | -------- |
 | DBCTL   | Dead-Band Control Register                  | 1Eh            | No       |
 | DBRED   | Dead-Band Rising Edge Delay Count Register  | 20h            | No       |
 | DBFED   | Dead-Band Falling Edge Delay Count Register | 22h            | No       |
 
-#### *15.2.2.6.3 Operational Highlights for the Dead-Band Generator Submodule*
+#### _15.2.2.6.3 Operational Highlights for the Dead-Band Generator Submodule_
 
 The following sections provide the operational highlights.
 
 The dead-band submodule has two groups of independent selection options as shown in [Figure](#page-51-0) 15-35.
 
-- **Input Source Selection:** The input signals to the dead-band module are the EPWMxA and EPWMxB output signals from the action-qualifier. In this section they will be referred to as EPWMxA In and EPWMxB In. Using the DBCTL[IN\_MODE) control bits, the signal source for each delay, falling-edge or rising-edge, can be selected:
+- **Input Source Selection:** The input signals to the dead-band module are the EPWMxA and EPWMxB output signals from the action-qualifier. In this section they will be referred to as EPWMxA In and EPWMxB In. Using the DBCTL[IN_MODE) control bits, the signal source for each delay, falling-edge or rising-edge, can be selected:
   - EPWMxA In is the source for both falling-edge and rising-edge delay. This is the default mode.
   - EPWMxA In is the source for falling-edge delay, EPWMxB In is the source for rising-edge delay.
   - EPWMxA In is the source for rising edge delay, EPWMxB In is the source for falling-edge delay.
@@ -2121,20 +2133,20 @@ Although all combinations are supported, not all are typical usage modes. Table 
 
 **Table 15-34. Classical Dead-Band Operating Modes**
 
-|      |                                                |        | DBCTL[POLSEL] |    | DBCTL[OUT_MODE] |
-|------|------------------------------------------------|--------|---------------|----|-----------------|
-| Mode | Mode Description (1)                           | S3     | S2            | S1 | S0              |
-| 1    | EPWMxA and EPWMxB Passed Through (No Delay)    | x      | x             | 0  | 0               |
-| 2    | Active High Complementary (AHC)                | 1      | 0             | 1  | 1               |
-| 3    | Active Low Complementary (ALC)                 | 0      | 1             | 1  | 1               |
-| 4    | Active High (AH)                               | 0      | 0             | 1  | 1               |
-| 5    | Active Low (AL)                                | 1      | 1             | 1  | 1               |
-| 6    | EPWMxA Out = EPWMxA In (No Delay)              | 0 or 1 | 0 or 1        |    | 1               |
-|      | EPWMxB Out = EPWMxA In with Falling Edge Delay |        |               | 0  |                 |
-| 7    | EPWMxA Out = EPWMxA In with Rising Edge Delay  | 0 or 1 | 0 or 1        | 1  | 0               |
-|      | EPWMxB Out = EPWMxB In with No Delay           |        |               |    |                 |
+|      |                                                |        | DBCTL[POLSEL] |     | DBCTL[OUT_MODE] |
+| ---- | ---------------------------------------------- | ------ | ------------- | --- | --------------- |
+| Mode | Mode Description (1)                           | S3     | S2            | S1  | S0              |
+| 1    | EPWMxA and EPWMxB Passed Through (No Delay)    | x      | x             | 0   | 0               |
+| 2    | Active High Complementary (AHC)                | 1      | 0             | 1   | 1               |
+| 3    | Active Low Complementary (ALC)                 | 0      | 1             | 1   | 1               |
+| 4    | Active High (AH)                               | 0      | 0             | 1   | 1               |
+| 5    | Active Low (AL)                                | 1      | 1             | 1   | 1               |
+| 6    | EPWMxA Out = EPWMxA In (No Delay)              | 0 or 1 | 0 or 1        |     | 1               |
+|      | EPWMxB Out = EPWMxA In with Falling Edge Delay |        |               | 0   |                 |
+| 7    | EPWMxA Out = EPWMxA In with Rising Edge Delay  | 0 or 1 | 0 or 1        | 1   | 0               |
+|      | EPWMxB Out = EPWMxB In with No Delay           |        |               |     |                 |
 
-<sup>(1)</sup> These are classical dead-band modes and assume that DBCTL[IN\_MODE] = 0,0. That is, EPWMxA in is the source for both the falling-edge and rising-edge delays. Enhanced, non-traditional modes can be achieved by changing the IN\_MODE configuration.
+<sup>(1)</sup> These are classical dead-band modes and assume that DBCTL[IN\_MODE] = 0,0. That is, EPWMxA in is the source for both the falling-edge and rising-edge delays. Enhanced, non-traditional modes can be achieved by changing the IN_MODE configuration.
 
 [Figure](#page-53-0) 15-36 shows waveforms for typical cases where 0% < duty < 100%.
 
@@ -2195,7 +2207,7 @@ Where TTBCLK is the period of TBCLK, the prescaled version of SYSCLKOUT.
 
 Figure 15-37 illustrates the PWM-chopper (PC) submodule within the ePWM module. The PWM-chopper submodule allows a high-frequency carrier signal to modulate the PWM waveform generated by the action-qualifier and dead-band submodules. This capability is important if you need pulse transformer-based gate drivers to control the power switching elements.
 
-> *[Diagram — signal/block labels not renderable in text format]*
+> _[Diagram — signal/block labels not renderable in text format]_
 
 Figure 15-37. PWM-Chopper Submodule
 
@@ -2215,10 +2227,10 @@ The PWM-chopper submodule operation is controlled via the register in Table 15-3
 Table 15-35. PWM-Chopper Submodule Registers
 
 | Acronym | Register Description         | Address Offset | Shadowed |
-|---------|------------------------------|----------------|----------|
+| ------- | ---------------------------- | -------------- | -------- |
 | PCCTL   | PWM-chopper Control Register | 3Ch            | No       |
 
-#### *15.2.2.7.3 Operational Highlights for the PWM-Chopper Submodule*
+#### _15.2.2.7.3 Operational Highlights for the PWM-Chopper Submodule_
 
 [Figure](#page-55-0) 15-38 shows the operational details of the PWM-chopper submodule. The carrier clock is derived from SYSCLKOUT. Its frequency and duty cycle are controlled via the CHPFREQ and CHPDUTY bits in the PCCTL register. The one-shot block is a feature that provides a high energy first pulse to ensure hard and fast power switch turn on, while the subsequent pulses sustain pulses, ensuring the power switch remains on. The one-shot width is programmed via the OSHTWTH bits. The PWM-chopper submodule can be fully disabled (bypassed) via the CHPEN bit.
 
@@ -2277,7 +2289,7 @@ PWMB_ch ---------------------------->|   0: Bypass       |----> EPWMxB
 
 **Figure 15-38. PWM-Chopper Submodule Signals and Registers**
 
-#### *15.2.2.7.4 Waveforms*
+#### _15.2.2.7.4 Waveforms_
 
 [Figure](#page-56-0) 15-39 shows simplified waveforms of the chopping action only; one-shot and duty-cycle control are not shown. Details of the one-shot and duty-cycle control are discussed in the following sections.
 
@@ -2305,7 +2317,8 @@ EPWMxB (after chopper)
         |_|‾|_ ____________________ |_|‾|_|‾|_ __________________ |_|‾|_|‾|_
         (PSCLK pulses only inside the shown EPWMxB active windows)
 ```
-#### *15.2.2.7.4.1 One-Shot Pulse*
+
+#### _15.2.2.7.4.1 One-Shot Pulse_
 
 The width of the first pulse can be programmed to any of 16 possible pulse width values. The width or period of the first pulse is given by:
 
@@ -2336,7 +2349,7 @@ EPWMxA out
               \________ sustaining pulses ________/ \__ sustaining __/
 ```
 
-#### *15.2.2.7.4.2 Duty Cycle Control*
+#### _15.2.2.7.4.2 Duty Cycle Control_
 
 Pulse transformer-based gate drive designs need to comprehend the magnetic properties or characteristics of the transformer and associated circuitry. Saturation is one such consideration. To assist the gate drive designer, the duty cycles of the second and subsequent pulses have been made programmable. These sustaining pulses ensure the correct drive strength and polarity is maintained on the power switch gate during the on period, and hence a programmable duty cycle allows a design to be tuned or optimized via software control.
 
@@ -2364,11 +2377,12 @@ Duty 5/8   ____|‾‾‾‾‾|________________________________________________
 Duty 6/8   ____|‾‾‾‾‾‾|_______________________________________________|‾‾‾‾‾‾|
 Duty 7/8   ____|‾‾‾‾‾‾‾|______________________________________________|‾‾‾‾‾‾‾|
 ```
+
 #### 15.2.2.8 Trip-Zone (TZ) Submodule
 
-Figure 15-42 shows how the trip-zone (TZ) submodule fits within the ePWM module. Each ePWM module is connected to every  $\overline{TZ}$  signal that are sourced from the GPIO MUX. These signals indicates external fault or trip conditions, and the ePWM outputs can be programmed to respond accordingly when faults occur. See Section 15.1.2 to determine the number of trip-zone pins available for the device.
+Figure 15-42 shows how the trip-zone (TZ) submodule fits within the ePWM module. Each ePWM module is connected to every $\overline{TZ}$ signal that are sourced from the GPIO MUX. These signals indicates external fault or trip conditions, and the ePWM outputs can be programmed to respond accordingly when faults occur. See Section 15.1.2 to determine the number of trip-zone pins available for the device.
 
-CTR = PRD Event CTR = 0Trigger Action Interrupt **EPWMxINT** CTR = CMPA and Qualifier controller **EPWMxSYNCI** CTR = PRD <sup>⊥</sup> (AQ) Interrupt CTR = CMPB Time-Base CTR =  $0^{1}$ (ET) CTR\_Dir **FPWMxSYNCO** (TB) CTR Dir **EPWMxA** EPWMxA H Dead PWM-Trip Band chopper Zone CTR = CMPA <sup>⊥</sup> (DB) **GPIO** (PC) (TZ) Counter **EPWMxB** MUX Compare **EPWMxB** CTR = CMPB (CC) TZ1 to TZn CTR = 0**EPWMxTZINT** Interrupt controller
+CTR = PRD Event CTR = 0Trigger Action Interrupt **EPWMxINT** CTR = CMPA and Qualifier controller **EPWMxSYNCI** CTR = PRD <sup>⊥</sup> (AQ) Interrupt CTR = CMPB Time-Base CTR = $0^{1}$ (ET) CTR_Dir **FPWMxSYNCO** (TB) CTR Dir **EPWMxA** EPWMxA H Dead PWM-Trip Band chopper Zone CTR = CMPA <sup>⊥</sup> (DB) **GPIO** (PC) (TZ) Counter **EPWMxB** MUX Compare **EPWMxB** CTR = CMPB (CC) TZ1 to TZn CTR = 0**EPWMxTZINT** Interrupt controller
 
 Figure 15-42. Trip-Zone Submodule
 
@@ -2389,14 +2403,14 @@ The key functions of the trip-zone submodule are:
 - Software-forced tripping is also supported.
 - The trip-zone submodule can be fully bypassed if it is not required.
 
-#### *15.2.2.8.2 Controlling and Monitoring the Trip-Zone Submodule*
+#### _15.2.2.8.2 Controlling and Monitoring the Trip-Zone Submodule_
 
 The trip-zone submodule operation is controlled and monitored through the following registers:
 
 **Table 15-36. Trip-Zone Submodule Registers**
 
 | Acronym | Register Description                | Address Offset | Shadowed |
-|---------|-------------------------------------|----------------|----------|
+| ------- | ----------------------------------- | -------------- | -------- |
 | TZSEL   | Trip-Zone Select Register           | 24h            | No       |
 | TZCTL   | Trip-Zone Control Register          | 28h            | No       |
 | TZEINT  | Trip-Zone Enable Interrupt Register | 2Ah            | No       |
@@ -2404,7 +2418,7 @@ The trip-zone submodule operation is controlled and monitored through the follow
 | TZCLR   | Trip-Zone Clear Register            | 2Eh            | No       |
 | TZFRC   | Trip-Zone Force Register            | 30h            | No       |
 
-#### *15.2.2.8.3 Operational Highlights for the Trip-Zone Submodule*
+#### _15.2.2.8.3 Operational Highlights for the Trip-Zone Submodule_
 
 The following sections describe the operational highlights and configuration options for the trip-zone submodule.
 
@@ -2421,13 +2435,13 @@ The action taken when a trip event occurs can be configured individually for eac
 ## **Table 15-37. Possible Actions On a Trip Event**
 
 | TZCTL[TZA]<br>and/or<br>TZCTL[TZB] | EPWMxA<br>and/or<br>EPWMxB | Comment                                      |
-|------------------------------------|----------------------------|----------------------------------------------|
+| ---------------------------------- | -------------------------- | -------------------------------------------- |
 | 0                                  | High-Impedance             | Tripped                                      |
 | 1h                                 | Force to High State        | Tripped                                      |
 | 2h                                 | Force to Low State         | Tripped                                      |
 | 3h                                 | No Change                  | Do Nothing. No change is made to the output. |
 
-#### *Example 15-2. Trip-Zone Configurations*
+#### _Example 15-2. Trip-Zone Configurations_
 
 #### **Scenario A:**
 
@@ -2458,11 +2472,11 @@ A one-shot event on TZ1 or TZ6 puts EPWM2A into a high impedance state.
   - TZCTL[TZA] = 0: EPWM1A will be put into a high-impedance state on a trip event.
   - TZCTL[TZB] = 3: EPWM1B will ignore the trip event.
 
-#### *15.2.2.8.4 Generating Trip Event Interrupts*
+#### _15.2.2.8.4 Generating Trip Event Interrupts_
 
 [Figure](#page-61-0) 15-43 and [Figure](#page-61-1) 15-44 illustrate the trip-zone submodule control and interrupt logic, respectively.
 
-> *[Diagram — signal/block labels not renderable in text format]*
+> _[Diagram — signal/block labels not renderable in text format]_
 
 Figure 15-44. Trip-Zone Submodule Interrupt Logic
 
@@ -2513,11 +2527,11 @@ Clear
 
 [Figure](#page-62-1) 15-45 shows the event-trigger (ET) submodule in the ePWM system. The event-trigger submodule manages the events generated by the time-base submodule and the counter-compare submodule to generate an interrupt to the CPU.
 
-CTR = CMPB CTR = CMPA CTR\_Dir CTR = 0 CTR = PRD Dead Band (DB) Counter Compare (CC) Action Qualifier (AQ) EPWMA EPWMB CTR = CMPB CTR = 0 EPWMxINT EPWMxA EPWMxB TZ1 TZn to CTR = CMPA Time-Base (TB) CTR = PRD CTR = 0 CTR\_Dir EPWMxSYNCI EPWMxSYNCO EPWMxTZINT PWMchopper (PC) Event Trigger and Interrupt (ET) Trip Zone (TZ)
+CTR = CMPB CTR = CMPA CTR_Dir CTR = 0 CTR = PRD Dead Band (DB) Counter Compare (CC) Action Qualifier (AQ) EPWMA EPWMB CTR = CMPB CTR = 0 EPWMxINT EPWMxA EPWMxB TZ1 TZn to CTR = CMPA Time-Base (TB) CTR = PRD CTR = 0 CTR_Dir EPWMxSYNCI EPWMxSYNCO EPWMxTZINT PWMchopper (PC) Event Trigger and Interrupt (ET) Trip Zone (TZ)
 
 **Figure 15-45. Event-Trigger Submodule**
 
-#### *15.2.2.9.1 Purpose of the Event-Trigger Submodule*
+#### _15.2.2.9.1 Purpose of the Event-Trigger Submodule_
 
 The key functions of the event-trigger submodule are:
 
@@ -2529,7 +2543,7 @@ The key functions of the event-trigger submodule are:
   - Every third event
 - Provides full visibility of event generation via event counters and flags
 
-#### *15.2.2.9.2 Controlling and Monitoring the Event-Trigger Submodule*
+#### _15.2.2.9.2 Controlling and Monitoring the Event-Trigger Submodule_
 
 The key registers used to configure the event-trigger submodule are shown in Table [15-38:](#page-62-2)
 
@@ -2537,7 +2551,7 @@ The key registers used to configure the event-trigger submodule are shown in Tab
 
 **Table 15-38. Event-Trigger Submodule Registers**
 
-#### *15.2.2.9.3 Operational Overview of the Event-Trigger Submodule*
+#### _15.2.2.9.3 Operational Overview of the Event-Trigger Submodule_
 
 The following sections describe the event-trigger submodule's operational highlights.
 
@@ -2729,7 +2743,7 @@ Event Trigger / Interrupt (ET):
 
 **Figure 15-49. HRPWM System Interface**
 
-#### *15.2.2.10.1 Purpose of the High-Resolution PWM Submodule*
+#### _15.2.2.10.1 Purpose of the High-Resolution PWM Submodule_
 
 The enhanced high-resolution pulse-width modulator (eHRPWM) extends the time resolution capabilities of the conventionally derived digital pulse-width modulator (PWM). HRPWM is typically used when PWM resolution falls below ~9-10 bits. The key features of HRPWM are:
 
@@ -2772,7 +2786,7 @@ Although each application may differ, typical low-frequency PWM operation (below
 - Phase-shifted full bridge
 - Direct modulation of D-Class power amplifiers
 
-#### *15.2.2.10.2 Architecture of the High-Resolution PWM Submodule*
+#### _15.2.2.10.2 Architecture of the High-Resolution PWM Submodule_
 
 The HRPWM is based on micro edge positioner (MEP) technology. MEP logic is capable of positioning an edge very finely by sub-dividing one coarse system clock of a conventional PWM generator. The time step accuracy is on the order of 150 ps. The HRPWM also has a self-check software diagnostics mode to check if the MEP logic is running optimally, under all operating conditions.
 
@@ -2813,7 +2827,7 @@ A For MEP range and rounding adjustment.
 
 To generate an HRPWM waveform, configure the TBM, CCM, and AQM registers as you would to generate a conventional PWM of a given frequency and polarity. The HRPWM works together with the TBM, CCM, and AQM registers to extend edge resolution, and should be configured accordingly. Although many programming combinations are possible, only a few are needed and practical.
 
-#### *15.2.2.10.3 Controlling and Monitoring the High-Resolution PWM Submodule*
+#### _15.2.2.10.3 Controlling and Monitoring the High-Resolution PWM Submodule_
 
 The MEP of the HRPWM is controlled by two extension registers, each 8-bits wide. These two HRPWM registers are concatenated with the 16-bit TBPHS and CMPA registers used to control PWM operation.
 
@@ -2823,14 +2837,14 @@ The MEP of the HRPWM is controlled by two extension registers, each 8-bits wide.
 Table [15-40](#page-68-1) lists the registers used to control and monitor the high-resolution PWM submodule.
 
 | Acronym | Register Description               | Address Offset | Shadowed |
-|---------|------------------------------------|----------------|----------|
+| ------- | ---------------------------------- | -------------- | -------- |
 | TBPHSHR | Extension Register for HRPWM Phase | 4h             | No       |
 | CMPAHR  | Extension Register for HRPWM Duty  | 10h            | Yes      |
 | HRCNFG  | HRPWM Configuration Register       | C0h            | No       |
 
 **Table 15-40. HRPWM Submodule Registers**
 
-#### *15.2.2.10.4 Configuring the High-Resolution PWM Submodule*
+#### _15.2.2.10.4 Configuring the High-Resolution PWM Submodule_
 
 Once the ePWM has been configured to provide conventional PWM of a given frequency and polarity, the HRPWM is configured by programming the HRCNFG register located at offset address C0h. This register provides configuration options for the following key operating modes:
 
@@ -2838,14 +2852,14 @@ Once the ePWM has been configured to provide conventional PWM of a given frequen
 - **Control Mode:** The MEP is programmed to be controlled either from the CMPAHR register (duty cycle control) or the TBPHSHR register (phase control). RE or FE control mode should be used with CMPAHR register. BE control mode should be used with TBPHSHR register.
 - **Shadow Mode:** This mode provides the same shadowing (double buffering) option as in regular PWM mode. This option is valid only when operating from the CMPAHR register and should be chosen to be the same as the regular load option for the CMPA register. If TBPHSHR is used, then this option has no effect.
 
-#### *15.2.2.10.5 Operational Highlights for the High-Resolution PWM Submodule*
+#### _15.2.2.10.5 Operational Highlights for the High-Resolution PWM Submodule_
 
 The MEP logic is capable of placing an edge in one of 255 (8 bits) discrete time steps, each of which has a time resolution on the order of 150 ps. The MEP works with the TBM and CCM registers to be certain that time steps are optimally applied and that edge placement accuracy is maintained over a wide range of PWM frequencies, system clock frequencies and other operating conditions. Table [15-41](#page-69-0) shows the typical range of operating frequencies supported by the HRPWM.
 
 **Table 15-41. Relationship Between MEP Steps, PWM Frequency and Resolution**
 
 | System<br>(MHz) | MEP Steps Per<br>SYSCLKOUT(1) (2) (3) | PWM Minimum<br>(Hz)(4) | PWM Maximum<br>(MHz) | Resolution at<br>Maximum<br>(Bits)(5) |
-|-----------------|---------------------------------------|------------------------|----------------------|---------------------------------------|
+| --------------- | ------------------------------------- | ---------------------- | -------------------- | ------------------------------------- |
 | 50.0            | 111                                   | 763                    | 2.50                 | 11.1                                  |
 | 60.0            | 93                                    | 916                    | 3.00                 | 10.9                                  |
 | 70.0            | 79                                    | 1068                   | 3.50                 | 10.6                                  |
@@ -2863,7 +2877,7 @@ The MEP logic is capable of placing an edge in one of 255 (8 bits) discrete time
 
 <sup>(5)</sup> Resolution in bits is given for the maximum PWM frequency stated.
 
-#### *15.2.2.10.5.1 Edge Positioning*
+#### _15.2.2.10.5.1 Edge Positioning_
 
 In a typical power control loop (switch modes, digital motor control (DMC), uninterruptible power supply (UPS)), a digital controller (PID, 2pole/2zero, lag/lead, etc.) issues a duty command, usually expressed in a per unit or percentage terms.
 
@@ -2907,7 +2921,7 @@ EPWM1A  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 **Table 15-42. CMPA vs Duty (left), and [CMPA:CMPAHR] vs Duty (right)**
 
 | CMPA<br>(count)(1) (2) (3) | DUTY<br>(%) | High Time<br>(ns) | CMPA<br>(count) | CMPAHR<br>(count) | Duty<br>(%) | High Time<br>(ns) |
-|----------------------------|-------------|-------------------|-----------------|-------------------|-------------|-------------------|
+| -------------------------- | ----------- | ----------------- | --------------- | ----------------- | ----------- | ----------------- |
 | 28                         | 35.0        | 280               | 32              | 18                | 40.405      | 323.24            |
 | 29                         | 36.3        | 290               | 32              | 19                | 40.428      | 323.42            |
 | 30                         | 37.5        | 300               | 32              | 20                | 40.450      | 323.60            |
@@ -2925,7 +2939,7 @@ EPWM1A  ‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾
 
 <sup>(3)</sup> Assumed MEP step size for the above example = 180 ps
 
-#### *15.2.2.10.5.2 Scaling Considerations*
+#### _15.2.2.10.5.2 Scaling Considerations_
 
 The mechanics of how to position an edge precisely in time has been demonstrated using the resources of the standard (CMPA) and MEP (CMPAHR) registers. In a practical application, however, it is necessary to seamlessly provide the CPU a mapping function from a per-unit (fractional) duty cycle to a final integer (non-fractional) representation that is written to the [CMPA:CMPAHR] register combination.
 
@@ -2945,7 +2959,7 @@ PWM period in terms of coarse steps, = 80
 
 Number of MEP steps per coarse step at
 
-180 ps (10 ns/180 ps), **MEP\_SF**
+180 ps (10 ns/180 ps), **MEP_SF**
 
 Value to keep CMPAHR within the range
 
@@ -2965,7 +2979,7 @@ CMPA register value = 32 (20h)
 
 #### **Step 2: Fractional value conversion for CMPAHR register**
 
-CMPAHR register value = (frac(**PWMDuty** × **PWMperiod**) × **MEP\_SF**) << 8) +
+CMPAHR register value = (frac(**PWMDuty** × **PWMperiod**) × **MEP_SF**) << 8) +
 
 180h; frac means fractional part
 
@@ -2989,7 +3003,7 @@ CMPAHR value = 1780h; CMPAHR value = 1700h, lower 8 bits will be
 
 ignored by hardware.
 
-#### *15.2.2.10.5.3 Duty Cycle Range Limitation*
+#### _15.2.2.10.5.3 Duty Cycle Range Limitation_
 
 In high resolution mode, the MEP is not active for 100% of the PWM period. It becomes operational 3 SYSCLK cycles after the period starts.
 
@@ -3048,24 +3062,24 @@ _____________________________________________________________________|‾|_____
 (very narrow pulse at the end of the period)
 ```
 
-#### *15.2.2.10.6 Scale Factor Optimizing Software (SFO)*
+#### _15.2.2.10.6 Scale Factor Optimizing Software (SFO)_
 
 The micro edge positioner (MEP) logic is capable of placing an edge in one of 255 discrete time steps. As previously mentioned, the size of these steps is on the order of 150 ps. The MEP step size varies based on worst-case process parameters, operating temperature, and voltage. MEP step size increases with decreasing voltage and increasing temperature and decreases with increasing voltage and decreasing temperature. Applications that use the HRPWM feature should use the TI-supplied MEP scale factor optimizer (SFO) software functions. SFO functions help to dynamically determine the number of MEP steps per SYSCLKOUT period while the HRPWM is in operation.
 
-To utilize the MEP capabilities effectively during the Q15 duty to [CMPA:CMPAHR] mapping function (see Section [15.2.2.10.5.2\)](#page-71-0), the correct value for the MEP scaling factor (MEP\_SF) needs to be known by the software. To accomplish this, each HRPWM module has built in self-check and diagnostics capabilities that can be used to determine the optimum MEP\_SF value for any operating condition. TI provides a Ccallable library containing two SFO functions that utilize this hardware and determine the optimum MEP\_SF. As such, MEP Control and Diagnostics registers are reserved for TI use.
+To utilize the MEP capabilities effectively during the Q15 duty to [CMPA:CMPAHR] mapping function (see Section [15.2.2.10.5.2\)](#page-71-0), the correct value for the MEP scaling factor (MEP_SF) needs to be known by the software. To accomplish this, each HRPWM module has built in self-check and diagnostics capabilities that can be used to determine the optimum MEP_SF value for any operating condition. TI provides a Ccallable library containing two SFO functions that utilize this hardware and determine the optimum MEP_SF. As such, MEP Control and Diagnostics registers are reserved for TI use.
 
-Currently, there are two released versions of the SFO library - SFO\_TI\_Build.lib and SFO\_TI\_Build\_V5.lib. Versions 2, 3, and 4 were TI-Internal only. A high-level comparison table between the two library versions can be found in Section [15.2.2.10.6.1.](#page-73-0) A detailed description of the SFO\_TI\_Build.lib software functions follows in Section [15.2.2.10.6.2](#page-74-0). Information on the SFO\_TI\_Build\_V5.lib software functions, which support up to 16 HRPWM channels, can be found in Section [15.2.2.10.6.4](#page-78-0).
+Currently, there are two released versions of the SFO library - SFO_TI_Build.lib and SFO_TI_Build_V5.lib. Versions 2, 3, and 4 were TI-Internal only. A high-level comparison table between the two library versions can be found in Section [15.2.2.10.6.1.](#page-73-0) A detailed description of the SFO_TI_Build.lib software functions follows in Section [15.2.2.10.6.2](#page-74-0). Information on the SFO_TI_Build_V5.lib software functions, which support up to 16 HRPWM channels, can be found in Section [15.2.2.10.6.4](#page-78-0).
 
-**NOTE:** For floating-point devices, when compiling application code for floating point (fpu32 mode), libraries utilized by the application code must also be compiled for floating point. The SFO\_TI\_Build\_fpu.lib and SFO\_TI\_Build\_V5\_fpu.lib are available as the floating-point compiled equivalents to the fixed-point SFO\_TI\_Build.lib and SFO\_TI\_Build\_V5.lib libraries. The SFO functions in the fpu-version libraries are C-code-compatible to their fixed-point equivalents.
+**NOTE:** For floating-point devices, when compiling application code for floating point (fpu32 mode), libraries utilized by the application code must also be compiled for floating point. The SFO_TI_Build_fpu.lib and SFO_TI_Build_V5_fpu.lib are available as the floating-point compiled equivalents to the fixed-point SFO_TI_Build.lib and SFO_TI_Build_V5.lib libraries. The SFO functions in the fpu-version libraries are C-code-compatible to their fixed-point equivalents.
 
-#### *15.2.2.10.6.1 SFO Library Version Comparison*
+#### _15.2.2.10.6.1 SFO Library Version Comparison_
 
-Table [15-43](#page-73-1) includes a high-level comparison between SFO\_TI\_Build.lib and SFO\_TI\_Build\_V5.lib. A detailed description of SFO\_TI\_Build\_V5.lib follows the table, and more information on SFO\_TI\_Build.lib can be found in Section [15.2.2.10.6](#page-73-2).
+Table [15-43](#page-73-1) includes a high-level comparison between SFO_TI_Build.lib and SFO_TI_Build_V5.lib. A detailed description of SFO_TI_Build_V5.lib follows the table, and more information on SFO_TI_Build.lib can be found in Section [15.2.2.10.6](#page-73-2).
 
 **Table 15-43. SFO Library Version Comparison**
 
 |                                                      | SYSCLK<br>Frequency | ePWM<br>Frequency | SFO_TI_Build.lib | SFO_TI_Build_V5.lib                   | Unit         |
-|------------------------------------------------------|---------------------|-------------------|------------------|---------------------------------------|--------------|
+| ---------------------------------------------------- | ------------------- | ----------------- | ---------------- | ------------------------------------- | ------------ |
 | Maximum HRPWM<br>channels supported                  | -                   | -                 | Up to 4          | Up to 16                              | channels     |
 | Total static variable<br>memory size                 | -                   | -                 | 220              | 79 (1 channel) to<br>192 (16 channel) | words        |
 | MepEn runs on multiple<br>channels concurrently?     | -                   | -                 | Yes              | No                                    | -            |
@@ -3079,49 +3093,49 @@ Table [15-43](#page-73-1) includes a high-level comparison between SFO\_TI\_Buil
 | MepDis to update<br>MEP_ScaleFactor on 1             | 60 MHz              | -                 | 1.38             | 1.38                                  | milliseconds |
 | channel if called repetitively<br>without interrupts | 50 MHz              | -                 | 1.66             | 1.66                                  | milliseconds |
 
-#### *15.2.2.10.6.2 SFO\_TI\_Build Library Routines*
+#### _15.2.2.10.6.2 SFO_TI_Build Library Routines_
 
-Table [15-44](#page-74-1) provides functional descriptions of the two SFO library routines in SFO\_TI\_Build.lib.
+Table [15-44](#page-74-1) provides functional descriptions of the two SFO library routines in SFO_TI_Build.lib.
 
 ### **Table 15-44. SFO Library Routines**
 
-| Function      | Description                                                                                                                                                                                                                                                                                                                      |  |  |  |
-|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--|--|--|
-| SFO_MepDis(n) | Scale Factor Optimizer with MEP Disabled                                                                                                                                                                                                                                                                                         |  |  |  |
-|               | This routine runs faster, as the calibration logic works when HRPWM capabilities are disabled; therefore,<br>HRPWM capabilities cannot be run concurrently when the ePWMn is being used.                                                                                                                                         |  |  |  |
-|               | The function returns a value in the variable array:                                                                                                                                                                                                                                                                              |  |  |  |
-|               | MEP_ScaleFactor[n](1)<br>= Number of MEP steps/SYSCLKOUT                                                                                                                                                                                                                                                                         |  |  |  |
-|               | If TBCLK is not equal to SYSCLKOUT, then the returned value must be adjusted to reflect the correct<br>TBCLK:                                                                                                                                                                                                                    |  |  |  |
-|               | = MEP_ScaleFactor[n] × (SYSCLKOUT/TBCLK)(1)<br>MEP steps per TBCLK                                                                                                                                                                                                                                                               |  |  |  |
-|               | Constraints when using this function:                                                                                                                                                                                                                                                                                            |  |  |  |
-|               | MEP diagnostics logic uses SYSCLKOUT not TBCLK and hence SYSCLKOUT restriction is an important<br>constraint. SFO_MepDis(n) function does not require a starting Scale Factor value.                                                                                                                                             |  |  |  |
-|               | When to use:                                                                                                                                                                                                                                                                                                                     |  |  |  |
-|               | If one of the ePWM modules is not used in HRPWM mode, then it can be dedicated to run the SFO<br>diagnostics for the modules that are running HRPWM mode. Here the single MEP_SF value obtained can be<br>applied to other ePWM modules. This assumes that all HRPWM module's MEP steps are similar but may<br>not be identical. |  |  |  |
-|               | The ePWM module that is not active in HRPWM mode is still fully operational in conventional PWM mode<br>and can be used to drive PWM pins. The SFO function only makes use of the MEP diagnostics logic.                                                                                                                         |  |  |  |
-|               | The other ePWM modules operating in HRPWM mode incur only a 3-cycle minimum duty limitation.                                                                                                                                                                                                                                     |  |  |  |
-| SFO_MepEn(n)  | Scale Factor Optimizer with MEP Enabled                                                                                                                                                                                                                                                                                          |  |  |  |
+| Function      | Description                                                                                                                                                                                                                                                                                                                      |     |     |     |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- | --- |
+| SFO_MepDis(n) | Scale Factor Optimizer with MEP Disabled                                                                                                                                                                                                                                                                                         |     |     |     |
+|               | This routine runs faster, as the calibration logic works when HRPWM capabilities are disabled; therefore,<br>HRPWM capabilities cannot be run concurrently when the ePWMn is being used.                                                                                                                                         |     |     |     |
+|               | The function returns a value in the variable array:                                                                                                                                                                                                                                                                              |     |     |     |
+|               | MEP_ScaleFactor[n] (1)<br>= Number of MEP steps/SYSCLKOUT                                                                                                                                                                                                                                                                         |     |     |     |
+|               | If TBCLK is not equal to SYSCLKOUT, then the returned value must be adjusted to reflect the correct<br>TBCLK:                                                                                                                                                                                                                    |     |     |     |
+|               | = MEP_ScaleFactor[n] × (SYSCLKOUT/TBCLK)(1)<br>MEP steps per TBCLK                                                                                                                                                                                                                                                               |     |     |     |
+|               | Constraints when using this function:                                                                                                                                                                                                                                                                                            |     |     |     |
+|               | MEP diagnostics logic uses SYSCLKOUT not TBCLK and hence SYSCLKOUT restriction is an important<br>constraint. SFO_MepDis(n) function does not require a starting Scale Factor value.                                                                                                                                             |     |     |     |
+|               | When to use:                                                                                                                                                                                                                                                                                                                     |     |     |     |
+|               | If one of the ePWM modules is not used in HRPWM mode, then it can be dedicated to run the SFO<br>diagnostics for the modules that are running HRPWM mode. Here the single MEP_SF value obtained can be<br>applied to other ePWM modules. This assumes that all HRPWM module's MEP steps are similar but may<br>not be identical. |     |     |     |
+|               | The ePWM module that is not active in HRPWM mode is still fully operational in conventional PWM mode<br>and can be used to drive PWM pins. The SFO function only makes use of the MEP diagnostics logic.                                                                                                                         |     |     |     |
+|               | The other ePWM modules operating in HRPWM mode incur only a 3-cycle minimum duty limitation.                                                                                                                                                                                                                                     |     |     |     |
+| SFO_MepEn(n)  | Scale Factor Optimizer with MEP Enabled                                                                                                                                                                                                                                                                                          |     |     |     |
 
 This routine runs slower as the calibration logic is used concurrently while HRPWM capabilities are being used by the ePWM module.
 
 The function returns a value in the variable array:
 
-MEP\_ScaleFactor[n](1) = Number of MEP steps/SYSCLKOUT = Number of MEP steps/TBCLK
+MEP_ScaleFactor[n] (1) = Number of MEP steps/SYSCLKOUT = Number of MEP steps/TBCLK
 
 #### **Constraints when using this function:**
 
-MEP diagnostics logic uses SYSCLKOUT not TBCLK and hence SYSCLKOUT restriction is an important constraint. SFO\_MepEn(n) function does require a starting Scale Factor value.MEP\_ScaleFactor[0] needs to be initialized to a typical MEP step size value.
+MEP diagnostics logic uses SYSCLKOUT not TBCLK and hence SYSCLKOUT restriction is an important constraint. SFO_MepEn(n) function does require a starting Scale Factor value.MEP_ScaleFactor[0] needs to be initialized to a typical MEP step size value.
 
-**NOTE:** SFO\_MepEn(n) only supports the following HRPWM configuration:
+**NOTE:** SFO_MepEn(n) only supports the following HRPWM configuration:
 
 - HRCNFG[HRLOAD] = 0 (load on CTR = 0)
 - HRCNFG[EDGMODE] = 10 (falling edge MEP control)
 
 #### **When to use:**
 
-If the application requires all ePWM modules to have HRPWM capability (MEP is operational), then the SFO\_MepEn(n) function should run for each of the active ePWM modules with HRPWM capability.
+If the application requires all ePWM modules to have HRPWM capability (MEP is operational), then the SFO_MepEn(n) function should run for each of the active ePWM modules with HRPWM capability.
 
 - In the above case, a 6-cycle MEP inactivity zone exists at the start of the PWM period. See Section [15.2.2.10.5.3](#page-72-2) on duty cycle range limitation.
-- If all ePWM modules are using the same TBCLK prescaler, then it is also possible to run the SFO\_MepEn(n) function for only one ePWM module and to use the SFO return value for the other modules. In this case only one ePWM module incurs the 6-cycle limitation, and remaining modules incur only a 3-cycle minimum duty limitation. See "Duty cycle limitation" section. This assumes that all HRPWM module's MEP steps are similar but may not be identical.
+- If all ePWM modules are using the same TBCLK prescaler, then it is also possible to run the SFO_MepEn(n) function for only one ePWM module and to use the SFO return value for the other modules. In this case only one ePWM module incurs the 6-cycle limitation, and remaining modules incur only a 3-cycle minimum duty limitation. See "Duty cycle limitation" section. This assumes that all HRPWM module's MEP steps are similar but may not be identical.
 
 <sup>(1)</sup> n is the ePWM module number on which the SFO function operates.
 
@@ -3129,16 +3143,16 @@ Both routines can be run as background tasks in a slow loop requiring negligible
 
 While using HRPWM feature with no SFO diagnostics, HRPWM logic will not be active for the first 3 TBCLK cycles of the PWM period. While running the application in this configuration, if CMPA register value is less than 3 cycles, then its CMPAHR register must be cleared to zero. This would avoid any unexpected transitions on PWM signal.
 
-However, if SFO diagnostic function SFO\_MepEn is used in the background, then HRPWM logic will not be active for the first 6 TBCLK cycles of PWM period. While using SFO\_MepEn function if CMPA register value is less than 6 cycles, then its CMPAHR register must be cleared to zero. This would avoid any unexpected transitions on PWM signal. Also note that the SFO\_MepDis function cannot be used concurrently with PWM signals with HRPWM enabled.
+However, if SFO diagnostic function SFO_MepEn is used in the background, then HRPWM logic will not be active for the first 6 TBCLK cycles of PWM period. While using SFO_MepEn function if CMPA register value is less than 6 cycles, then its CMPAHR register must be cleared to zero. This would avoid any unexpected transitions on PWM signal. Also note that the SFO_MepDis function cannot be used concurrently with PWM signals with HRPWM enabled.
 
-#### *15.2.2.10.6.3 SFO\_TI\_Build Software Usage*
+#### _15.2.2.10.6.3 SFO_TI_Build Software Usage_
 
-Software library functions SFO\_MepEn(int n) and SFO\_MepDis(int n) calculate the MEP scale factor for up to four ePWM modules. The scale factor is an integer value in the range 1–255, and represents the number of micro step edge positions available for a system clock period. The scale factor value is returned in a global array of integer values called MEP\_ScaleFactor[x], where x is the maximum number of HRPWM channels for a device plus one. For example, see Table [15-45](#page-75-0).
+Software library functions SFO_MepEn(int n) and SFO_MepDis(int n) calculate the MEP scale factor for up to four ePWM modules. The scale factor is an integer value in the range 1–255, and represents the number of micro step edge positions available for a system clock period. The scale factor value is returned in a global array of integer values called MEP_ScaleFactor[x], where x is the maximum number of HRPWM channels for a device plus one. For example, see Table [15-45](#page-75-0).
 
 **Table 15-45. Factor Values**
 
-| Software function calls | Functional description                          | Updated Variable<br>MEP_ScaleFactor[5](1) |
-|-------------------------|-------------------------------------------------|-------------------------------------------|
+| Software function calls | Functional description                          | Updated Variable<br>MEP_ScaleFactor[5] (1) |
+| ----------------------- | ----------------------------------------------- | ----------------------------------------- |
 | SFO_MepDis(n)           |                                                 |                                           |
 | SFO_MepDis(1);          | Returns the scale factor value to array index 1 | MEP_ScaleFactor[1]                        |
 | SFO_MepDis(2);          | Returns the scale factor value to array index 2 | MEP_ScaleFactor[2]                        |
@@ -3150,7 +3164,7 @@ Software library functions SFO\_MepEn(int n) and SFO\_MepDis(int n) calculate th
 | SFO_MepEn(3);           | Returns the scale factor value to array index 3 | MEP_ScaleFactor[3]                        |
 | SFO_MepEn(4);           | Returns the scale factor value to array index 4 | MEP_ScaleFactor[4]                        |
 
-<sup>(1)</sup> MEP\_ScaleFactor[0] variable is a starting value and used by the SFO software functions internally
+<sup>(1)</sup> MEP_ScaleFactor[0] variable is a starting value and used by the SFO software functions internally
 
 To use the HRPWM feature of the ePWMs it is recommended that the SFO functions be used as follows. For different devices that may have fewer HRPWM channels, modifications will be required in Step 1 and Step 2.
 
@@ -3160,7 +3174,7 @@ To use the HRPWM feature of the ePWMs it is recommended that the SFO functions b
 
 The SFO.h file needs to be included as follows. This include file is mandatory while using the SFO library function. These include files are optional if customized header files are used in the end applications.
 
-#### *Example 15-3. A Sample of How to Add Include Files*
+#### _Example 15-3. A Sample of How to Add Include Files_
 
 ```
 #include "SFO.h" // SFO lib functions (needed for HRPWM)
@@ -3170,7 +3184,7 @@ The SFO.h file needs to be included as follows. This include file is mandatory w
 
 Declare a 5-element array of integer variables as follows:
 
-#### *Example 15-4. Declaring an Element*
+#### _Example 15-4. Declaring an Element_
 
 ```
 int MEP_ScaleFactor[5] = {0,0,0,0,0}; // Scale factor values for ePWM1-4
@@ -3178,13 +3192,13 @@ int MEP_SF1, MEP_SF2, MEP_SF3, MEP_SF4
 volatile struct EPWM_REGS *ePWM[] = {&EPwm1Regs, &EPwm1Regs, &EPwm2Regs, &EPwm3Regs, &EPwm4Regs};
 ```
 
-## **Step 3. MEP\_ScaleFactor Initialization**
+## **Step 3. MEP_ScaleFactor Initialization**
 
-After power up, the SFO\_MepEn(n) function needs a starting Scale Factor value. This value can be conveniently determined by using one of the ePWM modules to run the SFO\_MepDis(n) function prior to configuring its PWM outputs for the application. SFO\_MepDis(n) function does not require a starting Scale Factor value.
+After power up, the SFO_MepEn(n) function needs a starting Scale Factor value. This value can be conveniently determined by using one of the ePWM modules to run the SFO_MepDis(n) function prior to configuring its PWM outputs for the application. SFO_MepDis(n) function does not require a starting Scale Factor value.
 
 As part of the one-time initialization code, include the following:
 
-#### *Example 15-5. Initializing With a Scale Factor Value*
+#### _Example 15-5. Initializing With a Scale Factor Value_
 
 ```
 // MEP_ScaleFactor variables initialized using function SFO_MepDis
@@ -3200,7 +3214,7 @@ MEP_ScaleFactor[0] = MEP_ScaleFactor[1]; //Common variable for SFOMepEN(n) funct
 
 While the application is running, fluctuations in both device temperature and supply voltage may be expected. To be sure that optimal Scale Factors are used for each ePWM module, the SFO function should be re-run periodically as part of a slower back-ground loop. Some examples of this are shown here.
 
-## *Example 15-6. SFO Function Calls*
+## _Example 15-6. SFO Function Calls_
 
 ```
 main()
@@ -3231,29 +3245,29 @@ main()
 }
 ```
 
-#### *15.2.2.10.6.4 SFO\_TI\_Build\_V5 Library Routines*
+#### _15.2.2.10.6.4 SFO_TI_Build_V5 Library Routines_
 
-In SFO\_TI\_Build\_V5.lib, the diagnostic software has been optimized to use less memory, to minimize the calibration time, and to support up to 16 HRPWM channels. Table [15-46](#page-78-1) provides functional description of the two SFO library routines in SFO\_TI\_Build\_V5.lib.
+In SFO_TI_Build_V5.lib, the diagnostic software has been optimized to use less memory, to minimize the calibration time, and to support up to 16 HRPWM channels. Table [15-46](#page-78-1) provides functional description of the two SFO library routines in SFO_TI_Build_V5.lib.
 
 #### **Table 15-46. SFO V5 Library Routines**
 
 #### **Function Description**
 
-#### **int SFO\_MepDis\_V5 (n) Scale Factor Optimizer V5 with MEP Disabled**
+#### **int SFO_MepDis_V5 (n) Scale Factor Optimizer V5 with MEP Disabled**
 
-This routine is very similar to the SFO\_MepDis() routine in the original SFO library, but with one change. It now returns a 1 when MEP disabled calibration is complete, or a 0 while calibration is still running.
+This routine is very similar to the SFO_MepDis() routine in the original SFO library, but with one change. It now returns a 1 when MEP disabled calibration is complete, or a 0 while calibration is still running.
 
-This function runs faster than the SFO\_MepEn \_V5() routine and cannot be used on an ePWM channel while HRPWM capabilities are enabled for that channel. If there is a spare ePWM channel available in the system, SFO\_MepDis\_V5() can be run for that channel, and the resulting MEP\_ScaleFactor[n] value can be copied into the MEP\_ScaleFactor[n] for all other channels.
+This function runs faster than the SFO_MepEn \_V5() routine and cannot be used on an ePWM channel while HRPWM capabilities are enabled for that channel. If there is a spare ePWM channel available in the system, SFO_MepDis_V5() can be run for that channel, and the resulting MEP_ScaleFactor[n] value can be copied into the MEP_ScaleFactor[n] for all other channels.
 
-Because the MEP step behavior in a particular piece of silicon is similar on all HRPWM channels with regard to temperature and voltage, using one dedicated HRPWM channel for calibration by calling the SFO\_MepDis\_V5 function will reduce software overhead.
+Because the MEP step behavior in a particular piece of silicon is similar on all HRPWM channels with regard to temperature and voltage, using one dedicated HRPWM channel for calibration by calling the SFO_MepDis_V5 function will reduce software overhead.
 
 The function returns a value in the variable array:
 
-MEP\_ScaleFactor[n] = Number of MEP steps/SYSCLKOUT
+MEP_ScaleFactor[n] = Number of MEP steps/SYSCLKOUT
 
 If TBCLK is not equal to SYSCLKOUT, then the returned value must be adjusted to reflect the correct TBCLK:
 
-MEP steps per TBCLK = MEP\_ScaleFactor[n] × (SYSCLKOUT/TBCLK)
+MEP steps per TBCLK = MEP_ScaleFactor[n] × (SYSCLKOUT/TBCLK)
 
 #### **Constraints when using this function:**
 
@@ -3263,77 +3277,78 @@ MEP steps per TBCLK = MEP\_ScaleFactor[n] × (SYSCLKOUT/TBCLK)
 
 #### **Usage:**
 
-- If one of the ePWM modules is running in normal ePWM mode, then it can be used to run the SFO diagnostics function. Here, the single MEP\_ScaleFactor value obtained for that channel can be copied and used as the MEP\_ScaleFactor for the other ePWM modules which are running HRPWM mode. This assumes that all HRPWM modules' MEP steps are similar but may not be identical.
+- If one of the ePWM modules is running in normal ePWM mode, then it can be used to run the SFO diagnostics function. Here, the single MEP_ScaleFactor value obtained for that channel can be copied and used as the MEP_ScaleFactor for the other ePWM modules which are running HRPWM mode. This assumes that all HRPWM modules' MEP steps are similar but may not be identical.
 - This routine returns a 1 when calibration is finished on the specified channel or a 0 if calibration is still running.
 - The ePWM module that is not active in HRPWM mode is still fully operational in conventional PWM mode and can be used to drive PWM pins. The SFO function only makes use of the MEP diagnostics logic in the HRPWM circuitry.
-- SFO\_MepDis\_V5(n) function does not require a starting Scale Factor value.
+- SFO_MepDis_V5(n) function does not require a starting Scale Factor value.
 - The other ePWM modules operating in HRPWM mode incur only a 3-cycle minimum duty cycle limitation.
+
 ## **Table 15-46. SFO V5 Library Routines (continued)**
 
-| Function<br>Description |
-|-------------------------|
-|-------------------------|
+| Function<br>Description   |
+| ------------------------- |
+| ------------------------- |
 
-## **int SFO\_MepEn\_V5 (n) Scale Factor Optimizer V5 with MEP Enabled**
+## **int SFO_MepEn_V5 (n) Scale Factor Optimizer V5 with MEP Enabled**
 
-This function runs slower than the SFO\_MepDis\_V5() routine and runs SFO diagnostics on an ePWM channel with HRPWM capabilities enabled for that channel.
+This function runs slower than the SFO_MepDis_V5() routine and runs SFO diagnostics on an ePWM channel with HRPWM capabilities enabled for that channel.
 
 The function returns a value in the variable array:
 
-MEP\_ScaleFactor[n] = Number of MEP steps/SYSCLKOUT = Number of MEP steps/TBCLK
+MEP_ScaleFactor[n] = Number of MEP steps/SYSCLKOUT = Number of MEP steps/TBCLK
 
 #### **Constraints when using this function:**
 
-• This routine must be run on one channel at a time and cannot be run on multiple channels concurrently. When it has finished updating the MEP\_ScaleFactor for a channel, it will return a 1. If it is still calibrating, it will return a 0. A background loop should exist in the user code which calls SFO\_MepEn\_V5(n) repetitively until it returns a 1. Then the function can be called for the next channel .
+• This routine must be run on one channel at a time and cannot be run on multiple channels concurrently. When it has finished updating the MEP_ScaleFactor for a channel, it will return a 1. If it is still calibrating, it will return a 0. A background loop should exist in the user code which calls SFO_MepEn_V5(n) repetitively until it returns a 1. Then the function can be called for the next channel .
 
-**NOTE:** Unlike the original SFO\_MepEn(n) routine, this routine cannot run on multiple channels concurrently.
+**NOTE:** Unlike the original SFO_MepEn(n) routine, this routine cannot run on multiple channels concurrently.
 
-> Do not call SFO\_MepEn\_V5(n) for another channel until the function returns a 1 for the current channel. Otherwise, the MEP\_ScaleFactor for both channels will become corrupted.
+> Do not call SFO_MepEn_V5(n) for another channel until the function returns a 1 for the current channel. Otherwise, the MEP_ScaleFactor for both channels will become corrupted.
 
-SFO\_MepEn\_V5(n) in *SFO\_TI\_Build\_V5.lib* supports only the following HRPWM configuration:
+SFO*MepEn_V5(n) in \_SFO_TI_Build_V5.lib* supports only the following HRPWM configuration:
 
 - HRCNFG[HRLOAD] = 0 (load on CTR = 0)
 - HRCNFG[EDGMODE] = 10 (falling edge MEP control)
 
-An upgraded version of SFO\_MepEn\_V5(n) in *SFO\_TI\_Build\_V5B.lib* supports all available HRPWM configurations. When using this version, the HRCNFG register must be initialized with the appropriate configuration after calling SFO\_MepDis\_V5(n) to seed the MEP\_ScaleFactor[n] and prior to calling SFO\_MepEn\_V5(n).
+An upgraded version of SFO*MepEn_V5(n) in \_SFO_TI_Build_V5B.lib* supports all available HRPWM configurations. When using this version, the HRCNFG register must be initialized with the appropriate configuration after calling SFO_MepDis_V5(n) to seed the MEP_ScaleFactor[n] and prior to calling SFO_MepEn_V5(n).
 
 • MEP diagnostics logic uses SYSCLKOUT and not TBCLK. Hence, the SYSCLKOUT restriction is an important constraint.
 
 #### **Usage:**
 
-- After calling SFO\_MepDis(n) to seed MEP\_ScaleFactor[n], and prior to using the SFO\_MepEn\_V5(n) function in *SFO\_TI\_Build\_V5B.lib*, the HRCNFG register must be initialized with the desired HRPWM configuration. Otherwise, calibration will not be initiated, and calls to SFO\_MepEn\_V5(n) will continuously return zero.
-- The SFO\_MepEn\_V5(n) function requires a starting scale factor value, MEP\_ScaleFactor[0]. MEP\_ScaleFactor[0] needs to be initialized to a typical MEP step size value. To do this, SFO\_MepDis\_V5(n) can be run on an ePWM channel while the HRPWM is disabled, and the resulting MEP\_ScaleFactor[n] value can be copied into MEP\_ScaleFactor[0].
-- If there are drastic environmental changes to your system (i.e. temperature/voltage), it is generally a good idea to re-seed MEP\_ScaleFactor[0] with a new typical MEP step size value for the changed conditions.
-- Because SFO\_MepEn\_V5(n) can be run on only one channel at a time, it is only recommended for systems where there are no spare HRPWM channels available, so SFO calibration must be performed on all channels with HRPWM capabilities enabled. In this case, a 6-cycle MEP inactivity zone exists at the start of each PWM period on all HRPWM channels. See Section [15.2.2.10.5.3](#page-72-2) on duty cycle range limitation.
+- After calling SFO*MepDis(n) to seed MEP_ScaleFactor[n], and prior to using the SFO_MepEn_V5(n) function in \_SFO_TI_Build_V5B.lib*, the HRCNFG register must be initialized with the desired HRPWM configuration. Otherwise, calibration will not be initiated, and calls to SFO_MepEn_V5(n) will continuously return zero.
+- The SFO_MepEn_V5(n) function requires a starting scale factor value, MEP_ScaleFactor[0]. MEP_ScaleFactor[0] needs to be initialized to a typical MEP step size value. To do this, SFO_MepDis_V5(n) can be run on an ePWM channel while the HRPWM is disabled, and the resulting MEP_ScaleFactor[n] value can be copied into MEP_ScaleFactor[0].
+- If there are drastic environmental changes to your system (i.e. temperature/voltage), it is generally a good idea to re-seed MEP_ScaleFactor[0] with a new typical MEP step size value for the changed conditions.
+- Because SFO_MepEn_V5(n) can be run on only one channel at a time, it is only recommended for systems where there are no spare HRPWM channels available, so SFO calibration must be performed on all channels with HRPWM capabilities enabled. In this case, a 6-cycle MEP inactivity zone exists at the start of each PWM period on all HRPWM channels. See Section [15.2.2.10.5.3](#page-72-2) on duty cycle range limitation.
 - The function returns:
   - A 1 when it has finished SFO calibration for the current channel
   - A 0 when SFO diagnostics are still running for the channel
-  - A 2 as an error indicator after calibration has completed if the resulting MEP\_ScaleFactor for
-- (1) If SFO calibration must be run on multiple channels at a time while HRPWM capabilities are enabled, the previous version of the SFO library, SFO\_TI\_Build.lib, which uses more memory resources, can be used instead, and SFO\_MepEn(n) can run concurrently for up to 4 ePWM channels with HRPWM enabled.
+  - A 2 as an error indicator after calibration has completed if the resulting MEP_ScaleFactor for
+- (1) If SFO calibration must be run on multiple channels at a time while HRPWM capabilities are enabled, the previous version of the SFO library, SFO_TI_Build.lib, which uses more memory resources, can be used instead, and SFO_MepEn(n) can run concurrently for up to 4 ePWM channels with HRPWM enabled.
 
 #### **Table 15-46. SFO V5 Library Routines (continued)**
 
 #### **Function Description**
 
-the channel differs from the original MEP\_ScaleFactor[0] seed value by more than +/- 15. The function must be called repetitively before it will return a 1. This takes a longer time to complete than the SFO\_MepDis\_V5(n) calibration.
+the channel differs from the original MEP_ScaleFactor[0] seed value by more than +/- 15. The function must be called repetitively before it will return a 1. This takes a longer time to complete than the SFO_MepDis_V5(n) calibration.
 
-If it returns a 2, the MEP\_ScaleFactor for the channel has finished updating and is outside the typical drift range of MEP\_ScaleFactor[0] +/-15 even with large temperature and voltage variations. If the reason for the large difference between the seed and the channel scale factor is known and acceptable, the user may choose to ignore the return of 2, and treat it as a return value of 1, indicating that calibration is complete.
+If it returns a 2, the MEP_ScaleFactor for the channel has finished updating and is outside the typical drift range of MEP_ScaleFactor[0] +/-15 even with large temperature and voltage variations. If the reason for the large difference between the seed and the channel scale factor is known and acceptable, the user may choose to ignore the return of 2, and treat it as a return value of 1, indicating that calibration is complete.
 
 Otherwise, if the large difference is unexpected, there are steps to take to remedy the error:
 
-- 1. Check your code to ensure SFO\_MepEn\_V5(n) is not being called on more than one channel at a time.
-- 2. If the above is not effective, run SFO\_MepDis\_V5(n) again and re-seed Mep\_ScaleFactor[0].
+- 1. Check your code to ensure SFO_MepEn_V5(n) is not being called on more than one channel at a time.
+- 2. If the above is not effective, run SFO_MepDis_V5(n) again and re-seed Mep_ScaleFactor[0].
 - 3. If neither of the above 2 steps work, there may be a system problem. The application firmware should perform a shutdown or an appropriate recovery procedure.
-- If all ePWM modules are using the same TBCLK prescaler, then it is possible to run the SFO\_MepEn\_V5(n) function for only one ePWM module and to use the MEP\_ScaleFactor value for that module for the other modules also. In this case only one ePWM module incurs the 6-cycle duty limitation, and the remaining modules incur only a 3-cycle minimum duty limitation. This assumes that all HRPWM modules' MEP steps are similar but may not be identical.
+- If all ePWM modules are using the same TBCLK prescaler, then it is possible to run the SFO_MepEn_V5(n) function for only one ePWM module and to use the MEP_ScaleFactor value for that module for the other modules also. In this case only one ePWM module incurs the 6-cycle duty limitation, and the remaining modules incur only a 3-cycle minimum duty limitation. This assumes that all HRPWM modules' MEP steps are similar but may not be identical.
 
-#### *15.2.2.10.6.5 SFO\_TI\_Build\_V5 Software Usage*
+#### _15.2.2.10.6.5 SFO_TI_Build_V5 Software Usage_
 
-Software library functions int SFO\_MepEn\_V5(int n) and int SFO\_MepDis\_V5(int n) calculate the MEP scale factor for ePWMn modules, where n= the ePWM channel number. The scale factor value, which represents the number of micro-steps available in a system clock period, is returned in a global array of integer values called MEP\_ScaleFactor[x], where x is the maximum number of HRPWM channels for a device plus one. For example, if the maximum number of HRPWM channels for a device is 16, the scale factor array would be MEP\_ScaleFactor[17]. Both SFO\_MepEn\_V5 and SFO\_MepDis\_V5 themselves also return a 1 when calibration has completed, indicating the MEP\_ScaleFactor has been successfully updated for the channel, and a 0 when calibration is still on-going. A return of 2 represents an out-of-range error.
+Software library functions int SFO_MepEn_V5(int n) and int SFO_MepDis_V5(int n) calculate the MEP scale factor for ePWMn modules, where n= the ePWM channel number. The scale factor value, which represents the number of micro-steps available in a system clock period, is returned in a global array of integer values called MEP_ScaleFactor[x], where x is the maximum number of HRPWM channels for a device plus one. For example, if the maximum number of HRPWM channels for a device is 16, the scale factor array would be MEP_ScaleFactor[17]. Both SFO_MepEn_V5 and SFO_MepDis_V5 themselves also return a 1 when calibration has completed, indicating the MEP_ScaleFactor has been successfully updated for the channel, and a 0 when calibration is still on-going. A return of 2 represents an out-of-range error.
 
 **Table 15-47. Software Functions**
 
 | Software functional calls   | Functional Description                                                  |
-|-----------------------------|-------------------------------------------------------------------------|
+| --------------------------- | ----------------------------------------------------------------------- |
 | int SFO_MepDis_V5(int n)(1) |                                                                         |
 | status = SFO_MepDis_V5(1)   | The scale factor in MEP_ScaleFactor[1] is updated when status = 1       |
 | status = SFO_MepDis_V5(2)   | The scale factor in MEP_ScaleFactor[2] is updated when status = 1       |
@@ -3345,25 +3360,25 @@ Software library functions int SFO\_MepEn\_V5(int n) and int SFO\_MepDis\_V5(int
 |                             |                                                                         |
 | status = SFO_MepEn_V5(16);  | The scale factor in MEP_ScaleFactor[16] is updated when status = 1 or 2 |
 
-<sup>(1)</sup> MEP\_ScaleFactor[0] is a starting seed value used by the SFO software functions internally.
+<sup>(1)</sup> MEP_ScaleFactor[0] is a starting seed value used by the SFO software functions internally.
 
-To use the HRPWM feature of the ePWMs, it is recommended that the SFO functions in TI\_Build\_V5.lib be used as described here. For different devices that may have fewer HRPWM channels, modifications will be required in Step 1 and Step 2.
+To use the HRPWM feature of the ePWMs, it is recommended that the SFO functions in TI_Build_V5.lib be used as described here. For different devices that may have fewer HRPWM channels, modifications will be required in Step 1 and Step 2.
 
 **NOTE:** The following example assumes there are four ePWM instances that contain the HRPWM submodule in the device. See [Section](#page-3-0) 15.1.2 to determine the number of ePWM instances that contain the HRPWM submodule.
 
 #### **Step 1. Add Include Files**
 
-The SFO\_V5.h file needs to be included as follows. This include file is mandatory when using the SFO V5 library functions.
+The SFO_V5.h file needs to be included as follows. This include file is mandatory when using the SFO V5 library functions.
 
-## *Example 15-7. A Sample of How to Add Include Files*
+## _Example 15-7. A Sample of How to Add Include Files_
 
 #### **Step 2. Define Number of HRPWM Channels Used**
 
-In the SFO\_V5.h file, the maximum number of HRPWM's used for a particular device must be defined. PWM\_CH must equal the number of HRPWM channels plus 1.
+In the SFO_V5.h file, the maximum number of HRPWM's used for a particular device must be defined. PWM_CH must equal the number of HRPWM channels plus 1.
 
-To save static variable memory, fewer than the maximum number of HRPWM channels may be defined with some caution. To do this, PWM\_CH can be set to the largest ePWM channel number plus 1. For instance, if only ePWM1A and ePWM2A channels are required as HRPWM channels, PWM\_CH can be set to 3. However, if only ePWM15A and ePWM16A channels are required as HRPWM channels, PWM\_CH must still be set to 17.
+To save static variable memory, fewer than the maximum number of HRPWM channels may be defined with some caution. To do this, PWM_CH can be set to the largest ePWM channel number plus 1. For instance, if only ePWM1A and ePWM2A channels are required as HRPWM channels, PWM_CH can be set to 3. However, if only ePWM15A and ePWM16A channels are required as HRPWM channels, PWM_CH must still be set to 17.
 
-### *Example 15-8. Defining Number of HRPWM Channels Used (Plus 1)*
+### _Example 15-8. Defining Number of HRPWM Channels Used (Plus 1)_
 
 ```
 // SFO_V5.H
@@ -3374,9 +3389,9 @@ To save static variable memory, fewer than the maximum number of HRPWM channels 
 
 #### **Step 3. Element Declaration**
 
-Declare an array of integer variables with a length equal to PWM\_CH, and an array of pointers to EPWM register structures. The array of pointers will include pointers for up to 16 EPWM register structures plus one dummy pointer in location EPWM[0] for a device with 16 EPWM channels. Likewise, it will include pointers for up to 4 EPWM register structures plus 1 for a device with 4 EPWM registers and up to 3 EPWM register structures plus 1 for a device with 3 EPWM registers.
+Declare an array of integer variables with a length equal to PWM_CH, and an array of pointers to EPWM register structures. The array of pointers will include pointers for up to 16 EPWM register structures plus one dummy pointer in location EPWM[0] for a device with 16 EPWM channels. Likewise, it will include pointers for up to 4 EPWM register structures plus 1 for a device with 4 EPWM registers and up to 3 EPWM register structures plus 1 for a device with 3 EPWM registers.
 
-#### *Example 15-9. Declaring Elements Required by SFO\_TI\_Build\_V5.lib*
+#### _Example 15-9. Declaring Elements Required by SFO_TI_Build_V5.lib_
 
 ```
 int MEP_ScaleFactor[PWM_CH] = {0,0,0,0,0, // Scale factor values for ePWM 1-16
@@ -3393,13 +3408,13 @@ volatile struct EPWM_REGS *ePWM[PWM_CH] {&EPwm1Regs, &EPwm1Regs, &EPwm2Regs,
 &EPwm13Regs, &EPwm14Regs, &EPwm15Regs, &EPwm16Regs};
 ```
 
-#### **Step 4. MEP\_ScaleFactor Initialization**
+#### **Step 4. MEP_ScaleFactor Initialization**
 
-After power up, the SFO\_MepEn\_V5(n) function needs a typical scale factor starting seed value in MEP\_ScaleFactor[0]. This value can be conveniently determined using one of the ePWM modules to run the SFO\_MepDis\_V5(n) function prior to initializing the PWM settings for the application. The SFO\_MepDis\_V5(n) function does not require a starting scale factor value.
+After power up, the SFO_MepEn_V5(n) function needs a typical scale factor starting seed value in MEP_ScaleFactor[0]. This value can be conveniently determined using one of the ePWM modules to run the SFO_MepDis_V5(n) function prior to initializing the PWM settings for the application. The SFO_MepDis_V5(n) function does not require a starting scale factor value.
 
 As part of the one-time initialization code, include the following:
 
-#### *Example 15-10. Initialization With a Scale Factor Value*
+#### _Example 15-10. Initialization With a Scale Factor Value_
 
 ```
 // MEP_ScaleFactor variables initialized using function SFO_MepDis_V5
@@ -3417,7 +3432,7 @@ for (I=1; i<PWM_CH; I++) // For channels 1-16
 
 While the application is running, fluctuations in both device temperature and supply voltage may be expected. To be sure that optimal scale factors are used for each ePWM module, the SFO function should be re-run periodically as part of a slower background loop. Some examples of this are shown here.
 
-## *Example 15-11. SFO Function Calls*
+## _Example 15-11. SFO Function Calls_
 
 ```
 main()
@@ -3457,10 +3472,10 @@ main()
 
 To configure the ePWM to stop during emulation suspend events (for example, debugger breakpoints), set up the ePWM and the Debug Subsystem:
 
-- 1. Set TBCTL.FREE\_SOFT= 0 or 1 (see register description for more details). This will allow the Suspend\_Control signal from the Debug Subsystem (Chapter 27) to stop and start the ePWM. Note that if FREE\_SOFT = 2 or 3, the Suspend\_Control signal is ignored and the ePWM is free running regardless of any debug suspend event. This FREE\_SOFT bit gives local control from a module perspective to gate the suspend signal coming from the Debug Subsystem.
-- 2. Set the appropriate xxx\_Suspend\_Control register = 0x9, as described in Section 27.1.1.1, *Debug Suspend Support for Peripherals*. Choose the register appropriate to the peripheral you want to suspend during a suspend event.
+- 1. Set TBCTL.FREE_SOFT= 0 or 1 (see register description for more details). This will allow the Suspend_Control signal from the Debug Subsystem (Chapter 27) to stop and start the ePWM. Note that if FREE_SOFT = 2 or 3, the Suspend_Control signal is ignored and the ePWM is free running regardless of any debug suspend event. This FREE_SOFT bit gives local control from a module perspective to gate the suspend signal coming from the Debug Subsystem.
+- 2. Set the appropriate xxx*Suspend_Control register = 0x9, as described in Section 27.1.1.1, \_Debug Suspend Support for Peripherals*. Choose the register appropriate to the peripheral you want to suspend during a suspend event.
 
-### *15.2.3 Use Cases*
+### _15.2.3 Use Cases_
 
 An ePWM module has all the local resources necessary to operate completely as a standalone module or to operate in synchronization with other identical ePWM modules.
 
@@ -3585,7 +3600,7 @@ Slave ePWM module (2) with SyncIn, phase enable, and SyncOut select
 
 One of the simplest power converter topologies is the buck. A single ePWM module configured as a master can control two buck stages with the same PWM frequency. If independent frequency control is required for each buck converter, then one ePWM module must be allocated for each converter stage. [Figure](#page-87-0) 15-57 shows four buck stages, each running at independent frequencies. In this case, all four ePWM modules are configured as Masters and no synchronization is used. [Figure](#page-88-0) 15-58 shows the waveforms generated by the setup shown in [Figure](#page-87-0) 15-57; note that only three waveforms are shown, although there are four stages.
 
-> *[Diagram — signal/block labels not renderable in text format]*
+> _[Diagram — signal/block labels not renderable in text format]_
 
 **Figure 15-57. Control of Four Buck Stages. Here FPWM1≠ FPWM2≠ FPWM3≠ FPWM4**
 
@@ -3638,12 +3653,13 @@ EPWM3A output
 _____|‾‾|_________|‾‾|_________|‾‾|_________|‾‾|____________________
      set@CA clr@P  set@CA clr@P  set@CA clr@P  set@CA clr@P
 ```
+
 <sup>P</sup> Indicates this event triggers an interrupt <sup>I</sup>
 
 #### **Table 15-48. EPWM1 Initialization for [Figure](#page-88-0) 15-58**
 
 | Register | Bit       | Value           | Comments                   |
-|----------|-----------|-----------------|----------------------------|
+| -------- | --------- | --------------- | -------------------------- |
 | TBPRD    | TBPRD     | 1200 (4B0h)     | Period = 1201 TBCLK counts |
 | TBPHS    | TBPHS     | 0               | Clear Phase Register to 0  |
 | TBCTL    | CTRMODE   | TB_UP           |                            |
@@ -3660,7 +3676,7 @@ _____|‾‾|_________|‾‾|_________|‾‾|_________|‾‾|________________
 ## **Table 15-49. EPWM2 Initialization for [Figure](#page-88-0) 15-58**
 
 | Register | Bit       | Value           | Comments                   |
-|----------|-----------|-----------------|----------------------------|
+| -------- | --------- | --------------- | -------------------------- |
 | TBPRD    | TBPRD     | 1400 (578h)     | Period = 1401 TBCLK counts |
 | TBPHS    | TBPHS     | 0               | Clear Phase Register to 0  |
 | TBCTL    | CTRMODE   | TB_UP           |                            |
@@ -3677,7 +3693,7 @@ _____|‾‾|_________|‾‾|_________|‾‾|_________|‾‾|________________
 #### **Table 15-50. EPWM3 Initialization for [Figure](#page-88-0) 15-58**
 
 | Register | Bit       | Value           | Comments                  |
-|----------|-----------|-----------------|---------------------------|
+| -------- | --------- | --------------- | ------------------------- |
 | TBPRD    | TBPRD     | 800 (320h)      | Period = 801 TBCLK counts |
 | TBPHS    | TBPHS     | 0               | Clear Phase Register to 0 |
 | TBCTL    | CTRMODE   | TB_UP           |                           |
@@ -3691,7 +3707,7 @@ _____|‾‾|_________|‾‾|_________|‾‾|_________|‾‾|________________
 | AQCTLA   | PRD       | AQ_CLEAR        |                           |
 |          | CAU       | AQ_SET          |                           |
 
-#### *Example 15-12. Configuration for Example in [Figure](#page-88-0) 15-58*
+#### _Example 15-12. Configuration for Example in [Figure](#page-88-0) 15-58_
 
 ```
 // Run Time (Note: Example execution of one run-time instance)
@@ -3713,27 +3729,27 @@ CTR=0 CTR=CMPB X En Φ=0° SyncOut Phase reg Ext SyncIn (optional) EPWM1A EPWM1B
 
 ## **Table 15-51. EPWM1 Initialization for [Figure](#page-90-0) 15-59**
 
-| Register | Bit       | Value       | Comments                   |  |
-|----------|-----------|-------------|----------------------------|--|
-| TBPRD    | TBPRD     | 600 (258h)  | Period = 1200 TBCLK counts |  |
-| TBPHS    | TBPHS     | 0           | Clear Phase Register to 0  |  |
-| TBCTL    | CTRMODE   | TB_UPDOWN   |                            |  |
-|          | PHSEN     | TB_DISABLE  | Phase loading disabled     |  |
-|          | PRDLD     | TB_SHADOW   |                            |  |
-|          | SYNCOSEL  | TB_CTR_ZERO | Sync down-stream module    |  |
-| CMPCTL   | SHDWAMODE | CC_SHADOW   |                            |  |
-|          | SHDWBMODE | CC_SHADOW   |                            |  |
-|          | LOADAMODE | CC_CTR_ZERO | Load on CTR = 0            |  |
-|          | LOADBMODE | CC_CTR_ZERO | Load on CTR = 0            |  |
-| AQCTLA   | CAU       | AQ_SET      | Set actions for EPWM1A     |  |
-|          | CAD       | AQ_CLEAR    |                            |  |
-| AQCTLB   | CBU       | AQ_SET      | Set actions for EPWM1B     |  |
-|          | CBD       | AQ_CLEAR    |                            |  |
+| Register | Bit       | Value       | Comments                   |     |
+| -------- | --------- | ----------- | -------------------------- | --- |
+| TBPRD    | TBPRD     | 600 (258h)  | Period = 1200 TBCLK counts |     |
+| TBPHS    | TBPHS     | 0           | Clear Phase Register to 0  |     |
+| TBCTL    | CTRMODE   | TB_UPDOWN   |                            |     |
+|          | PHSEN     | TB_DISABLE  | Phase loading disabled     |     |
+|          | PRDLD     | TB_SHADOW   |                            |     |
+|          | SYNCOSEL  | TB_CTR_ZERO | Sync down-stream module    |     |
+| CMPCTL   | SHDWAMODE | CC_SHADOW   |                            |     |
+|          | SHDWBMODE | CC_SHADOW   |                            |     |
+|          | LOADAMODE | CC_CTR_ZERO | Load on CTR = 0            |     |
+|          | LOADBMODE | CC_CTR_ZERO | Load on CTR = 0            |     |
+| AQCTLA   | CAU       | AQ_SET      | Set actions for EPWM1A     |     |
+|          | CAD       | AQ_CLEAR    |                            |     |
+| AQCTLB   | CBU       | AQ_SET      | Set actions for EPWM1B     |     |
+|          | CBD       | AQ_CLEAR    |                            |     |
 
 #### **Table 15-52. EPWM2 Initialization for [Figure](#page-90-0) 15-59**
 
 | Register | Bit       | Value       | Comments                   |
-|----------|-----------|-------------|----------------------------|
+| -------- | --------- | ----------- | -------------------------- |
 | TBPRD    | TBPRD     | 600 (258h)  | Period = 1200 TBCLK counts |
 | TBPHS    | TBPHS     | 0           | Clear Phase Register to 0  |
 | TBCTL    | CTRMODE   | TB_UPDOWN   |                            |
@@ -3749,7 +3765,7 @@ CTR=0 CTR=CMPB X En Φ=0° SyncOut Phase reg Ext SyncIn (optional) EPWM1A EPWM1B
 | AQCTLB   | CBU       | AQ_SET      | Set actions for EPWM2B     |
 |          | CBD       | AQ_CLEAR    |                            |
 
-#### *Example 15-13. Code Snippet for Configuration in [Figure](#page-90-0) 15-59*
+#### _Example 15-13. Code Snippet for Configuration in [Figure](#page-90-0) 15-59_
 
 ```
 // Run Time (Note: Example execution of one run-time instance)
@@ -3815,43 +3831,43 @@ Pulse Center
 
 #### **Table 15-53. EPWM1 Initialization for [Figure](#page-93-0) 15-61**
 
-| Register | Bit       | Value       | Comments                   |  |
-|----------|-----------|-------------|----------------------------|--|
-| TBPRD    | TBPRD     | 600 (258h)  | Period = 1200 TBCLK counts |  |
-| TBPHS    | TBPHS     | 0           | Clear Phase Register to 0  |  |
-| TBCTL    | CTRMODE   | TB_UPDOWN   |                            |  |
-|          | PHSEN     | TB_DISABLE  | Phase loading disabled     |  |
-|          | PRDLD     | TB_SHADOW   |                            |  |
-|          | SYNCOSEL  | TB_CTR_ZERO | Sync down-stream module    |  |
-| CMPCTL   | SHDWAMODE | CC_SHADOW   |                            |  |
-|          | SHDWBMODE | CC_SHADOW   |                            |  |
-|          | LOADAMODE | CC_CTR_ZERO | Load on CTR = 0            |  |
-|          | LOADBMODE | CC_CTR_ZERO | Load on CTR = 0            |  |
-| AQCTLA   | ZRO       | AQ_SET      | Set actions for EPWM1A     |  |
-|          | CAU       | AQ_CLEAR    |                            |  |
-| AQCTLB   | ZRO       | AQ_CLEAR    | Set actions for EPWM1B     |  |
-|          | CAD       | AQ_SET      |                            |  |
+| Register | Bit       | Value       | Comments                   |     |
+| -------- | --------- | ----------- | -------------------------- | --- |
+| TBPRD    | TBPRD     | 600 (258h)  | Period = 1200 TBCLK counts |     |
+| TBPHS    | TBPHS     | 0           | Clear Phase Register to 0  |     |
+| TBCTL    | CTRMODE   | TB_UPDOWN   |                            |     |
+|          | PHSEN     | TB_DISABLE  | Phase loading disabled     |     |
+|          | PRDLD     | TB_SHADOW   |                            |     |
+|          | SYNCOSEL  | TB_CTR_ZERO | Sync down-stream module    |     |
+| CMPCTL   | SHDWAMODE | CC_SHADOW   |                            |     |
+|          | SHDWBMODE | CC_SHADOW   |                            |     |
+|          | LOADAMODE | CC_CTR_ZERO | Load on CTR = 0            |     |
+|          | LOADBMODE | CC_CTR_ZERO | Load on CTR = 0            |     |
+| AQCTLA   | ZRO       | AQ_SET      | Set actions for EPWM1A     |     |
+|          | CAU       | AQ_CLEAR    |                            |     |
+| AQCTLB   | ZRO       | AQ_CLEAR    | Set actions for EPWM1B     |     |
+|          | CAD       | AQ_SET      |                            |     |
 
 #### **Table 15-54. EPWM2 Initialization for [Figure](#page-93-0) 15-61**
 
-| Register | Bit       | Value       | Comments                   |  |
-|----------|-----------|-------------|----------------------------|--|
-| TBPRD    | TBPRD     | 600 (258h)  | Period = 1200 TBCLK counts |  |
-| TBPHS    | TBPHS     | 0           | Clear Phase Register to 0  |  |
-| TBCTL    | CTRMODE   | TB_UPDOWN   |                            |  |
-|          | PHSEN     | TB_ENABLE   | Phase loading enabled      |  |
-|          | PRDLD     | TB_SHADOW   |                            |  |
-|          | SYNCOSEL  | TB_SYNC_IN  | Sync flow-through          |  |
-| CMPCTL   | SHDWAMODE | CC_SHADOW   |                            |  |
-|          | SHDWBMODE | CC_SHADOW   |                            |  |
-|          | LOADAMODE | CC_CTR_ZERO | Load on CTR = 0            |  |
-|          | LOADBMODE | CC_CTR_ZERO | Load on CTR = 0            |  |
-| AQCTLA   | ZRO       | AQ_SET      | Set actions for EPWM2A     |  |
-|          | CAU       | AQ_CLEAR    |                            |  |
-| AQCTLB   | ZRO       | AQ_CLEAR    | Set actions for EPWM2B     |  |
-|          | CAD       | AQ_SET      |                            |  |
+| Register | Bit       | Value       | Comments                   |     |
+| -------- | --------- | ----------- | -------------------------- | --- |
+| TBPRD    | TBPRD     | 600 (258h)  | Period = 1200 TBCLK counts |     |
+| TBPHS    | TBPHS     | 0           | Clear Phase Register to 0  |     |
+| TBCTL    | CTRMODE   | TB_UPDOWN   |                            |     |
+|          | PHSEN     | TB_ENABLE   | Phase loading enabled      |     |
+|          | PRDLD     | TB_SHADOW   |                            |     |
+|          | SYNCOSEL  | TB_SYNC_IN  | Sync flow-through          |     |
+| CMPCTL   | SHDWAMODE | CC_SHADOW   |                            |     |
+|          | SHDWBMODE | CC_SHADOW   |                            |     |
+|          | LOADAMODE | CC_CTR_ZERO | Load on CTR = 0            |     |
+|          | LOADBMODE | CC_CTR_ZERO | Load on CTR = 0            |     |
+| AQCTLA   | ZRO       | AQ_SET      | Set actions for EPWM2A     |     |
+|          | CAU       | AQ_CLEAR    |                            |     |
+| AQCTLB   | ZRO       | AQ_CLEAR    | Set actions for EPWM2B     |     |
+|          | CAD       | AQ_SET      |                            |     |
 
-#### *Example 15-14. Code Snippet for Configuration in [Figure](#page-93-0) 15-61*
+#### _Example 15-14. Code Snippet for Configuration in [Figure](#page-93-0) 15-61_
 
 ```
 // Run Time (Note: Example execution of one run-time instance)
@@ -3921,10 +3937,11 @@ EPWM3B:    ‾‾‾‾|_____|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾�
 
 (Values labeled on EPWM3 triangle: 700 and 700)
 ```
+
 #### **Table 15-55. EPWM1 Initialization for [Figure](#page-96-0) 15-63**
 
 | Register | Bit       | Value          | Comments                   |
-|----------|-----------|----------------|----------------------------|
+| -------- | --------- | -------------- | -------------------------- |
 | TBPRD    | TBPRD     | 800 (320h)     | Period = 1600 TBCLK counts |
 | TBPHS    | TBPHS     | 0              | Clear Phase Register to 0  |
 | TBCTL    | CTRMODE   | TB_UPDOWN      |                            |
@@ -3945,7 +3962,7 @@ EPWM3B:    ‾‾‾‾|_____|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾�
 #### **Table 15-56. EPWM2 Initialization for [Figure](#page-96-0) 15-63**
 
 | Register | Bit       | Value          | Comments                   |
-|----------|-----------|----------------|----------------------------|
+| -------- | --------- | -------------- | -------------------------- |
 | TBPRD    | TBPRD     | 800 (320h)     | Period = 1600 TBCLK counts |
 | TBPHS    | TBPHS     | 0              | Clear Phase Register to 0  |
 | TBCTL    | CTRMODE   | TB_UPDOWN      |                            |
@@ -3966,7 +3983,7 @@ EPWM3B:    ‾‾‾‾|_____|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾�
 #### **Table 15-57. EPWM3 Initialization for [Figure](#page-96-0) 15-63**
 
 | Register | Bit       | Value          | Comments                   |
-|----------|-----------|----------------|----------------------------|
+| -------- | --------- | -------------- | -------------------------- |
 | TBPRD    | TBPRD     | 800 (320h)     | Period = 1600 TBCLK counts |
 | TBPHS    | TBPHS     | 0              | Clear Phase Register to 0  |
 | TBCTL    | CTRMODE   | TB_UPDOWN      |                            |
@@ -3984,7 +4001,7 @@ EPWM3B:    ‾‾‾‾|_____|‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾�
 | DBFED    | DBFED     | 50             | FED = 50 TBCLKs            |
 |          | DBRED     | 50             | RED = 50 TBCLKs            |
 
-## *Example 15-15. Code Snippet for Configuration in [Figure](#page-96-0) 15-63*
+## _Example 15-15. Code Snippet for Configuration in [Figure](#page-96-0) 15-63_
 
 ```
 // Run Time (Note: Example execution of one run-time instance)
@@ -4078,7 +4095,7 @@ CTR=0 CTR=CMPB X En SyncOut Phase reg Ext SyncIn (optional) EPWM1A EPWM1B SyncOu
 ### **Table 15-58. EPWM1 Initialization for [Figure](#page-1-0) 15-67**
 
 | Register | Bit       | Value          | Comments                  |
-|----------|-----------|----------------|---------------------------|
+| -------- | --------- | -------------- | ------------------------- |
 | TBPRD    | TBPRD     | 450 (1C2h)     | Period = 900 TBCLK counts |
 | TBPHS    | TBPHS     | 0              | Clear Phase Register to 0 |
 | TBCTL    | CTRMODE   | TB_UPDOWN      |                           |
@@ -4099,7 +4116,7 @@ CTR=0 CTR=CMPB X En SyncOut Phase reg Ext SyncIn (optional) EPWM1A EPWM1B SyncOu
 ### **Table 15-59. EPWM2 Initialization for [Figure](#page-1-0) 15-67**
 
 | Register | Bit       | Value          | Comments                       |
-|----------|-----------|----------------|--------------------------------|
+| -------- | --------- | -------------- | ------------------------------ |
 | TBPRD    | TBPRD     | 450 (1C2h)     | Period = 900 TBCLK counts      |
 | TBPHS    | TBPHS     | 300            | Phase = (300/900) × 360 = 120° |
 | TBCTL    | CTRMODE   | TB_UPDOWN      |                                |
@@ -4121,7 +4138,7 @@ CTR=0 CTR=CMPB X En SyncOut Phase reg Ext SyncIn (optional) EPWM1A EPWM1B SyncOu
 ### **Table 15-60. EPWM3 Initialization for [Figure](#page-1-0) 15-67**
 
 | Register | Bit       | Value          | Comments                       |
-|----------|-----------|----------------|--------------------------------|
+| -------- | --------- | -------------- | ------------------------------ |
 | TBPRD    | TBPRD     | 450 (1C2h)     | Period = 900 TBCLK counts      |
 | TBPHS    | TBPHS     | 300            | Phase = (300/900) × 360 = 120° |
 | TBCTL    | CTRMODE   | TB_UPDOWN      |                                |
@@ -4140,7 +4157,7 @@ CTR=0 CTR=CMPB X En SyncOut Phase reg Ext SyncIn (optional) EPWM1A EPWM1B SyncOu
 | DBFED    | DBFED     | 20             | FED = 20 TBCLKs                |
 |          | DBRED     | 20             | RED = 20 TBCLKs                |
 
-*Example 15-16. Code Snippet for Configuration in [Figure](#page-1-0) 15-67*
+_Example 15-16. Code Snippet for Configuration in [Figure](#page-1-0) 15-67_
 
 ```
 // Run Time (Note: Example execution of one run-time instance)
@@ -4152,7 +4169,7 @@ EPwm3Regs.CMPA.half.CMPA = 285; // adjust duty for output EPWM3A
 
 #### **15.2.3.9 Controlling Zero Voltage Switched Full Bridge (ZVSFB) Converter**
 
-The example given in [Figure](#page-5-0) 15-69 assumes a static or constant phase relationship between legs (modules). In such a case, control is achieved by modulating the duty cycle. It is also possible to dynamically change the phase value on a cycle-by-cycle basis. This feature lends itself to controlling a class of power topologies known as *phase-shifted full bridge*, or *zero voltage switched full bridge.* Here the controlled parameter is not duty cycle (this is kept constant at approximately 50 percent); instead it is the phase relationship between legs. Such a system can be implemented by allocating the resources of two PWM modules to control a single power stage, which in turn requires control of four switching elements. [Figure](#page-6-0) 15-70 shows a master/slave module combination synchronized together to control a full H-bridge. In this case, both master and slave modules are required to switch at the same PWM frequency. The phase is controlled by using the slave's phase register (TBPHS). The master's phase register is not used and therefore can be initialized to zero.
+The example given in [Figure](#page-5-0) 15-69 assumes a static or constant phase relationship between legs (modules). In such a case, control is achieved by modulating the duty cycle. It is also possible to dynamically change the phase value on a cycle-by-cycle basis. This feature lends itself to controlling a class of power topologies known as _phase-shifted full bridge_, or _zero voltage switched full bridge._ Here the controlled parameter is not duty cycle (this is kept constant at approximately 50 percent); instead it is the phase relationship between legs. Such a system can be implemented by allocating the resources of two PWM modules to control a single power stage, which in turn requires control of four switching elements. [Figure](#page-6-0) 15-70 shows a master/slave module combination synchronized together to control a full H-bridge. In this case, both master and slave modules are required to switch at the same PWM frequency. The phase is controlled by using the slave's phase register (TBPHS). The master's phase register is not used and therefore can be initialized to zero.
 
 **Figure 15-69. Controlling a Full-H Bridge Stage (FPWM2 = FPWM1)**
 
@@ -4163,7 +4180,7 @@ Power phase EPWM1A EPWM1B RED 300 Φ2=variable TBPHS =(1200−Φ2) EPWM2A RED EP
 ### **Table 15-61. EPWM1 Initialization for [Figure](#page-5-0) 15-69**
 
 | Register | Bit       | Value          | Comments                   |
-|----------|-----------|----------------|----------------------------|
+| -------- | --------- | -------------- | -------------------------- |
 | TBPRD    | TBPRD     | 1200 (4B0h)    | Period = 1201 TBCLK counts |
 | TBPHS    | TBPHS     | 0              | Clear Phase Register to 0  |
 | TBCTL    | CTRMODE   | TB_UP          |                            |
@@ -4185,7 +4202,7 @@ Power phase EPWM1A EPWM1B RED 300 Φ2=variable TBPHS =(1200−Φ2) EPWM2A RED EP
 #### **Table 15-62. EPWM2 Initialization for [Figure](#page-5-0) 15-69**
 
 | Register | Bit       | Value          | Comments                   |
-|----------|-----------|----------------|----------------------------|
+| -------- | --------- | -------------- | -------------------------- |
 | TBPRD    | TBPRD     | 1200 (4B0h)    | Period = 1201 TBCLK counts |
 | TBPHS    | TBPHS     | 0              | Clear Phase Register to 0  |
 | TBCTL    | CTRMODE   | TB_UP          |                            |
@@ -4205,7 +4222,7 @@ Power phase EPWM1A EPWM1B RED 300 Φ2=variable TBPHS =(1200−Φ2) EPWM2A RED EP
 |          | DBRED     | 40             | RED = 40 TBCLKs            |
 |          |           |                |                            |
 
-### *Example 15-17. Code Snippet for Configuration in [Figure](#page-5-0) 15-69*
+### _Example 15-17. Code Snippet for Configuration in [Figure](#page-5-0) 15-69_
 
 ```
 // Run Time (Note: Example execution of one run-time instance)
@@ -4216,18 +4233,18 @@ EPwm1Regs.DBRED = RED1_NewValue; // Update ZVS transition interval
 EPwm2Regs.DBFED = FED2_NewValue; // Update ZVS transition interval
 ```
 
-### *Example 15-17. Code Snippet for Configuration in [Figure](#page-5-0) 15-69 (continued)*
+### _Example 15-17. Code Snippet for Configuration in [Figure](#page-5-0) 15-69 (continued)_
 
-EPwm2Regs.DBRED = RED2\_NewValue; // Update ZVS transition interval
+EPwm2Regs.DBRED = RED2_NewValue; // Update ZVS transition interval
 
-### *15.2.4 EPWM Registers*
+### _15.2.4 EPWM Registers_
 
 Table [15-63](#page-8-0) lists the memory-mapped registers for the EPWM. All register offset addresses not listed in Table [15-63](#page-8-0) should be considered as reserved locations and the register contents should not be modified.
 
 ## **Table 15-63. EPWM Registers**
 
 | Offset | Acronym | Register Name                                              | Section           |
-|--------|---------|------------------------------------------------------------|-------------------|
+| ------ | ------- | ---------------------------------------------------------- | ----------------- |
 | 0h     | TBCTL   | Time-Base Control Register                                 | Section 15.2.4.1  |
 | 2h     | TBSTS   | Time-Base Status Register                                  | Section 15.2.4.2  |
 | 4h     | TBPHSHR | Extension for HRPWM Phase Register                         | Section 15.2.4.3  |
@@ -4265,30 +4282,30 @@ TBCTL is shown in [Figure](#page-9-1) 15-71 and described in Table [15-64.](#pag
 
 #### **Figure 15-71. TBCTL Register**
 
-| 15        | 14        | 13       | 12 | 11     | 10     | 9         | 8 |
-|-----------|-----------|----------|----|--------|--------|-----------|---|
-|           | FREE_SOFT | PHSDIR   |    | CLKDIV |        | HSPCLKDIV |   |
-|           | R/W-0h    | R/W-0h   |    | R/W-0h |        | R/W-0h    |   |
-| 7         | 6         | 5        | 4  | 3      | 2      | 1         | 0 |
-| HSPCLKDIV | SWFSYNC   | SYNCOSEL |    | PRDLD  | PHSEN  | CTRMODE   |   |
-| R/W-0h    | R/W-0h    | R/W-0h   |    | R/W-0h | R/W-0h | R/W-0h    |   |
+| 15        | 14        | 13       | 12  | 11     | 10     | 9         | 8   |
+| --------- | --------- | -------- | --- | ------ | ------ | --------- | --- |
+|           | FREE_SOFT | PHSDIR   |     | CLKDIV |        | HSPCLKDIV |     |
+|           | R/W-0h    | R/W-0h   |     | R/W-0h |        | R/W-0h    |     |
+| 7         | 6         | 5        | 4   | 3      | 2      | 1         | 0   |
+| HSPCLKDIV | SWFSYNC   | SYNCOSEL |     | PRDLD  | PHSEN  | CTRMODE   |     |
+| R/W-0h    | R/W-0h    | R/W-0h   |     | R/W-0h | R/W-0h | R/W-0h    |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-64. TBCTL Register Field Descriptions**
 
 | Bit   | Field     | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-|-------|-----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | --------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-14 | FREE_SOFT | R/W  | 0h    | Emulation Mode Bits.<br>These bits select the behavior of the ePWM time-base counter<br>during emulation suspend events.<br>Emulation debug events can be set up in the Debug Subsystem.<br>0h (R/W) = Stop after the next time-base counter increment or<br>decrement<br>1h (R/W) = Stop when counter completes a whole cycle. (a) Up<br>count mode - stop when the time-base counter = period (TBCNT =<br>TBPRD). (b) Down-count mode - stop when the time-base counter =<br>0000 (TBCNT = 0000h). (c) Up-down-count mode - stop when the<br>time-base counter = 0000 (TBCNT = 0000h).       |
 |       |           |      |       | 2h (R/W) = Free run<br>3h (R/W) = Free run                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | 13    | PHSDIR    | R/W  | 0h    | Phase Direction Bit.<br>This bit is only used when the time-base counter is configured in the<br>up-down-count mode.<br>The PHSDIR bit indicates the direction the time-base counter<br>(TBCNT) will count after a synchronization event occurs and a new<br>phase value is loaded from the phase (TBPHS) register.<br>This is irrespective of the direction of the counter before the<br>synchronization event<br>In the up-count and down-count modes this bit is ignored.<br>0h (R/W) = Count down after the synchronization event.<br>1h (R/W) = Count up after the synchronization event. |
-| 12-10 | CLKDIV    | R/W  | 0h    | Time-base Clock Prescale Bits.<br>These bits determine part of the time-base clock prescale value.<br>TBCLK = SYSCLKOUT/(HSPCLKDIV * CLKDIV)<br>0h (R/W) = /1 (default on reset)<br>1h (R/W) = /2<br>2h (R/W) = /4<br>3h (R/W) = /8<br>4h (R/W) = /16<br>5h (R/W) = /32<br>6h (R/W) = /64<br>7h (R/W) = /128                                                                                                                                                                                                                                                                                   |
+| 12-10 | CLKDIV    | R/W  | 0h    | Time-base Clock Prescale Bits.<br>These bits determine part of the time-base clock prescale value.<br>TBCLK = SYSCLKOUT/(HSPCLKDIV \* CLKDIV)<br>0h (R/W) = /1 (default on reset)<br>1h (R/W) = /2<br>2h (R/W) = /4<br>3h (R/W) = /8<br>4h (R/W) = /16<br>5h (R/W) = /32<br>6h (R/W) = /64<br>7h (R/W) = /128                                                                                                                                                                                                                                                                                  |
 
 **Table 15-64. TBCTL Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-|-----|-----------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 9-7 | HSPCLKDIV | R/W  | 0h    | High-Speed Time-base Clock Prescale Bits.<br>These bits determine part of the time-base clock prescale value.<br>TBCLK = SYSCLKOUT/(HSPCLKDIV * CLKDIV).<br>This divisor emulates the HSPCLK in the TMS320x281x system as<br>used on the Event Manager (EV) peripheral.<br>0h (R/W) = /1<br>1h (R/W) = /2 (default on reset)<br>2h (R/W) = /4<br>3h (R/W) = /6<br>4h (R/W) = /8<br>5h (R/W) = /10<br>6h (R/W) = /12<br>7h (R/W) = /14                                                                                                                    |
+| --- | --------- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 9-7 | HSPCLKDIV | R/W  | 0h    | High-Speed Time-base Clock Prescale Bits.<br>These bits determine part of the time-base clock prescale value.<br>TBCLK = SYSCLKOUT/(HSPCLKDIV \* CLKDIV).<br>This divisor emulates the HSPCLK in the TMS320x281x system as<br>used on the Event Manager (EV) peripheral.<br>0h (R/W) = /1<br>1h (R/W) = /2 (default on reset)<br>2h (R/W) = /4<br>3h (R/W) = /6<br>4h (R/W) = /8<br>5h (R/W) = /10<br>6h (R/W) = /12<br>7h (R/W) = /14                                                                                                                   |
 | 6   | SWFSYNC   | R/W  | 0h    | Software Forced Synchronization Pulse.<br>0h (R/W) = Writing a 0 has no effect and reads always return a 0.<br>1h (R/W) = Writing a 1 forces a one-time synchronization pulse to be<br>generated. This event is ORed with the EPWMxSYNCI input of the<br>ePWM module. SWFSYNC is valid (operates) only when<br>EPWMxSYNCI is selected by SYNCOSEL = 00.                                                                                                                                                                                                  |
 | 5-4 | SYNCOSEL  | R/W  | 0h    | Synchronization Output Select.<br>These bits select the source of the EPWMxSYNCO signal.<br>0h (R/W) = EPWMxSYNC:<br>1h (R/W) = CTR = 0 - Time-base counter equal to zero (TBCNT =<br>0000h)<br>2h (R/W) = CTR = CMPB - Time-base counter equal to counter<br>compare B (TBCNT = CMPB)<br>3h (R/W) = Disable EPWMxSYNCO signal                                                                                                                                                                                                                           |
 | 3   | PRDLD     | R/W  | 0h    | Active Period Register Load From Shadow Register Select<br>0h (R/W) = The period register (TBPRD) is loaded from its shadow<br>register when the time-base counter, TBCNT, is equal to zero. A<br>write or read to the TBPRD register accesses the shadow register.<br>1h (R/W) = Load the TBPRD register immediately without using a<br>shadow register. A write or read to the TBPRD register directly<br>accesses the active register.                                                                                                                |
@@ -4301,12 +4318,12 @@ TBSTS is shown in [Figure](#page-11-1) 15-72 and described in Table [15-65](#pag
 
 ### **Figure 15-72. TBSTS Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-65. TBSTS Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                    |
-|------|----------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-3 | RESERVED | R    | 0h    |                                                                                                                                                                                                                |
 | 2    | CTRMAX   |      | 0h    | Time-Base Counter Max Latched Status Bit.                                                                                                                                                                      |
 |      |          |      |       | 0h (R/W) = Reading a 0 indicates the time-base counter never<br>reached its maximum value. Writing a 0 will have no effect.                                                                                    |
@@ -4324,20 +4341,20 @@ TBPHSHR is shown in [Figure](#page-12-1) 15-73 and described in Table [15-66.](#
 
 **Figure 15-73. TBPHSHR Register**
 
-| 15     | 14       | 13 | 12   | 11 | 10 | 9 | 8 |  |  |  |
-|--------|----------|----|------|----|----|---|---|--|--|--|
-| TBPHSH |          |    |      |    |    |   |   |  |  |  |
-|        | R/W-0h   |    |      |    |    |   |   |  |  |  |
-| 7      | 6        | 5  | 4    | 3  | 2  | 1 | 0 |  |  |  |
-|        | RESERVED |    |      |    |    |   |   |  |  |  |
-|        |          |    | R-0h |    |    |   |   |  |  |  |
+| 15     | 14       | 13  | 12   | 11  | 10  | 9   | 8   |     |     |     |
+| ------ | -------- | --- | ---- | --- | --- | --- | --- | --- | --- | --- |
+| TBPHSH |          |     |      |     |     |     |     |     |     |     |
+|        | R/W-0h   |     |      |     |     |     |     |     |     |     |
+| 7      | 6        | 5   | 4    | 3   | 2   | 1   | 0   |     |     |     |
+|        | RESERVED |     |      |     |     |     |     |     |     |     |
+|        |          |     | R-0h |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-66. TBPHSHR Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                          |
-|------|----------|------|-------|--------------------------------------|
+| ---- | -------- | ---- | ----- | ------------------------------------ |
 | 15-8 | TBPHSH   | R/W  | 0h    | Time-base phase high-resolution bits |
 | 7-0  | RESERVED | R    | 0h    |                                      |
 
@@ -4349,12 +4366,12 @@ This register is only available on ePWM instances that include the high-resoluti
 
 **Figure 15-74. TBPHS Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-67. TBPHS Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-|------|-------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 15-0 | TBPHS | R/W  | 0h    | These bits set time-base counter phase of the selected ePWM<br>relative to the time-base that is supplying the synchronization input<br>signal.<br>(a) If TBCTL[PHSEN] = 0, then the synchronization event is ignored<br>and the time-base counter is not loaded with the phase.<br>(b) If TBCTL[PHSEN] = 1, then the time-base counter (TBCNT) will<br>be loaded with the phase (TBPHS) when a synchronization event<br>occurs.<br>The synchronization event can be initiated by the input<br>synchronization signal (EPWMxSYNCI) or by a software forced<br>synchronization. |
 
 #### **15.2.4.5 TBCNT Register (offset = 8h) [reset = 0h]**
@@ -4363,12 +4380,12 @@ TBCNT is shown in [Figure](#page-14-1) 15-75 and described in Table [15-68](#pag
 
 ### **Figure 15-75. TBCNT Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 15-68. TBCNT Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                                                                                                                                                                                                              |
-|------|-------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-0 | TBCNT | R/W  | 0h    | Reading these bits gives the current time-base counter value.<br>Writing to these bits sets the current time-base counter value.<br>The update happens as soon as the write occurs.<br>The write is NOT synchronized to the time-base clock (TBCLK) and<br>the register is not shadowed. |
 
 #### **15.2.4.6 TBPRD Register (offset = Ah) [reset = 0h]**
@@ -4377,12 +4394,12 @@ TBPRD is shown in [Figure](#page-15-1) 15-76 and described in Table [15-69.](#pa
 
 ### **Figure 15-76. TBPRD Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-69. TBPRD Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-|------|-------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-0 | TBPRD | R/W  | 0h    | These bits determine the period of the time-base counter.<br>This sets the PWM frequency.<br>Shadowing of this register is enabled and disabled by the<br>TBCTL[PRDLD] bit.<br>By default this register is shadowed.<br>(a) If TBCTL[PRDLD] = 0, then the shadow is enabled and any write<br>or read will automatically go to the shadow register.<br>In this case, the active register will be loaded from the shadow<br>register when the time-base counter equals zero.<br>(b) If TBCTL[PRDLD] = 1, then the shadow is disabled and any write<br>or read will go directly to the active register, that is the register<br>actively controlling the hardware.<br>(c) The active and shadow registers share the same memory map<br>address. |
 
 #### **15.2.4.7 CMPCTL Register (offset = Eh) [reset = 0h]**
@@ -4391,12 +4408,12 @@ CMPCTL is shown in [Figure](#page-16-1) 15-77 and described in Table [15-70](#pa
 
 ## **Figure 15-77. CMPCTL Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-70. CMPCTL Register Field Descriptions**
 
 | Bit   | Field     | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-|-------|-----------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | --------- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-10 | RESERVED  | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | 9     | SHDWBFULL | R    | 0h    | Counter-compare B (CMPB) Shadow Register Full Status Flag.<br>This bit self clears once a load-strobe occurs.<br>0h (R/W) = CMPB shadow FIFO not full yet<br>1h (R/W) = Indicates the CMPB shadow FIFO is full. A CPU write<br>will overwrite current shadow value.                                                                                                                                                                                      |
 | 8     | SHDWAFULL | R    | 0h    | Counter-compare A (CMPA) Shadow Register Full Status Flag.<br>The flag bit is set when a 32 bit write to CMPA:CMPAHR register or<br>a 16 bit write to CMPA register is made.<br>A 16 bit write to CMPAHR register will not affect the flag.<br>This bit self clears once a load-strobe occurs.<br>0h (R/W) = CMPA shadow FIFO not full yet<br>1h (R/W) = Indicates the CMPA shadow FIFO is full, a CPU write will<br>overwrite the current shadow value. |
@@ -4409,7 +4426,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 ### **Table 15-70. CMPCTL Register Field Descriptions (continued)**
 
 | Bit | Field     | Type | Reset | Description                                                                                                                              |
-|-----|-----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | --------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | 1-0 | LOADAMODE | R/W  | 0h    | Active Counter-Compare A (CMPA) Load From Shadow Select<br>Mode.<br>This bit has no effect in immediate mode (CMPCTL[SHDWAMODE]<br>= 1). |
 |     |           |      |       | 0h (R/W) = Load on CTR = 0 - Time-base counter equal to zero<br>(TBCNT = 0000h)                                                          |
 |     |           |      |       | 1h (R/W) = Load on CTR = PRD - Time-base counter equal to period<br>(TBCNT = TBPRD)                                                      |
@@ -4424,20 +4441,20 @@ This register is only available on ePWM instances that include the high-resoluti
 
 **Figure 15-78. CMPAHR Register**
 
-| 15 | 14       | 13                         | 12 | 11 | 10 | 9 | 8 |  |  |
-|----|----------|----------------------------|----|----|----|---|---|--|--|
-|    | CMPAHR   |                            |    |    |    |   |   |  |  |
-|    | R/W-1h   |                            |    |    |    |   |   |  |  |
-| 7  | 6        | 5<br>4<br>3<br>2<br>1<br>0 |    |    |    |   |   |  |  |
-|    | RESERVED |                            |    |    |    |   |   |  |  |
-|    | R-0h     |                            |    |    |    |   |   |  |  |
+| 15  | 14       | 13                         | 12  | 11  | 10  | 9   | 8   |     |     |
+| --- | -------- | -------------------------- | --- | --- | --- | --- | --- | --- | --- |
+|     | CMPAHR   |                            |     |     |     |     |     |     |     |
+|     | R/W-1h   |                            |     |     |     |     |     |     |     |
+| 7   | 6        | 5<br>4<br>3<br>2<br>1<br>0 |     |     |     |     |     |     |     |
+|     | RESERVED |                            |     |     |     |     |     |     |     |
+|     | R-0h     |                            |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-71. CMPAHR Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                               |
-|------|----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-8 | CMPAHR   | R/W  | 1h    | Compare A High-Resolution register bits for MEP step control.<br>A minimum value of 1h is needed to enable HRPWM capabilities.<br>Valid MEP range of operation<br>1-255h. |
 | 7-0  | RESERVED | R    | 0h    |                                                                                                                                                                           |
 
@@ -4447,12 +4464,12 @@ CMPA is shown in [Figure](#page-19-1) 15-79 and described in Table [15-72.](#pag
 
 ### **Figure 15-79. CMPA Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 15-72. CMPA Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-|------|-------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-0 | CMPA  | R/W  | 0h    | The value in the active CMPA register is continuously compared to<br>the time-base counter (TBCNT).<br>When the values are equal, the counter-compare module generates<br>a "time-base counter equal to counter compare A" event.<br>This event is sent to the action-qualifier where it is qualified and<br>converted it into one or more actions.<br>These actions can be applied to either the EPWMxA or the<br>EPWMxB output depending on the configuration of the AQCTLA and<br>AQCTLB registers.<br>The actions that can be defined in the AQCTLA and AQCTLB<br>registers include the following.<br>(a) Do nothing the event is ignored.<br>(b) Clear - Pull the EPWMxA and/or EPWMxB signal low.<br>(c) Set - Pull the EPWMxA and/or EPWMxB signal high.<br>(d) Toggle the EPWMxA and/or EPWMxB signal.<br>Shadowing of this register is enabled and disabled by the<br>CMPCTL[SHDWAMODE] bit.<br>By default this register is shadowed.<br>(a) If CMPCTL[SHDWAMODE] = 0, then the shadow is enabled and<br>any write or read will automatically go to the shadow register.<br>In this case, the CMPCTL[LOADAMODE] bit field determines which<br>event will load the active register from the shadow register.<br>(b) Before a write, the CMPCTL[SHDWAFULL] bit can be read to<br>determine if the shadow register is currently full.<br>(c) If CMPCTL[SHDWAMODE] = 1, then the shadow register is<br>disabled and any write or read will go directly to the active register,<br>that is the register actively controlling the hardware.<br>(d) In either mode, the active and shadow registers share the same<br>memory map address. |
 
 #### **15.2.4.10 CMPB Register (offset = 14h) [reset = 0h]**
@@ -4461,17 +4478,17 @@ CMPB is shown in [Figure](#page-20-1) 15-80 and described in Table [15-73.](#pag
 
 ### **Figure 15-80. CMPB Register**
 
-| 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8      | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|----|----|----|----|----|---|--------|---|---|---|---|---|---|---|---|
-|    |    |    |    |    |    |   | CMPB   |   |   |   |   |   |   |   |   |
-|    |    |    |    |    |    |   | R/W-0h |   |   |   |   |   |   |   |   |
+| 15  | 14  | 13  | 12  | 11  | 10  | 9   | 8      | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- |
+|     |     |     |     |     |     |     | CMPB   |     |     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 15-73. CMPB Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-|------|-------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-0 | CMPB  | R/W  | 0h    | The value in the active CMPB register is continuously compared to<br>the time-base counter (TBCNT).<br>When the values are equal, the counter-compare module generates<br>a "time-base counter equal to counter compare B" event.<br>This event is sent to the action-qualifier where it is qualified and<br>converted it into one or more actions.<br>These actions can be applied to either the EPWMxA or the<br>EPWMxB output depending on the configuration of the AQCTLA and<br>AQCTLB registers.<br>The actions that can be defined in the AQCTLA and AQCTLB<br>registers include the following.<br>(a) Do nothing, the event is ignored.<br>(b) Clear - Pull the EPWMxA and/or EPWMxB signal low.<br>(c) Set - Pull the EPWMxA and/or EPWMxB signal high.<br>(d) Toggle the EPWMxA and/or EPWMxB signal.<br>Shadowing of this register is enabled and disabled by the<br>CMPCTL[SHDWBMODE] bit.<br>By default this register is shadowed.<br>(a) If CMPCTL[SHDWBMODE] = 0, then the shadow is enabled and<br>any write or read will automatically go to the shadow register.<br>In this case, the CMPCTL[LOADBMODE] bit field determines which<br>event will load the active register from the shadow register: (b)<br>Before a write, the CMPCTL[SHDWBFULL] bit can be read to<br>determine if the shadow register is currently full.<br>(c) If CMPCTL[SHDWBMODE] = 1, then the shadow register is<br>disabled and any write or read will go directly to the active register,<br>that is the register actively controlling the hardware.<br>(d) In either mode, the active and shadow registers share the same<br>memory map address. |
 
 #### **15.2.4.11 AQCTLA Register (offset = 16h) [reset = 0h]**
@@ -4480,20 +4497,20 @@ AQCTLA is shown in [Figure](#page-21-1) 15-81 and described in Table [15-74](#pa
 
 ## **Figure 15-81. AQCTLA Register**
 
-| 15 | 14       | 13 | 12     | 11     | 10 | 9      | 8 |
-|----|----------|----|--------|--------|----|--------|---|
-|    | RESERVED |    |        | CBD    |    | CBU    |   |
-|    | R-0h     |    |        | R/W-0h |    | R/W-0h |   |
-| 7  | 6        | 5  | 4      |        | 2  | 1      | 0 |
-|    | CAD      |    | CAU    | PRD    |    | ZRO    |   |
-|    | R/W-0h   |    | R/W-0h | R/W-0h |    | R/W-0h |   |
+| 15  | 14       | 13  | 12     | 11     | 10  | 9      | 8   |
+| --- | -------- | --- | ------ | ------ | --- | ------ | --- |
+|     | RESERVED |     |        | CBD    |     | CBU    |     |
+|     | R-0h     |     |        | R/W-0h |     | R/W-0h |     |
+| 7   | 6        | 5   | 4      |        | 2   | 1      | 0   |
+|     | CAD      |     | CAU    | PRD    |     | ZRO    |     |
+|     | R/W-0h   |     | R/W-0h | R/W-0h |     | R/W-0h |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-74. AQCTLA Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                             |
-|-------|----------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-12 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | 11-10 | CBD      | R/W  | 0h    | Action when the time-base counter equals the active CMPB register<br>and the counter is decrementing.<br>0h (R/W) = Do nothing (action disabled)<br>1h (R/W) = Clear - force EPWMxA output low.<br>2h (R/W) = Set - force EPWMxA output high.<br>3h (R/W) = Toggle EPWMxA output - low output signal will be forced<br>high, and a high signal will be forced low.                                                                      |
 | 9-8   | CBU      | R/W  | 0h    | Action when the counter equals the active CMPB register and the<br>counter is incrementing.<br>0h (R/W) = Do nothing (action disabled)<br>1h (R/W) = Clear - force EPWMxA output low.<br>2h (R/W) = Set - force EPWMxA output high.<br>3h (R/W) = Toggle EPWMxA output - low output signal will be forced<br>high, and a high signal will be forced low.                                                                                |
@@ -4504,7 +4521,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 15-74. AQCTLA Register Field Descriptions (continued)**
 
 | Bit | Field | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                            |
-|-----|-------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | ----- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1-0 | ZRO   | R/W  | 0h    | Action when counter equals zero.<br>Note: By definition, in count up-down mode when the counter equals<br>0 the direction is defined as 1 or counting up.<br>0h (R/W) = Do nothing (action disabled)<br>1h (R/W) = Clear - force EPWMxA output low.<br>2h (R/W) = Set - force EPWMxA output high.<br>3h (R/W) = Toggle EPWMxA output - low output signal will be forced<br>high, and a high signal will be forced low. |
 
 #### **15.2.4.12 AQCTLB Register (offset = 18h) [reset = 0h]**
@@ -4513,20 +4530,20 @@ AQCTLB is shown in [Figure](#page-23-1) 15-82 and described in Table [15-75](#pa
 
 ### **Figure 15-82. AQCTLB Register**
 
-| 15 | 14       | 13 | 12     | 11     | 10 | 9      | 8 |
-|----|----------|----|--------|--------|----|--------|---|
-|    | RESERVED |    |        | CBD    |    | CBU    |   |
-|    | R-0h     |    |        | R/W-0h |    | R/W-0h |   |
-| 7  | 6        | 5  | 4      | 3      | 2  | 1      | 0 |
-|    | CAD      |    | CAU    | PRD    |    | ZRO    |   |
-|    | R/W-0h   |    | R/W-0h | R/W-0h |    | R/W-0h |   |
+| 15  | 14       | 13  | 12     | 11     | 10  | 9      | 8   |
+| --- | -------- | --- | ------ | ------ | --- | ------ | --- |
+|     | RESERVED |     |        | CBD    |     | CBU    |     |
+|     | R-0h     |     |        | R/W-0h |     | R/W-0h |     |
+| 7   | 6        | 5   | 4      | 3      | 2   | 1      | 0   |
+|     | CAD      |     | CAU    | PRD    |     | ZRO    |     |
+|     | R/W-0h   |     | R/W-0h | R/W-0h |     | R/W-0h |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-75. AQCTLB Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                             |
-|-------|----------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-12 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | 11-10 | CBD      | R/W  | 0h    | Action when the counter equals the active CMPB register and the<br>counter is decrementing.<br>0h (R/W) = Do nothing (action disabled)<br>1h (R/W) = Clear - force EPWMxB output low.<br>2h (R/W) = Set - force EPWMxB output high.<br>3h (R/W) = Toggle EPWMxB output - low output signal will be forced                                                                                                                               |
 | 9-8   | CBU      | R/W  | 0h    | high, and a high signal will be forced low.<br>Action when the counter equals the active CMPB register and the<br>counter is incrementing.<br>0h (R/W) = Do nothing (action disabled)<br>1h (R/W) = Clear - force EPWMxB output low.<br>2h (R/W) = Set - force EPWMxB output high.<br>3h (R/W) = Toggle EPWMxB output - low output signal will be forced<br>high, and a high signal will be forced low.                                 |
@@ -4537,7 +4554,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 15-75. AQCTLB Register Field Descriptions (continued)**
 
 | Bit | Field | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                            |
-|-----|-------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | ----- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1-0 | ZRO   | R/W  | 0h    | Action when counter equals zero.<br>Note: By definition, in count up-down mode when the counter equals<br>0 the direction is defined as 1 or counting up.<br>0h (R/W) = Do nothing (action disabled)<br>1h (R/W) = Clear - force EPWMxB output low.<br>2h (R/W) = Set - force EPWMxB output high.<br>3h (R/W) = Toggle EPWMxB output - low output signal will be forced<br>high, and a high signal will be forced low. |
 
 #### **15.2.4.13 AQSFRC Register (offset = 1Ah) [reset = 0h]**
@@ -4546,12 +4563,12 @@ AQSFRC is shown in [Figure](#page-25-1) 15-83 and described in Table [15-76.](#p
 
 ### **Figure 15-83. AQSFRC Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-76. AQSFRC Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                            |
-|------|----------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-8 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                        |
 | 7-6  | RLDCSF   | R/W  | 0h    | AQCSFRC Active Register Reload From Shadow Options.<br>0h (R/W) = Load on event counter equals zero<br>1h (R/W) = Load on event counter equals period<br>2h (R/W) = Load on event counter equals zero or counter equals<br>period<br>3h (R/W) = Load immediately (the active register is directly accessed<br>by the CPU and is not loaded from the shadow register).                  |
 | 5    | OTSFB    | R/W  | 0h    | One-Time Software Forced Event on Output B.<br>0h (R/W) = Writing a 0 (zero) has no effect. Always reads back a 0.<br>This bit is auto cleared once a write to this register is complete, that<br>is, a forced event is initiated. This is a one-shot forced event. It can<br>be overridden by another subsequent event on output B.<br>1h (R/W) = Initiates a single s/w forced event |
@@ -4565,12 +4582,12 @@ AQCSFRC is shown in [Figure](#page-26-1) 15-84 and described in Table [15-77.](#
 
 ## **Figure 15-84. AQCSFRC Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-77. AQCSFRC Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-|------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-4 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | 3-2  | CSFB     | R/W  | 0h    | Continuous Software Force on Output B.<br>In immediate mode, a continuous force takes effect on the next<br>TBCLK edge.<br>In shadow mode, a continuous force takes effect on the next TBCLK<br>edge after a shadow load into the active register.<br>To configure shadow mode, use AQSFRC[RLDCSF].<br>0h (R/W) = Forcing disabled, that is, has no effect<br>1h (R/W) = Forces a continuous low on output B<br>2h (R/W) = Forces a continuous high on output B<br>3h (R/W) = Software forcing is disabled and has no effect |
 | 1-0  | CSFA     | R/W  | 0h    | Continuous Software Force on Output A In immediate mode, a<br>continuous force takes effect on the next TBCLK edge.<br>In shadow mode, a continuous force takes effect on the next TBCLK<br>edge after a shadow load into the active register.<br>0h (R/W) = Forcing disabled, that is, has no effect<br>1h (R/W) = Forces a continuous low on output A<br>2h (R/W) = Forces a continuous high on output A<br>3h (R/W) = Software forcing is disabled and has no effect                                                      |
@@ -4581,12 +4598,12 @@ DBCTL is shown in [Figure](#page-27-1) 15-85 and described in Table [15-78.](#pa
 
 ### **Figure 15-85. DBCTL Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-78. DBCTL Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-|------|----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-6 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 5-4  | IN_MODE  | R/W  | 0h    | Dead Band Input Mode Control.<br>Bit 5 controls the S5 switch and bit 4 controls the S4 switch.<br>This allows you to select the input source to the falling-edge and<br>rising-edge delay.<br>To produce classical dead-band waveforms, the default is EPWMxA<br>In is the source for both falling and rising-edge delays.<br>0h (R/W) = EPWMxA In (from the action-qualifier) is the source for                                                                                                                               |
 |      |          |      |       | both falling-edge and rising-edge delay.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -4602,7 +4619,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 ### **Table 15-78. DBCTL Register Field Descriptions (continued)**
 
 | Bit | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                          |
-|-----|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1-0 | OUT_MODE | R/W  | 0h    | Dead-band Output Mode Control.<br>Bit 1 controls the S1 switch and bit 0 controls the S0 switch.<br>This allows you to selectively enable or bypass the dead-band<br>generation for the falling-edge and rising-edge delay.                                                                          |
 |     |          |      |       | 0h (R/W) = Dead-band generation is bypassed for both output<br>signals. In this mode, both the EPWMxA and EPWMxB output<br>signals from the action-qualifier are passed directly to the PWM<br>chopper submodule. In this mode, the POLSEL and IN_MODE bits<br>have no effect.                       |
 |     |          |      |       | 1h (R/W) = Disable rising-edge delay. The EPWMxA signal from the<br>action-qualifier is passed straight through to the EPWMxA input of<br>the PWM-chopper submodule. The falling-edge delayed signal is<br>seen on output EPWMxB. The input signal for the delay is<br>determined by DBCTL[IN_MODE]. |
@@ -4615,12 +4632,12 @@ DBRED is shown in [Figure](#page-29-1) 15-86 and described in Table [15-79](#pag
 
 ### **Figure 15-86. DBRED Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-79. DBRED Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                 |
-|-------|----------|------|-------|---------------------------------------------|
+| ----- | -------- | ---- | ----- | ------------------------------------------- |
 | 15-10 | RESERVED | R    | 0h    |                                             |
 | 9-0   | DEL      | R/W  | 0h    | Rising Edge Delay Count.<br>10 bit counter. |
 
@@ -4630,12 +4647,12 @@ DBFED is shown in [Figure](#page-30-1) 15-87 and described in Table [15-80.](#pa
 
 ## **Figure 15-87. DBFED Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-80. DBFED Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                 |
-|-------|----------|------|-------|---------------------------------------------|
+| ----- | -------- | ---- | ----- | ------------------------------------------- |
 | 15-10 | RESERVED | R    | 0h    |                                             |
 | 9-0   | DEL      | R/W  | 0h    | Falling Edge Delay Count.<br>10 bit counter |
 
@@ -4645,20 +4662,20 @@ TZSEL is shown in [Figure](#page-31-1) 15-88 and described in Table [15-81](#pag
 
 ### **Figure 15-88. TZSEL Register**
 
-| 15 | 14     | 13 | 12 | 11     | 10 | 9 | 8 |  |
-|----|--------|----|----|--------|----|---|---|--|
-|    |        |    |    | OSHTn  |    |   |   |  |
-|    |        |    |    | R/W-0h |    |   |   |  |
-| 7  | 6      | 5  | 4  | 3      | 2  | 1 | 0 |  |
-|    |        |    |    | CBCn   |    |   |   |  |
-|    | R/W-0h |    |    |        |    |   |   |  |
+| 15  | 14     | 13  | 12  | 11     | 10  | 9   | 8   |     |
+| --- | ------ | --- | --- | ------ | --- | --- | --- | --- |
+|     |        |     |     | OSHTn  |     |     |     |     |
+|     |        |     |     | R/W-0h |     |     |     |     |
+| 7   | 6      | 5   | 4   | 3      | 2   | 1   | 0   |     |
+|     |        |     |     | CBCn   |     |     |     |     |
+|     | R/W-0h |     |     |        |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-81. TZSEL Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-|------|-------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 15-8 | OSHTn | R/W  | 0h    | Trip-zone n (TZn) select.<br>One-Shot (OSHT) trip-zone enable/disable.<br>When any of the enabled pins go low, a one-shot trip event occurs<br>for this ePWM module.<br>When the event occurs, the action defined in the TZCTL register is<br>taken on the EPWMxA and EPWMxB outputs.<br>The one-shot trip condition remains latched until you clear the<br>condition via the TZCLR register.<br>0h (R/W) = Disable TZn as a one-shot trip source for this ePWM<br>module.<br>1h (R/W) = Enable TZn as a one-shot trip source for this ePWM<br>module. |
 | 7-0  | CBCn  | R/W  | 0h    | Trip-zone n (TZn) select.<br>Cycle-by-Cycle (CBC) trip-zone enable/disable.<br>When any of the enabled pins go low, a cycle-by-cycle trip event<br>occurs for this ePWM module.<br>When the event occurs, the action defined in the TZCTL register is<br>taken on the EPWMxA and EPWMxB outputs.<br>A cycle-by-cycle trip condition is automatically cleared when the<br>time-base counter reaches zero.<br>0h (R/W) = Disable TZn as a CBC trip source for this ePWM module.<br>1h (R/W) = Enable TZn as a CBC trip source for this ePWM module.      |
 
@@ -4668,12 +4685,12 @@ TZCTL is shown in [Figure](#page-32-1) 15-89 and described in Table [15-82](#pag
 
 ### **Figure 15-89. TZCTL Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-82. TZCTL Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                           |
-|------|----------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-4 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                       |
 | 3-2  | TZB      | R/W  | 0h    | When a trip event occurs the following action is taken on output<br>EPWMxB.<br>Which trip-zone pins can cause an event is defined in the TZSEL<br>register.<br>0h (R/W) = High impedance (EPWMxB = High-impedance state)<br>1h (R/W) = Force EPWMxB to a high state<br>2h (R/W) = Force EPWMxB to a low state<br>3h (R/W) = Do nothing, no action is taken on EPWMxB. |
 | 1-0  | TZA      | R/W  | 0h    | When a trip event occurs the following action is taken on output<br>EPWMxA.<br>Which trip-zone pins can cause an event is defined in the TZSEL<br>register.<br>0h (R/W) = High impedance (EPWMxA = High-impedance state)<br>1h (R/W) = Force EPWMxA to a high state<br>2h (R/W) = Force EPWMxA to a low state<br>3h (R/W) = Do nothing, no action is taken on EPWMxA. |
@@ -4684,12 +4701,12 @@ TZEINT is shown in [Figure](#page-33-1) 15-90 and described in Table [15-83](#pa
 
 ### **Figure 15-90. TZEINT Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-83. TZEINT Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                        |
-|------|----------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 15-3 | RESERVED | R    | 0h    |                                                                                                                                                                                                                    |
 | 2    | OST      | R/W  | 0h    | Trip-zone One-Shot Interrupt Enable<br>0h (R/W) = Disable one-shot interrupt generation<br>1h (R/W) = Enable Interrupt generation; a one-shot trip event will<br>cause a EPWMxTZINT interrupt.                     |
 | 1    | CBC      | R/W  | 0h    | Trip-zone Cycle-by-Cycle Interrupt Enable<br>0h (R/W) = Disable cycle-by-cycle interrupt generation.<br>1h (R/W) = Enable interrupt generation; a cycle-by-cycle trip event<br>will cause an EPWMxTZINT interrupt. |
@@ -4701,12 +4718,12 @@ TZFLG is shown in [Figure](#page-34-1) 15-91 and described in Table [15-84.](#pa
 
 ### **Figure 15-91. TZFLG Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-84. TZFLG Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-|------|----------|------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-3 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | 2    | OST      | R    | 0h    | Latched Status Flag for A One-Shot Trip Event.<br>0h (R/W) = No one-shot trip event has occurred.<br>1h (R/W) = Indicates a trip event has occurred on a pin selected as a<br>one-shot trip source. This bit is cleared by writing the appropriate<br>value to the TZCLR register.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | 1    | CBC      | R    | 0h    | Latched Status Flag for Cycle-By-Cycle Trip Event<br>0h (R/W) = No cycle-by-cycle trip event has occurred.<br>1h (R/W) = Indicates a trip event has occurred on a pin selected as a<br>cycle-by-cycle trip source. The TZFLG[CBC] bit will remain set until it<br>is manually cleared by the user. If the cycle-by-cycle trip event is still<br>present when the CBC bit is cleared, then CBC will be immediately<br>set again. The specified condition on the pins is automatically<br>cleared when the ePWM time-base counter reaches zero (TBCNT =<br>0000h) if the trip condition is no longer present. The condition on the<br>pins is only cleared when the TBCNT = 0000h no matter where in<br>the cycle the CBC flag is cleared. This bit is cleared by writing the<br>appropriate value to the TZCLR register. |
@@ -4718,12 +4735,12 @@ TZCLR is shown in [Figure](#page-35-1) 15-92 and described in Table [15-85](#pag
 
 ## **Figure 15-92. TZCLR Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-85. TZCLR Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-|------|----------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 15-3 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 2    | OST      | R/W  | 0h    | Clear Flag for One-Shot Trip (OST) Latch<br>0h (R/W) = Has no effect. Always reads back a 0.<br>1h (R/W) = Clears this Trip (set) condition.                                                                                                                                                                                                                                                                                                     |
 | 1    | CBC      | R/W  | 0h    | Clear Flag for Cycle-By-Cycle (CBC) Trip Latch<br>0h (R/W) = Has no effect. Always reads back a 0.<br>1h (R/W) = Clears this Trip (set) condition.                                                                                                                                                                                                                                                                                               |
@@ -4735,12 +4752,12 @@ TZFRC is shown in [Figure](#page-36-1) 15-93 and described in Table [15-86.](#pa
 
 ## **Figure 15-93. TZFRC Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-86. TZFRC Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                   |
-|------|----------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-3 | RESERVED | R    | 0h    |                                                                                                                                                                                               |
 | 2    | OST      | R/W  | 0h    | Force a One-Shot Trip Event via Software<br>0h (R/W) = Writing of 0 is ignored. Always reads back a 0.<br>1h (R/W) = Forces a one-shot trip event and sets the TZFLG[OST]<br>bit.             |
 | 1    | CBC      | R/W  | 0h    | Force a Cycle-by-Cycle Trip Event via Software<br>0h (R/W) = Writing of 0 is ignored. Always reads back a 0.<br>1h (R/W) = Forces a cycle-by-cycle trip event and sets the<br>TZFLG[CBC] bit. |
@@ -4752,12 +4769,12 @@ ETSEL is shown in [Figure](#page-37-1) 15-94 and described in Table [15-87.](#pa
 
 ### **Figure 15-94. ETSEL Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-87. ETSEL Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-|------|----------|------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-4 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | 3    | INTEN    | R/W  | 0h    | Enable ePWM Interrupt (EPWMx_INT) Generation<br>0h (R/W) = Disable EPWMx_INT generation<br>1h (R/W) = Enable EPWMx_INT generation                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | 2-0  | INTSEL   | R/W  | 0h    | ePWM Interrupt (EPWMx_INT) Selection Options<br>0h (R/W) = Reserved<br>1h (R/W) = Enable event time-base counter equal to zero. (TBCNT =<br>0000h)<br>2h (R/W) = Enable event time-base counter equal to period (TBCNT<br>= TBPRD)<br>3h (R/W) = Reserved<br>4h (R/W) = Enable event time-base counter equal to CMPA when<br>the timer is incrementing.<br>5h (R/W) = Enable event time-base counter equal to CMPA when<br>the timer is decrementing.<br>6h (R/W) = Enable event - time-base counter equal to CMPB when<br>the timer is incrementing.<br>7h (R/W) = Enable event - time-base counter equal to CMPB when<br>the timer is decrementing. |
@@ -4768,12 +4785,12 @@ ETPS is shown in [Figure](#page-38-1) 15-95 and described in Table [15-88](#page
 
 ### **Figure 15-95. ETPS Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-88. ETPS Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-|------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-4 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | 3-2  | INTCNT   | R    | 0h    | ePWM Interrupt Event (EPWMx_INT) Counter Register.<br>These bits indicate how many selected ETSEL[INTSEL] events have<br>occurred.<br>These bits are automatically cleared when an interrupt pulse is<br>generated.<br>If interrupts are disabled, ETSEL[INT] = 0 or the interrupt flag is set,<br>ETFLG[INT] = 1, the counter will stop counting events when it<br>reaches the period value ETPS[INTCNT] = ETPS[INTPRD].<br>0h (R/W) = No events have occurred.<br>1h (R/W) = 1 event has occurred.<br>2h (R/W) = 2 events have occurred.<br>3h (R/W) = 3 events have occurred.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | 1-0  | INTPRD   | R/W  | 0h    | ePWM Interrupt (EPWMx_INT) Period Select.<br>These bits determine how many selected ETSEL[INTSEL] events<br>need to occur before an interrupt is generated.<br>To be generated, the interrupt must be enabled (ETSEL[INT] = 1).<br>If the interrupt status flag is set from a previous interrupt<br>(ETFLG[INT] = 1) then no interrupt will be generated until the flag is<br>cleared via the ETCLR[INT] bit.<br>This allows for one interrupt to be pending while another is still being<br>serviced.<br>Once the interrupt is generated, the ETPS[INTCNT] bits will<br>automatically be cleared.<br>Writing a INTPRD value that is the same as the current counter<br>value will trigger an interrupt if it is enabled and the status flag is<br>clear.<br>Writing a INTPRD value that is less than the current counter value<br>will result in an undefined state.<br>If a counter event occurs at the same instant as a new zero or non<br>zero INTPRD value is written, the counter is incremented.<br>0h (R/W) = Disable the interrupt event counter. No interrupt will be<br>generated and ETFRC[INT] is ignored.<br>1h (R/W) = Generate an interrupt on the first event INTCNT = 01<br>(first event)<br>2h (R/W) = Generate interrupt on ETPS[INTCNT] = 1,0 (second<br>event)<br>3h (R/W) = Generate interrupt on ETPS[INTCNT] = 1,1 (third event) |
@@ -4784,12 +4801,12 @@ ETFLG is shown in [Figure](#page-39-1) 15-96 and described in Table [15-89](#pag
 
 ### **Figure 15-96. ETFLG Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-89. ETFLG Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                      |
-|------|----------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-1 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 0    | INT      | R    | 0h    | Latched ePWM Interrupt (EPWMx_INT) Status Flag<br>0h (R/W) = Indicates no event occurred<br>1h (R/W) = Indicates that an ePWMx interrupt (EWPMx_INT) was<br>generated. No further interrupts will be generated until the flag bit is<br>cleared. Up to one interrupt can be pending while the ETFLG[INT] bit<br>is still set. If an interrupt is pending, it will not be generated until after<br>the ETFLG[INT] bit is cleared. |
 
@@ -4799,12 +4816,12 @@ ETCLR is shown in [Figure](#page-40-1) 15-97 and described in Table [15-90.](#pa
 
 ## **Figure 15-97. ETCLR Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-90. ETCLR Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                      |
-|------|----------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-1 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                  |
 | 0    | INT      | R    | 0h    | ePWM Interrupt (EPWMx_INT) Flag Clear Bit<br>0h (R/W) = Writing a 0 has no effect. Always reads back a 0.<br>1h (R/W) = Clears the ETFLG[INT] flag bit and enable further<br>interrupts pulses to be generated. NOTE: Interrupts can also used as<br>DMA events, and this will also enable further DMA events to be<br>generated |
 
@@ -4814,12 +4831,12 @@ ETFRC is shown in [Figure](#page-41-1) 15-98 and described in Table [15-91](#pag
 
 #### **Figure 15-98. ETFRC Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-91. ETFRC Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                           |
-|------|----------|------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-1 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                       |
 | 0    | INT      | R    | 0h    | INT Force Bit.<br>The interrupt will only be generated if the event is enabled in the<br>ETSEL register.<br>The INT flag bit will be set regardless.<br>0h (R/W) = Writing 0 to this bit will be ignored. Always reads back a<br>0.<br>1h (R/W) = Generates an interrupt on EPWMxINT and set the INT<br>flag bit. This bit is used for test purposes. |
 
@@ -4829,12 +4846,12 @@ PCCTL is shown in [Figure](#page-42-1) 15-99 and described in Table [15-92.](#pa
 
 ### **Figure 15-99. PCCTL Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-92. PCCTL Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                              |
-|-------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-11 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                          |
 | 10-8  | CHPDUTY  | R/W  | 0h    | Chopping Clock Duty Cycle<br>0h (R/W) = Duty = 1/8 (12.5%)<br>1h (R/W) = Duty = 2/8 (25.0%)<br>2h (R/W) = Duty = 3/8 (37.5%)<br>3h (R/W) = Duty = 4/8 (50.0%)<br>4h (R/W) = Duty = 5/8 (62.5%)<br>5h (R/W) = Duty = 6/8 (75.0%)<br>6h (R/W) = Duty = 7/8 (87.5%)<br>7h (R/W) = Reserved. |
 | 7-5   | CHPFREQ  | R/W  | 0h    | Chopping Clock Frequency<br>0h (R/W) = Divide by 1 (no prescale).<br>1h (R/W) = Divide by 2.<br>2h (R/W) = Divide by 3.<br>3h (R/W) = Divide by 4.<br>4h (R/W) = Divide by 5.<br>5h (R/W) = Divide by 6.<br>6h (R/W) = Divide by 7.<br>7h (R/W) = Divide by 8.                           |
@@ -4849,12 +4866,12 @@ This register is only available on ePWM instances that include the high-resoluti
 
 ## **Figure 15-100. HRCNFG Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-93. HRCNFG Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-|------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-4 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | 3    | HRLOAD   | R/W  | 0h    | Shadow mode bit - Selects the time event that loads the CMPAHR<br>shadow value into the active register.<br>Note: Load mode selection is valid only if CTLMODE = 0 has been<br>selected.<br>You should select this event<br>to match the selection of the CMPA load mode<br>(CMPCTL[LOADMODE] bits) in the EPWM module as<br>follows:<br>0x<br>0: Load on CTR = 0<br>Time-base counter equal to zero (TBCNT = 0000h)<br>0x<br>1: Load on CTR = PRD<br>Time-base counter equal to period (TBCNT = TBPRD)<br>0x<br>2: Load on either CTR = 0 or CTR = PRD (should not be used with<br>HRPWM)<br>0x<br>3: Freeze (no loads possible should not be used with HRPWM)<br>0h (R/W) = CTR = PRD (counter equal period)<br>1h (R/W) = CTR = 0 (counter equals zero) |
 | 2    | CTLMODE  | R/W  | 0h    | Control Mode Bits - Selects the register (CMP or TBPHS) that<br>controls the MEP.<br>0h (R/W) = CMPAHR(8) Register controls the edge position (this is<br>duty control mode). (default on reset)<br>1h (R/W) = TBPHSHR(8) Register controls the edge position (this is<br>phase control mode).                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
@@ -4862,7 +4879,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 
 ## **15.3 Enhanced Capture (eCAP) Module**
 
-### *15.3.1 Introduction*
+### _15.3.1 Introduction_
 
 #### **15.3.1.1 Purpose of the Peripheral**
 
@@ -4889,7 +4906,7 @@ The eCAP module includes the following features:
 - All above resources dedicated to a single input pin
 - When not used in capture mode, the ECAP module can be configured as a single channel PWM output
 
-### *15.3.2 Functional Description*
+### _15.3.2 Functional Description_
 
 The eCAP module represents one complete capture channel that can be instantiated multiple times depending on the target device. In the context of this guide, one eCAP channel has the following independent key resources:
 
@@ -4920,7 +4937,7 @@ You can use the eCAP module resources to implement a single-channel PWM generato
 
 Figure [15-103](#page-47-0) shows the various components that implement the capture function.
 
-TSCTR (counter-32 bit) RST CAP1 (APRD active) LD CAP2 (ACMP active) LD CAP3 (APRD shadow) LD CAP4 (ACMP shadow) LD Continuous / Oneshot Capture Control LD1 LD2 LD3 LD4 32 32 PRD [0-31] CMP [0-31] CTR [0-31] ECAPx Interrupt Trigger and Flag control to Interrupt Controller 32 32 32 32 32 ACMP shadow Event Prescale CTRPHS (phase register-32 bit) SYNCOut SYNCIn Event qualifier Polarity select Polarity select Polarity select Polarity select PRDEQ CNTOVF 4 PWM compare logic CTR [0-31] PRD [0-31] CMP [0-31] CMPEQ PRDEQ OVF CTR\_OVF APWM mode Delta-mode SYNC 4 *Capture events* CEVT[1:4] APRD shadow 32 32 MODE SELECT ECCTL2[SYNCI\_EN, SYNCOSEL, SWSYNC] ECCTL2[CAP/APWM] *Edge Polarity Select* ECCTL1[CAPxPOL] ECCTL1[EVTPS] ECCTL1 [ CAPLDEN, CTRRSTx]
+TSCTR (counter-32 bit) RST CAP1 (APRD active) LD CAP2 (ACMP active) LD CAP3 (APRD shadow) LD CAP4 (ACMP shadow) LD Continuous / Oneshot Capture Control LD1 LD2 LD3 LD4 32 32 PRD [0-31] CMP [0-31] CTR [0-31] ECAPx Interrupt Trigger and Flag control to Interrupt Controller 32 32 32 32 32 ACMP shadow Event Prescale CTRPHS (phase register-32 bit) SYNCOut SYNCIn Event qualifier Polarity select Polarity select Polarity select Polarity select PRDEQ CNTOVF 4 PWM compare logic CTR [0-31] PRD [0-31] CMP [0-31] CMPEQ PRDEQ OVF CTR*OVF APWM mode Delta-mode SYNC 4 \_Capture events* CEVT[1:4] APRD shadow 32 32 MODE SELECT ECCTL2[SYNCI\_EN, SYNCOSEL, SWSYNC] ECCTL2[CAP/APWM] _Edge Polarity Select_ ECCTL1[CAPxPOL] ECCTL1[EVTPS] ECCTL1 [ CAPLDEN, CTRRSTx]
 
 **Figure 15-103. Capture Function Diagram**
 
@@ -4928,7 +4945,7 @@ Registers: ECEINT, ECFLG, ECCLR, ECFRC
 
 ECCTL2 [ RE-ARM, CONT/ONESHT, STOP\_WRAP]
 
-#### *15.3.2.2.1 Event Prescaler*
+#### _15.3.2.2.1 Event Prescaler_
 
 An input capture signal (pulse train) can be prescaled by N = 2-62 (in multiples of 2) or can bypass the prescaler. This is useful when very high frequency signals are used as inputs. Figure [15-104](#page-48-0) shows a functional diagram and Figure [15-105](#page-48-1) shows the operation of the prescale function.
 
@@ -4936,13 +4953,13 @@ An input capture signal (pulse train) can be prescaled by N = 2-62 (in multiples
 
 (1) When a prescale value of 1 is chosen (ECCTL1[13:9] = 0000) the input capture signal by-passes the prescale logic completely.
 
-#### *15.3.2.2.2 Edge Polarity Select and Qualifier*
+#### _15.3.2.2.2 Edge Polarity Select and Qualifier_
 
 - Four independent edge polarity (rising edge/falling edge) selection multiplexers are used, one for each capture event.
 - Each edge (up to 4) is event qualified by the Modulo4 sequencer.
 - The edge event is gated to its respective CAP*n* register by the Mod4 counter. The CAP*n* register is loaded on the falling edge.
 
-#### *15.3.2.2.3 Continuous/One-Shot Control*
+#### _15.3.2.2.3 Continuous/One-Shot Control_
 
 - The Mod4 (2 bit) counter is incremented via edge qualified events (CEVT1-CEVT4).
 - The Mod4 counter continues counting (0->1->2->3->0) and wraps around unless stopped.
@@ -4958,7 +4975,7 @@ In continuous mode, the Mod4 counter continues to run (0->1->2->3->0, the one-sh
 
 **Figure 15-106. Continuous/One-shot Block Diagram**
 
-#### *15.3.2.2.4 32-Bit Counter and Phase Control*
+#### _15.3.2.2.4 32-Bit Counter and Phase Control_
 
 This counter (Figure [15-107\)](#page-50-0) provides the time-base for event captures, and is clocked via the system clock.
 
@@ -4968,7 +4985,7 @@ On any of the four event loads, an option to reset the 32-bit counter is given. 
 
 **Figure 15-107. Counter and Synchronization Block Diagram**
 
-#### *15.3.2.2.5 CAP1-CAP4 Registers*
+#### _15.3.2.2.5 CAP1-CAP4 Registers_
 
 These 32-bit registers are fed by the 32-bit counter timer bus, CTR[0-31] and are loaded (capture a timestamp) when their respective LD inputs are strobed.
 
@@ -4978,7 +4995,7 @@ CAP1 and CAP2 registers become the active period and compare registers, respecti
 
 CAP3 and CAP4 registers become the respective shadow registers (APRD and ACMP) for CAP1 and CAP2 during APWM operation.
 
-#### *15.3.2.2.6 Interrupt Control*
+#### _15.3.2.2.6 Interrupt Control_
 
 An Interrupt can be generated on capture events (CEVT1-CEVT4, CNTOVF) or APWM events (PRDEQ, CMPEQ). See Figure [15-108.](#page-52-0)
 
@@ -4992,7 +5009,7 @@ Seven interrupt events (CEVT1, CEVT2, CEVT3, CEVT4, CNTOVF, PRDEQ, CMPEQ) can be
 
 Note that the interrupts coming from the eCAP module are also used as DMA events. The interrupt registers should be used to enable and clear the current DMA event in order for the eCAP module to generate subsequent DMA events.
 
-#### *15.3.2.2.7 Shadow Load and Lockout Control*
+#### _15.3.2.2.7 Shadow Load and Lockout Control_
 
 In capture mode, this logic inhibits (locks out) any shadow loading of CAP1 or CAP2 from APRD and ACMP registers, respectively.
 
@@ -5005,7 +5022,7 @@ In APWM mode, shadow loading is active and two choices are permitted:
 
 **Figure 15-108. Interrupts in eCAP Module**
 
-#### *15.3.2.2.8 APWM Mode Operation*
+#### _15.3.2.2.8 APWM Mode Operation_
 
 Main operating highlights of the APWM section:
 
@@ -5039,7 +5056,7 @@ CMP = PERIOD+1, output low for complete period (100% duty)
 CMP > PERIOD+1, output low for complete period
 ```
 
-### *15.3.3 Use Cases*
+### _15.3.3 Use Cases_
 
 The following sections will provide Applications examples and code snippets to show how to configure and operate the eCAP module. For clarity and ease of use, below are useful #defines which will help in the understanding of the examples.
 
@@ -5102,7 +5119,7 @@ On an event, the TSCTR contents (time-stamp) is first captured, then Mod4 counte
 ### **Table 15-94. ECAP Initialization for CAP Mode Absolute Time, Rising Edge Trigger**
 
 | Register | Bit         | Value         |
-|----------|-------------|---------------|
+| -------- | ----------- | ------------- |
 | ECCTL1   | CAP1POL     | EC_RISING     |
 | ECCTL1   | CAP2POL     | EC_RISING     |
 | ECCTL1   | CAP3POL     | EC_RISING     |
@@ -5119,7 +5136,7 @@ On an event, the TSCTR contents (time-stamp) is first captured, then Mod4 counte
 | ECCTL2   | SYNCI_EN    | EC_DISABLE    |
 | ECCTL2   | TSCTRSTOP   | EC_RUN        |
 
-#### *Example 15-18. Code Snippet for CAP Mode Absolute Time, Rising Edge Trigger*
+#### _Example 15-18. Code Snippet for CAP Mode Absolute Time, Rising Edge Trigger_
 
 ```
 // Code snippet for CAP mode Absolute Time, Rising edge trigger
@@ -5136,14 +5153,14 @@ On an event, the TSCTR contents (time-stamp) is first captured, then Mod4 counte
 
 #### 15.3.3.2 Absolute Time-Stamp Operation Rising and Falling Edge Trigger Example
 
-In Figure 15-111 the eCAP operating mode is almost the same as in the previous section except capture events are qualified as either rising or falling edge, this now gives both period and duty cycle information: Period1 =  $t_3 - t_1$ , Period2 =  $t_5 - t_3$ , ...etc. Duty Cycle1 (on-time %) =  $(t_2 - t_1)$  / Period1 x 100%, etc. Duty Cycle1 (off-time %) =  $(t_3 - t_2)$  / Period1 x 100%, etc.
+In Figure 15-111 the eCAP operating mode is almost the same as in the previous section except capture events are qualified as either rising or falling edge, this now gives both period and duty cycle information: Period1 = $t_3 - t_1$ , Period2 = $t_5 - t_3$ , ...etc. Duty Cycle1 (on-time %) = $(t_2 - t_1)$ / Period1 x 100%, etc. Duty Cycle1 (off-time %) = $(t_3 - t_2)$ / Period1 x 100%, etc.
 
 Figure 15-111. Capture Sequence for Absolute Time-Stamp, Rising and Falling Edge Detect
 
 ### **Table 15-95. ECAP Initialization for CAP Mode Absolute Time, Rising and Falling Edge Trigger**
 
 | Register | Bit         | Value         |
-|----------|-------------|---------------|
+| -------- | ----------- | ------------- |
 | ECCTL1   | CAP1POL     | EC_RISING     |
 | ECCTL1   | CAP2POL     | EC_FALLING    |
 | ECCTL1   | CAP3POL     | EC_RISING     |
@@ -5160,7 +5177,7 @@ Figure 15-111. Capture Sequence for Absolute Time-Stamp, Rising and Falling Edge
 | ECCTL2   | SYNCI_EN    | EC_DISABLE    |
 | ECCTL2   | TSCTRSTOP   | EC_RUN        |
 
-#### *Example 15-19. Code Snippet for CAP Mode Absolute Time, Rising and Falling Edge Trigger*
+#### _Example 15-19. Code Snippet for CAP Mode Absolute Time, Rising and Falling Edge Trigger_
 
 ```
 // Code snippet for CAP mode Absolute Time, Rising & Falling edge triggers
@@ -5177,14 +5194,14 @@ Figure 15-111. Capture Sequence for Absolute Time-Stamp, Rising and Falling Edge
 
 #### 15.3.3.3 Time Difference (Delta) Operation Rising Edge Trigger Example
 
-Figure 15-112 shows how the eCAP module can be used to collect Delta timing data from pulse train waveforms. Here Continuous Capture mode (TSCTR counts-up without resetting, and Mod4 counter wraps around) is used. In Delta-time mode, TSCTR is Reset back to Zero on every valid event. Here Capture events are qualified as Rising edge only. On an event, TSCTR contents (time-stamp) is captured first, and then TSCTR is reset to Zero. The Mod4 counter then increments to the next state. If TSCTR reaches FFFF FFFFh (maximum value), before the next event, it wraps around to 0000 0000h and continues, a CNTOVF (counter overflow) Flag is set, and an Interrupt (if enabled) occurs. The advantage of Delta-time Mode is that the CAPn contents directly give timing data without the need for CPU calculations: Period1 =  $T_1$ , Period2 =  $T_2$ ,...etc. As shown in Figure 15-112, the CEVT1 event is a good trigger point to read the timing data,  $T_1$ ,  $T_2$ ,  $T_3$ ,  $T_4$  are all valid here.
+Figure 15-112 shows how the eCAP module can be used to collect Delta timing data from pulse train waveforms. Here Continuous Capture mode (TSCTR counts-up without resetting, and Mod4 counter wraps around) is used. In Delta-time mode, TSCTR is Reset back to Zero on every valid event. Here Capture events are qualified as Rising edge only. On an event, TSCTR contents (time-stamp) is captured first, and then TSCTR is reset to Zero. The Mod4 counter then increments to the next state. If TSCTR reaches FFFF FFFFh (maximum value), before the next event, it wraps around to 0000 0000h and continues, a CNTOVF (counter overflow) Flag is set, and an Interrupt (if enabled) occurs. The advantage of Delta-time Mode is that the CAPn contents directly give timing data without the need for CPU calculations: Period1 = $T_1$ , Period2 = $T_2$ ,...etc. As shown in Figure 15-112, the CEVT1 event is a good trigger point to read the timing data, $T_1$ , $T_2$ , $T_3$ , $T_4$ are all valid here.
 
 Figure 15-112. Capture Sequence for Delta Mode Time-Stamp, Rising Edge Detect
 
 ## **Table 15-96. ECAP Initialization for CAP Mode Delta Time, Rising Edge Trigger**
 
 | Register | Bit         | Value         |
-|----------|-------------|---------------|
+| -------- | ----------- | ------------- |
 | ECCTL1   | CAP1POL     | EC_RISING     |
 | ECCTL1   | CAP2POL     | EC_RISING     |
 | ECCTL1   | CAP3POL     | EC_RISING     |
@@ -5201,7 +5218,7 @@ Figure 15-112. Capture Sequence for Delta Mode Time-Stamp, Rising Edge Detect
 | ECCTL2   | SYNCI_EN    | EC_DISABLE    |
 | ECCTL2   | TSCTRSTOP   | EC_RUN        |
 
-#### *Example 15-20. Code Snippet for CAP Mode Delta Time, Rising Edge Trigger*
+#### _Example 15-20. Code Snippet for CAP Mode Delta Time, Rising Edge Trigger_
 
 ```
 // Code snippet for CAP mode Delta Time, Rising edge trigger
@@ -5216,18 +5233,18 @@ Figure 15-112. Capture Sequence for Delta Mode Time-Stamp, Rising Edge Detect
 
 #### 15.3.3.4 Time Difference (Delta) Operation Rising and Falling Edge Trigger Example
 
-In Figure 15-113 the eCAP operating mode is almost the same as in previous section except Capture events are qualified as either Rising or Falling edge, this now gives both Period and Duty cycle information: Period1 =  $T_1 + T_2$ , Period2 =  $T_3 + T_4$ , ...etc Duty Cycle1 (on-time %) =  $T_1$  / Period1 x 100%, etc Duty Cycle1 (off-time %) =  $T_2$  / Period1 x 100%, etc
+In Figure 15-113 the eCAP operating mode is almost the same as in previous section except Capture events are qualified as either Rising or Falling edge, this now gives both Period and Duty cycle information: Period1 = $T_1 + T_2$ , Period2 = $T_3 + T_4$ , ...etc Duty Cycle1 (on-time %) = $T_1$ / Period1 x 100%, etc Duty Cycle1 (off-time %) = $T_2$ / Period1 x 100%, etc
 
 During initialization, you must write to the active registers for both period and compare. This will then automatically copy the init values into the shadow values. For subsequent compare updates, that is, during run-time, only the shadow registers must be used.
 
-CEVT2 CEVT4 CEVT2 CEVT1 CEVT3 CEVT1 CEVT3 CEVT5 CAPx pin  $T_8$  $T_1$  $T_3$  $T_5$ **FFFFFFF**  $T_2$  $T_4$ CTR[0-31] 00000000 MOD4 0 2 3 0 1 2 3 0 CTR CAP1 XX CTR value at CEVT1  $t_4$ CAP2 XX  $t_1$ t<sub>5</sub> CAP3 XX $t_2$  $t_6$ XX  $t_3$  $t_7$ Polarity selection Capture registers [1-4]
+CEVT2 CEVT4 CEVT2 CEVT1 CEVT3 CEVT1 CEVT3 CEVT5 CAPx pin $T_8$ $T_1$ $T_3$ $T_5$ **FFFFFFF** $T_2$ $T_4$ CTR[0-31] 00000000 MOD4 0 2 3 0 1 2 3 0 CTR CAP1 XX CTR value at CEVT1 $t_4$ CAP2 XX $t_1$ t<sub>5</sub> CAP3 XX $t_2$ $t_6$ XX $t_3$ $t_7$ Polarity selection Capture registers [1-4]
 
 Figure 15-113. Capture Sequence for Delta Mode Time-Stamp, Rising and Falling Edge Detect
 
 ### **Table 15-97. ECAP Initialization for CAP Mode Delta Time, Rising and Falling Edge Triggers**
 
 | Register | Bit         | Value         |
-|----------|-------------|---------------|
+| -------- | ----------- | ------------- |
 | ECCTL1   | CAP1POL     | EC_RISING     |
 | ECCTL1   | CAP2POL     | EC_FALLING    |
 | ECCTL1   | CAP3POL     | EC_RISING     |
@@ -5244,7 +5261,7 @@ Figure 15-113. Capture Sequence for Delta Mode Time-Stamp, Rising and Falling Ed
 | ECCTL2   | SYNCI_EN    | EC_DISABLE    |
 | ECCTL2   | TSCTRSTOP   | EC_RUN        |
 
-#### *Example 15-21. Code Snippet for CAP Mode Delta Time, Rising and Falling Edge Triggers*
+#### _Example 15-21. Code Snippet for CAP Mode Delta Time, Rising and Falling Edge Triggers_
 
 ```
 // Code snippet for CAP mode Delta Time, Rising and Falling edge triggers
@@ -5261,7 +5278,7 @@ Figure 15-113. Capture Sequence for Delta Mode Time-Stamp, Rising and Falling Ed
 
 #### **15.3.3.5 Application of the APWM Mode**
 
-#### *15.3.3.5.1 Simple PWM Generation (Independent Channel/s) Example*
+#### _15.3.3.5.1 Simple PWM Generation (Independent Channel/s) Example_
 
 In this example, the eCAP module is configured to operate as a PWM generator. Here a very simple single channel PWM waveform is generated from output pin APWM*n*. The PWM polarity is active high, which means that the compare value (CAP2 reg is now a compare register) represents the on-time (high level) of the period. Alternatively, if the APWMPOL bit is configured for active low, then the compare value represents the off-time.
 
@@ -5270,7 +5287,7 @@ In this example, the eCAP module is configured to operate as a PWM generator. He
 ### **Table 15-98. ECAP Initialization for APWM Mode**
 
 | Register | Bit       | Value        |
-|----------|-----------|--------------|
+| -------- | --------- | ------------ |
 | CAP1     | CAP1      | 0x1000       |
 | CTRPHS   | CTRPHS    | 0x0          |
 | ECCTL2   | CAP_APWM  | EC_APWM_MODE |
@@ -5279,7 +5296,7 @@ In this example, the eCAP module is configured to operate as a PWM generator. He
 | ECCTL2   | SYNCO_SEL | EC_SYNCO_DIS |
 | ECCTL2   | TSCTRSTOP | EC_RUN       |
 
-## *Example 15-22. Code Snippet for APWM Mode*
+## _Example 15-22. Code Snippet for APWM Mode_
 
 ```
 // Code snippet for APWM mode Example 1
@@ -5291,7 +5308,7 @@ In this example, the eCAP module is configured to operate as a PWM generator. He
   ECAPxRegs.CAP2 = 0x500; // Set Duty cycle i.e. compare value
 ```
 
-#### *15.3.3.5.2 Multichannel PWM Generation with Synchronization Example*
+#### _15.3.3.5.2 Multichannel PWM Generation with Synchronization Example_
 
 Figure [15-115](#page-65-0) takes advantage of the synchronization feature between eCAP modules. Here 4 independent PWM channels are required with different frequencies, but at integer multiples of each other to avoid "beat" frequencies. Hence one eCAP module is configured as the Master and the remaining 3 are Slaves all receiving their synch pulse (CTR = PRD) from the master. Note the Master is chosen to have the lower frequency (F1 = 1/20,000) requirement. Here Slave2 Freq = 2 × F1, Slave3 Freq = 4 × F1 and Slave4 Freq = 5 × F1. Note here values are in decimal notation. Also, only the APWM1 output waveform is shown.
 
@@ -5300,7 +5317,7 @@ Figure [15-115](#page-65-0) takes advantage of the synchronization feature betwe
 ### **Table 15-99. ECAP1 Initialization for Multichannel PWM Generation with Synchronization**
 
 | Register | Bit       | Value        |
-|----------|-----------|--------------|
+| -------- | --------- | ------------ |
 | CAP1     | CAP1      | 20000        |
 | CTRPHS   | CTRPHS    | 0            |
 | ECCTL2   | CAP_APWM  | EC_APWM_MODE |
@@ -5312,7 +5329,7 @@ Figure [15-115](#page-65-0) takes advantage of the synchronization feature betwe
 **Table 15-100. ECAP2 Initialization for Multichannel PWM Generation with Synchronization**
 
 | Register | Bit       | Value        |
-|----------|-----------|--------------|
+| -------- | --------- | ------------ |
 | CAP1     | CAP1      | 10000        |
 | CTRPHS   | CTRPHS    | 0            |
 | ECCTL2   | CAP_APWM  | EC_APWM_MODE |
@@ -5324,7 +5341,7 @@ Figure [15-115](#page-65-0) takes advantage of the synchronization feature betwe
 **Table 15-101. ECAP3 Initialization for Multichannel PWM Generation with Synchronization**
 
 | Register | Bit       | Value        |
-|----------|-----------|--------------|
+| -------- | --------- | ------------ |
 | CAP1     | CAP1      | 5000         |
 | CTRPHS   | CTRPHS    | 0            |
 | ECCTL2   | CAP_APWM  | EC_APWM_MODE |
@@ -5336,7 +5353,7 @@ Figure [15-115](#page-65-0) takes advantage of the synchronization feature betwe
 **Table 15-102. ECAP4 Initialization for Multichannel PWM Generation with Synchronization**
 
 | Register | Bit       | Value        |
-|----------|-----------|--------------|
+| -------- | --------- | ------------ |
 | CAP1     | CAP1      | 4000         |
 | CTRPHS   | CTRPHS    | 0            |
 | ECCTL2   | CAP_APWM  | EC_APWM_MODE |
@@ -5345,7 +5362,7 @@ Figure [15-115](#page-65-0) takes advantage of the synchronization feature betwe
 | ECCTL2   | SYNCO_SEL | EC_SYNCO_DIS |
 | ECCTL2   | TSCTRSTOP | EC_RUN       |
 
-### *Example 15-23. Code Snippet for Multichannel PWM Generation with Synchronization*
+### _Example 15-23. Code Snippet for Multichannel PWM Generation with Synchronization_
 
 ```
 // Code snippet for APWM mode Example 2
@@ -5357,7 +5374,7 @@ Figure [15-115](#page-65-0) takes advantage of the synchronization feature betwe
   ECAP4Regs.CAP2 = 6500; // Set Duty cycle i.e., compare value = 6500
 ```
 
-#### *15.3.3.5.3 Multichannel PWM Generation with Phase Control Example*
+#### _15.3.3.5.3 Multichannel PWM Generation with Phase Control Example_
 
 In Figure [15-116,](#page-68-0) the Phase control feature of the APWM mode is used to control a 3 phase Interleaved DC/DC converter topology. This topology requires each phase to be off-set by 120° from each other. Hence if "Leg" 1 (controlled by APWM1) is the reference Leg (or phase), that is, 0°, then Leg 2 need 120° off-set and Leg 3 needs 240° off-set. The waveforms in Figure [15-116](#page-68-0) show the timing relationship between each of the phases (Legs). Note eCAP1 module is the Master and issues a sync out pulse to the slaves (modules 2, 3) whenever TSCTR = Period value.
 
@@ -5368,7 +5385,7 @@ Comple− mentary and deadband logic APWM1 APWM2 logic deadband Comple− mentar
 ## **Table 15-103. ECAP1 Initialization for Multichannel PWM Generation with Phase Control**
 
 | Register | Bit       | Value        |
-|----------|-----------|--------------|
+| -------- | --------- | ------------ |
 | CAP1     | CAP1      | 1200         |
 | CTRPHS   | CTRPHS    | 0            |
 | ECCTL2   | CAP_APWM  | EC_APWM_MODE |
@@ -5380,7 +5397,7 @@ Comple− mentary and deadband logic APWM1 APWM2 logic deadband Comple− mentar
 **Table 15-104. ECAP2 Initialization for Multichannel PWM Generation with Phase Control**
 
 | Register | Bit       | Value        |
-|----------|-----------|--------------|
+| -------- | --------- | ------------ |
 | CAP1     | CAP1      | 1200         |
 | CTRPHS   | CTRPHS    | 800          |
 | ECCTL2   | CAP_APWM  | EC_APWM_MODE |
@@ -5392,7 +5409,7 @@ Comple− mentary and deadband logic APWM1 APWM2 logic deadband Comple− mentar
 **Table 15-105. ECAP3 Initialization for Multichannel PWM Generation with Phase Control**
 
 | Register | Bit       | Value        |
-|----------|-----------|--------------|
+| -------- | --------- | ------------ |
 | CAP1     | CAP1      | 1200         |
 | CTRPHS   | CTRPHS    | 400          |
 | ECCTL2   | CAP_APWM  | EC_APWM_MODE |
@@ -5401,7 +5418,7 @@ Comple− mentary and deadband logic APWM1 APWM2 logic deadband Comple− mentar
 | ECCTL2   | SYNCO_SEL | EC_SYNCO_DIS |
 | ECCTL2   | TSCTRSTOP | EC_RUN       |
 
-### *Example 15-24. Code Snippet for Multichannel PWM Generation with Phase Control*
+### _Example 15-24. Code Snippet for Multichannel PWM Generation with Phase Control_
 
 ```
 // Code snippet for APWM mode Example 3
@@ -5413,7 +5430,7 @@ Comple− mentary and deadband logic APWM1 APWM2 logic deadband Comple− mentar
  ECAP3Regs.CAP2 = 700; // Set Duty cycle i.e. compare value = 700
 ```
 
-### *15.3.4 Registers*
+### _15.3.4 Registers_
 
 All 32-bit registers are aligned on even address boundaries and are organized in little-endian mode. The 16 least-significant bits of a 32-bit register are located on lowest address (even address).
 
@@ -5426,7 +5443,7 @@ Table [15-106](#page-70-0) lists the memory-mapped registers for the ECAP. All r
 **Table 15-106. ECAP Registers**
 
 | Offset | Acronym | Register Name                       | Section                |
-|--------|---------|-------------------------------------|------------------------|
+| ------ | ------- | ----------------------------------- | ---------------------- |
 | 0h     | TSCTR   | Time-Stamp Counter Register         | Section 15.3.4.1.1     |
 | 4h     | CTRPHS  | Counter Phase Offset Value Register | Section 15.3.4.1.2     |
 | 8h     | CAP1    | Capture 1 Register                  | Section 15.3.4.1.3     |
@@ -5441,167 +5458,167 @@ Table [15-106](#page-70-0) lists the memory-mapped registers for the ECAP. All r
 | 32h    | ECFRC   | Capture Interrupt Force Register    | Section<br>15.3.4.1.12 |
 | 5Ch    | REVID   | Revision ID Register                | Section 15.4.3.25      |
 
-#### *15.3.4.1.1 TSCTR Register (offset = 0h) [reset = 0h]*
+#### _15.3.4.1.1 TSCTR Register (offset = 0h) [reset = 0h]_
 
 TSCTR is shown in Figure [15-117](#page-71-1) and described in Table [15-107.](#page-71-2)
 
 ### **Figure 15-117. TSCTR Register**
 
-| 31 | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15     | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|--------|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | TSCTR  |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
-|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | R/W-0h |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
+| 31  | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15     | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | TSCTR  |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-107. TSCTR Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                          |
-|------|-------|------|-------|----------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | -------------------------------------------------------------------- |
 | 31-0 | TSCTR | R/W  | 0h    | Active 32 bit counter register that is used as the capture time-base |
 
-#### *15.3.4.1.2 CTRPHS Register (offset = 4h) [reset = 0h]*
+#### _15.3.4.1.2 CTRPHS Register (offset = 4h) [reset = 0h]_
 
 CTRPHS is shown in Figure [15-118](#page-72-1) and described in Table [15-108](#page-72-2).
 
 ### **Figure 15-118. CTRPHS Register**
 
-| 31 | 30     | 29 | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15     | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|--------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|--------|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-|    | CTRPHS |    |    |    |    |    |    |    |    |    |    |    |    |    |    |        |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
-|    |        |    |    |    |    |    |    |    |    |    |    |    |    |    |    | R/W-0h |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
+| 31  | 30     | 29  | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15     | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|     | CTRPHS |     |     |     |     |     |     |     |     |     |     |     |     |     |     |        |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+|     |        |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 15-108. CTRPHS Register Field Descriptions**
 
 | Bit  | Field  | Type | Reset | Description                                                                                                                                                                                                                                                                                         |
-|------|--------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ------ | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-0 | CTRPHS | R/W  | 0h    | Counter phase value register that can be programmed for phase<br>lag/lead.<br>This register shadows TSCTR and is loaded into TSCTR upon either<br>a SYNCI event or S/W force via a control bit.<br>Used to achieve phase control synchronization with respect to other<br>eCAP and EPWM time-bases. |
 
-#### *15.3.4.1.3 CAP1 Register (offset = 8h) [reset = 0h]*
+#### _15.3.4.1.3 CAP1 Register (offset = 8h) [reset = 0h]_
 
 CAP1 is shown in Figure [15-119](#page-73-1) and described in Table [15-109](#page-73-2).
 
 ### **Figure 15-119. CAP1 Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-109. CAP1 Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                                                                                                                                                     |
-|------|-------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-0 | CAP1  | R/W  | 0h    | This register can be loaded (written) by the following.<br>(a) Time-Stamp (that is, counter value) during a capture event.<br>(b) Software may be useful for test purposes.<br>(c) APRD active register when used in APWM mode. |
 
-#### *15.3.4.1.4 CAP2 Register (offset = Ch) [reset = 0h]*
+#### _15.3.4.1.4 CAP2 Register (offset = Ch) [reset = 0h]_
 
 CAP2 is shown in Figure [15-120](#page-74-1) and described in Table [15-110](#page-74-2).
 
 ### **Figure 15-120. CAP2 Register**
 
-| 31 | 30   | 29 | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15     | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|--------|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-|    | CAP2 |    |    |    |    |    |    |    |    |    |    |    |    |    |    |        |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
-|    |      |    |    |    |    |    |    |    |    |    |    |    |    |    |    | R/W-0h |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
+| 31  | 30   | 29  | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15     | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | ---- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|     | CAP2 |     |     |     |     |     |     |     |     |     |     |     |     |     |     |        |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+|     |      |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 15-110. CAP2 Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                                                                                                                                                     |
-|------|-------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-0 | CAP2  | R/W  | 0h    | This register can be loaded (written) by the following.<br>(a) Time-Stamp (that is, counter value) during a capture event.<br>(b) Software may be useful for test purposes.<br>(c) ACMP active register when used in APWM mode. |
 
-#### *15.3.4.1.5 CAP3 Register (offset = 10h) [reset = 0h]*
+#### _15.3.4.1.5 CAP3 Register (offset = 10h) [reset = 0h]_
 
 CAP3 is shown in Figure [15-121](#page-75-1) and described in Table [15-111](#page-75-2).
 
 ### **Figure 15-121. CAP3 Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-111. CAP3 Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                                                                                                                                   |
-|------|-------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-0 | CAP3  | R/W  | 0h    | In CMP mode, this is a time-stamp capture register.<br>In APWM mode, this is the period shadow (APRD) register.<br>You update the PWM period value through this register.<br>In this mode, CAP3 shadows CAP1. |
 
-#### *15.3.4.1.6 CAP4 Register (offset = 14h) [reset = 0h]*
+#### _15.3.4.1.6 CAP4 Register (offset = 14h) [reset = 0h]_
 
 CAP4 is shown in Figure [15-122](#page-76-1) and described in Table [15-112](#page-76-2).
 
 ### **Figure 15-122. CAP4 Register**
 
-| 31 | 30   | 29 | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15     | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|--------|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-|    | CAP4 |    |    |    |    |    |    |    |    |    |    |    |    |    |    |        |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
-|    |      |    |    |    |    |    |    |    |    |    |    |    |    |    |    | R/W-0h |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
+| 31  | 30   | 29  | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15     | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | ---- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|     | CAP4 |     |     |     |     |     |     |     |     |     |     |     |     |     |     |        |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+|     |      |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 15-112. CAP4 Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                                                                                                                                     |
-|------|-------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-0 | CAP4  | R/W  | 0h    | In CMP mode, this is a time-stamp capture register.<br>In APWM mode, this is the compare shadow (ACMP) register.<br>You update the PWM compare value through this register.<br>In this mode, CAP4 shadows CAP2. |
 
-#### *15.3.4.1.7 ECCTL1 Register (offset = 28h) [reset = 0h]*
+#### _15.3.4.1.7 ECCTL1 Register (offset = 28h) [reset = 0h]_
 
 ECCTL1 is shown in Figure [15-123](#page-77-1) and described in Table [15-113.](#page-77-2)
 
 ### **Figure 15-123. ECCTL1 Register**
 
-| 15      | 14        | 13      | 12       | 11      | 10      | 9       | 8       |  |  |
-|---------|-----------|---------|----------|---------|---------|---------|---------|--|--|
-|         | FREE_SOFT |         | PRESCALE |         |         |         |         |  |  |
-|         | R/W-0h    |         |          | R/W-0h  |         |         | R/W-0h  |  |  |
-| 7       | 6         | 5       | 4        | 3       | 2       | 1       | 0       |  |  |
-| CTRRST4 | CAP4POL   | CTRRST3 | CAP3POL  | CTRRST2 | CAP2POL | CTRRST1 | CAP1POL |  |  |
-| R/W-0h  | R/W-0h    | R/W-0h  | R/W-0h   | R/W-0h  | R/W-0h  | R/W-0h  | R/W-0h  |  |  |
+| 15      | 14        | 13      | 12       | 11      | 10      | 9       | 8       |     |     |
+| ------- | --------- | ------- | -------- | ------- | ------- | ------- | ------- | --- | --- |
+|         | FREE_SOFT |         | PRESCALE |         |         |         |         |     |     |
+|         | R/W-0h    |         |          | R/W-0h  |         |         | R/W-0h  |     |     |
+| 7       | 6         | 5       | 4        | 3       | 2       | 1       | 0       |     |     |
+| CTRRST4 | CAP4POL   | CTRRST3 | CAP3POL  | CTRRST2 | CAP2POL | CTRRST1 | CAP1POL |     |     |
+| R/W-0h  | R/W-0h    | R/W-0h  | R/W-0h   | R/W-0h  | R/W-0h  | R/W-0h  | R/W-0h  |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-113. ECCTL1 Register Field Descriptions**
 
-| Bit   | Field                | Type | Reset | Description                                                                                                                                                                                                                                                           |  |  |
-|-------|----------------------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--|--|
-| 15-14 | FREE_SOFT            | R/W  | 0h    | Emulation Control<br>0h = TSCTR counter stops immediately on emulation suspend.<br>1h = TSCTR counter runs until = 0.<br>2h = TSCTR counter is unaffected by emulation suspend (Run<br>Free).<br>3h = TSCTR counter is unaffected by emulation suspend (Run<br>Free). |  |  |
-| 13-9  | PRESCALE             | R/W  | 0h    | Event Filter prescale select<br>0h = Divide by 1 (i.e,. no prescale, by-pass the prescaler)<br>1h = Divide by 2<br>2h = Divide by 4<br>3h = Divide by 6<br>4h = Divide by 8<br>5h = Divide by 10<br>1Eh = Divide by 60<br>1Fh = Divide by 62                          |  |  |
-| 8     | CAPLDEN              | R/W  | 0h    | Enable Loading of CAP1 to CAP4 registers on a capture event<br>0h = Disable CAP1 through 4 register loads at capture event time.<br>1h = Enable CAP1-4 register loads at capture event time.                                                                          |  |  |
-| 7     | CTRRST4              | R/W  | 0h    | Counter Reset on Capture Event 4<br>0h = Do not reset counter on Capture Event 4 (absolute time stamp<br>operation)<br>1h = Reset counter after Capture Event 4 time-stamp has been<br>captured (used in difference mode operation)                                   |  |  |
-| 6     | CAP4POL              | R/W  | 0h    | Capture Event 4 Polarity select<br>0h = Capture Event 4 triggered on a rising edge (RE)<br>1h = Capture Event 4 triggered on a falling edge (FE)                                                                                                                      |  |  |
-| 5     | CTRRST3              | R/W  | 0h    | Counter Reset on Capture Event 3<br>0h = Do not reset counter on Capture Event 3 (absolute time stamp)<br>1h = Reset counter after Event 3 time-stamp has been captured<br>(used in difference mode operation)                                                        |  |  |
-| 4     | CAP3POL              | R/W  | 0h    | Capture Event 3 Polarity select<br>0h = Capture Event 3 triggered on a rising edge (RE)<br>1h = Capture Event 3 triggered on a falling edge (FE)                                                                                                                      |  |  |
-| 3     | CTRRST2<br>R/W<br>0h |      |       | Counter Reset on Capture Event 2<br>0h = Do not reset counter on Capture Event 2 (absolute time stamp)<br>1h = Reset counter after Event 2 time-stamp has been captured<br>(used in difference mode operation)                                                        |  |  |
+| Bit   | Field                | Type | Reset | Description                                                                                                                                                                                                                                                           |     |     |
+| ----- | -------------------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- |
+| 15-14 | FREE_SOFT            | R/W  | 0h    | Emulation Control<br>0h = TSCTR counter stops immediately on emulation suspend.<br>1h = TSCTR counter runs until = 0.<br>2h = TSCTR counter is unaffected by emulation suspend (Run<br>Free).<br>3h = TSCTR counter is unaffected by emulation suspend (Run<br>Free). |     |     |
+| 13-9  | PRESCALE             | R/W  | 0h    | Event Filter prescale select<br>0h = Divide by 1 (i.e,. no prescale, by-pass the prescaler)<br>1h = Divide by 2<br>2h = Divide by 4<br>3h = Divide by 6<br>4h = Divide by 8<br>5h = Divide by 10<br>1Eh = Divide by 60<br>1Fh = Divide by 62                          |     |     |
+| 8     | CAPLDEN              | R/W  | 0h    | Enable Loading of CAP1 to CAP4 registers on a capture event<br>0h = Disable CAP1 through 4 register loads at capture event time.<br>1h = Enable CAP1-4 register loads at capture event time.                                                                          |     |     |
+| 7     | CTRRST4              | R/W  | 0h    | Counter Reset on Capture Event 4<br>0h = Do not reset counter on Capture Event 4 (absolute time stamp<br>operation)<br>1h = Reset counter after Capture Event 4 time-stamp has been<br>captured (used in difference mode operation)                                   |     |     |
+| 6     | CAP4POL              | R/W  | 0h    | Capture Event 4 Polarity select<br>0h = Capture Event 4 triggered on a rising edge (RE)<br>1h = Capture Event 4 triggered on a falling edge (FE)                                                                                                                      |     |     |
+| 5     | CTRRST3              | R/W  | 0h    | Counter Reset on Capture Event 3<br>0h = Do not reset counter on Capture Event 3 (absolute time stamp)<br>1h = Reset counter after Event 3 time-stamp has been captured<br>(used in difference mode operation)                                                        |     |     |
+| 4     | CAP3POL              | R/W  | 0h    | Capture Event 3 Polarity select<br>0h = Capture Event 3 triggered on a rising edge (RE)<br>1h = Capture Event 3 triggered on a falling edge (FE)                                                                                                                      |     |     |
+| 3     | CTRRST2<br>R/W<br>0h |      |       | Counter Reset on Capture Event 2<br>0h = Do not reset counter on Capture Event 2 (absolute time stamp)<br>1h = Reset counter after Event 2 time-stamp has been captured<br>(used in difference mode operation)                                                        |     |     |
 
 **Table 15-113. ECCTL1 Register Field Descriptions (continued)**
 
 | Bit | Field   | Type | Reset | Description                                                                                                                                                                                                    |
-|-----|---------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | ------- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2   | CAP2POL | R/W  | 0h    | Capture Event 2 Polarity select<br>0h = Capture Event 2 triggered on a rising edge (RE)<br>1h = Capture Event 2 triggered on a falling edge (FE)                                                               |
 | 1   | CTRRST1 | R/W  | 0h    | Counter Reset on Capture Event 1<br>0h = Do not reset counter on Capture Event 1 (absolute time stamp)<br>1h = Reset counter after Event 1 time-stamp has been captured<br>(used in difference mode operation) |
 | 0   | CAP1POL | R/W  | 0h    | Capture Event 1 Polarity select<br>0h = Capture Event 1 triggered on a rising edge (RE)<br>1h = Capture Event 1 triggered on a falling edge (FE)                                                               |
 
-#### *15.3.4.1.8 ECCTL2 Register (offset = 2Ah) [reset = 6h]*
+#### _15.3.4.1.8 ECCTL2 Register (offset = 2Ah) [reset = 6h]_
 
 ECCTL2 is shown in Figure [15-124](#page-79-1) and described in Table [15-114.](#page-79-2)
 
 ### **Figure 15-124. ECCTL2 Register**
 
-| 15        | 14 | 13       | 12        | 11     | 10      | 9         | 8               |
-|-----------|----|----------|-----------|--------|---------|-----------|-----------------|
-|           |    | RESERVED |           |        | APWMPOL | CAP_APWM  | SWSYNC          |
-|           |    | R-0h     |           |        | R/W-0h  | R/W-0h    | R/W-0h          |
-| 7         | 6  | 5        | 4         | 3      | 2       | 1         | 0               |
-| SYNCO_SEL |    | SYNCI_EN | TSCTRSTOP | RE-ARM |         | STOP_WRAP | CONT_ONESH<br>T |
-| R/W-0h    |    | R/W-0h   | R/W-0h    | R/W-0h |         | R/W-3h    | R/W-0h          |
+| 15        | 14  | 13       | 12        | 11     | 10      | 9         | 8               |
+| --------- | --- | -------- | --------- | ------ | ------- | --------- | --------------- |
+|           |     | RESERVED |           |        | APWMPOL | CAP_APWM  | SWSYNC          |
+|           |     | R-0h     |           |        | R/W-0h  | R/W-0h    | R/W-0h          |
+| 7         | 6   | 5        | 4         | 3      | 2       | 1         | 0               |
+| SYNCO_SEL |     | SYNCI_EN | TSCTRSTOP | RE-ARM |         | STOP_WRAP | CONT_ONESH<br>T |
+| R/W-0h    |     | R/W-0h   | R/W-0h    | R/W-0h |         | R/W-3h    | R/W-0h          |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-114. ECCTL2 Register Field Descriptions**
 
 | Bit   | Field     | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-|-------|-----------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | --------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 15-11 | RESERVED  | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | 10    | APWMPOL   | R/W  | 0h    | APWM output polarity select.<br>This is applicable only in APWM operating mode<br>0h = Output is active high (Compare value defines high time)<br>1h = Output is active low (Compare value defines low time)                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | 9     | CAP_APWM  | R/W  | 0h    | CAP/APWM operating mode select<br>0h = ECAP module operates in capture mode. This mode forces the<br>following configuration. (a) Inhibits TSCTR resets via PRDEQ event.<br>(b) Inhibits shadow loads on CAP1 and 2 registers. (c) Permits user<br>to enable CAP1-4 register load. (d) ECAPn/APWMn pin operates as<br>a capture input.<br>1h = ECAP module operates in APWM mode. This mode forces the<br>following configuration. (a) Resets TSCTR on PRDEQ event (period<br>boundary). (b) Permits shadow loading on CAP1 and 2 registers. (c)<br>Disables loading of time-stamps into CAP1-4 registers. (d)<br>ECAPn/APWMn pin operates as a APWM output. |
@@ -5613,12 +5630,12 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 15-114. ECCTL2 Register Field Descriptions (continued)**
 
 | Bit | Field       | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-|-----|-------------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | ----------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 3   | RE-ARM      | R/W  | 0h    | One-Shot Re-Arming Control, that is, wait for stop trigger.<br>Note: The re-arm function is valid in one shot or continuous mode.<br>0h = Has no effect (reading always returns a 0)<br>1h = Arms the one-shot sequence as follows: 1) Resets the Mod4<br>counter to zero. 2) Unfreezes the Mod4 counter. 3) Enables capture                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | 2-1 | STOP_WRAP   | R/W  | 3h    | register loads.<br>Stop value for one-shot mode.<br>This is the number (between 1 and 4) of captures allowed to occur<br>before the CAP (1 through 4) registers are frozen, that is, capture<br>sequence is stopped.<br>Wrap value for continuous mode.<br>This is the number (between 1 and 4) of the capture register in which<br>the circular buffer wraps around and starts again.<br>Notes: STOP_WRAP is compared to Mod4 counter and, when<br>equal, the following two actions occur.<br>(1) Mod4 counter is stopped (frozen), and (2) Capture register loads<br>are inhibited.<br>In one-shot mode, further interrupt events are blocked until re<br>armed.<br>0h = Stop after Capture Event 1 in one-shot mode. Wrap after<br>Capture Event 1 in continuous mode.<br>1h = Stop after Capture Event 2 in one-shot mode. Wrap after<br>Capture Event 2 in continuous mode.<br>2h = Stop after Capture Event 3 in one-shot mode. Wrap after<br>Capture Event 3 in continuous mode.<br>3h = Stop after Capture Event 4 in one-shot mode. Wrap after<br>Capture Event 4 in continuous mode. |
 | 0   | CONT_ONESHT | R/W  | 0h    | Continuous or one-shot mode control (applicable only in capture<br>mode)<br>0h = Operate in continuous mode<br>1h = Operate in one-shot mode                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 
-#### *15.3.4.1.9 ECEINT Register (offset = 2Ch) [reset = 0h]*
+#### _15.3.4.1.9 ECEINT Register (offset = 2Ch) [reset = 0h]_
 
 ECEINT is shown in Figure [15-125](#page-81-1) and described in Table [15-115.](#page-81-2)
 
@@ -5626,50 +5643,50 @@ The interrupt enable bits (CEVTn) block any of the selected events from generati
 
 ### **Figure 15-125. ECEINT Register**
 
-| 15     | 14       | 13     | 12     | 11     | 10     | 9      | 8        |  |  |  |  |
-|--------|----------|--------|--------|--------|--------|--------|----------|--|--|--|--|
-|        | RESERVED |        |        |        |        |        |          |  |  |  |  |
-|        | R-0h     |        |        |        |        |        |          |  |  |  |  |
-| 7      | 6        | 5      | 4      | 3      | 2      | 1      | 0        |  |  |  |  |
-| CMPEQ  | PRDEQ    | CNTOVF | CEVT4  | CEVT3  | CEVT2  | CEVT1  | RESERVED |  |  |  |  |
-| R/W-0h | R/W-0h   | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R-0h     |  |  |  |  |
+| 15     | 14       | 13     | 12     | 11     | 10     | 9      | 8        |     |     |     |     |
+| ------ | -------- | ------ | ------ | ------ | ------ | ------ | -------- | --- | --- | --- | --- |
+|        | RESERVED |        |        |        |        |        |          |     |     |     |     |
+|        | R-0h     |        |        |        |        |        |          |     |     |     |     |
+| 7      | 6        | 5      | 4      | 3      | 2      | 1      | 0        |     |     |     |     |
+| CMPEQ  | PRDEQ    | CNTOVF | CEVT4  | CEVT3  | CEVT2  | CEVT1  | RESERVED |     |     |     |     |
+| R/W-0h | R/W-0h   | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R-0h     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ## **Table 15-115. ECEINT Register Field Descriptions**
 
-| Bit  | Field    | Type | Reset | Description                                                                                                                                         |  |  |
-|------|----------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------|--|--|
-| 15-8 | RESERVED | R    | 0h    |                                                                                                                                                     |  |  |
-| 7    | CMPEQ    | R/W  | 0h    | Counter Equal Compare Interrupt Enable.<br>0h = Disable Compare Equal as an Interrupt source.<br>1h = Enable Compare Equal as an Interrupt source.  |  |  |
-| 6    | PRDEQ    | R/W  | 0h    | Counter Equal Period Interrupt Enable.<br>0h = Disable Period Equal as an Interrupt source.<br>1h = Enable Period Equal as an Interrupt source.     |  |  |
-| 5    | CNTOVF   | R/W  | 0h    | Counter Overflow Interrupt Enable.<br>0h = Disable counter Overflow as an Interrupt source.<br>1h = Enable counter Overflow as an Interrupt source. |  |  |
-| 4    | CEVT4    | R/W  | 0h    | Capture Event 4 Interrupt Enable.<br>0h = Disable Capture Event 4 as an Interrupt source.<br>1h = Enable Capture Event 4 as an Interrupt source.    |  |  |
-| 3    | CEVT3    | R/W  | 0h    | Capture Event 3 Interrupt Enable.<br>0h = Disable Capture Event 3 as an Interrupt source.<br>1h = Enable Capture Event 3 as an Interrupt source.    |  |  |
-| 2    | CEVT2    | R/W  | 0h    | Capture Event 2 Interrupt Enable.<br>0h = Disable Capture Event 2 as an Interrupt source.<br>1h = Enable Capture Event 2 as an Interrupt source.    |  |  |
-| 1    | CEVT1    | R/W  | 0h    | Capture Event 1 Interrupt Enable .<br>0h = Disable Capture Event 1 as an Interrupt source.<br>1h = Enable Capture Event 1 as an Interrupt source.   |  |  |
-| 0    | RESERVED | R    | 0h    |                                                                                                                                                     |  |  |
+| Bit  | Field    | Type | Reset | Description                                                                                                                                         |     |     |
+| ---- | -------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- |
+| 15-8 | RESERVED | R    | 0h    |                                                                                                                                                     |     |     |
+| 7    | CMPEQ    | R/W  | 0h    | Counter Equal Compare Interrupt Enable.<br>0h = Disable Compare Equal as an Interrupt source.<br>1h = Enable Compare Equal as an Interrupt source.  |     |     |
+| 6    | PRDEQ    | R/W  | 0h    | Counter Equal Period Interrupt Enable.<br>0h = Disable Period Equal as an Interrupt source.<br>1h = Enable Period Equal as an Interrupt source.     |     |     |
+| 5    | CNTOVF   | R/W  | 0h    | Counter Overflow Interrupt Enable.<br>0h = Disable counter Overflow as an Interrupt source.<br>1h = Enable counter Overflow as an Interrupt source. |     |     |
+| 4    | CEVT4    | R/W  | 0h    | Capture Event 4 Interrupt Enable.<br>0h = Disable Capture Event 4 as an Interrupt source.<br>1h = Enable Capture Event 4 as an Interrupt source.    |     |     |
+| 3    | CEVT3    | R/W  | 0h    | Capture Event 3 Interrupt Enable.<br>0h = Disable Capture Event 3 as an Interrupt source.<br>1h = Enable Capture Event 3 as an Interrupt source.    |     |     |
+| 2    | CEVT2    | R/W  | 0h    | Capture Event 2 Interrupt Enable.<br>0h = Disable Capture Event 2 as an Interrupt source.<br>1h = Enable Capture Event 2 as an Interrupt source.    |     |     |
+| 1    | CEVT1    | R/W  | 0h    | Capture Event 1 Interrupt Enable .<br>0h = Disable Capture Event 1 as an Interrupt source.<br>1h = Enable Capture Event 1 as an Interrupt source.   |     |     |
+| 0    | RESERVED | R    | 0h    |                                                                                                                                                     |     |     |
 
-#### *15.3.4.1.10 ECFLG Register (offset = 2Eh) [reset = 0h]*
+#### _15.3.4.1.10 ECFLG Register (offset = 2Eh) [reset = 0h]_
 
 ECFLG is shown in Figure [15-126](#page-82-1) and described in Table [15-116.](#page-82-2)
 
 ## **Figure 15-126. ECFLG Register**
 
-| 15    | 14       | 13     | 12    | 11    | 10    | 9     | 8    |  |  |  |  |
-|-------|----------|--------|-------|-------|-------|-------|------|--|--|--|--|
-|       | RESERVED |        |       |       |       |       |      |  |  |  |  |
-|       | R-0h     |        |       |       |       |       |      |  |  |  |  |
-| 7     | 6        | 5      | 4     | 3     | 2     | 1     | 0    |  |  |  |  |
-| CMPEQ | PRDEQ    | CNTOVF | CEVT4 | CEVT3 | CEVT2 | CEVT1 | INT  |  |  |  |  |
-| R-0h  | R-0h     | R-0h   | R-0h  | R-0h  | R-0h  | R-0h  | R-0h |  |  |  |  |
+| 15    | 14       | 13     | 12    | 11    | 10    | 9     | 8    |     |     |     |     |
+| ----- | -------- | ------ | ----- | ----- | ----- | ----- | ---- | --- | --- | --- | --- |
+|       | RESERVED |        |       |       |       |       |      |     |     |     |     |
+|       | R-0h     |        |       |       |       |       |      |     |     |     |     |
+| 7     | 6        | 5      | 4     | 3     | 2     | 1     | 0    |     |     |     |     |
+| CMPEQ | PRDEQ    | CNTOVF | CEVT4 | CEVT3 | CEVT2 | CEVT1 | INT  |     |     |     |     |
+| R-0h  | R-0h     | R-0h   | R-0h  | R-0h  | R-0h  | R-0h  | R-0h |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-116. ECFLG Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                   |
-|------|----------|------|-------|-----------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | --------------------------------------------------------------------------------------------- |
 | 15-8 | RESERVED | R    | 0h    |                                                                                               |
 | 7    | CMPEQ    | R    | 0h    | Compare Equal Compare Status Flag.<br>This flag is only active in APWM mode.                  |
 |      |          |      |       | 0h = Indicates no event occurred                                                              |
@@ -5696,56 +5713,56 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 |      |          |      |       | 0h = Indicates no interrupt generated.                                                        |
 |      |          |      |       | 1h = Indicates that an interrupt was generated.                                               |
 
-#### *15.3.4.1.11 ECCLR Register (offset = 30h) [reset = 0h]*
+#### _15.3.4.1.11 ECCLR Register (offset = 30h) [reset = 0h]_
 
 ECCLR is shown in Figure [15-127](#page-83-1) and described in Table [15-117](#page-83-2).
 
 ### **Figure 15-127. ECCLR Register**
 
-| 15     | 14       | 13     | 12     | 11     | 10     | 9      | 8      |  |  |  |  |
-|--------|----------|--------|--------|--------|--------|--------|--------|--|--|--|--|
-|        | RESERVED |        |        |        |        |        |        |  |  |  |  |
-|        | R-0h     |        |        |        |        |        |        |  |  |  |  |
-| 7      | 6        | 5      | 4      | 3      | 2      | 1      | 0      |  |  |  |  |
-| CMPEQ  | PRDEQ    | CNTOVF | CEVT4  | CEVT3  | CEVT2  | CEVT1  | INT    |  |  |  |  |
-| R/W-0h | R/W-0h   | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h |  |  |  |  |
+| 15     | 14       | 13     | 12     | 11     | 10     | 9      | 8      |     |     |     |     |
+| ------ | -------- | ------ | ------ | ------ | ------ | ------ | ------ | --- | --- | --- | --- |
+|        | RESERVED |        |        |        |        |        |        |     |     |     |     |
+|        | R-0h     |        |        |        |        |        |        |     |     |     |     |
+| 7      | 6        | 5      | 4      | 3      | 2      | 1      | 0      |     |     |     |     |
+| CMPEQ  | PRDEQ    | CNTOVF | CEVT4  | CEVT3  | CEVT2  | CEVT1  | INT    |     |     |     |     |
+| R/W-0h | R/W-0h   | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-117. ECCLR Register Field Descriptions**
 
-| Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                            |  |  |
-|------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--|--|
-| 15-8 | RESERVED | R    | 0h    |                                                                                                                                                                                                                        |  |  |
-| 7    | CMPEQ    | R/W  | 0h    | Counter Equal Compare Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0<br>1h = Writing a 1 clears the CMPEQ flag condition                                                                         |  |  |
-| 6    | PRDEQ    | R/W  | 0h    | Counter Equal Period Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0<br>1h = Writing a 1 clears the PRDEQ flag condition                                                                          |  |  |
-| 5    | CNTOVF   | R/W  | 0h    | Counter Overflow Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0<br>1h = Writing a 1 clears the CNTOVF flag condition                                                                             |  |  |
-| 4    | CEVT4    | R/W  | 0h    | Capture Event 4 Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0.<br>1h = Writing a 1 clears the CEVT3 flag condition.                                                                             |  |  |
-| 3    | CEVT3    | R/W  | 0h    | Capture Event 3 Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0.<br>1h = Writing a 1 clears the CEVT3 flag condition.                                                                             |  |  |
-| 2    | CEVT2    | R/W  | 0h    | Capture Event 2 Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0.<br>1h = Writing a 1 clears the CEVT2 flag condition.                                                                             |  |  |
-| 1    | CEVT1    | R/W  | 0h    | Capture Event 1 Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0.<br>1h = Writing a 1 clears the CEVT1 flag condition.                                                                             |  |  |
-| 0    | INT      | R/W  | 0h    | Global Interrupt Clear Flag<br>0h = Writing a 0 has no effect. Always reads back a 0.<br>1h = Writing a 1 clears the INT flag and enable further interrupts to<br>be generated if any of the event flags are set to 1. |  |  |
+| Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                            |     |     |
+| ---- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- | --- |
+| 15-8 | RESERVED | R    | 0h    |                                                                                                                                                                                                                        |     |     |
+| 7    | CMPEQ    | R/W  | 0h    | Counter Equal Compare Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0<br>1h = Writing a 1 clears the CMPEQ flag condition                                                                         |     |     |
+| 6    | PRDEQ    | R/W  | 0h    | Counter Equal Period Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0<br>1h = Writing a 1 clears the PRDEQ flag condition                                                                          |     |     |
+| 5    | CNTOVF   | R/W  | 0h    | Counter Overflow Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0<br>1h = Writing a 1 clears the CNTOVF flag condition                                                                             |     |     |
+| 4    | CEVT4    | R/W  | 0h    | Capture Event 4 Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0.<br>1h = Writing a 1 clears the CEVT3 flag condition.                                                                             |     |     |
+| 3    | CEVT3    | R/W  | 0h    | Capture Event 3 Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0.<br>1h = Writing a 1 clears the CEVT3 flag condition.                                                                             |     |     |
+| 2    | CEVT2    | R/W  | 0h    | Capture Event 2 Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0.<br>1h = Writing a 1 clears the CEVT2 flag condition.                                                                             |     |     |
+| 1    | CEVT1    | R/W  | 0h    | Capture Event 1 Status Flag<br>0h = Writing a 0 has no effect. Always reads back a 0.<br>1h = Writing a 1 clears the CEVT1 flag condition.                                                                             |     |     |
+| 0    | INT      | R/W  | 0h    | Global Interrupt Clear Flag<br>0h = Writing a 0 has no effect. Always reads back a 0.<br>1h = Writing a 1 clears the INT flag and enable further interrupts to<br>be generated if any of the event flags are set to 1. |     |     |
 
-#### *15.3.4.1.12 ECFRC Register (offset = 32h) [reset = 0h]*
+#### _15.3.4.1.12 ECFRC Register (offset = 32h) [reset = 0h]_
 
 ECFRC is shown in Figure [15-128](#page-84-1) and described in Table [15-118.](#page-84-2)
 
 ## **Figure 15-128. ECFRC Register**
 
-| 15     | 14       | 13     | 12     | 11     | 10     | 9      | 8        |  |  |  |  |
-|--------|----------|--------|--------|--------|--------|--------|----------|--|--|--|--|
-|        | RESERVED |        |        |        |        |        |          |  |  |  |  |
-|        | R-0h     |        |        |        |        |        |          |  |  |  |  |
-| 7      | 6        | 5      | 4      | 3      | 2      | 1      | 0        |  |  |  |  |
-| CMPEQ  | PRDEQ    | CNTOVF | CEVT4  | CEVT3  | CEVT2  | CEVT1  | RESERVED |  |  |  |  |
-| R/W-0h | R/W-0h   | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R-0h     |  |  |  |  |
+| 15     | 14       | 13     | 12     | 11     | 10     | 9      | 8        |     |     |     |     |
+| ------ | -------- | ------ | ------ | ------ | ------ | ------ | -------- | --- | --- | --- | --- |
+|        | RESERVED |        |        |        |        |        |          |     |     |     |     |
+|        | R-0h     |        |        |        |        |        |          |     |     |     |     |
+| 7      | 6        | 5      | 4      | 3      | 2      | 1      | 0        |     |     |     |     |
+| CMPEQ  | PRDEQ    | CNTOVF | CEVT4  | CEVT3  | CEVT2  | CEVT1  | RESERVED |     |     |     |     |
+| R/W-0h | R/W-0h   | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R-0h     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-118. ECFRC Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                  |
-|------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------- |
 | 15-8 | RESERVED | R    | 0h    |                                                                                                                              |
 | 7    | CMPEQ    | R/W  | 0h    | Force Counter Equal Compare Interrupt<br>0h = No effect. Always reads back a 0.<br>1h = Writing a 1 sets the CMPEQ flag bit. |
 | 6    | PRDEQ    | R/W  | 0h    | Force Counter Equal Period Interrupt<br>0h = No effect. Always reads back a 0.<br>1h = Writing a 1 sets the PRDEQ flag bit.  |
@@ -5756,23 +5773,23 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 | 1    | CEVT1    | R/W  | 0h    | Always reads back a 0.<br>Force Capture Event 1<br>0h = No effect.<br>1h = Writing a 1 sets the CEVT1 flag bit.              |
 | 0    | RESERVED | R    | 0h    |                                                                                                                              |
 
-#### *15.3.4.1.13 REVID Register (offset = 5Ch) [reset = 44D22100h]*
+#### _15.3.4.1.13 REVID Register (offset = 5Ch) [reset = 44D22100h]_
 
 REVID is shown in Figure [15-174](#page-133-1) and described in Table [15-146.](#page-133-2)
 
 ### **Figure 15-129. REVID Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-119. REVID Register Field Descriptions**
 
 | Bit  | Field | Type | Reset     | Description  |
-|------|-------|------|-----------|--------------|
+| ---- | ----- | ---- | --------- | ------------ |
 | 31-0 | REV   | R    | 44D22100h | Revision ID. |
 
 ## **15.4 Enhanced Quadrature Encoder Pulse (eQEP) Module**
 
-### *15.4.1 Introduction*
+### _15.4.1 Introduction_
 
 A single track of slots patterns the periphery of an incremental encoder disk, as shown in Figure [15-130](#page-86-0). These slots create an alternating pattern of dark and light lines. The disk count is defined as the number of dark/light line pairs that occur per revolution (lines per revolution). As a rule, a second track is added to generate a signal that occurs once per revolution (index signal: QEPI), which can be used to indicate an absolute position. Encoder manufacturers identify the index pulse using different terms such as index, marker, home position, and zero reference.
 
@@ -5795,7 +5812,7 @@ Some typical applications of shaft encoders include robotics and even computer i
 **General Issues:** Estimating velocity from a digital position sensor is a cost-effective strategy in motor control. Two different first order approximations for velocity may be written as:
 
 $$v(k) \approx \frac{x(k) - x(k-1)}{T} = \frac{\Delta X}{T}$$
- (1)
+(1)
 
 $$v(k) \approx \frac{X}{t(k) - t(k-1)} = \frac{X}{\Delta T}$$
 (2)
@@ -5830,7 +5847,7 @@ At low speed, [Equation](#page-88-1) 2 provides a more accurate approach. It req
 
 For systems with a large speed range (that is, speed estimation is needed at both low and high speeds), one approach is to use [Equation](#page-88-1) 2 at low speed and have the DSP software switch over to [Equation](#page-88-0) 1 when the motor speed rises above some specified threshold.
 
-### *15.4.2 Functional Description*
+### _15.4.2 Functional Description_
 
 This section provides the eQEP inputs and functional description.
 
@@ -5867,7 +5884,7 @@ Figure [15-134](#page-91-0) shows a functional block diagram of the QDU.
 
 **Figure 15-134. Functional Block Diagram of Decoder Unit**
 
-#### *15.4.2.3.1 Position Counter Input Modes*
+#### _15.4.2.3.1 Position Counter Input Modes_
 
 Clock and direction input to position counter is selected using the QSRC bit in the eQEP decoder control register (QDECCTL), based on interface input requirement as follows:
 
@@ -5876,7 +5893,7 @@ Clock and direction input to position counter is selected using the QSRC bit in 
 - UP-count mode
 - DOWN-count mode
 
-#### *15.4.2.3.1.1 Quadrature Count Mode*
+#### _15.4.2.3.1.1 Quadrature Count Mode_
 
 The quadrature decoder generates the direction and clock to the position counter in quadrature count mode.
 
@@ -5889,11 +5906,11 @@ The quadrature decoder generates the direction and clock to the position counter
 **Reverse Count—** In normal quadrature count operation, QEPA input is fed to the QA input of the quadrature decoder and the QEPB input is fed to the QB input of the quadrature decoder. Reverse counting is enabled by setting the SWAP bit in the eQEP decoder control register (QDECCTL). This will swap the input to the quadrature decoder thereby reversing the counting direction.
 
 |               | Table 15-120. Quadrature Decoder Truth Table |      |         |
-|---------------|----------------------------------------------|------|---------|
+| ------------- | -------------------------------------------- | ---- | ------- |
 | Previous Edge | Present Edge                                 | QDIR | QPOSCNT |
 
 | Previous Edge | Present Edge | QDIR   | QPOSCNT                |
-|---------------|--------------|--------|------------------------|
+| ------------- | ------------ | ------ | ---------------------- |
 | QA↑           | QB↑          | UP     | Increment              |
 |               | QB↓          | DOWN   | Decrement              |
 |               | QA↓          | TOGGLE | Increment or Decrement |
@@ -5911,23 +5928,23 @@ The quadrature decoder generates the direction and clock to the position counter
 
 **Figure 15-136. Quadrature-clock and Direction Decoding**
 
-#### *15.4.2.3.1.2 Direction-count Mode*
+#### _15.4.2.3.1.2 Direction-count Mode_
 
 Some position encoders provide direction and clock outputs, instead of quadrature outputs. In such cases, direction-count mode can be used. QEPA input will provide the clock for position counter and the QEPB input will have the direction information. The position counter is incremented on every rising edge of a QEPA input when the direction input is high and decremented when the direction input is low.
 
-#### *15.4.2.3.1.3 Up-Count Mode*
+#### _15.4.2.3.1.3 Up-Count Mode_
 
 The counter direction signal is hard-wired for up count and the position counter is used to measure the frequency of the QEPA input. Setting of the XCR bit in the eQEP decoder control register (QDECCTL) enables clock generation to the position counter on both edges of the QEPA input, thereby increasing the measurement resolution by 2× factor.
 
-#### *15.4.2.3.1.4 Down-Count Mode*
+#### _15.4.2.3.1.4 Down-Count Mode_
 
 The counter direction signal is hardwired for a down count and the position counter is used to measure the frequency of the QEPA input. Setting of the XCR bit in the eQEP decoder control register (QDECCTL) enables clock generation to the position counter on both edges of a QEPA input, thereby increasing the measurement resolution by 2× factor.
 
-#### *15.4.2.3.2 eQEP Input Polarity Selection*
+#### _15.4.2.3.2 eQEP Input Polarity Selection_
 
 Each eQEP input can be inverted using the in the eQEP decoder control register (QDECCTL[8:5]) control bits. As an example, setting of the QIP bit in QDECCTL inverts the index input.
 
-#### *15.4.2.3.3 Position-Compare Sync Output*
+#### _15.4.2.3.3 Position-Compare Sync Output_
 
 The eQEP peripheral includes a position-compare unit that is used to generate the position-compare sync signal on compare match between the position counter register (QPOSCNT) and the position-compare register (QPOSCMP). This sync signal can be output using an index pin or strobe pin of the EQEP peripheral.
 
@@ -5937,7 +5954,7 @@ Setting the SOEN bit in the eQEP decoder control register (QDECCTL) enables the 
 
 The position counter and control unit provides two configuration registers (QEPCTL and QPOSCTL) for setting up position counter operational modes, position counter initialization/latch modes and positioncompare logic for sync signal generation.
 
-#### *15.4.2.4.1 Position Counter Operating Modes*
+#### _15.4.2.4.1 Position Counter Operating Modes_
 
 Position counter data may be captured in different manners. In some systems, the position counter is accumulated continuously for multiple revolutions and the position counter value provides the position information with respect to the known reference. An example of this is the quadrature encoder mounted on the motor controlling the print head in the printer. Here the position counter is reset by moving the print head to the home position and then position counter provides absolute position information with respect to home position.
 
@@ -5966,27 +5983,27 @@ The index event latch configuration QEPCTL[IEL] bits are ignored in this mode an
 
 Figure 15-137. Position Counter Reset by Index Pulse for 1000 Line Encoder (QPOSMAX = 3999 or F9Fh)
 
-#### *15.4.2.4.1.2 Position Counter Reset on Maximum Position (QEPCTL[PCRM]=01)*
+#### _15.4.2.4.1.2 Position Counter Reset on Maximum Position (QEPCTL[PCRM]=01)_
 
 If the position counter is equal to QPOSMAX, then the position counter is reset to 0 on the next eQEP clock for forward movement and position counter overflow flag is set. If the position counter is equal to ZERO, then the position counter is reset to QPOSMAX on the next QEP clock for reverse movement and position counter underflow flag is set. Figure [15-138](#page-96-0) shows the position counter reset operation in this mode.
 
 First index marker is defined as the quadrature edge following the first index edge. The eQEP peripheral records the occurrence of the first index marker (QEPSTS[FIMF]) and direction on the first index event marker (QEPSTS[FIDF]) in the QEPSTS registers; it also remembers the quadrature edge on the first index marker so that the same relative quadrature transition is used for the software index marker (QEPCTL[IEL]=11).
 
-#### *15.4.2.4.1.3 Position Counter Reset on the First Index Event (QEPCTL[PCRM] = 10)*
+#### _15.4.2.4.1.3 Position Counter Reset on the First Index Event (QEPCTL[PCRM] = 10)_
 
 If the index event occurs during forward movement, then the position counter is reset to 0 on the next eQEP clock. If the index event occurs during the reverse movement, then the position counter is reset to the value in the QPOSMAX register on the next eQEP clock. Note that this is done only on the first occurrence and subsequently the position counter value is not reset on an index event; rather, it is reset based on maximum position as described in Section [15.4.2.4.1.2.](#page-96-1)
 
 First index marker is defined as the quadrature edge following the first index edge. The eQEP peripheral records the occurrence of the first index marker (QEPSTS[FIMF]) and direction on the first index event marker (QEPSTS[FIDF]) in QEPSTS registers. It also remembers the quadrature edge on the first index marker so that same relative quadrature transition is used for software index marker (QEPCTL[IEL]=11).
 
-#### *15.4.2.4.1.4 Position Counter Reset on Unit Time out Event (QEPCTL[PCRM] = 11)*
+#### _15.4.2.4.1.4 Position Counter Reset on Unit Time out Event (QEPCTL[PCRM] = 11)_
 
 In this mode, the QPOSCNT value is latched to the QPOSLAT register and then the QPOSCNT is reset (to 0 or QPOSMAX, depending on the direction mode selected by QDECCTL[QSRC] bits on a unit time event). This is useful for frequency measurement.
 
-#### *15.4.2.4.2 Position Counter Latch*
+#### _15.4.2.4.2 Position Counter Latch_
 
 The eQEP index and strobe input can be configured to latch the position counter (QPOSCNT) into QPOSILAT and QPOSSLAT, respectively, on occurrence of a definite event on these pins.
 
-#### *15.4.2.4.2.1 Index Event Latch*
+#### _15.4.2.4.2.1 Index Event Latch_
 
 In some applications, it may not be desirable to reset the position counter on every index event and instead it may be required to operate the position counter in full 32-bit mode (QEPCTL[PCRM] = 01 and QEPCTL[PCRM] = 10 modes).
 
@@ -6006,7 +6023,7 @@ The index event latch interrupt flag (QFLG[IEL]) is set when the position counte
 
 Figure [15-139](#page-98-0) shows the position counter latch using an index event marker.
 
-#### *15.4.2.4.2.2 Strobe Event Latch*
+#### _15.4.2.4.2.2 Strobe Event Latch_
 
 The position-counter value is latched to the QPOSSLAT register on the rising edge of the strobe input by clearing the QEPCTL[SEL] bit.
 
@@ -6014,7 +6031,7 @@ If the QEPCTL[SEL] bit is set, then the position counter value is latched to the
 
 The strobe event latch interrupt flag (QFLG[SEL]) is set when the position counter is latched to the QPOSSLAT register.
 
-#### *15.4.2.4.3 Position Counter Initialization*
+#### _15.4.2.4.3 Position Counter Initialization_
 
 The position counter can be initialized using following events:
 
@@ -6036,7 +6053,7 @@ The strobe event initialization interrupt flag (QFLG[SEI]) is set when the posit
 
 **Software Initialization (SWI)—** The position counter can be initialized in software by writing a 1 to the QEPCTL[SWI] bit, which will automatically be cleared after initialization.
 
-#### *15.4.2.4.4 eQEP Position-compare Unit*
+#### _15.4.2.4.4 eQEP Position-compare Unit_
 
 The eQEP peripheral includes a position-compare unit that is used to generate a sync output and/or interrupt on a position-compare match. Figure [15-141](#page-100-0) shows a diagram. The position-compare (QPOSCMP) register is shadowed and shadow mode can be enabled or disabled using the QPOSCTL[PSSHDW] bit. If the shadow mode is not enabled, the CPU writes directly to the active position compare register.
 
@@ -6101,7 +6118,7 @@ N - Number of quadrature periods selected using QCAPCTL[UPPS] bits
 Velocity Calculation Equations:
 
 $$v(k) = \frac{x(k) - x(k-1)}{T} = \frac{\Delta X}{T} o$$
- (4)
+(4)
 
 where
 
@@ -6126,7 +6143,7 @@ t(k-1): Time instant "k - 1"
 Unit time (T) and unit period (X) are configured using the QUPRD and QCAPCTL[UPPS] registers. Incremental position output and incremental time output is available in the QPOSLAT and QCPRDLAT registers.
 
 | Parameter | Relevant Register to Configure or Read the Information                  |
-|-----------|-------------------------------------------------------------------------|
+| --------- | ----------------------------------------------------------------------- |
 | T         | Unit Period Register (QUPRD)                                            |
 | ΔX        | Incremental Position = QPOSLAT(k) - QPOSLAT(K - 1)                      |
 | X         | Fixed unit position defined by sensor resolution and ZCAPCTL[UPPS] bits |
@@ -6156,14 +6173,14 @@ Eleven interrupt events (PCE, PHE, QDC, WTO, PCU, PCO, PCR, PCM, SEL, IEL, and U
 
 Note that the interrupts coming from the eQEP module are also used as DMA events. The interrupt registers should be used to enable and clear the current DMA event in order for the eQEP module to generate subsequent DMA events.
 
-### *15.4.3 EQEP Registers*
+### _15.4.3 EQEP Registers_
 
 Table [15-121](#page-107-0) lists the memory-mapped registers for the EQEP. All register offset addresses not listed in Table [15-121](#page-107-0) should be considered as reserved locations and the register contents should not be modified.
 
 **Table 15-121. EQEP Registers**
 
 | Offset | Acronym  | Register Name                                 | Section           |
-|--------|----------|-----------------------------------------------|-------------------|
+| ------ | -------- | --------------------------------------------- | ----------------- |
 | 0h     | QPOSCNT  | eQEP Position Counter Register                | Section 15.4.3.1  |
 | 4h     | QPOSINIT | eQEP Position Counter Initialization Register | Section 15.4.3.2  |
 | 8h     | QPOSMAX  | eQEP Maximum Position Count Register          | Section 15.4.3.3  |
@@ -6196,17 +6213,17 @@ QPOSCNT is shown in Figure [15-150](#page-108-1) and described in Table [15-122.
 
 ### **Figure 15-150. QPOSCNT Register**
 
-| 31 | 30     | 29 | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16      | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|--------|----|----|----|----|----|----|----|----|----|----|----|----|----|---------|----|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-|    |        |    |    |    |    |    |    |    |    |    |    |    |    |    | QPOSCNT |    |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
-|    | R/W-0h |    |    |    |    |    |    |    |    |    |    |    |    |    |         |    |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
+| 31  | 30     | 29  | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21  | 20  | 19  | 18  | 17  | 16      | 15  | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|     |        |     |     |     |     |     |     |     |     |     |     |     |     |     | QPOSCNT |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+|     | R/W-0h |     |     |     |     |     |     |     |     |     |     |     |     |     |         |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-122. QPOSCNT Register Field Descriptions**
 
 | Bit  | Field   | Type | Reset | Description                                                                                                                                                                                                                       |
-|------|---------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-0 | QPOSCNT | R/W  | 0h    | This 32 bit position counter register counts up/down on every eQEP<br>pulse based on direction input.<br>This counter acts as a position integrator whose count value is<br>proportional to position from a give reference point. |
 
 #### **15.4.3.2 QPOSINIT Register (offset = 4h) [reset = 0h]**
@@ -6215,12 +6232,12 @@ QPOSINIT is shown in Figure [15-151](#page-109-1) and described in Table [15-123
 
 ### **Figure 15-151. QPOSINIT Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-123. QPOSINIT Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                        |
-|------|----------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-0 | QPOSINIT | R/W  | 0h    | This register contains the position value that is used to initialize the<br>position counter based on external strobe or index event.<br>The position counter can be initialized through software. |
 
 #### **15.4.3.3 QPOSMAX Register (offset = 8h) [reset = 0h]**
@@ -6229,17 +6246,17 @@ QPOSMAX is shown in Figure [15-152](#page-110-1) and described in Table [15-124.
 
 ### **Figure 15-152. QPOSMAX Register**
 
-| 31 |        | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15      | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|--------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|---------|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-|    |        |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | QPOSMAX |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
-|    | R/W-0h |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |         |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
+| 31  |        | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15      | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|     |        |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | QPOSMAX |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+|     | R/W-0h |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |         |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 15-124. QPOSMAX Register Field Descriptions**
 
 | Bit  | Field   | Type | Reset | Description                                                |
-|------|---------|------|-------|------------------------------------------------------------|
+| ---- | ------- | ---- | ----- | ---------------------------------------------------------- |
 | 31-0 | QPOSMAX | R/W  | 0h    | This register contains the maximum position counter value. |
 
 #### **15.4.3.4 QPOSCMP Register (offset = Ch) [reset = 0h]**
@@ -6248,12 +6265,12 @@ QPOSCMP is shown in Figure [15-153](#page-111-1) and described in Table [15-125]
 
 ### **Figure 15-153. QPOSCMP Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-125. QPOSCMP Register Field Descriptions**
 
 | Bit  | Field   | Type | Reset | Description                                                                                                                                                  |
-|------|---------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 31-0 | QPOSCMP | R/W  | 0h    | The position-compare value in this register is compared with the<br>position counter (QPOSCNT) to generate sync output and/or<br>interrupt on compare match. |
 
 #### **15.4.3.5 QPOSILAT Register (offset = 10h) [reset = 0h]**
@@ -6262,17 +6279,17 @@ QPOSILAT is shown in Figure [15-154](#page-112-1) and described in Table [15-126
 
 ### **Figure 15-154. QPOSILAT Register**
 
-| 31 | 30       | 29 | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|----------|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-|    | QPOSILAT |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
-|    | R-0h     |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
+| 31  | 30       | 29  | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15  | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | -------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|     | QPOSILAT |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+|     | R-0h     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-126. QPOSILAT Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                       |
-|------|----------|------|-------|-------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ----------------------------------------------------------------------------------------------------------------- |
 | 31-0 | QPOSILAT | R    | 0h    | The position-counter value is latched into this register on an index<br>event as defined by the QEPCTL[IEL] bits. |
 
 #### **15.4.3.6 QPOSSLAT Register (offset = 14h) [reset = 0h]**
@@ -6281,12 +6298,12 @@ QPOSSLAT is shown in Figure [15-155](#page-113-1) and described in Table [15-127
 
 #### **Figure 15-155. QPOSSLAT Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-127. QPOSSLAT Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                     |
-|------|----------|------|-------|-----------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------- |
 | 31-0 | QPOSSLAT | R    | 0h    | The position-counter value is latched into this register on strobe<br>event as defined by the QEPCTL[SEL] bits. |
 
 #### **15.4.3.7 QPOSLAT Register (offset = 18h) [reset = 0h]**
@@ -6295,17 +6312,17 @@ QPOSLAT is shown in Figure [15-156](#page-114-1) and described in Table [15-128]
 
 ### **Figure 15-156. QPOSLAT Register**
 
-| 31 | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16      | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|---------|----|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | QPOSLAT |    |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
-|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | R-0h    |    |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
+| 31  | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21  | 20  | 19  | 18  | 17  | 16      | 15  | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ------- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | QPOSLAT |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R-0h    |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-128. QPOSLAT Register Field Descriptions**
 
 | Bit  | Field   | Type | Reset | Description                                                                         |
-|------|---------|------|-------|-------------------------------------------------------------------------------------|
+| ---- | ------- | ---- | ----- | ----------------------------------------------------------------------------------- |
 | 31-0 | QPOSLAT | R    | 0h    | The position-counter value is latched into this register on unit time<br>out event. |
 
 #### **15.4.3.8 QUTMR Register (offset = 1Ch) [reset = 0h]**
@@ -6314,17 +6331,17 @@ QUTMR is shown in Figure [15-157](#page-115-1) and described in Table [15-129.](
 
 ### **Figure 15-157. QUTMR Register**
 
-| 31 | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15     | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|--------|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | QUTMR  |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
-|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | R/W-0h |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
+| 31  | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15     | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | QUTMR  |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-129. QUTMR Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                                                                                    |
-|------|-------|------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-0 | QUTMR | R/W  | 0h    | This register acts as time base for unit time event generation.<br>When this timer value matches with unit time period value, unit time<br>event is generated. |
 
 #### **15.4.3.9 QUPRD Register (offset = 20h) [reset = 0h]**
@@ -6333,17 +6350,17 @@ QUPRD is shown in Figure [15-158](#page-116-1) and described in Table [15-130](#
 
 ### **Figure 15-158. QUPRD Register**
 
-| 31 | 30 | 29 | 28 | 27 | 26 | 25 | 24 | 23 | 22 | 21 | 20 | 19 | 18 | 17 | 16 | 15     | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|--------|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | QUPRD  |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
-|    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    | R/W-0h |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
+| 31  | 30  | 29  | 28  | 27  | 26  | 25  | 24  | 23  | 22  | 21  | 20  | 19  | 18  | 17  | 16  | 15     | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | QUPRD  |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 15-130. QUPRD Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                                                                                                                          |
-|------|-------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 31-0 | QUPRD | R/W  | 0h    | This register contains the period count for unit timer to generate<br>periodic unit time events to latch the eQEP position information at<br>periodic interval and optionally to generate interrupt. |
 
 #### **15.4.3.10 QWDTMR Register (offset = 24h) [reset = 0h]**
@@ -6352,12 +6369,12 @@ QWDTMR is shown in Figure [15-159](#page-117-1) and described in Table [15-131](
 
 ### **Figure 15-159. QWDTMR Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-131. QWDTMR Register Field Descriptions**
 
 | Bit  | Field  | Type | Reset | Description                                                                                                                                                                                                                                                                   |
-|------|--------|------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ------ | ---- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-0 | QWDTMR | R/W  | 0h    | This register acts as time base for watch dog to detect motor stalls.<br>When this timer value matches with watch dog period value, watch<br>dog timeout interrupt is generated.<br>This register is reset upon edge transition in quadrature-clock<br>indicating the motion. |
 
 #### **15.4.3.11 QWDPRD Register (offset = 26h) [reset = 0h]**
@@ -6366,17 +6383,17 @@ QWDPRD is shown in Figure [15-160](#page-118-1) and described in Table [15-132.]
 
 ### **Figure 15-160. QWDPRD Register**
 
-| 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7      | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|----|----|----|----|----|----|---|---|--------|---|---|---|---|---|---|---|
-|    |    |    |    |    |    |   |   | QWDPRD |   |   |   |   |   |   |   |
-|    |    |    |    |    |    |   |   | R/W-0h |   |   |   |   |   |   |   |
+| 15  | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7      | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| --- | --- | --- | --- | --- | --- | --- | --- | ------ | --- | --- | --- | --- | --- | --- | --- |
+|     |     |     |     |     |     |     |     | QWDPRD |     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |     | R/W-0h |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 **Table 15-132. QWDPRD Register Field Descriptions**
 
 | Bit  | Field  | Type | Reset | Description                                                                                                                                                                                             |
-|------|--------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ------ | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-0 | QWDPRD | R/W  | 0h    | This register contains the time-out count for the eQEP peripheral<br>watch dog timer.<br>When the watchdog timer value matches the watchdog period value,<br>a watchdog timeout interrupt is generated. |
 
 #### **15.4.3.12 QDECCTL Register (offset = 28h) [reset = 0h]**
@@ -6386,19 +6403,19 @@ QDECCTL is shown in Figure [15-161](#page-119-1) and described in Table [15-133]
 #### **Figure 15-161. QDECCTL Register**
 
 | 15     | 14     | 13     | 12     | 11     | 10       | 9      | 8      |
-|--------|--------|--------|--------|--------|----------|--------|--------|
+| ------ | ------ | ------ | ------ | ------ | -------- | ------ | ------ |
 |        | QSRC   | SOEN   | SPSEL  | XCR    | SWAP     | IGATE  | QAP    |
 |        | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h   | R/W-0h | R/W-0h |
 | 7      | 6      | 5      | 4      | 3      | 2        | 1      | 0      |
 | QBP    | QIP    | QSP    |        |        | RESERVED |        |        |
 | R/W-0h | R/W-0h | R/W-0h |        |        | R-0h     |        |        |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-133. QDECCTL Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                 |
-|-------|----------|------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-14 | QSRC     | R/W  | 0h    | Position-counter source selection.<br>0h = Quadrature count mode (QCLK = iCLK, QDIR = iDIR)<br>1h = Direction-count mode (QCLK = xCLK, QDIR = xDIR)<br>2h = UP count mode for frequency measurement (QCLK = xCLK,<br>QDIR = 1)<br>3h = DOWN count mode for frequency measurement (QCLK =<br>xCLK, QDIR = 0) |
 | 13    | SOEN     | R/W  | 0h    | Sync output-enable<br>0h = Disable position-compare sync output<br>1h = Enable position-compare sync output                                                                                                                                                                                                 |
 | 12    | SPSEL    | R/W  | 0h    | Sync output pin selection<br>0h = Index pin is used for sync output<br>1h = Strobe pin is used for sync output                                                                                                                                                                                              |
@@ -6417,20 +6434,20 @@ QEPCTL is shown in Figure [15-162](#page-120-1) and described in Table [15-134](
 
 ## **Figure 15-162. QEPCTL Register**
 
-| 15     | 14        | 13 | 12     | 11     | 10     | 9      | 8      |
-|--------|-----------|----|--------|--------|--------|--------|--------|
-|        | FREE_SOFT |    | PCRM   |        | SEI    |        | IEI    |
-|        | R/W-0h    |    | R/W-0h |        | R/W-0h |        | R/W-0h |
-| 7      | 6         | 5  | 4      | 3      | 2      | 1      | 0      |
-| SWI    | SEL       |    | IEL    | PHEN   | QCLM   | UTE    | WDE    |
-| R/W-0h | R/W-0h    |    | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h |
+| 15     | 14        | 13  | 12     | 11     | 10     | 9      | 8      |
+| ------ | --------- | --- | ------ | ------ | ------ | ------ | ------ |
+|        | FREE_SOFT |     | PCRM   |        | SEI    |        | IEI    |
+|        | R/W-0h    |     | R/W-0h |        | R/W-0h |        | R/W-0h |
+| 7      | 6         | 5   | 4      | 3      | 2      | 1      | 0      |
+| SWI    | SEL       |     | IEL    | PHEN   | QCLM   | UTE    | WDE    |
+| R/W-0h | R/W-0h    |     | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-134. QEPCTL Register Field Descriptions**
 
 | Bit   | Field     | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-|-------|-----------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | --------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-14 | FREE_SOFT | R/W  | 0h    | Emulation Control Bits.<br>In the values 0 through 3 listed below, x is different for the four<br>following behaviors.<br>QPOSCNT behavior, x refers to the Position counter.<br>QWDTMR behavior, x refers to the Watchdog counter.<br>QUTMR behavior, x refers to the Unit timer.<br>QCTMR behavior, x refers to the Capture timer.<br>0h = x stops immediately. For QPOSCNT behavior, the stop is on<br>emulation suspend.<br>1h = x continues to count until the rollover.<br>2h = x is unaffected by emulation suspend. |
 | 13-12 | PCRM      | R/W  | 0h    | 3h = x is unaffected by emulation suspend.<br>Position counter reset mode<br>0h = Position counter reset on an index event<br>1h = Position counter reset on the maximum position<br>2h = Position counter reset on the first index event<br>3h = Position counter reset on a unit time event                                                                                                                                                                                                                               |
 | 11-10 | SEI       | R/W  | 0h    | Strobe event initialization of position counter<br>0h = Does nothing (action disabled)<br>1h = Does nothing (action disabled)<br>2h = Initializes the position counter on rising edge of the QEPS<br>signal<br>3h = Clockwise Direction: Initializes the position counter on the rising<br>edge of QEPS strobe. Counter Clockwise Direction: Initializes the<br>position counter on the falling edge of QEPS strobe                                                                                                         |
@@ -6441,7 +6458,7 @@ LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = v
 **Table 15-134. QEPCTL Register Field Descriptions (continued)**
 
 | Bit | Field | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-|-----|-------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --- | ----- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 5-4 | IEL   | R/W  | 0h    | Index event latch of position counter (software index marker)<br>0h = Reserved<br>1h = Latches position counter on rising edge of the index signal<br>2h = Latches position counter on falling edge of the index signal<br>3h = Software index marker. Latches the position counter and<br>quadrature direction flag on index event marker. The position<br>counter is latched to the QPOSILAT register and the direction flag is<br>latched in the QEPSTS[QDLF] bit. This mode is useful for software<br>index marking. |
 | 3   | PHEN  | R/W  | 0h    | Quadrature position counter enable/software reset<br>0h = Reset the eQEP peripheral internal operating flags/read-only<br>registers. Control/configuration registers are not disturbed by a<br>software reset.<br>1h = eQEP position counter is enabled                                                                                                                                                                                                                                                                  |
 | 2   | QCLM  | R/W  | 0h    | eQEP capture latch mode<br>0h = Latch on position counter read by CPU. Capture timer and<br>capture period values are latched into QCTMRLAT and QCPRDLAT<br>registers when CPU reads the QPOSCNT register.<br>1h = Latch on unit time out. Position counter, capture timer and<br>capture period values are latched into QPOSLAT, QCTMRLAT and<br>QCPRDLAT registers on unit time out.                                                                                                                                   |
@@ -6454,20 +6471,20 @@ QCAPCTL is shown in Figure [15-163](#page-122-1) and described in Table [15-135]
 
 ### **Figure 15-163. QCAPCTL Register**
 
-| 15       | 14 | 13               | 12 | 11 | 10 | 9    | 8 |  |  |
-|----------|----|------------------|----|----|----|------|---|--|--|
-| CEN      |    | RESERVED         |    |    |    |      |   |  |  |
-| R/W-0h   |    | R-0h             |    |    |    |      |   |  |  |
-| 7        | 6  | 5                | 4  | 3  | 2  | 1    | 0 |  |  |
-| RESERVED |    | CCPS             |    |    |    | UPPS |   |  |  |
-| R-0h     |    | R/W-0h<br>R/W-0h |    |    |    |      |   |  |  |
+| 15       | 14  | 13               | 12  | 11  | 10  | 9    | 8   |     |     |
+| -------- | --- | ---------------- | --- | --- | --- | ---- | --- | --- | --- |
+| CEN      |     | RESERVED         |     |     |     |      |     |     |     |
+| R/W-0h   |     | R-0h             |     |     |     |      |     |     |     |
+| 7        | 6   | 5                | 4   | 3   | 2   | 1    | 0   |     |     |
+| RESERVED |     | CCPS             |     |     |     | UPPS |     |     |     |
+| R-0h     |     | R/W-0h<br>R/W-0h |     |     |     |      |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-135. QCAPCTL Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                                                                                                                                                      |
-|------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15   | CEN      | R/W  | 0h    | Enable eQEP capture<br>0h = eQEP capture unit is disabled<br>1h = eQEP capture unit is enabled                                                                                                                                                                                                                                                                                                                   |
 | 14-7 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | 6-4  | CCPS     | R/W  | 0h    | eQEP capture timer clock prescaler<br>0h = CAPCLK = SYSCLKOUT/1<br>1h = CAPCLK = SYSCLKOUT/2<br>2h = CAPCLK = SYSCLKOUT/4<br>3h = CAPCLK = SYSCLKOUT/8<br>4h = CAPCLK = SYSCLKOUT/16<br>5h = CAPCLK = SYSCLKOUT/32<br>6h = CAPCLK = SYSCLKOUT/64<br>7h = CAPCLK = SYSCLKOUT/128                                                                                                                                  |
@@ -6479,20 +6496,20 @@ QPOSCTL is shown in Figure [15-164](#page-123-1) and described in Table [15-136]
 
 ### **Figure 15-164. QPOSCTL Register**
 
-| 15     | 14     | 13     | 12     | 11     | 10 | 9 | 8 |  |  |  |
-|--------|--------|--------|--------|--------|----|---|---|--|--|--|
-| PCSHDW | PCLOAD | PCPOL  | PCE    | PCSPW  |    |   |   |  |  |  |
-| R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h |    |   |   |  |  |  |
-| 7      | 6      | 5      | 4      | 3      | 2  | 1 | 0 |  |  |  |
-|        |        |        |        | PCSPW  |    |   |   |  |  |  |
-|        | R/W-0h |        |        |        |    |   |   |  |  |  |
+| 15     | 14     | 13     | 12     | 11     | 10  | 9   | 8   |     |     |     |
+| ------ | ------ | ------ | ------ | ------ | --- | --- | --- | --- | --- | --- |
+| PCSHDW | PCLOAD | PCPOL  | PCE    | PCSPW  |     |     |     |     |     |     |
+| R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h |     |     |     |     |     |     |
+| 7      | 6      | 5      | 4      | 3      | 2   | 1   | 0   |     |     |     |
+|        |        |        |        | PCSPW  |     |     |     |     |     |     |
+|        | R/W-0h |        |        |        |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-136. QPOSCTL Register Field Descriptions**
 
 | Bit  | Field  | Type | Reset | Description                                                                                                                                                                                                                                            |
-|------|--------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | ------ | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 15   | PCSHDW | R/W  | 0h    | Position-compare shadow enable<br>0h = Shadow disabled, load Immediate<br>1h = Shadow enabled                                                                                                                                                          |
 | 14   | PCLOAD | R/W  | 0h    | Position-compare shadow load mode<br>0h = Load on QPOSCNT = 0<br>1h = Load when QPOSCNT = QPOSCMP                                                                                                                                                      |
 | 13   | PCPOL  | R/W  | 0h    | Polarity of sync output<br>0h = Active HIGH pulse output<br>1h = Active LOW pulse output                                                                                                                                                               |
@@ -6506,19 +6523,19 @@ QEINT is shown in Figure [15-165](#page-124-1) and described in Table [15-137.](
 ## **Figure 15-165. QEINT Register**
 
 | 15     | 14     | 13       | 12     | 11     | 10     | 9      | 8        |
-|--------|--------|----------|--------|--------|--------|--------|----------|
+| ------ | ------ | -------- | ------ | ------ | ------ | ------ | -------- |
 |        |        | RESERVED |        | UTO    | IEL    | SEL    | PCM      |
 |        |        | R-0h     |        | R/W-0h | R/W-0h | R/W-0h | R/W-0h   |
 | 7      | 6      | 5        | 4      | 3      | 2      | 1      | 0        |
 | PCR    | PCO    | PCU      | WTO    | QDC    | PHE    | PCE    | RESERVED |
 | R/W-0h | R/W-0h | R/W-0h   | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R-0h     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-137. QEINT Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                             |
-|-------|----------|------|-------|---------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ------------------------------------------------------------------------------------------------------- |
 | 15-12 | RESERVED | R    | 0h    |                                                                                                         |
 | 11    | UTO      | R/W  | 0h    | Unit time out interrupt enable<br>0h = Interrupt is disabled<br>1h = Interrupt is enabled               |
 | 10    | IEL      | R/W  | 0h    | Index event latch interrupt enable<br>0h = Interrupt is disabled<br>1h = Interrupt is enabled           |
@@ -6540,19 +6557,19 @@ QFLG is shown in Figure [15-166](#page-125-1) and described in Table [15-138](#p
 #### **Figure 15-166. QFLG Register**
 
 | 15   | 14   | 13       | 12   | 11   | 10   | 9    | 8    |
-|------|------|----------|------|------|------|------|------|
+| ---- | ---- | -------- | ---- | ---- | ---- | ---- | ---- |
 |      |      | RESERVED |      | UTO  | IEL  | SEL  | PCM  |
 |      | R-0h |          |      |      | R-0h | R-0h | R-0h |
 | 7    | 6    | 5        | 4    | 3    | 2    | 1    | 0    |
 | PCR  | PCO  | PCU      | WTO  | QDC  | PHE  | PCE  | INT  |
 | R-0h | R-0h | R-0h     | R-0h | R-0h | R-0h | R-0h | R-0h |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-138. QFLG Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                                           |
-|-------|----------|------|-------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-12 | RESERVED | R    | 0h    |                                                                                                                                                                                       |
 | 11    | UTO      | R    | 0h    | Unit time out interrupt flag<br>0h = No interrupt generated<br>1h = Set by eQEP unit timer period match                                                                               |
 | 10    | IEL      | R    | 0h    | Index event latch interrupt flag<br>0h = No interrupt generated<br>1h = This bit is set after latching the QPOSCNT to QPOSILAT                                                        |
@@ -6574,19 +6591,19 @@ QCLR is shown in Figure [15-167](#page-126-1) and described in Table [15-139](#p
 ## **Figure 15-167. QCLR Register**
 
 | 15     | 14     | 13       | 12     | 11     | 10     | 9      | 8      |
-|--------|--------|----------|--------|--------|--------|--------|--------|
+| ------ | ------ | -------- | ------ | ------ | ------ | ------ | ------ |
 |        |        | RESERVED |        | UTO    | IEL    | SEL    | PCM    |
 |        |        | R-0h     |        | R/W-0h | R/W-0h | R/W-0h | R/W-0h |
 | 7      | 6      | 5        | 4      | 3      | 2      | 1      | 0      |
 | PCR    | PCO    | PCU      | WTO    | QDC    | PHE    | PCE    | INT    |
 | R/W-0h | R/W-0h | R/W-0h   | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R/W-0h |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-139. QCLR Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                                                                                                      |
-|-------|----------|------|-------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-12 | RESERVED | R    | 0h    |                                                                                                                                                                  |
 | 11    | UTO      | R/W  | 0h    | Clear unit time out interrupt flag<br>0h = No effect<br>1h = Clears the interrupt flag                                                                           |
 | 10    | IEL      | R/W  | 0h    | Clear index event latch interrupt flag<br>0h = No effect<br>1h = Clears the interrupt flag                                                                       |
@@ -6608,19 +6625,19 @@ QFRC is shown in Figure [15-168](#page-127-1) and described in Table [15-140.](#
 #### **Figure 15-168. QFRC Register**
 
 | 15     | 14     | 13       | 12     | 11     | 10     | 9      | 8        |
-|--------|--------|----------|--------|--------|--------|--------|----------|
+| ------ | ------ | -------- | ------ | ------ | ------ | ------ | -------- |
 |        |        | RESERVED |        | UTO    | IEL    | SEL    | PCM      |
 |        |        | R-0h     |        | R/W-0h | R/W-0h | R/W-0h | R/W-0h   |
 | 7      | 6      | 5        | 4      | 3      | 2      | 1      | 0        |
 | PCR    | PCO    | PCU      | WTO    | QDC    | PHE    | PCE    | RESERVED |
 | R/W-0h | R/W-0h | R/W-0h   | R/W-0h | R/W-0h | R/W-0h | R/W-0h | R-0h     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-140. QFRC Register Field Descriptions**
 
 | Bit   | Field    | Type | Reset | Description                                                                               |
-|-------|----------|------|-------|-------------------------------------------------------------------------------------------|
+| ----- | -------- | ---- | ----- | ----------------------------------------------------------------------------------------- |
 | 15-12 | RESERVED | R    | 0h    |                                                                                           |
 | 11    | UTO      | R/W  | 0h    | Force unit time out interrupt<br>0h = No effect<br>1h = Force the interrupt               |
 | 10    | IEL      | R/W  | 0h    | Force index event latch interrupt<br>0h = No effect<br>1h = Force the interrupt           |
@@ -6641,20 +6658,20 @@ QEPSTS is shown in Figure [15-169](#page-128-1) and described in Table [15-141.]
 
 ## **Figure 15-169. QEPSTS Register**
 
-| 15     | 14       | 13   | 12   | 11     | 10     | 9      | 8    |  |  |  |
-|--------|----------|------|------|--------|--------|--------|------|--|--|--|
-|        | RESERVED |      |      |        |        |        |      |  |  |  |
-|        | R-0h     |      |      |        |        |        |      |  |  |  |
-| 7      | 6        | 5    | 4    | 3      | 2      | 1      | 0    |  |  |  |
-| UPEVNT | FDF      | QDF  | QDLF | COEF   | CDEF   | FIMF   | PCEF |  |  |  |
-| R-0h   | R-0h     | R-0h | R-0h | R/W-0h | R/W-0h | R/W-0h | R-0h |  |  |  |
+| 15     | 14       | 13   | 12   | 11     | 10     | 9      | 8    |     |     |     |
+| ------ | -------- | ---- | ---- | ------ | ------ | ------ | ---- | --- | --- | --- |
+|        | RESERVED |      |      |        |        |        |      |     |     |     |
+|        | R-0h     |      |      |        |        |        |      |     |     |     |
+| 7      | 6        | 5    | 4    | 3      | 2      | 1      | 0    |     |     |     |
+| UPEVNT | FDF      | QDF  | QDLF | COEF   | CDEF   | FIMF   | PCEF |     |     |     |
+| R-0h   | R-0h     | R-0h | R-0h | R/W-0h | R/W-0h | R/W-0h | R-0h |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-141. QEPSTS Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                                                                                                                                                   |
-|------|----------|------|-------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-8 | RESERVED | R    | 0h    |                                                                                                                                                                                                                                                                               |
 | 7    | UPEVNT   | R    | 0h    | Unit position event flag<br>0h = No unit position event detected<br>1h = Unit position event detected. Write 1 to clear.                                                                                                                                                      |
 | 6    | FDF      | R    | 0h    | Direction on the first index marker.<br>Status of the direction is latched on the first index event marker.<br>0h = Counter-clockwise rotation (or reverse movement) on the first<br>index event<br>1h = Clockwise rotation (or forward movement) on the first index<br>event |
@@ -6671,17 +6688,17 @@ QCTMR is shown in Figure [15-170](#page-129-1) and described in Table [15-142.](
 
 ### **Figure 15-170. QCTMR Register**
 
-| 15     | 14    | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|--------|-------|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-|        | QCTMR |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
-| R/W-0h |       |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
+| 15     | 14    | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| ------ | ----- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|        | QCTMR |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+| R/W-0h |       |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-142. QCTMR Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                             |
-|------|-------|------|-------|---------------------------------------------------------|
+| ---- | ----- | ---- | ----- | ------------------------------------------------------- |
 | 15-0 | QCTMR | R/W  | 0h    | This register provides time base for edge capture unit. |
 
 #### **15.4.3.22 QCPRD Register (offset = 3Ch) [reset = 0h]**
@@ -6690,17 +6707,17 @@ QCPRD is shown in Figure [15-171](#page-130-1) and described in Table [15-143](#
 
 ### **Figure 15-171. QCPRD Register**
 
-|        | 15 | 14 | 13 | 12 | 11 | 10 | 9 | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
-|--------|----|----|----|----|----|----|---|---|---|---|---|---|---|---|---|---|
-| QCPRD  |    |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
-| R/W-0h |    |    |    |    |    |    |   |   |   |   |   |   |   |   |   |   |
+|        | 15  | 14  | 13  | 12  | 11  | 10  | 9   | 8   | 7   | 6   | 5   | 4   | 3   | 2   | 1   | 0   |
+| ------ | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| QCPRD  |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
+| R/W-0h |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |     |
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-143. QCPRD Register Field Descriptions**
 
 | Bit  | Field | Type | Reset | Description                                                                                    |
-|------|-------|------|-------|------------------------------------------------------------------------------------------------|
+| ---- | ----- | ---- | ----- | ---------------------------------------------------------------------------------------------- |
 | 15-0 | QCPRD | R/W  | 0h    | This register holds the period count value between the last<br>successive eQEP position events |
 
 #### **15.4.3.23 QCTMRLAT Register (offset = 3Eh) [reset = 0h]**
@@ -6709,12 +6726,12 @@ QCTMRLAT is shown in Figure [15-172](#page-131-1) and described in Table [15-144
 
 #### **Figure 15-172. QCTMRLAT Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 ### **Table 15-144. QCTMRLAT Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                         |
-|------|----------|------|-------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 15-0 | QCTMRLAT | R    | 0h    | The eQEP capture timer value can be latched into this register on<br>two events, that is, unit timeout event, reading the eQEP position<br>counter. |
 
 #### **15.4.3.24 QCPRDLAT Register (offset = 40h) [reset = 0h]**
@@ -6723,12 +6740,12 @@ QCPRDLAT is shown in Figure [15-173](#page-132-1) and described in Table [15-145
 
 ### **Figure 15-173. QCPRDLAT Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-145. QCPRDLAT Register Field Descriptions**
 
 | Bit  | Field    | Type | Reset | Description                                                                                                                                      |
-|------|----------|------|-------|--------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---- | -------- | ---- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 15-0 | QCPRDLAT | R/W  | 0h    | eQEP capture period value can be latched into this register on two<br>events, that is, unit timeout event, reading the eQEP position<br>counter. |
 
 #### **15.4.3.25 REVID Register (offset = 5Ch) [reset = 44D31103h]**
@@ -6737,10 +6754,10 @@ REVID is shown in Figure [15-174](#page-133-1) and described in Table [15-146.](
 
 ### **Figure 15-174. REVID Register**
 
-LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; *-n* = value after reset
+LEGEND: R/W = Read/Write; R = Read only; W1toCl = Write 1 to clear bit; _-n_ = value after reset
 
 #### **Table 15-146. REVID Register Field Descriptions**
 
 | Bit  | Field | Type | Reset     | Description      |
-|------|-------|------|-----------|------------------|
+| ---- | ----- | ---- | --------- | ---------------- |
 | 31-0 | REV   | R    | 44D31103h | eQEP revision ID |
