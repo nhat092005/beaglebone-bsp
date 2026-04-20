@@ -8,7 +8,7 @@ BUILD_DIR="${REPO_ROOT}/build"
 usage() {
     echo "Usage: $0 <device> [rootfs.tar.gz]"
     echo ""
-    echo "  device        Block device to flash (e.g. /dev/sdb)"
+    echo "  device        Block device to flash (must start with /dev/sd, e.g. /dev/sdb)"
     echo "  rootfs.tar.gz Optional rootfs tarball to write to partition 2"
     echo ""
     echo "WARNING: All data on <device> will be erased."
@@ -20,25 +20,29 @@ usage() {
 DEV="$1"
 ROOTFS="${2:-}"
 
+# Must start with /dev/sd — reject everything else (nvme, mmcblk, null, etc.)
+if [[ "${DEV}" != /dev/sd* ]]; then
+    echo "[flash] refusing: ${DEV} does not start with /dev/sd" >&2
+    exit 1
+fi
+
+# Refuse if device backs / or /home (check all partitions of DEV)
+if grep -qE "^${DEV}[0-9]* +(/|/home) " /proc/mounts 2>/dev/null; then
+    echo "[flash] refusing: ${DEV} is mounted at / or /home" >&2
+    exit 1
+fi
+
 # Require root
 if [[ "$(id -u)" -ne 0 ]]; then
     echo "[flash] ERROR: must run as root" >&2
     exit 1
 fi
 
-# Validate block device
+# Require block device
 if [[ ! -b "${DEV}" ]]; then
     echo "[flash] ERROR: ${DEV} is not a block device" >&2
     exit 1
 fi
-
-# Safety: reject common system disks
-case "${DEV}" in
-    /dev/sda|/dev/nvme0n1|/dev/mmcblk0)
-        echo "[flash] ERROR: refusing to flash ${DEV} (likely system disk)" >&2
-        exit 1
-        ;;
-esac
 
 echo "[flash] target: ${DEV}"
 echo "[flash] WARNING: all data on ${DEV} will be erased"
@@ -50,22 +54,21 @@ for part in "${DEV}"?*; do
     umount "${part}" 2>/dev/null || true
 done
 
-# Partition: p1 FAT32 64 MB with boot flag, p2 ext4 remainder
+# Partition: p1 FAT32 100 MiB with boot flag, p2 ext4 remainder
 echo "[flash] partitioning ${DEV}"
 sfdisk "${DEV}" <<EOF
 label: dos
-,64M,c,*
+,100M,c,*
 ,,83
 EOF
 
-# Re-read partition table
 partprobe "${DEV}" 2>/dev/null || true
 sleep 1
 
 P1="${DEV}1"
 P2="${DEV}2"
 
-# Handle mmcblk-style device names (e.g. /dev/mmcblk1p1)
+# Handle mmcblk-style names (should not reach here given /dev/sd check, but safe)
 if [[ ! -b "${P1}" ]]; then
     P1="${DEV}p1"
     P2="${DEV}p2"
@@ -90,22 +93,25 @@ trap cleanup EXIT
 mount "${P1}" "${MNT_BOOT}"
 mount "${P2}" "${MNT_ROOT}"
 
-# Copy boot artifacts
 echo "[flash] copying boot files"
-for f in MLO u-boot.img zImage am335x-boneblack.dtb; do
-    [[ -f "${BUILD_DIR}/${f}" ]] || { echo "[flash] ERROR: ${BUILD_DIR}/${f} not found" >&2; exit 1; }
-    cp "${BUILD_DIR}/${f}" "${MNT_BOOT}/"
+for f in MLO u-boot.img zImage am335x-boneblack-custom.dtb; do
+    src="${BUILD_DIR}/kernel/${f}"
+    # MLO and u-boot.img come from uboot subdir
+    case "${f}" in
+        MLO|u-boot.img) src="${BUILD_DIR}/uboot/${f}" ;;
+        zImage|*.dtb)   src="${BUILD_DIR}/kernel/${f}" ;;
+    esac
+    [[ -f "${src}" ]] || { echo "[flash] ERROR: ${src} not found" >&2; exit 1; }
+    cp "${src}" "${MNT_BOOT}/"
 done
 
-# Write uEnv.txt
 cat > "${MNT_BOOT}/uEnv.txt" <<'UENV'
 bootargs=console=ttyO0,115200n8 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
-uenvcmd=load mmc 0:1 ${loadaddr} zImage; load mmc 0:1 ${fdtaddr} am335x-boneblack.dtb; bootz ${loadaddr} - ${fdtaddr}
+uenvcmd=load mmc 0:1 ${loadaddr} zImage; load mmc 0:1 ${fdtaddr} am335x-boneblack-custom.dtb; bootz ${loadaddr} - ${fdtaddr}
 UENV
 
 echo "[flash] uEnv.txt written"
 
-# Extract rootfs if provided
 if [[ -n "${ROOTFS}" ]]; then
     [[ -f "${ROOTFS}" ]] || { echo "[flash] ERROR: rootfs ${ROOTFS} not found" >&2; exit 1; }
     echo "[flash] extracting rootfs"
