@@ -84,7 +84,7 @@ For this agent, check only:
 Issue: Variable $DEVICE used unquoted -- word splitting risk if path contains spaces.
 Fix: Change to "${DEVICE}"
 
-[HIGH] meta-bbb/recipes-kernel/linux/linux-bbb_%.bbappend:3
+[HIGH] meta-bbb/recipes-kernel/linux/linux-yocto-bbb_5.10.bbappend:3
 Issue: FILESEXTRAPATHS uses = instead of :prepend
 Fix: FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
@@ -115,3 +115,5 @@ Verdict: WARNING -- resolve HIGH issues before committing.
 - Command: `/check` -- run static analysis first, then invoke this agent
 - Wiki: `vault/wiki/drivers/_index.md` -- driver conventions and patterns
 - Wiki: `vault/wiki/kernel/_index.md` -- kernel/DTS conventions
+
+**Last Update**: 2026-04-22 — fixed recipe name to match TODO Phase 4 standards

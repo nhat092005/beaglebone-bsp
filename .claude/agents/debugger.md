@@ -32,7 +32,7 @@ ls /dev/<device> 2>/dev/null
 
 # Recent git changes (what changed before the failure)
 git log --oneline -10
-git diff HEAD~1 -- drivers/ linux/arch/arm/boot/dts/
+git diff HEAD~1 -- drivers/ linux/dts/ linux/arch/arm/boot/dts/
 ```
 
 ## Phase 2 -- Classify the Failure
@@ -149,7 +149,7 @@ In FreeRTOS code, check for:
 oe-pkgdata-util find-path /path/to/file
 
 # Check what is installed in rootfs
-bitbake -e core-image-minimal | grep "^IMAGE_INSTALL"
+bitbake -e bbb-image | grep "^IMAGE_INSTALL"
 
 # Runtime library missing
 ldd /usr/bin/<app>
@@ -212,3 +212,5 @@ Stop and report if:
 - Agent: `agents/cpp-reviewer.md` -- if root cause is found, review the fix before applying
 - Wiki: `vault/wiki/debugging/_index.md` -- known bugs, debug techniques, and past incidents
 - Wiki: `vault/wiki/kernel/_index.md` -- kernel subsystem notes relevant to driver failures
+
+**Last Update**: 2026-04-22 — fixed DTS paths and Yocto image name to match TODO standards

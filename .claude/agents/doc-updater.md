@@ -9,7 +9,7 @@ model: sonnet
 
 Keep `vault/wiki/`, `CLAUDE.md`, and `README.md` in sync with the actual codebase.
 
-> Use `obsidian-markdown` skill for all wiki writes: wikilinks `[[...]]`, callouts `> [!NOTE]`, frontmatter properties.
+> Use YAML frontmatter and wikilinks `[[...]]` for all wiki files. Follow existing format in `vault/wiki/kernel/_index.md`.
 
 ## When to Run
 
@@ -38,8 +38,7 @@ Stop and ask user which topic to sync first if >20 files changed.
 | `meta-bbb/`                | `vault/wiki/yocto/_index.md`      |
 | `u-boot/`                  | `vault/wiki/bootloader/_index.md` |
 | `freertos/`                | `vault/wiki/rtos/_index.md`       |
-| `scripts/`                 | relevant topic + `README.md`      |
-| `apps/`                    | `vault/wiki/drivers/_index.md`    |
+| `scripts/`                 | `vault/wiki/scripts/_index.md`    |
 
 ## Step 3 — Update Files
 
@@ -47,7 +46,8 @@ For each affected `_index.md`:
 
 1. Read current file + actual changed files
 2. Update Key Files table and Quick Reference if commands changed
-3. Set `Last Updated:` to today (YYYY-MM-DD) and `Status:` to In Progress / Stable / Empty
+3. Set `last_updated:` to today (YYYY-MM-DD) in frontmatter
+4. Set `status:` to one of: `In Progress` | `Stable` | `Empty`
 
 Also update:
 
@@ -57,30 +57,37 @@ Also update:
 
 ### \_index.md Format
 
-```markdown
-# [Topic] — BeagleBone BSP
+Follow the existing format used in `vault/wiki/kernel/_index.md`:
 
-**Last Updated:** YYYY-MM-DD
-**Status:** Active / In Progress / Stable
+````markdown
+---
+title: Topic Name
+last_updated: YYYY-MM-DD
+category: topic-slug
+status: In Progress
+---
 
-## Overview
+# Topic Name (Version/Details)
 
-[2-3 sentence summary]
+Brief description of the topic.
 
-## Key Files
+## Workflow
 
-| File/Directory | Purpose      |
-| -------------- | ------------ |
-| `path/to/file` | What it does |
+| #   | Topic    | File                     |
+| --- | -------- | ------------------------ |
+| 00  | Overview | [[00-topic-overview.md]] |
+| 01  | Setup    | [[01-topic-setup.md]]    |
+| ... | ...      | ...                      |
 
 ## Quick Reference
 
-[Most common commands or snippets]
-
-## Related Topics
-
-- [[vault/wiki/other-topic/_index.md]]
+```bash
+# Common commands
+command example
 ```
+````
+
+````
 
 ## Step 4 — Verify
 
@@ -88,13 +95,13 @@ Also update:
 grep -r '`[a-z]' vault/wiki/ | awk -F'`' '{print $2}' | while read f; do
   [ -e "$f" ] || echo "MISSING: $f"
 done
-```
+````
 
 Report broken paths. Do not invent content — only document what exists.
 
 ## Done When
 
-- All affected `_index.md` have today's `Last Updated`
+- All affected `_index.md` have today's `last_updated` in frontmatter
 - No paths in wiki point to non-existent files
 - `_master-index.md` reflects current status
 

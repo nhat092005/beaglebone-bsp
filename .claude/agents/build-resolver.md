@@ -100,7 +100,7 @@ Stop and report if:
 ## Output Format
 
 ```
-[FIXED] meta-bbb/recipes-kernel/linux/linux-bbb_%.bbappend:12
+[FIXED] meta-bbb/recipes-kernel/linux/linux-yocto-bbb_5.10%.bbappend:12
 Error: SRC_URI checksum mismatch for patch file
 Fix: Updated sha256sum to match actual file: abc123...
 

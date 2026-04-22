@@ -78,15 +78,17 @@ When invoked:
 ## Diagnostic Commands
 
 ```bash
-# Kernel module check
-cppcheck --enable=all --suppress=missingIncludeSystem drivers/
-sparse drivers/*.c 2>&1 | head -50   # if sparse available
+# Kernel driver check - run from project root on cross-compiled drivers
+cppcheck --enable=all --suppress=missingIncludeSystem drivers/<name>/
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- C=2 KERNEL_DIR=${BSP_ROOT}/linux -C drivers/<name>/
 
 # Device tree compile check
-dtc -I dts -O dtb arch/arm/boot/dts/am335x-boneblack.dts -o /dev/null
+dtc -I dts -O dtb linux/dts/am335x-boneblack-custom.dts -o /dev/null
+cpp -nostdinc -I linux/arch/arm/boot/dts -I linux/include -I linux/include/dt-bindings -undef -D__DTS__ -x assembler-with-cpp linux/dts/am335x-boneblack-custom.dts | dtc -I dts -O dtb -o /tmp/custom.dtb -
 
 # Yocto recipe check
-bitbake -e <recipe> | grep "^SRC_URI\|^DEPENDS\|^LICENSE"
+bitbake -e linux-yocto-bbb | grep "^SRC_URI\|^DEPENDS\|^LICENSE"
+bitbake -e bbb-image | grep "^ERROR"
 ```
 
 ## Approval Criteria
@@ -98,7 +100,7 @@ bitbake -e <recipe> | grep "^SRC_URI\|^DEPENDS\|^LICENSE"
 ## Output Format
 
 ```
-[CRITICAL] drivers/gpio/gpio-am335x.c:142
+[CRITICAL] drivers/led-gpio/led-gpio.c:142
 Issue: kmalloc(GFP_KERNEL) called inside IRQ handler
 Fix: Pre-allocate in probe(), or use GFP_ATOMIC
 
@@ -119,3 +121,4 @@ Verdict: WARNING — resolve HIGH issues before merge
 - Skill: `skills/embedded-c-patterns/` -- embedded C idioms and kernel patterns
 - Wiki: `vault/wiki/drivers/_index.md` -- existing driver conventions and list
 - Wiki: `vault/wiki/kernel/_index.md` -- kernel subsystem notes
+**Last Update**: 2026-04-22 — satisfied TODO Phase 5 requirements

@@ -23,7 +23,7 @@ You are a senior embedded Linux / BSP architect specializing in BeagleBone Black
 - Read existing `CLAUDE.md`, `README.md` for project conventions
 - Check `drivers/`, `apps/`, `freertos/`, `meta-bbb/` structure
 - Identify existing patterns and subsystem usage
-- Note what's already in device tree (`linux/arch/arm/boot/dts/`)
+- Note what's already in device tree (`linux/dts/` for custom, `linux/arch/arm/boot/dts/` for upstream)
 
 ### 2. Requirements Analysis
 
@@ -94,26 +94,51 @@ YYYY-MM-DD
 
 ## BeagleBone BSP Specific Patterns
 
-### Driver File Structure
+### Driver File Structure (Out-of-Tree)
 
 ```
 drivers/
-└── <subsystem>/
-    ├── Kconfig          ← menu entry
-    ├── Makefile         ← obj-$(CONFIG_XXX) += xxx.o
-    └── xxx.c            ← driver
+└── <name>/
+    ├── Makefile         ← KERNEL_DIR, CROSS_COMPILE, ARCH
+    └── <name>.c         ← driver implementation
+```
+
+For in-tree drivers (if upstreaming):
+
+```
+linux/drivers/<subsystem>/
+    ├── Kconfig
+    ├── Makefile
+    └── xxx.c
 ```
 
 ### Yocto Integration Pattern
 
 ```
 meta-bbb/
-└── recipes-kernel/
-    └── linux/
-        ├── linux-bbb_%.bbappend   ← SRC_URI patches
-        └── files/
-            └── 0001-add-xxx.patch
+├── recipes-kernel/
+│   ├── linux/
+│   │   ├── linux-yocto-bbb_5.10.bb      ← standalone recipe
+│   │   └── files/
+│   │       ├── 0001-add-xxx.patch
+│   │       └── boneblack-custom.config
+│   └── <driver-name>/
+│       └── <driver-name>_1.0.bb         ← out-of-tree module
+├── recipes-apps/
+│   └── <app-name>/
+│       └── <app-name>_1.0.bb            ← userspace application
+└── recipes-core/
+    └── images/
+        └── bbb-image.bb                 ← custom image recipe
 ```
+
+Custom kernel inputs pulled from repo-level:
+
+- `linux/patches/` → patches
+- `linux/configs/` → config fragments
+- `linux/dts/` → device tree sources
+
+Driver recipes use `file://` URIs pointing to `drivers/<name>/` (no network fetch).
 
 ### FreeRTOS ↔ Linux RPMsg Pattern
 

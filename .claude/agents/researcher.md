@@ -34,8 +34,11 @@ Read the user's goal and identify:
 Before looking externally, search what already exists:
 
 ```bash
-# Find existing similar drivers
+# Find existing similar drivers (upstream DTS)
 grep -r "compatible" linux/arch/arm/boot/dts/am335x*.dts* | grep -i "<keyword>"
+
+# Find custom DTS files added by this project
+find linux/dts -name "*.dts" -o -name "*.dtsi" | head -10
 
 # Find existing driver patterns
 find linux/drivers -name "*.c" | xargs grep -l "<subsystem>" 2>/dev/null | head -10
@@ -72,8 +75,10 @@ Find the right Linux subsystem and existing similar drivers:
 # Find drivers for the same type of peripheral
 find linux/drivers -name "*.c" | xargs grep -l "of_match_table\|platform_driver" 2>/dev/null | head -20
 
-# Check kernel config symbol
-grep -r "CONFIG_<SUBSYSTEM>" linux/arch/arm/configs/am335x_boneblack_defconfig
+# Check kernel config symbol (project uses omap2plus_defconfig + fragment overrides)
+grep -r "CONFIG_<SUBSYSTEM>" linux/arch/arm/configs/omap2plus_defconfig
+grep -r "CONFIG_<SUBSYSTEM>" linux/configs/boneblack-custom.config
+grep -r "CONFIG_<SUBSYSTEM>" linux/configs/reproducible.config
 
 # Find devicetree binding documentation
 find linux/Documentation/devicetree/bindings -name "*.yaml" -o -name "*.txt" | xargs grep -l "<compatible-prefix>" 2>/dev/null
@@ -84,11 +89,11 @@ find linux/Documentation/devicetree/bindings -name "*.yaml" -o -name "*.txt" | x
 For new recipes or layer changes:
 
 ```bash
-# Find if recipe already exists in poky or meta-ti
-find poky -name "<recipe>*.bb" 2>/dev/null | head -5
-find meta-ti -name "<recipe>*.bb" 2>/dev/null | head -5
+# Find if recipe already exists inside meta-bbb (poky/meta-ti are not in this repo)
+find meta-bbb -name "<recipe>*.bb" -o -name "<recipe>*.bbappend" 2>/dev/null | head -10
 
 # Check layer priority conflicts
+# NOTE: bitbake commands must run inside the Yocto container — use `make yocto-shell` first
 bitbake-layers show-layers 2>/dev/null | head -20
 
 # Find bbappend targets
@@ -145,3 +150,5 @@ Stop and report if:
 - Agent: `agents/architect.md` -- use after research to plan the implementation
 - Skill: `skills/embedded-c-patterns/` -- reference patterns for implementation
 - Wiki: `vault/wiki/kernel/_index.md` -- kernel subsystem knowledge base
+
+**Last Update**: 2026-04-22 — added reproducible.config to config fragment search
