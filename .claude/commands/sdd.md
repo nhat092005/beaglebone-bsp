@@ -21,7 +21,13 @@ Before running `/sdd`, these must be true:
 
 1. `/plan` has been run and user has said "approve" or "go ahead"
 2. `/checkpoint create before-<feature-name>` has been created
-3. Build baseline is clean: `make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j$(nproc)` exits 0
+3. Build baseline is clean:
+   ```bash
+   cd linux
+   make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- omap2plus_defconfig
+   make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j$(nproc) zImage dtbs modules
+   ```
+   exits 0
 
 If any prerequisite is missing, stop and tell the user which one to fix first.
 
@@ -132,7 +138,7 @@ Log MEDIUM issues in the session report without blocking.
 If both reviews pass:
 
 ```bash
-git add -A
+git add -- {files from task Files scope}
 git commit -m "feat(<scope>): T{i}/{N} — {task description}"
 ```
 

@@ -32,7 +32,7 @@ git stash list | head -5
 ### Step 2 -- Stage and commit
 
 ```bash
-git add -A
+git add -u
 git commit -m "[CHECKPOINT] $NAME -- $(date '+%Y-%m-%d %H:%M')"
 ```
 
@@ -87,6 +87,10 @@ Ask the user to confirm before rolling back:
 ```
 Confirm rollback to checkpoint '$NAME'?
 All changes after this checkpoint will be stashed, not deleted.
+
+WARNING: This will put you in detached HEAD state.
+You must run `git checkout -b <branch-name>` before making new commits.
+
 Type 'yes' to confirm.
 ```
 
@@ -102,10 +106,10 @@ SHA=$(grep "$NAME" .claude/checkpoints.log | tail -1 | awk '{print $NF}')
 git stash push -m "auto-stash before rollback to $NAME"
 
 # Check out the checkpoint commit
-git checkout $SHA
+git checkout "$SHA"
 ```
 
-Report the result and remind the user that current changes are in stash.
+Report the result. Remind user: (1) current changes are in stash, (2) HEAD is now detached — run `git checkout -b <branch>` before committing.
 
 ## Stop Conditions
 

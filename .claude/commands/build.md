@@ -19,12 +19,13 @@ Otherwise, detect from recently changed files:
 git diff --name-only HEAD -- | head -20
 ```
 
-| Changed Path               | Build Target |
-| -------------------------- | ------------ |
-| `linux/` or `drivers/`     | kernel       |
-| `u-boot/`                  | uboot        |
-| `meta-bbb/` or `freertos/` | yocto        |
-| `apps/`                    | app          |
+| Changed Path           | Build Target |
+| ---------------------- | ------------ |
+| `linux/` or `drivers/` | kernel       |
+| `u-boot/`              | uboot        |
+| `meta-bbb/`            | yocto        |
+| `apps/`                | app          |
+| `freertos/`            | freertos     |
 
 If the target cannot be determined, ask the user: "Which target do you want to build: kernel, uboot, yocto, driver, or app?"
 
@@ -34,6 +35,7 @@ If the target cannot be determined, ask the user: "Which target do you want to b
 
 ```bash
 cd linux
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- omap2plus_defconfig
 make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j$(nproc) zImage dtbs modules 2>&1
 ```
 
@@ -45,10 +47,19 @@ Success indicator: line containing `Kernel: arch/arm/boot/zImage is ready`
 
 ```bash
 cd u-boot
+make CROSS_COMPILE=arm-linux-gnueabihf- am335x_boneblack_custom_defconfig
 make CROSS_COMPILE=arm-linux-gnueabihf- -j$(nproc) 2>&1
 ```
 
 Success indicator: `u-boot.img` exists and size is greater than zero.
+
+---
+
+## FreeRTOS Build
+
+FreeRTOS firmware is bare-metal and does not build through BitBake. No automated
+build command is defined. Ask the user for the build method (e.g., CMake, make,
+vendor SDK) before proceeding.
 
 ---
 

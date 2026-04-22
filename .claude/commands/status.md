@@ -21,7 +21,7 @@ Check which build outputs exist:
 
 ```bash
 ls -lh linux/arch/arm/boot/zImage 2>/dev/null
-ls -lh linux/arch/arm/boot/dts/am335x-boneblack.dtb 2>/dev/null
+ls -lh linux/arch/arm/boot/dts/am335x-boneblack-custom.dtb 2>/dev/null
 ls -lh u-boot/u-boot.img 2>/dev/null
 find drivers -name '*.ko' 2>/dev/null | head -5
 ```
@@ -35,7 +35,10 @@ Check if any source files are newer than the build artifacts (staleness check):
 find linux/arch/arm/boot/dts -newer linux/arch/arm/boot/zImage -name "*.dts" 2>/dev/null
 
 # C source files newer than any .ko driver -- means drivers may need rebuild
-find drivers -name "*.c" -newer $(find drivers -name "*.ko" 2>/dev/null | head -1) 2>/dev/null | head -5
+NEWEST_KO=$(find drivers -name "*.ko" 2>/dev/null | head -1)
+if [ -n "$NEWEST_KO" ]; then
+  find drivers -name "*.c" -newer "$NEWEST_KO" 2>/dev/null | head -5
+fi
 ```
 
 If any stale sources are found, flag the affected artifact as **STALE** in the report.
