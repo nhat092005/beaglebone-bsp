@@ -5,6 +5,13 @@
       "options": {}
     }
   },
+  "instructions": [
+    "../AGENTS.md",
+    "../.claude/rules/workflow.md",
+    "../.claude/rules/coding-standards.md",
+    "../.claude/rules/bsp-context.md",
+    "../.claude/rules/tech-defaults.md"
+  ],
   "permission": {
     "edit": {
       "build/**": "deny"
