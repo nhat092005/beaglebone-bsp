@@ -39,7 +39,22 @@ build_kernel() {
     mkdir -p "${out}"
     echo "[build] kernel"
     cd "${KERNEL_DIR}"
-    make ARCH="${ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" am335x_boneblack_defconfig
+    
+    # Reproducible build: fix timestamp, user, host, source date, and version
+    export KBUILD_BUILD_TIMESTAMP="2026-04-21"
+    export KBUILD_BUILD_USER="builder"
+    export KBUILD_BUILD_HOST="bsp-build"
+    export SOURCE_DATE_EPOCH="1713715200"  # 2024-04-21 00:00:00 UTC
+    export KBUILD_BUILD_VERSION="1"
+    
+    # Generate base config
+    make ARCH="${ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" omap2plus_defconfig
+    
+    # Apply reproducible build config fragment
+    if [[ -f "${REPO_ROOT}/linux/configs/reproducible.config" ]]; then
+        ./scripts/kconfig/merge_config.sh -m .config "${REPO_ROOT}/linux/configs/reproducible.config"
+    fi
+    
     make ARCH="${ARCH}" CROSS_COMPILE="${CROSS_COMPILE}" -j"$(nproc)" zImage dtbs modules
     cp arch/arm/boot/zImage "${out}/"
     cp arch/arm/boot/dts/am335x-boneblack-custom.dtb "${out}/"
