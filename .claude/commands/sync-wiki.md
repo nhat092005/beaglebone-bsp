@@ -24,17 +24,17 @@ git diff --name-only "$LAST_WIKI_COMMIT"..HEAD -- \
 
 Map changed paths to wiki sections:
 
-| Changed Path     | Wiki Section                    |
-| ---------------- | ------------------------------- |
-| `drivers/`       | `vault/wiki/drivers/`           |
-| `linux/dts/`     | `vault/wiki/kernel/`            |
-| `linux/configs/` | `vault/wiki/kernel/`            |
-| `linux/patches/` | `vault/wiki/kernel/`            |
-| `u-boot/`        | `vault/wiki/bootloader/`        |
-| `freertos/`      | `vault/wiki/rtos/`              |
-| `meta-bbb/`      | `vault/wiki/yocto/`             |
-| `scripts/`       | `vault/wiki/debugging/`         |
-| `tests/`         | `vault/wiki/debugging/`         |
+| Changed Path     | Wiki Section             |
+| ---------------- | ------------------------ |
+| `drivers/`       | `vault/wiki/drivers/`    |
+| `linux/dts/`     | `vault/wiki/kernel/`     |
+| `linux/configs/` | `vault/wiki/kernel/`     |
+| `linux/patches/` | `vault/wiki/kernel/`     |
+| `u-boot/`        | `vault/wiki/bootloader/` |
+| `freertos/`      | `vault/wiki/rtos/`       |
+| `meta-bbb/`      | `vault/wiki/yocto/`      |
+| `scripts/`       | `vault/wiki/debugging/`  |
+| `tests/`         | `vault/wiki/debugging/`  |
 
 If no code changes are detected since the last wiki commit, report "Wiki already
 up to date" and stop.

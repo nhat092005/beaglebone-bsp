@@ -21,6 +21,7 @@ minicom -D /dev/ttyUSB0 -b 115200
 ## Kernel Debugging
 
 ### Dynamic Debug (printk)
+
 ```bash
 # Enable debug messages for a driver at runtime (no recompile)
 echo "module my_driver +p" > /sys/kernel/debug/dynamic_debug/control
@@ -32,6 +33,7 @@ pr_debug("module level debug: %d\n", val);
 ```
 
 ### Kernel Oops Analysis
+
 ```
 # Typical oops format — read this:
 Unable to handle kernel NULL pointer dereference at virtual address 00000000
@@ -46,6 +48,7 @@ scripts/faddr2line vmlinux my_irq_handler+0x24/0x80
 ```
 
 ### DebugFS Inspection
+
 ```bash
 # Mount debugfs (usually auto-mounted)
 mount -t debugfs none /sys/kernel/debug
@@ -62,6 +65,7 @@ cat /sys/kernel/debug/regmap/*/registers
 ```
 
 ### Driver & Device Inspection
+
 ```bash
 # Check if driver is loaded
 lsmod | grep my_driver
@@ -101,13 +105,14 @@ fdt print /
 
 # Load and boot manually
 load mmc 0:2 ${loadaddr} /boot/zImage
-load mmc 0:2 ${fdtaddr} /boot/am335x-boneblack.dtb
+load mmc 0:2 ${fdtaddr} /boot/am335x-boneblack-custom.dtb
 bootz ${loadaddr} - ${fdtaddr}
 ```
 
 ## FreeRTOS Debugging
 
 ### Task State Inspection
+
 ```c
 /* In your FreeRTOS app — print task list */
 char task_buf[512];
@@ -122,6 +127,7 @@ printf("%s\r\n", stats_buf);
 ```
 
 ### Stack Overflow Detection
+
 ```c
 /* In FreeRTOSConfig.h */
 #define configCHECK_FOR_STACK_OVERFLOW  2
@@ -138,19 +144,25 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 }
 ```
 
-### RPMsg/OpenAMP Debug
+### FreeRTOS on QEMU (lm3s6965evb — Stellaris Cortex-M3)
+
 ```bash
-# Linux side — check remoteproc
-ls /sys/class/remoteproc/
-cat /sys/class/remoteproc/remoteproc0/state
+# Run FreeRTOS firmware under QEMU — serial output on stdio
+qemu-system-arm -machine lm3s6965evb \
+    -kernel freertos/build/freertos.elf \
+    -serial mon:stdio \
+    -nographic
 
-# Load FreeRTOS firmware
-echo "freertos_app.elf" > /sys/class/remoteproc/remoteproc0/firmware
-echo start > /sys/class/remoteproc/remoteproc0/state
+# GDB attach to QEMU FreeRTOS
+qemu-system-arm -machine lm3s6965evb \
+    -kernel freertos/build/freertos.elf \
+    -serial mon:stdio -nographic \
+    -S -gdb tcp::1234 &
 
-# Check RPMsg device created
-ls /dev/rpmsg*
-cat /dev/rpmsg0  # read messages from FreeRTOS
+arm-none-eabi-gdb freertos/build/freertos.elf
+(gdb) target remote :1234
+(gdb) break main
+(gdb) continue
 ```
 
 ## Yocto/BitBake Debugging

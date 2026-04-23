@@ -1,32 +1,34 @@
 #!/usr/bin/env bash
-# notify.sh -- Play a short beep to alert the user.
-# Used by Claude Code hooks on Stop and SessionEnd events.
-# Reads JSON input from stdin (required by Claude Code hook protocol).
+# notify.sh -- Beep + notification on Stop and SessionEnd.
 
 set -euo pipefail
 
-# Read stdin (required -- Claude Code hooks must consume stdin)
 INPUT=$(cat)
 
-# On Stop event: avoid infinite loop if another hook is active
+# Avoid infinite loop on re-entry
 if echo "$INPUT" | grep -q '"stop_hook_active":true'; then
   exit 0
 fi
 
-beep_once() {
-  if command -v paplay &>/dev/null && [ -f /usr/share/sounds/freedesktop/stereo/message.oga ]; then
-    paplay /usr/share/sounds/freedesktop/stereo/message.oga &
-  elif command -v paplay &>/dev/null && [ -f /usr/share/sounds/freedesktop/stereo/bell.oga ]; then
-    paplay /usr/share/sounds/freedesktop/stereo/bell.oga &
-  elif command -v pw-play &>/dev/null && [ -f /usr/share/sounds/freedesktop/stereo/bell.oga ]; then
-    pw-play /usr/share/sounds/freedesktop/stereo/bell.oga &
-  elif command -v aplay &>/dev/null && [ -f /usr/share/sounds/alsa/Front_Center.wav ]; then
-    aplay -q /usr/share/sounds/alsa/Front_Center.wav &
-  elif command -v beep &>/dev/null; then
-    beep -f 880 -l 300 &
-  else
-    printf '\a'
+notify() {
+  local title="$1" msg="$2"
+  if command -v notify-send &>/dev/null; then
+    notify-send "$title" "$msg" --expire-time=4000 2>/dev/null &
   fi
+  echo "[BSP] $title: $msg" >&2
 }
+
+beep_once() {
+  for _ in {1..3}; do
+    printf '\a'
+    sleep 0.2
+  done
+}
+
+if echo "$INPUT" | grep -q '"stop_hook_active"'; then
+  notify "Claude BSP" "Claude is waiting for your input"
+else
+  notify "Claude BSP" "Session has ended"
+fi
 
 beep_once

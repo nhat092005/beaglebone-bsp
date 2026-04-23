@@ -106,7 +106,7 @@ Fix: Pre-allocate in probe(), or use GFP_ATOMIC
 
 ## Review Summary
 | Severity | Count | Status |
-|----------|-------|--------|
+| -------- | ----- | ------ |
 | CRITICAL | 0     | pass   |
 | HIGH     | 1     | warn   |
 | MEDIUM   | 2     | info   |

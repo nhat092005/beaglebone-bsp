@@ -114,10 +114,16 @@ FreeRTOS task logic, and Yocto recipe dependencies.
 
 A clean build does not mean it's done. A task is not complete until:
 
-**Driver / kernel module:**
+**Driver / kernel module (all 8 RULE-3 gates must pass):**
 
+- `checkpatch.pl --strict` → 0 errors, 0 warnings
+- `sparse C=2` → 0 warnings
 - `insmod` succeeds with no errors in `dmesg`
 - `/sys/` or `/dev/` entry appears as expected
+- Relevant kselftest or kunit test passes
+- 100× `insmod` / `rmmod` loop exits 0
+- `CONFIG_PROVE_LOCKING=y` build: no lockdep splat
+- `CONFIG_KASAN=y` build: no KASAN report
 - Functionality verified by a test script or userspace app
 
 **DTS change:**
@@ -145,3 +151,17 @@ Always end with: "Build is clean — please test on the board."
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites
 due to overcomplication, and clarifying questions come before implementation rather
 than after mistakes.
+
+---
+
+## Attribution
+
+Principles 1–4 derive from Andrej Karpathy's observations on LLM coding pitfalls:
+
+- X post: https://x.com/karpathy/status/2015883857489522876
+- Skill wrapper repo: https://github.com/forrestchang/andrej-karpathy-skills (MIT-licensed)
+
+Principles 5–6 are BSP-specific additions by this project.
+
+For a skill-picker-discoverable version of these principles, see
+`.claude/skills/karpathy-discipline/SKILL.md`.

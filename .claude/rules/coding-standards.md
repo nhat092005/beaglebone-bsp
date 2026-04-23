@@ -16,7 +16,7 @@ Specific coding rules for each layer of the BSP. Apply these alongside the gener
 ## Device Tree
 
 - `compatible` string must exactly match the driver's `of_match_table` entry -- character by character.
-- Add `status = "disabled"` in SoC dtsi file. Enable with `status = "okay"` in board dts only.
+- Never modify upstream dtsi/dts files. Add/enable nodes in the project overlay (`linux/dts/am335x-boneblack-custom.dts`) only. Enable with `status = "okay"` in the overlay; leave upstream files untouched.
 - `reg` addresses must come from the AM335x TRM, not guesses.
 - Pinctrl: define groups in `am33xx-clocks.dtsi` style and reference by name in device node.
 - Include `#address-cells` and `#size-cells` on every bus node.
@@ -27,7 +27,7 @@ Specific coding rules for each layer of the BSP. Apply these alongside the gener
 - Pre-allocate task stacks statically where possible (`StaticTask_t` + `StackType_t` array).
 - Document task priorities and stack sizes in a comment block at the top of each task file.
 - Always define `vApplicationStackOverflowHook` for stack overflow detection during development.
-- For RPMsg: use endpoint registration pattern from `OpenAMP/rpmsg.h`.
+- Project target: QEMU `lm3s6965evb` (Stellaris Cortex-M3), standalone FreeRTOS. No OpenAMP, no PRU, no RPMsg in this project.
 
 ## Yocto / BitBake
 
@@ -35,7 +35,7 @@ Specific coding rules for each layer of the BSP. Apply these alongside the gener
 - Use `${D}`, `${S}`, `${WORKDIR}`, `${B}` -- never hardcode paths.
 - Out-of-tree kernel modules: use `inherit module` -- do not write manual install steps.
 - bbappend files: always use `FILESEXTRAPATHS:prepend := "${THISDIR}/files:"` -- never `=`.
-- `SRC_URI` entries for local patches: include `sha256sum` checksum.
+- `SRC_URI` network entries (git://, https://): always pin with `SRCREV` + `LIC_FILES_CHKSUM`. Local `file://` patches do NOT require checksums.
 - Separate kernel module recipe from userspace app recipe -- do not combine.
 
 ## Shell Scripts
@@ -45,6 +45,19 @@ Specific coding rules for each layer of the BSP. Apply these alongside the gener
 - Quote all variables: `"${VAR}"` not `$VAR`.
 - Check for root before using `sudo`: `[ "$(id -u)" -ne 0 ] && sudo ...`.
 - No hardcoded absolute paths -- use `${SCRIPT_DIR}` relative to the script location.
+
+## Static Analysis Gates (RULE-3 — all 8 required before a driver is done)
+
+Every out-of-tree kernel module must pass all 8 gates:
+
+1. `checkpatch.pl --strict -f <file.c>` → `total: 0 errors, 0 warnings, 0 checks`
+2. `make C=2 CF="-D__CHECK_ENDIAN__"` (sparse) → 0 warnings
+3. `insmod` succeeds, `dmesg` shows no errors
+4. `/sys/` or `/dev/` entry appears as expected
+5. Relevant kselftest or kunit test passes
+6. 100× consecutive `insmod` / `rmmod` loop exits 0
+7. Kernel built with `CONFIG_PROVE_LOCKING=y` — no lockdep splat
+8. Kernel built with `CONFIG_KASAN=y` — no KASAN report
 
 ## General C / C++
 
@@ -85,3 +98,14 @@ iowrite32(0xFFFFFFFF, base + REG_STAT);
 
 Logging: module name prefix is MANDATORY:
 dev_dbg(dev, "[UART] init complete, baud=%d\n", baud);
+
+## Python (helper scripts only)
+
+- Target: Python 3.10+. Type hints: use `list[T]`, `dict[K, V]` PEP 585 syntax. Import `annotations` from `__future__` for forward references.
+- Every top-level script: `#!/usr/bin/env python3` + module docstring.
+- CLI: `argparse` with subcommands. Emit JSON to stdout for machine-readable results, human-readable progress to stderr.
+- Exceptions: exit with `sys.exit("error: ...")` for CLI user errors; raise for programmer bugs.
+- No `requests`-style heavy deps unless justified. Use stdlib + `pyserial` + `PyYAML` only.
+- Keep `.py` files under 250 LOC each. Split if longer.
+- No `os.system` / `subprocess.shell=True`. Use list-form `subprocess.run([...])`.
+- Format: PEP 8. Line length 88 (Black default). Run `python3 -m compileall scripts/` to syntax-check.

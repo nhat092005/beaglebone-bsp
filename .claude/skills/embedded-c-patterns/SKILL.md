@@ -10,7 +10,8 @@ Reference patterns for writing correct, safe embedded C code in this project.
 
 ## Kernel Driver Patterns
 
-### Resource-Managed Allocation (devm_*)
+### Resource-Managed Allocation (devm\_\*)
+
 ```c
 // GOOD: devm_* auto-freed on driver detach
 struct my_dev *dev = devm_kzalloc(&pdev->dev, sizeof(*dev), GFP_KERNEL);
@@ -30,6 +31,7 @@ struct my_dev *dev = kzalloc(sizeof(*dev), GFP_KERNEL);
 ```
 
 ### Error Path Pattern (goto cleanup)
+
 ```c
 static int my_probe(struct platform_device *pdev)
 {
@@ -61,6 +63,7 @@ err_clk:
 ```
 
 ### MMIO Register Access
+
 ```c
 // GOOD: Use ioread/iowrite for proper barriers
 u32 val = ioread32(dev->base + REG_CTRL);
@@ -76,6 +79,7 @@ iowrite32(val | BIT(0), dev->base + REG_CTRL);
 ```
 
 ### Spinlock for IRQ-shared data
+
 ```c
 struct my_dev {
     spinlock_t lock;
@@ -106,6 +110,7 @@ static irqreturn_t my_irq_handler(int irq, void *data)
 ```
 
 ### Device Tree Matching
+
 ```c
 static const struct of_device_id my_of_match[] = {
     { .compatible = "mycompany,my-device-v1", .data = &my_v1_data },
@@ -126,11 +131,15 @@ static int my_probe(struct platform_device *pdev)
 
 ## FreeRTOS Patterns
 
-### Task with proper stack and priority
+### Task with static stack (required by coding-standards)
+
 ```c
 #define MY_TASK_STACK_SIZE  (configMINIMAL_STACK_SIZE * 4)
 #define MY_TASK_PRIORITY    (tskIDLE_PRIORITY + 2)
 
+/* Static allocation — no heap, deterministic */
+static StaticTask_t my_task_tcb;
+static StackType_t  my_task_stack[MY_TASK_STACK_SIZE];
 static TaskHandle_t my_task_handle = NULL;
 
 void my_task(void *pvParameters)
@@ -148,15 +157,17 @@ void my_task(void *pvParameters)
     vTaskDelete(NULL);  /* should not reach here */
 }
 
-/* Create task */
-xTaskCreate(my_task, "MyTask", MY_TASK_STACK_SIZE,
-            &task_config, MY_TASK_PRIORITY, &my_task_handle);
+/* Create task — static variant, no heap allocation */
+my_task_handle = xTaskCreateStatic(my_task, "MyTask", MY_TASK_STACK_SIZE,
+                                   &task_config, MY_TASK_PRIORITY,
+                                   my_task_stack, &my_task_tcb);
 ```
 
 ### Queue from ISR (interrupt-safe)
+
 ```c
-/* From ISR — use FromISR variants */
-static void ICACHE_RAM_ATTR my_hw_irq_handler(void)
+/* From ISR — use FromISR variants (Cortex-M3, no platform-specific attributes) */
+static void my_hw_irq_handler(void)
 {
     BaseType_t higher_prio_task_woken = pdFALSE;
     uint32_t event = read_hw_event();
@@ -169,6 +180,7 @@ static void ICACHE_RAM_ATTR my_hw_irq_handler(void)
 ## Yocto Recipe Patterns
 
 ### Kernel module recipe
+
 ```bitbake
 SUMMARY = "BeagleBone custom kernel module"
 LICENSE = "GPL-2.0-only"
@@ -188,13 +200,16 @@ KERNEL_MODULE_PROBECONF += "my_driver"
 module_conf_my_driver = "options my_driver param=1"
 ```
 
-### bbappend for kernel config
+### Standalone kernel recipe (project pattern)
+
 ```bitbake
-# meta-bbb/recipes-kernel/linux/linux-bbb_%.bbappend
+# meta-bbb/recipes-kernel/linux/linux-yocto-bbb_5.10.bb
+# Project uses a standalone .bb recipe (not .bbappend) to pin kernel SRCREV.
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI += "file://0001-add-my-driver.patch \
-            file://my_driver.cfg \
+            file://boneblack-custom.config \
+            file://am335x-boneblack-custom.dts \
            "
 ```
 
