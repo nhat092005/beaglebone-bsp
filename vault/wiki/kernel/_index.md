@@ -1,0 +1,36 @@
+---
+title: Kernel
+last_updated: 2026-04-22
+category: kernel
+status: In Progress
+---
+
+# Kernel (Linux 5.10.y)
+
+Linux kernel build workflow for BeagleBone Black BSP.
+
+## Workflow
+
+| #   | Topic               | File                         |
+| --- | ------------------- | ---------------------------- |
+| 00  | Overview            | [[00-kernel-overview.md]]    |
+| 01  | Clone at v5.10.253  | [[01-kernel-clone.md]]       |
+| 02  | Generate Config     | [[02-kernel-config.md]]      |
+| 03  | Build zImage & DTB  | [[03-kernel-build.md]]       |
+| 04  | Apply Patches       | [[04-kernel-patches.md]]     |
+| 05  | Verify Artifacts    | [[05-kernel-verify.md]]      |
+| 06  | Device Tree (DTS)   | [[06-device-tree.md]]        |
+| 07  | Reproducible Builds | [[07-reproducible-build.md]] |
+
+## Quick Reference
+
+```bash
+# Clone kernel
+cd linux && git fetch --depth=1 https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git refs/tags/v5.10.253 && git checkout FETCH_HEAD
+
+# Build
+docker run --rm -v "${BSP_ROOT}/linux:/workspace/linux" -w /workspace/linux beaglebone-bsp-builder:1.0 bash -c "make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j\$(nproc) zImage dtbs"
+
+# Verify
+ls -lh build/kernel/zImage build/kernel/am335x-boneblack-custom.dtb
+```

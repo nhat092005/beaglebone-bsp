@@ -1,26 +1,32 @@
 ---
-title: Bootloader
-last_updated: 2026-04-16
-status: Stable
+title: Bootloader (U-Boot)
+last_updated: 2026-04-25
+category: bootloader
 ---
 
-# Bootloader
+# Bootloader (U-Boot v2022.07)
 
-U-Boot v2021.10 on BeagleBone Black (AM335x). Boot chain: ROM → SPL/MLO → U-Boot → Linux kernel. Custom defconfig adds TFTP network boot and reduces boot delay for dev workflow.
+U-Boot boot chain: ROM → SPL (MLO) → U-Boot → Kernel.
 
-## Contents
+## Workflow
 
-- [[boot-flow]] — Boot sequence, memory map, eMMC layout, uEnv.txt reference
-- [[uboot-config]] — Custom defconfig, patches, build commands
+| #   | Topic                 | File                             |
+| --- | --------------------- | -------------------------------- |
+| 00  | Boot Flow Overview    | [[00-boot-flow.md]]              |
+| 01  | Full Tutorial         | [[01-uboot-workflow.md]]         |
+| 02  | Clone & Branch Setup  | [[02-uboot-clone.md]]            |
+| 03  | Custom Defconfig      | [[03-uboot-custom-defconfig.md]] |
+| 04  | Patches (TFTP, delay) | [[04-uboot-patches.md]]          |
+| 05  | Build & Verify        | [[05-uboot-build-verify.md]]     |
+| 06  | TFTP/RNDIS Boot Notes | [[06-uboot-tftp-rndis-boot.md]]  |
 
-## Key Source Files
+## Key Artifacts
 
-| File | Purpose |
-| ---- | ------- |
-| `u-boot/configs/am335x_boneblack_custom_defconfig` | Custom defconfig (BOOTDELAY=1, DHCP/TFTP) |
-| `u-boot/patches/0001-boneblack-tftp-boot-env.patch` | TFTP boot env vars |
-| `u-boot/patches/0002-boneblack-reduce-boot-delay.patch` | Reduce boot delay to 1 s |
-| `scripts/build.sh` | Unified build: `bash scripts/build.sh uboot` |
-| `scripts/deploy.sh` | Deploy artifacts to board via SCP |
-| `scripts/flash_sd.sh` | Flash SD card (partition + write boot files) |
-| `docker/Dockerfile` | Reproducible cross-compile environment |
+| Path/File                                          | Purpose                              |
+| -------------------------------------------------- | ------------------------------------ |
+| `u-boot/configs/am335x_boneblack_custom_defconfig` | Custom defconfig (BOOTDELAY=1, TFTP) |
+| `u-boot/patches/0001-*.patch`                      | TFTP boot environment                |
+| `u-boot/patches/0002-*.patch`                      | Reduce boot delay to 1s              |
+| `scripts/build.sh`                                 | Build: `bash scripts/build.sh uboot` |
+| `scripts/deploy.sh`                                | Deploy via TFTP                      |
+| `scripts/flash_sd.sh`                              | Flash SD card (MLO, u-boot.img)      |

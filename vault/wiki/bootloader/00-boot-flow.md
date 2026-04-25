@@ -64,7 +64,7 @@ uenvcmd=load mmc 0:1 ${loadaddr} zImage; load mmc 0:1 ${fdtaddr} am335x-boneblac
 
 ### TFTP boot (dev workflow)
 
-Requires patches applied (see [[03-uboot-custom-defconfig]]). Server default `192.168.1.1`, board default `192.168.1.100`.
+Requires patches applied (see 03-uboot-custom-defconfig). Server default `192.168.1.1`, board default `192.168.1.100`.
 
 ```
 uenvcmd=run tftp_boot
