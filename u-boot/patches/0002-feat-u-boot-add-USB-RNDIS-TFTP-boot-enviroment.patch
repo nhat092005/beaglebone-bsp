@@ -1,0 +1,44 @@
+From 6b3e558c7e9be25e1e59c9bc7b9d521946c6bfd0 Mon Sep 17 00:00:00 2001
+From: BeagleBone BSP <bsp@example.com>
+Date: Sun, 26 Apr 2026 04:06:28 +0700
+Subject: [PATCH 2/2] feat(u-boot): add USB RNDIS TFTP boot enviroment
+
+Signed-off-by: BeagleBone BSP <bsp@example.com>
+---
+ include/configs/am335x_evm.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/include/configs/am335x_evm.h b/include/configs/am335x_evm.h
+index fd5b209a..572f0977 100644
+--- a/include/configs/am335x_evm.h
++++ b/include/configs/am335x_evm.h
+@@ -82,8 +82,26 @@
+ #ifndef CONFIG_SPL_BUILD
+ #include <environment/ti/dfu.h>
+ 
++/*
++ * TFTP dev-boot env — addresses from DEFAULT_LINUX_BOOT_ENV (ti_armv7_common.h
++ * (u-boot/include/configs/ti_armv7_common.h)): loadaddr=0x82000000,
++ * fdtaddr=0x88000000 (DDR3 0x80000000–0x9FFFFFFF. serverip default: host USB
++ * gadget IP (192.168.7.1). Override via uEnv.txt.
++ */
++#define TFTP_BOOT_ENV                                       \
++	"serverip=192.168.7.1\0"                            \
++	"ipaddr=192.168.7.2\0"                              \
++	"tftp_boot="                                        \
++	"setenv ethact usb_ether; "                         \
++	"setenv ethrotate no; "                             \
++	"tftpboot ${loadaddr} zImage; "                     \
++	"tftpboot ${fdtaddr} am335x-boneblack-custom.dtb; " \
++	"bootz ${loadaddr} - ${fdtaddr}\0"
++
++
+ #define CONFIG_EXTRA_ENV_SETTINGS \
+ 	DEFAULT_LINUX_BOOT_ENV \
++	TFTP_BOOT_ENV \
+ 	"fdtfile=undefined\0" \
+ 	"finduuid=part uuid mmc 0:2 uuid\0" \
+ 	"console=ttyO0,115200n8\0" \
+-- 
+2.43.0
+

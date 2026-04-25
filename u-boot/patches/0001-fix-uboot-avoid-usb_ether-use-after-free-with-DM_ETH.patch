@@ -1,0 +1,31 @@
+From c493de913d9b3d492e21f68982869ff818bdea3d Mon Sep 17 00:00:00 2001
+From: BeagleBone BSP <bsp@example.com>
+Date: Sun, 26 Apr 2026 04:05:25 +0700
+Subject: [PATCH 1/2] fix(uboot): avoid usb_ether use-after-free with DM_ETH
+
+Signed-off-by: BeagleBone BSP <bsp@example.com>
+---
+ drivers/usb/gadget/ether.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/usb/gadget/ether.c b/drivers/usb/gadget/ether.c
+index 43073286..00827cb4 100644
+--- a/drivers/usb/gadget/ether.c
++++ b/drivers/usb/gadget/ether.c
+@@ -2525,6 +2525,13 @@ static void _usb_eth_halt(struct ether_priv *priv)
+ 	}
+ 
+ 	usb_gadget_unregister_driver(&priv->eth_driver);
++
++	/*
++	 * With DM_ETH the UDC owns this usb_ether device. Releasing the UDC
++	 * here recursively removes this child while eth_halt() still updates
++	 * its uclass private state after ->stop() returns.
++	 */
++	if (!CONFIG_IS_ENABLED(DM_ETH))
+ 	usb_gadget_release(0);
+ }
+ 
+-- 
+2.43.0
+
