@@ -1,14 +1,6 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(python3 scripts/bbb-uart.py *)",
-      "Bash(python3 /home/nhat/Working_Space/my-project/beaglebone-bsp/scripts/bbb-uart.py *)",
-      "Bash(./scripts/bbb-uart.py *)",
-      "Bash(ls /dev/ttyUSB*)",
-      "Bash(ls -la /dev/ttyUSB*)",
-      "Bash(test -f config/error-patterns.yaml)",
-      "Bash(test -x scripts/bbb-uart.py)"
-    ]
+    "allow": []
   },
   "hooks": {
     "Stop": [
@@ -17,12 +9,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/notify.sh",
+            "command": "bash -lc 'ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; \"$ROOT/.claude/hooks/notify.sh\"'",
             "async": true,
             "timeout": 5
           }
         ],
-        "description": "Thông báo tiếng Việt + beep khi Claude dừng chờ input.",
+        "description": "Send a notification + beep sound when Claude stops and waits for input.",
         "id": "stop:notify-vi"
       }
     ],
@@ -32,12 +24,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/notify.sh",
+            "command": "bash -lc 'ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; \"$ROOT/.claude/hooks/notify.sh\"'",
             "async": true,
             "timeout": 5
           }
         ],
-        "description": "Thông báo tiếng Việt + beep khi session kết thúc.",
+        "description": "Send a notification + beep sound when session ends.",
         "id": "session-end:notify-vi"
       }
     ],
@@ -47,12 +39,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/clang-format.sh",
+            "command": "bash -lc 'ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; \"$ROOT/.claude/hooks/clang-format.sh\"'",
             "async": true,
             "timeout": 10
           }
         ],
-        "description": "Tự động clang-format file .c/.h sau khi write/edit.",
+        "description": "Automatically run clang-format on .c/.h files after writing/editing.",
         "id": "post-write:clang-format"
       },
       {
@@ -60,11 +52,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/checkpatch.sh",
+            "command": "bash -lc 'ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; \"$ROOT/.claude/hooks/checkpatch.sh\"'",
             "timeout": 15
           }
         ],
-        "description": "Chạy kernel checkpatch trên file .c/.h trong linux/ hoặc drivers/ sau khi write/edit.",
+        "description": "Run kernel checkpatch on .c/.h files in linux/ or drivers/ after writing/editing.",
         "id": "post-write:checkpatch"
       }
     ],
@@ -74,11 +66,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/block-git-add-all.sh",
+            "command": "bash -lc 'ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; \"$ROOT/.claude/hooks/block-git-add-all.sh\"'",
             "timeout": 5
           }
         ],
-        "description": "Chặn git add -A và git add . để tránh commit build artifacts.",
+        "description": "Block git add -A and git add . to avoid committing build artifacts.",
         "id": "pre-bash:block-git-add-all"
       }
     ]
