@@ -5,7 +5,7 @@
 > tree, out-of-tree drivers, Yocto BSP packaging, build/deploy scripts, debug/test scaffolding, and
 > an Obsidian-compatible engineering wiki.
 
-![BeagleBone Black BSP](assets/hero.png)
+![BeagleBone Black BSP](assets/readme/hero.png)
 
 **Target**: AM335x (BeagleBone Black), ARMv7-A, `arm-linux-gnueabihf-`
 **Stack**: Linux 5.10.y-cip practice baseline, U-Boot 2022.07, Yocto Kirkstone, FreeRTOS scaffold
