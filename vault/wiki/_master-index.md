@@ -12,7 +12,6 @@ category: wiki
 | ------------------------- | ----------- | ------------------------------------------- |
 | AM335x SoC                | Stable      | [[wiki/am335x/_index.md]]                   |
 | ARM Architecture          | Stable      | [[wiki/arm-arch/_index.md]]                 |
-| Bootloader                | Stable      | [[wiki/bootloader/_index.md]]               |
 | Debugging                 | —           | [[wiki/debugging/_index.md]]                |
 | Docker                    | Stable      | [[wiki/docker/_index.md]]                   |
 | Drivers                   | In Progress | [[wiki/drivers/_index.md]]                  |
@@ -21,6 +20,7 @@ category: wiki
 | Learning                  | Building    | [[wiki/learning/_index.md]]                 |
 | RTOS                      | In Progress | [[wiki/rtos/_index.md]]                     |
 | Scripts                   | Stable      | [[wiki/scripts/_index.md]]                  |
+| Bootloader                | Stable      | [[wiki/uboot/_index.md]]                    |
 | Yocto                     | In Progress | [[wiki/yocto/_index.md]]                    |
 
 ## Quick Start

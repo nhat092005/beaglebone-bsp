@@ -1,5 +1,5 @@
 ---
-title: Bootloader (U-Boot)
+title: U-Boot
 last_updated: 2026-04-25
 category: bootloader
 ---
