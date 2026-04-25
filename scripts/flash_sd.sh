@@ -107,7 +107,9 @@ done
 
 cat > "${MNT_BOOT}/uEnv.txt" <<'UENV'
 bootargs=console=ttyO0,115200n8 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
-uenvcmd=load mmc 0:1 ${loadaddr} zImage; load mmc 0:1 ${fdtaddr} am335x-boneblack-custom.dtb; bootz ${loadaddr} - ${fdtaddr}
+serverip=192.168.7.1
+ipaddr=192.168.7.2
+uenvcmd=run tftp_boot
 UENV
 
 echo "[flash] uEnv.txt written"

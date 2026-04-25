@@ -11,11 +11,11 @@ category: scripts
 
 # flash_sd.sh - SD Card Flashing
 
-⚠️ **WARNING: This script is DESTRUCTIVE and will ERASE ALL DATA on the target device!**
+**WARNING: This script is DESTRUCTIVE and will ERASE ALL DATA on the target device!**
 
 `scripts/flash_sd.sh` creates a bootable SD card for BeagleBone Black with boot files and optional root filesystem.
 
-## ⚠️ CRITICAL SAFETY WARNING
+## CRITICAL SAFETY WARNING
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -27,9 +27,9 @@ category: scripts
 │ • Data is NOT recoverable!                  │
 │                                             │
 │ If you specify wrong device:                │
-│ • /dev/sda → Deletes main hard drive! 💀    │
-│ • /dev/nvme0n1 → Deletes SSD! 💀            │
-│ • /dev/mmcblk0 → Deletes eMMC! 💀           │
+│ • /dev/sda → Deletes main hard drive!       │
+│ • /dev/nvme0n1 → Deletes SSD!               │
+│ • /dev/mmcblk0 → Deletes eMMC!              │
 │                                             │
 │ ALWAYS verify device name with lsblk first! │
 └─────────────────────────────────────────────┘
@@ -41,16 +41,16 @@ Create a **permanent bootable SD card** for BeagleBone Black.
 
 **When to use:**
 
-- ✅ Production deployment
-- ✅ First-time board setup
-- ✅ Recovery (board won't boot)
-- ✅ Creating backup SD cards
+- Production deployment
+- First-time board setup
+- Recovery (board won't boot)
+- Creating backup SD cards
 
 **When NOT to use:**
 
-- ❌ Development (use TFTP instead - see [[04-deploy-sh]])
-- ❌ Quick testing (TFTP is faster)
-- ❌ Frequent kernel updates (TFTP avoids SD wear)
+- Development (use TFTP instead - see04-deploy-sh)
+- Quick testing (TFTP is faster)
+- Frequent kernel updates (TFTP avoids SD wear)
 
 ## SD Card vs TFTP Boot
 
@@ -182,10 +182,10 @@ fi
 **Only allows `/dev/sd*` devices:**
 
 ```
-✅ Allowed:
+ Allowed:
   /dev/sdb, /dev/sdc, /dev/sdd  (USB/SD card readers)
 
-❌ Rejected:
+ Rejected:
   /dev/sda         (usually main hard drive)
   /dev/nvme0n1     (NVMe SSD)
   /dev/mmcblk0     (eMMC/SD card - could be system disk)
@@ -198,7 +198,7 @@ fi
 - `/dev/sdb`, `/dev/sdc` are typically removable drives
 - Reduces (but doesn't eliminate) risk
 
-**⚠️ Still dangerous:** `/dev/sdb` could be your backup drive!
+** Still dangerous:** `/dev/sdb` could be your backup drive!
 
 #### 2. Mounted Filesystem Check
 
@@ -266,10 +266,10 @@ read -r -p "[flash] type 'yes' to continue: " CONFIRM
 **Must type exactly "yes":**
 
 ```
-✅ Accepted:
+ Accepted:
   yes
 
-❌ Rejected:
+ Rejected:
   y
   YES
   Yes
@@ -390,7 +390,7 @@ trap cleanup EXIT
 # Without trap:
 mount /dev/sdb1 /mnt/boot
 # Script crashes
-# /dev/sdb1 still mounted! ❌
+# /dev/sdb1 still mounted!
 # Can't eject SD card
 
 # With trap:
@@ -398,7 +398,7 @@ trap cleanup EXIT
 mount /dev/sdb1 /mnt/boot
 # Script crashes
 # cleanup() runs automatically
-# /dev/sdb1 unmounted ✅
+# /dev/sdb1 unmounted
 # Can safely eject SD card
 ```
 
@@ -543,7 +543,7 @@ ${fdtaddr}  = 0x88000000  (device tree in DDR)
 
 ### Step 1: Identify SD Card Device
 
-**⚠️ CRITICAL: Verify device name before flashing!**
+** CRITICAL: Verify device name before flashing!**
 
 ```bash
 # Before inserting SD card:
@@ -563,7 +563,7 @@ lsblk
 # └─sdb1   8:17   1   7.4G  0 part /media/user/SD
 ```
 
-**SD card is `/dev/sdb`** ✅
+**SD card is `/dev/sdb`**
 
 **Alternative method:**
 
@@ -699,7 +699,7 @@ sudo bash scripts/flash_sd.sh /dev/sdb rootfs.tar.gz
 
 **Where to get rootfs.tar.gz?**
 
-- Build with Yocto (see [[../yocto/_index]])
+- Build with Yocto (see ../yocto/\_index)
 - Download from BeagleBoard.org
 - Build with Buildroot
 
@@ -755,7 +755,7 @@ if [[ "${DEV}" != /dev/sd* ]]; then
 if [[ "${DEV}" != /dev/sd* && "${DEV}" != /dev/nvme* ]]; then
 ```
 
-**⚠️ Warning:** Only do this if you understand the risks!
+** Warning:** Only do this if you understand the risks!
 
 ---
 
@@ -1088,11 +1088,11 @@ grep "^/dev/sdb" /proc/mounts
 # Should be empty or show /media/... (not / or /home)
 ```
 
-**⚠️ One wrong letter = disaster!**
+** One wrong letter = disaster!**
 
 ```
-/dev/sdb → SD card ✅
-/dev/sda → System disk 💀
+/dev/sdb → SD card
+/dev/sda → System disk
 ```
 
 ---
@@ -1277,7 +1277,7 @@ mkfs.ext4 -F -b 4096 -E stride=2,stripe-width=1024 /dev/sdb2
 - `-E stride=2` = 2 blocks per stripe
 - `-E stripe-width=1024` = RAID stripe width
 
-**⚠️ Advanced:** Only modify if you understand the parameters.
+** Advanced:** Only modify if you understand the parameters.
 
 ---
 
@@ -1295,9 +1295,9 @@ sudo tune2fs -O has_journal /dev/sdb2
 
 **Trade-off:**
 
-- ✅ Faster writes
-- ✅ Less SD card wear
-- ❌ No crash recovery
+- Faster writes
+- Less SD card wear
+- No crash recovery
 
 ---
 
@@ -1377,12 +1377,12 @@ sudo bash scripts/flash_sd.sh /dev/sdb
 
 **flash_sd.sh provides:**
 
-- ✅ Bootable SD card creation
-- ✅ 4 layers of safety checks
-- ✅ Automatic partitioning (FAT32 + ext4)
-- ✅ Boot files installation
-- ✅ Optional rootfs extraction
-- ✅ Cleanup on exit (trap)
+- Bootable SD card creation
+- 4 layers of safety checks
+- Automatic partitioning (FAT32 + ext4)
+- Boot files installation
+- Optional rootfs extraction
+- Cleanup on exit (trap)
 
 **Safety features:**
 
@@ -1412,10 +1412,10 @@ sudo bash scripts/flash_sd.sh /dev/sdb
 
 ## Next Steps
 
-- **Build kernel:** [[03-build-sh-functions]]
-- **Deploy via TFTP:** [[04-deploy-sh]]
-- **U-Boot configuration:** [[../bootloader/05-uboot-build-verify]]
-- **First boot:** [[../../docs/bringup-notes]] (TODO)
+- **Build kernel:** 03-build-sh-functions
+- **Deploy via TFTP:** 04-deploy-sh
+- **U-Boot configuration:** ../bootloader/05-uboot-build-verify
+- **First boot:** ../../docs/bringup-notes
 
 ---
 

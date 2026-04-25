@@ -16,7 +16,7 @@ This document explains the core build functions in `scripts/build.sh`: how they 
 
 ## Overview
 
-After the Docker auto-wrapper (see [[02-build-sh-docker-wrapper]]), the script calls one of these functions:
+After the Docker auto-wrapper (see 02-build-sh-docker-wrapper), the script calls one of these functions:
 
 ```bash
 build_kernel()   # Build Linux kernel

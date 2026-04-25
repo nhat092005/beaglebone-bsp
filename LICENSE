@@ -1,0 +1,39 @@
+Copyright (c) 2026 nhat092005
+
+# License
+
+This repository is a mixed-license BeagleBone Black BSP learning project.
+
+Unless a file or directory states otherwise, original project files authored for this
+repository are licensed under the MIT License below. This includes project
+documentation, helper scripts, Makefiles, local configuration, and BSP scaffolding.
+
+Some parts of this repository are governed by different licenses:
+
+| Path                                                   | License                                                                                                                                                        |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `linux/`                                               | Linux kernel licensing, primarily GPL-2.0-only, as defined by `linux/COPYING` and per-file SPDX identifiers.                                                   |
+| `u-boot/`                                              | U-Boot licensing as defined by `u-boot/Licenses/README` and per-file SPDX identifiers.                                                                         |
+| `drivers/`                                             | Out-of-tree Linux kernel modules; GPL-compatible kernel module licensing applies. Files should use SPDX identifiers such as `GPL-2.0-only`.                    |
+| `meta-bbb/`                                            | Yocto layer metadata is project-authored unless stated otherwise. Each recipe's `LICENSE` value describes the license of the software packaged by that recipe. |
+| Third-party manuals, datasheets, or reference material | Owned by their respective copyright holders and included only where permitted.                                                                                 |
+
+## MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
