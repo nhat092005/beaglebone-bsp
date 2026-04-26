@@ -21,7 +21,7 @@ beaglebone-bsp/
 ├── scripts/        build.sh, deploy.sh, flash_sd.sh, bbb-uart.py
 ├── config/         error-patterns.yaml (used by board-runner agent)
 ├── tests/          On-target shell tests + fixtures
-├── docs/           Numbered technical docs (00-roadmap → 09-debug-agent)
+├── docs/           Project documents
 ├── vault/wiki/     Knowledge base (indexed via _master-index.md)
 └── .claude/        Agents, commands, rules, skills
 ```
@@ -131,9 +131,9 @@ Typical scopes: `driver`, `dts`, `kernel`, `uboot`, `yocto`, `rtos`, `wiki`, `sc
 
 ## Cross-references
 
-- Live UART debug pipeline: `docs/09-debug-agent.md`
-- Board bring-up guide: `docs/01-bringup-notes.md`
-- Boot sequence detail: `docs/02-boot-flow.md`
+- Live UART debug pipeline: `vault/wiki/debugging/00-debug-agent.md`
+- Board bring-up guide: `vault/wiki/hardware-beagleboneblack/00-bringup-notes.md`
+- Boot sequence detail: `vault/wiki/uboot/00-boot-flow.md`
 - Master wiki index: `vault/wiki/_master-index.md`
 - OpenCode / non-Claude-Code tools: `AGENTS.md`
 
@@ -147,6 +147,7 @@ Typical scopes: `driver`, `dts`, `kernel`, `uboot`, `yocto`, `rtos`, `wiki`, `sc
 @.claude/rules/tech-defaults.md
 
 <!-- gitnexus:start -->
+
 # GitNexus — Code Intelligence
 
 This project is indexed by GitNexus as **beaglebone-bsp** (4799 symbols, 4800 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
