@@ -4,7 +4,7 @@ tags:
   - linux
   - kernel
   - am335x
-date: 2026-04-19
+last_updated: 2026-04-26
 category: kernel
 ---
 
@@ -18,11 +18,12 @@ Stored in `${BSP_ROOT}/linux/VERSION-PIN`.
 
 ## BSP Kernel Files
 
-| Path             | Purpose                                    |
-| ---------------- | ------------------------------------------ |
-| `linux/configs/` | Config fragments (boneblack-custom.config) |
-| `linux/dts/`     | Device Tree Source overlays                |
-| `linux/patches/` | Backported stable patches                  |
+| Path | Purpose |
+| --- | --- |
+| `linux/configs/` | Config fragments |
+| `linux/arch/arm/boot/dts/am335x-boneblack-custom.dts` | Custom DTS built by `make dtbs` |
+| `linux/dts/` | Project DTS copy used by packaging flows |
+| `linux/patches/` | Backported stable patches |
 
 ## Build Artifacts
 
@@ -33,9 +34,13 @@ Stored in `${BSP_ROOT}/linux/VERSION-PIN`.
 
 ## Prerequisites
 
-- Docker image: `beaglebone-bsp-builder:1.0`
+- Preferred Docker image through `Makefile`: `bbb-builder`
 - Cross-compiler: `arm-linux-gnueabihf-`
-- Architecture: `ARM`
+- Architecture: `arm`
+
+Direct `scripts/build.sh` execution still defaults to
+`beaglebone-bsp-builder:1.0`; use `DOCKER_IMAGE=bbb-builder` if bypassing the
+top-level `Makefile`.
 
 ## References
 

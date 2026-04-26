@@ -4,7 +4,7 @@ tags:
   - linux
   - kernel
   - kconfig
-date: 2026-04-19
+date: 2026-04-26
 category: kernel
 ---
 
@@ -23,20 +23,15 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- omap2plus_defconfig
 
 ## Apply BSP Config Fragment
 
-Use `make oldconfig` with the BSP config fragment:
+Use `merge_config.sh`:
 
 ```bash
-# Merge fragment
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- \
-    oldconfig \
-    KCONFIG_ALLCONFIG=${BSP_ROOT}/linux/configs/boneblack-custom.config
+scripts/kconfig/merge_config.sh -m .config configs/boneblack-custom.config
 ```
 
-Or use merge_config.sh:
-
-```bash
-scripts/kconfig/merge_config.sh .config ../configs/boneblack-custom.config
-```
+Current project caveat: `make kernel` does not merge this fragment today; it
+only merges `linux/configs/reproducible.config`. Merge this file manually when
+validating the full custom kernel configuration.
 
 ## Enable in menuconfig
 
@@ -64,7 +59,8 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- menuconfig
 
 **Enables:** the `/sys/class/gpio/` interface — `export`, `unexport`, `direction`, `value`, `edge` sysfs files.
 
-**Required by:** `tests/test-gpio.sh` which uses `/sys/class/gpio/export` to drive GPIO from shell.
+**Required by:** the planned GPIO shell test. `tests/test-gpio.sh` is currently
+an empty placeholder in this checkout.
 
 **Without it:** `echo 60 > /sys/class/gpio/export` returns `-sh: write error: Invalid argument`.
 
@@ -86,7 +82,8 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- menuconfig
 
 **Enables:** the `/dev/i2c-N` character device interface used by `i2cdetect`, `i2cget`, `i2cset`.
 
-**Required by:** `tests/test-i2c.sh` which calls `i2cdetect -y 1` to verify TMP102.
+**Required by:** the planned I2C shell test. `tests/test-i2c.sh` is currently an
+empty placeholder in this checkout.
 
 **Without it:** no `/dev/i2c-*` nodes.
 
@@ -220,7 +217,7 @@ echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable
 | Symbol                  | Value | Subsystem | Required for       |
 | ----------------------- | ----- | --------- | ------------------ |
 | `CONFIG_GPIOLIB`        | `y`   | GPIO      | All GPIO drivers   |
-| `CONFIG_GPIO_SYSFS`     | `y`   | GPIO      | tests/test-gpio.sh |
+| `CONFIG_GPIO_SYSFS`     | `y`   | GPIO      | planned GPIO test |
 | `CONFIG_I2C`            | `y`   | I2C       | I2C core           |
 | `CONFIG_I2C_CHARDEV`    | `y`   | I2C       | /dev/i2c-\*        |
 | `CONFIG_I2C_OMAP`       | `y`   | I2C       | AM335x I2C1+I2C2   |

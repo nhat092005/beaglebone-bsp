@@ -1,6 +1,6 @@
 ---
 title: U-Boot TFTP/RNDIS Boot Notes
-last_updated: 2026-04-25
+last_updated: 2026-04-26
 category: bootloader
 ---
 
@@ -16,7 +16,7 @@ The current custom flow is a RAM boot: U-Boot downloads `zImage` and `am335x-bon
 | -------------------------------------------------- | ---------------------------------------------------------------- |
 | `u-boot/include/configs/am335x_evm.h`              | Defines `TFTP_BOOT_ENV` and the `tftp_boot` environment variable |
 | `u-boot/configs/am335x_boneblack_custom_defconfig` | Selects the custom boot command                                  |
-| `u-boot/patches/*.patch`                           | Re-applicable U-Boot changes against upstream                    |
+| `patches/u-boot/v2022.07/*.patch`                  | Re-applicable U-Boot changes against upstream                    |
 | `build/uboot/MLO`                                  | SPL image copied to the boot medium                              |
 | `build/uboot/u-boot.img`                           | Full U-Boot image copied to the boot medium                      |
 | `/srv/tftp/zImage`                                 | Kernel served by the host TFTP server                            |
