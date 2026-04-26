@@ -1,0 +1,18 @@
+diff --git a/drivers/usb/gadget/ether.c b/drivers/usb/gadget/ether.c
+index 43073286..00827cb4 100644
+--- a/drivers/usb/gadget/ether.c
++++ b/drivers/usb/gadget/ether.c
+@@ -2525,6 +2525,13 @@ static void _usb_eth_halt(struct ether_priv *priv)
+ 	}
+ 
+ 	usb_gadget_unregister_driver(&priv->eth_driver);
++
++	/*
++	 * With DM_ETH the UDC owns this usb_ether device. Releasing the UDC
++	 * here recursively removes this child while eth_halt() still updates
++	 * its uclass private state after ->stop() returns.
++	 */
++	if (!CONFIG_IS_ENABLED(DM_ETH))
+ 	usb_gadget_release(0);
+ }
+ 
