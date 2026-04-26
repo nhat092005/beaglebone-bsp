@@ -1,6 +1,6 @@
 ---
 title: Kernel
-last_updated: 2026-04-22
+last_updated: 2026-04-26
 category: kernel
 status: In Progress
 ---
@@ -28,9 +28,12 @@ Linux kernel build workflow for BeagleBone Black BSP.
 # Clone kernel
 cd linux && git fetch --depth=1 https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git refs/tags/v5.10.253 && git checkout FETCH_HEAD
 
-# Build
-docker run --rm -v "${BSP_ROOT}/linux:/workspace/linux" -w /workspace/linux beaglebone-bsp-builder:1.0 bash -c "make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- -j\$(nproc) zImage dtbs"
+# Build through project entry point
+make kernel
 
 # Verify
 ls -lh build/kernel/zImage build/kernel/am335x-boneblack-custom.dtb
 ```
+
+Current caveat: `make kernel` merges `linux/configs/reproducible.config` but
+does not merge `linux/configs/boneblack-custom.config`. Use 03-kernel-build.md for the manual full-custom workflow.

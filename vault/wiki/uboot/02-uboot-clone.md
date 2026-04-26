@@ -1,6 +1,6 @@
 ---
 title: U-Boot Clone v2022.07
-last_updated: 2026-04-18
+last_updated: 2026-04-26
 category: bootloader
 ---
 
@@ -30,7 +30,9 @@ git log -1 --format=%H v2022.07
 
 ## Step 2 — Create working branch
 
-Patches in this project are stored as `git format-patch` files. To generate them you need commits.
+The current project U-Boot patch queue is stored as raw `git diff` patches under
+`patches/u-boot/v2022.07/`. You do not need commits in the vendor U-Boot tree
+for the normal apply/build workflow.
 
 ```bash
 git checkout -b boneblack-dev v2022.07
@@ -38,8 +40,9 @@ git config user.name "BeagleBone BSP"
 git config user.email "bsp@example.com"
 ```
 
-> **Note:** After generating patches with `git format-patch`, reset HEAD back to `v2022.07` so that `git describe --exact-match HEAD` keeps returning `v2022.07`.
-> Apply patches to the working tree only (via `git apply`, not `git am`) for day-to-day builds.
+Apply project patches to the working tree with `git apply`, not `git am`.
+The patch archive stays in `beaglebone-bsp/patches/u-boot/v2022.07/`; the
+vendor U-Boot tree remains disposable.
 
 ## Verify state
 

@@ -4,7 +4,7 @@ tags:
   - linux
   - patch
   - git
-date: 2026-04-19
+last_updated: 2026-04-26
 category: kernel
 ---
 
@@ -100,11 +100,17 @@ git cat-file -t 57bcd3feffa7
 
 ---
 
-## BSP Patches Location
+## BSP Patch Location
 
 ```
 linux/patches/
 ├── 0001-gpio-omap-fix-irq-unmask-on-resume.patch
+```
+
+The filename is historical. The current patch subject is:
+
+```text
+gpio: omap: do not register driver in probe()
 ```
 
 ---
@@ -182,29 +188,11 @@ make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- drivers/gpio/gpio-omap.o
 
 ---
 
-## Apply (Simple)
-
-```bash
-cd linux
-git apply ../linux/patches/0001-gpio-omap-fix-irq-unmask-on-resume.patch
-```
-
----
-
-## Verify Patch Applied
-
-```bash
-git log --oneline -1
-git diff --stat
-```
-
----
-
 ## Revert a Patch
 
 ```bash
 cd linux
-git checkout -- .
+git apply -R patches/0001-gpio-omap-fix-irq-unmask-on-resume.patch
 ```
 
 ---
@@ -250,14 +238,14 @@ git send-email \
 
 ## Quick Reference
 
-| Task              | Command                                                  |
-| ----------------- | -------------------------------------------------------- | ------------- | ------------------------- |
-| Verify stable SHA | `git cat-file -t <sha>` → `commit`                       |
-| Deepen            | `git fetch --deepen=5000 <url> linux-5.10.y`             |
-| Generate patch    | `git format-patch -1 <sha> --stdout > name.patch`        |
-| Check trailer     | `grep -cE '^(Fixes                                       | Signed-off-by | Cc: stable):' name.patch` |
-| Run checkpatch    | `scripts/checkpatch.pl --strict --ignore=... name.patch` |
-| Apply             | `git apply name.patch`                                   |
+| Task | Command |
+| --- | --- |
+| Verify stable SHA | `git cat-file -t <sha>` -> `commit` |
+| Deepen | `git fetch --deepen=5000 <url> linux-5.10.y` |
+| Generate patch | `git format-patch -1 <sha> --stdout > name.patch` |
+| Check trailer | `grep -cE '^(Fixes|Signed-off-by|Cc: stable):' name.patch` |
+| Run checkpatch | `scripts/checkpatch.pl --strict --ignore=... name.patch` |
+| Apply | `git apply name.patch` |
 
 ---
 

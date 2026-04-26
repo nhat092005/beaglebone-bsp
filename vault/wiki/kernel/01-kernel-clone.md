@@ -4,7 +4,7 @@ tags:
   - linux
   - git
   - clone
-date: 2026-04-19
+last_updated: 2026-04-26
 category: kernel
 ---
 
@@ -36,17 +36,21 @@ git checkout FETCH_HEAD
 git describe --tags HEAD
 # expect: v5.10.253
 
-# SHA should match VERSION-PIN
+# Current expected v5.10.253 SHA
 git log -1 --format=%H
 # expect: 49e5d20074c20b20773c6dc0f8dce0635591093b
 ```
 
-## Save Version Pin
+## Version Pin
 
-```bash
-echo "v5.10.253" > VERSION-PIN
-echo "49e5d20074c20b20773c6dc0f8dce0635591093b" >> VERSION-PIN
+The current repo stores the tag in `linux/VERSION-PIN`:
+
+```text
+LINUX_TAG=v5.10.253
 ```
+
+Do not rewrite this file with a bare tag or SHA list unless the project version
+pin format is intentionally changed.
 
 ## Deepen if Needed
 

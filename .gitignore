@@ -1,74 +1,129 @@
-# Build outputs
+# Editor / OS noise
+*~
+*.swp
+*.swo
+.DS_Store
+.vscode/
+.idea/
+
+# Local AI/tool state
+.codex/
+.gitnexus/
+.claude/CLAUDE.local.md
+.claude/settings.local.json
+
+# Build output roots
 build/
 out/
+tmp/
+
+# Kernel / module build artifacts
 *.o
 *.ko
 *.mod
 *.mod.c
 *.mod.o
+*.cmd
 *.symvers
 *.order
+*.so
+*.a
+*.lib
 modules.builtin
 modules.builtin.modinfo
+Module.markers
+Module.symvers
+System.map
+vmlinux
+vmlinux.*
+zImage
+uImage
+*.dtb
+*.dtbo
 
-# Kernel build artifacts
-linux/.config
-linux/include/config/
-linux/include/generated/
-linux/arch/arm/boot/zImage
-linux/arch/arm/boot/uImage
-linux/arch/arm/boot/dts/*.dtb
+# Kernel module signing
+*.pem
+*.pub
+signed_modules/
 
-# U-Boot build artifacts
-u-boot/u-boot
-u-boot/u-boot.bin
-u-boot/u-boot.img
-u-boot/MLO
-u-boot/spl/
-u-boot/.config
-u-boot/include/config/
+# Boot / rootfs / image artifacts
+*.img
+*.sdimg
+*.wic
+*.wic.*
+*.ext4
+*.cpio
+*.cpio.gz
+*.tar.gz
+*.tar.bz2
+*.tar.xz
 
-# FreeRTOS build
-freertos/build/
-freertos/*.elf
-freertos/*.bin
-freertos/*.map
-
-# Yocto / BitBake
-build/tmp/
-build/cache/
-build/sstate-cache/
-build/downloads/
-build/bitbake.lock
+# Yocto / OpenEmbedded artifacts
+sstate-cache/
+downloads/
+cache/
+bitbake.lock
+*.retry
 *.pyc
 __pycache__/
 
-# Cross-toolchain
+# Toolchain / SDK
 toolchain/
 sdk/
+*.shar
 
-# IDE / Editor
-.vscode/settings.json
-.vscode/launch.json
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-
-# AI / Claude Code
-CLAUDE.local.md
-.claude/CLAUDE.local.md
-.claude/settings.local.json
-
-# Logs & Temp
+# Logs / temp / patch rejects
 *.log
 *.tmp
-tmp/
+*.orig
+*.rej
 
-# Vault / RAG
-vault/output/query-results.md
+# Tags / code navigation
+cscope*
+GTAGS
+GRTAGS
+GPATH
+TAGS
+tags
 
-# Docker
+# Docker / VM local overrides
 .docker/
 docker-compose.override.yml
+.vagrant/
+
+# Obsidian local state
+vault/.obsidian/
+vault/output/
+
+# External vendor source trees
+/linux/*
+/u-boot/*
+/meta-yocto-bsp/
+
+# Tracked BSP metadata inside ignored vendor trees
+
+# Linux
+!/linux/configs/
+!/linux/configs/**
+!/linux/dts/
+!/linux/dts/**
+!/linux/.gitignore
+!/linux/patches/
+!/linux/patches/**
+!/linux/VERSION-PIN
+
+# U-Boot
+!/u-boot/.gitignore
+!/u-boot/configs/am335x_boneblack_custom_defconfig
+!/u-boot/patches/
+!/u-boot/patches/**
+!/u-boot/VERSION-PIN
+
+# Intentionally tracked README demo assets
+!assets/
+!assets/readme/
+!assets/readme/**
+
+# Personal planning scratchpad
+docs/00-roadmap.md
+TODO.md

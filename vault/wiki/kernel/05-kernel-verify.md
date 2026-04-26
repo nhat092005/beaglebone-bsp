@@ -4,7 +4,7 @@ tags:
   - linux
   - kernel
   - verify
-date: 2026-04-19
+last_updated: 2026-04-26
 category: kernel
 ---
 
@@ -30,10 +30,10 @@ ls -lh build/kernel/am335x-boneblack-custom.dtb
 
 ```bash
 docker run --rm \
-  -v "${BSP_ROOT}/linux:/workspace/linux" \
+  -v "${BSP_ROOT}:/workspace" \
   -w /workspace/linux \
-  beaglebone-bsp-builder:1.0 \
-  make ARCH=arm am335x-boneblack-custom.dtb
+  bbb-builder \
+  make ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf- dtbs
 
 # expect: no errors
 ```
@@ -60,13 +60,11 @@ make ARCH=arm W=1 dtbs 2>&1 | grep -c 'am335x-boneblack-custom.*warning'
 
 ## Copy to Build Directory
 
-```bash
-mkdir -p build/kernel
+`make kernel` already copies the two expected files:
 
-cp linux/arch/arm/boot/zImage build/kernel/
-cp linux/arch/arm/boot/dts/am335x-boneblack-custom.dtb build/kernel/
-
-ls -lh build/kernel/
+```text
+build/kernel/zImage
+build/kernel/am335x-boneblack-custom.dtb
 ```
 
 ## Verify on Target (requires hardware)

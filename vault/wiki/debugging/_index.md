@@ -1,42 +1,67 @@
 ---
-title: Debugging — BeagleBone BSP
-tags:
-  - bsp
-  - debugging
-  - reports
-date: 2026-04-24
+title: Debugging
+last_updated: 2026-04-26
+category: debugging
 ---
 
 # Debugging
 
-Project knowledge base for live-hardware + post-mortem debugging of the BeagleBone BSP.
+Debugging knowledge base for BeagleBone BSP bring-up, UART capture, log triage, and report-driven diagnosis.
 
-## Techniques
+## Workflow
 
-- [[debugging|Debugging Techniques]] — serial console, kernel oops decoding, JTAG/GDB, dynamic debug, FreeRTOS task inspection, U-Boot debug, Yocto build issues.
+| #   | Topic                      | File                              |
+| --- | -------------------------- | --------------------------------- |
+| 00  | UART Debug Agent           | [[00-debug-agent.md]]             |
+| 01  | Smoke Test Report Template | [[reports/example-smoke-test.md]] |
 
-## Agents & Skills
+## What This Section Covers
 
-- **`agents/board-runner.md`** — live UART pipeline. Invoke via `/debug-board <tag>`.
-- **`agents/debugger.md`** — post-mortem analysis on logs a human provides.
-- **`skills/bsp-debugging/SKILL.md`** — command reference consulted by both agents.
+- Serial-console based boot capture and post-boot probing
+- Structured error scanning using `config/error-patterns.yaml`
+- Root-cause reporting with evidence chain and actionable next steps
+- Replay workflow for offline/CI debugging without live hardware
 
 ## Reports
 
-AI-authored debug reports from `/debug-board` land in `reports/`. Each report follows the schema in `docs/09-debug-agent.md`:
+Debug reports are stored in `vault/wiki/debugging/reports/`.
 
-- YAML frontmatter: `report_type`, `timestamp`, `tag`, `focus`, `boot_log`, `summary.{total_errors,has_critical,boot_complete,iterations_used}`.
-- Body sections: Executive Summary, Boot Timeline, Errors Detected, Hypotheses Tested, Root Cause, Suggested Next Steps, Evidence Chain, Artifacts.
+Naming convention:
 
-Filename convention: `reports/YYYY-MM-DD-<tag>.md`.
+```text
+YYYY-MM-DD-<tag>.md
+```
 
-| Date | Tag | Focus | Critical | Boot Complete | Summary |
-|------|-----|-------|----------|---------------|---------|
-| 2026-04-24 | [smoke-test](reports/2026-04-24-smoke-test.md) | general | No | Yes | Board booted clean; 2 medium `ti-sysc` probe_ebusy hits, no kernel panic, login prompt reached. |
+Recommended report schema:
 
-## Reference
+- YAML frontmatter:
+  - `report_type`
+  - `timestamp`
+  - `tag`
+  - `focus`
+  - `boot_log`
+  - `summary.total_errors`
+  - `summary.has_critical`
+  - `summary.boot_complete`
+  - `summary.iterations_used`
+- Body sections:
+  - Executive Summary
+  - Boot Timeline
+  - Errors Detected
+  - Hypotheses Tested
+  - Root Cause
+  - Suggested Next Steps
+  - Evidence Chain
+  - Artifacts
 
-- `docs/09-debug-agent.md` — architecture + execution path + limits of the automated pipeline.
-- `scripts/bbb-uart.py` — pyserial CLI used by the subagent.
-- `config/error-patterns.yaml` — regex DB for boot-log error detection.
-- `tests/fixtures/boot-log-*.log` — captured logs for CI replay.
+| Date | Tag      | Focus   | Critical | Boot Complete | File                              |
+| ---- | -------- | ------- | -------- | ------------- | --------------------------------- |
+| N/A  | template | general | N/A      | N/A           | [[reports/example-smoke-test.md]] |
+
+## References
+
+- `vault/wiki/debugging/00-debug-agent.md` - architecture and usage of the automated UART debug pipeline
+- `docs/09-debug-agent.md` - project-level command and agent behavior reference
+- `scripts/bbb-uart.py` - UART capture/send/scan CLI
+- `config/error-patterns.yaml` - boot-log regex patterns and severities
+- `tests/fixtures/boot-log-*.log` - replay fixtures for CI and local analysis

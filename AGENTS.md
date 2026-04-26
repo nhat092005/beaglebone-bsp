@@ -20,7 +20,7 @@ beaglebone-bsp/
 ├── u-boot/         U-Boot source + patches
 ├── scripts/        build.sh, deploy.sh, flash_sd.sh
 ├── tests/          Shell tests (test-reproducible-build.sh implemented, others placeholder)
-├── docs/           Technical docs (00-roadmap → 09-debug-agent)
+├── docs/           Project documents
 ├── vault/wiki/     Knowledge base (indexed via _master-index.md)
 ├── .opencode/      OpenCode agents, commands, config
 └── .claude/        Claude Code agents, commands, rules, skills
@@ -139,7 +139,7 @@ Load skills via `skill` tool when needed.
 
 - `scripts/flash_sd.sh` is destructive: repartitions target disk after typing `yes`; refuses `/dev/sda`, `/dev/nvme0n1`, `/dev/mmcblk0`.
 - Flash script must run as root and writes:
-  - partition 1: 64MB FAT32 (boot)
+  - partition 1: 100MB FAT32 (boot)
   - partition 2: ext4 (rootfs)
 - `make deploy` pings target first and defaults to `HOST=192.168.7.2`.
 
@@ -179,12 +179,14 @@ Typical scopes: `driver`, `dts`, `kernel`, `uboot`, `yocto`, `rtos`, `wiki`, `sc
 
 ## Cross-references
 
-- Board bring-up guide: `docs/01-bringup-notes.md`
-- Boot sequence detail: `docs/02-boot-flow.md`
+- Live UART debug pipeline: `vault/wiki/debugging/00-debug-agent.md`
+- Board bring-up guide: `vault/wiki/hardware-beagleboneblack/00-bringup-notes.md`
+- Boot sequence detail: `vault/wiki/uboot/00-boot-flow.md`
 - Master wiki index: `vault/wiki/_master-index.md`
 - Claude Code entry point: `CLAUDE.md`
 
 <!-- gitnexus:start -->
+
 # GitNexus — Code Intelligence
 
 This project is indexed by GitNexus as **beaglebone-bsp** (4799 symbols, 4800 relationships, 2 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.

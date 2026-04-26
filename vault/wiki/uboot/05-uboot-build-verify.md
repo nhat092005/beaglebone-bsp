@@ -1,6 +1,6 @@
 ---
 title: U-Boot Build & Verify
-last_updated: 2026-04-18
+last_updated: 2026-04-26
 category: bootloader
 ---
 
@@ -8,23 +8,25 @@ category: bootloader
 
 Step 7-9 of U-Boot workflow.
 
-## Step 7 — Build inside Docker
+## Step 7 — Build Through Makefile
 
-The `beaglebone-bsp-builder:1.0` container has the cross-compiler:
+Use the repository entry point:
 
 ```bash
 cd "$BSP_ROOT"
-
-docker run --rm \
-  -v "${BSP_ROOT}/u-boot:/workspace/u-boot" \
-  -w /workspace/u-boot \
-  beaglebone-bsp-builder:1.0 bash -c "
-    make CROSS_COMPILE=arm-linux-gnueabihf- am335x_boneblack_custom_defconfig
-    make CROSS_COMPILE=arm-linux-gnueabihf- -j\$(nproc)
-  "
+make docker
+make uboot
 ```
 
-Expected tail:
+`Makefile` defaults to Docker image `bbb-builder`. The `uboot` target runs
+`bash scripts/build.sh uboot` inside the container. The script then runs:
+
+```bash
+make CROSS_COMPILE=arm-linux-gnueabihf- am335x_boneblack_custom_defconfig
+make CROSS_COMPILE=arm-linux-gnueabihf- -j"$(nproc)"
+```
+
+Expected build output includes:
 
 ```
   MKIMAGE u-boot.img
@@ -37,11 +39,13 @@ Expected tail:
 ## Step 8 — Verify artifacts
 
 ```bash
-# Inspect u-boot.img
+ls -lh build/uboot/MLO build/uboot/u-boot.img
+
+# Inspect u-boot.img with the tool built in the U-Boot tree.
 docker run --rm \
-  -v "${BSP_ROOT}/u-boot:/workspace/u-boot" \
+  -v "${BSP_ROOT}:/workspace" \
   -w /workspace/u-boot \
-  beaglebone-bsp-builder:1.0 \
+  bbb-builder \
   ./tools/mkimage -l u-boot.img | grep -E '(Architecture: ARM|OS:.*U-Boot)'
 # expect: two matching lines
 
@@ -50,22 +54,27 @@ stat -c '%s' u-boot/MLO
 # expect: 64000–131072
 ```
 
-## Copy to build directory
+## Direct Script Build
+
+Prefer `make uboot`. If running `scripts/build.sh` directly from the host, align
+the image name with the Makefile default:
 
 ```bash
-mkdir -p "${BSP_ROOT}/build/uboot"
-cp u-boot/MLO u-boot/u-boot.img "${BSP_ROOT}/build/uboot/"
-ls -lh "${BSP_ROOT}/build/uboot/"
+DOCKER_IMAGE=bbb-builder bash scripts/build.sh uboot
 ```
 
-## Step 9 — Re-apply patches after clean clone
+Without `DOCKER_IMAGE=bbb-builder`, direct script execution defaults to
+`beaglebone-bsp-builder:1.0`.
+
+## Step 9 — Re-apply Patches After Clean Clone
 
 If `u-boot/` is re-cloned:
 
 ```bash
 cd u-boot
-git apply patches/0001-boneblack-tftp-boot-env.patch
-git apply patches/0002-boneblack-reduce-boot-delay.patch
+while read patch; do
+  git apply "../patches/u-boot/v2022.07/${patch}"
+done < ../patches/u-boot/v2022.07/series
 ```
 
 Then build as in Step 7.
