@@ -113,15 +113,11 @@ Example embed:
 
 2. Docker build
 
-```md
 ![Docker build](assets/readme/02-docker-build.gif)
-```
 
 3. U-Boot TFTP boot
 
-```md
 ![U-Boot TFTP boot](assets/readme/03-uboot-tftp.gif)
-```
 
 ## Engineering Vault
 
