@@ -60,7 +60,7 @@ reproducible (via the replay mode and captured fixtures).
 | Slash command | `.claude/commands/debug-board.md`       | Entry point. Preflight checks + spawn subagent.                                |
 | Subagent      | `.claude/agents/board-runner.md`        | ReAct loop owner. Capture, analyze, probe, write report.                       |
 | CLI helper    | `scripts/bbb-uart.py`                   | pyserial I/O. Subcmds: `capture-boot`, `send`, `scan`, `replay`.               |
-| Regex DB      | `config/error-patterns.yaml`            | ≥17 patterns: kernel panic, probe, DT, I2C, SPI, GPIO, clock, PM, module, PWM. |
+| Regex DB      | `scripts/error-patterns.yaml`           | ≥17 patterns: kernel panic, probe, DT, I2C, SPI, GPIO, clock, PM, module, PWM. |
 | Fixtures      | `tests/fixtures/boot-log-*.log`         | Captured logs for CI + iteration without hardware.                             |
 | Reports dir   | `vault/wiki/debugging/reports/`         | AI-written reports. Indexed by `doc-updater`.                                  |
 | Peer skill    | `.claude/skills/bsp-debugging/SKILL.md` | Manual debug-command reference consulted by the agent.                         |
@@ -208,14 +208,14 @@ Produces: `vault/wiki/debugging/reports/2026-04-23-smoke-test.md`.
 ### Example B — focused I2C fault
 
 ```bash
-/debug-board i2c-fault "i2c bus 1 TMP102 at 0x48 not probing"
+/debug-board i2c-fault "i2c bus 2 SHT3x at 0x44 not probing"
 ```
 
 Subagent flow: capture-boot → scan finds `i2c_adapter_fail` + `probe_eio` →
-runs `i2cdetect -l`, `i2cdetect -y 1`, `cat /proc/device-tree/ocp/i2c@4802a000/status`,
-`dmesg | grep -i i2c`, `cat /sys/kernel/debug/clk/clk_summary | grep i2c1`
-over ≤20 iterations → synthesizes root-cause hypothesis (e.g. "I2C1 disabled
-in DT" or "TMP102 compatible string typo") → writes report.
+runs `i2cdetect -l`, `i2cdetect -y 2`, `cat /proc/device-tree/ocp/i2c@4819c000/status`,
+`dmesg | grep -i i2c`, `cat /sys/kernel/debug/clk/clk_summary | grep i2c2`
+over ≤20 iterations → synthesizes root-cause hypothesis (e.g. "I2C2 disabled
+in DT" or "SHT3x compatible string typo") → writes report.
 
 ### Example C — fixture replay (no hardware)
 
@@ -225,7 +225,7 @@ in DT" or "TMP102 compatible string typo") → writes report.
 
 Skips all serial I/O. Useful when:
 
-- Iterating on `config/error-patterns.yaml` — add a new regex, replay a fixture,
+- Iterating on `scripts/error-patterns.yaml` — add a new regex, replay a fixture,
   check hit count without touching a board.
 - Running in CI — GitHub Actions workflow can invoke the scan step to catch
   regressions in the pattern DB.
@@ -245,13 +245,13 @@ python3 scripts/bbb-uart.py capture-boot \
 python3 scripts/bbb-uart.py send "uname -r" --timeout 5
 
 # One-shot scan
-python3 scripts/bbb-uart.py scan /tmp/boot.log --patterns config/error-patterns.yaml
+python3 scripts/bbb-uart.py scan /tmp/boot.log --patterns scripts/error-patterns.yaml
 ```
 
 Combine with standard Unix tools:
 
 ```bash
-python3 scripts/bbb-uart.py scan /tmp/boot.log --patterns config/error-patterns.yaml \
+python3 scripts/bbb-uart.py scan /tmp/boot.log --patterns scripts/error-patterns.yaml \
   | jq '.by_category.i2c[].line_content'
 ```
 
@@ -358,7 +358,7 @@ python3 scripts/bbb-uart.py send "devmem2 0x44e09000 w | base64"
 
 ### Add a regex to the pattern DB
 
-Edit `config/error-patterns.yaml`, add a new entry under `patterns:`:
+Edit `scripts/error-patterns.yaml`, add a new entry under `patterns:`:
 
 ```yaml
 - name: my_new_pattern
@@ -371,9 +371,9 @@ Edit `config/error-patterns.yaml`, add a new entry under `patterns:`:
 Verify it compiles and matches a fixture:
 
 ```bash
-python3 -c "import yaml, re; [re.compile(p['regex']) for p in yaml.safe_load(open('config/error-patterns.yaml'))['patterns']]"
+python3 -c "import yaml, re; [re.compile(p['regex']) for p in yaml.safe_load(open('scripts/error-patterns.yaml'))['patterns']]"
 python3 scripts/bbb-uart.py replay tests/fixtures/boot-log-<fixture>.log \
-  --patterns config/error-patterns.yaml | jq '.by_category.my_category'
+  --patterns scripts/error-patterns.yaml | jq '.by_category.my_category'
 ```
 
 No code change required. The subagent automatically picks up the new category
@@ -425,7 +425,7 @@ reference if it is restored from history.
 - `.claude/skills/bsp-debugging/SKILL.md` — manual debug-command reference
   that the board-runner agent consults during Phase 4.
 - `scripts/bbb-uart.py` — the CLI.
-- `config/error-patterns.yaml` — regex knowledge base.
+- `scripts/error-patterns.yaml` — regex knowledge base.
 - Older `docs/Agents_Debug.md` blueprint — not adopted verbatim; MCP-server
   approach deliberately rejected in the current implementation.
 - `vault/wiki/hardware-beagleboneblack/bringup-notes.md` — hardware wiring of

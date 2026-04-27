@@ -1,6 +1,6 @@
 ---
 title: Kernel
-last_updated: 2026-04-26
+last_updated: 2026-04-27
 category: kernel
 status: In Progress
 ---
@@ -19,7 +19,7 @@ Linux kernel build workflow for BeagleBone Black BSP.
 | 03  | Build zImage & DTB  | [[03-kernel-build.md]]       |
 | 04  | Apply Patches       | [[04-kernel-patches.md]]     |
 | 05  | Verify Artifacts    | [[05-kernel-verify.md]]      |
-| 06  | Device Tree (DTS)   | [[06-device-tree.md]]        |
+| 06  | DTS-Kernel Integration | [[06-dts-kernel-integration.md]] |
 | 07  | Reproducible Builds | [[07-reproducible-build.md]] |
 
 ## Quick Reference
@@ -28,12 +28,13 @@ Linux kernel build workflow for BeagleBone Black BSP.
 # Clone kernel
 cd linux && git fetch --depth=1 https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git refs/tags/v5.10.253 && git checkout FETCH_HEAD
 
-# Build through project entry point
-make kernel
+# Build through project entry points
+make kernel-dev KERNEL_RECONFIGURE=1
 
-# Verify
-ls -lh build/kernel/zImage build/kernel/am335x-boneblack-custom.dtb
+# Verify host-side gates
+make kernel-verify
 ```
 
-Current caveat: `make kernel` merges `linux/configs/reproducible.config` but
-does not merge `linux/configs/boneblack-custom.config`. Use 03-kernel-build.md for the manual full-custom workflow.
+Current layout uses an out-of-tree dev build in `build/linux/dev/` and exports
+artifacts to `build/kernel/`. See `05-kernel-verify.md` for the canonical
+Phase 3 verification flow.

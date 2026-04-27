@@ -294,14 +294,11 @@ ARM boards have thousands of variants with different hardware:
     pinctrl-0 = <&uart1_pins>;
 };
 
-&i2c1 {
+&i2c2 {
     status = "okay";
+    pinctrl-names = "default";
+    pinctrl-0 = <&i2c2_pins>;
     clock-frequency = <100000>;
-
-    tmp102: sensor@48 {
-        compatible = "ti,tmp102";
-        reg = <0x48>;
-    };
 };
 ```
 

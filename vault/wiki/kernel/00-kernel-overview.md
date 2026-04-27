@@ -38,9 +38,8 @@ Stored in `${BSP_ROOT}/linux/VERSION-PIN`.
 - Cross-compiler: `arm-linux-gnueabihf-`
 - Architecture: `arm`
 
-Direct `scripts/build.sh` execution still defaults to
-`beaglebone-bsp-builder:1.0`; use `DOCKER_IMAGE=bbb-builder` if bypassing the
-top-level `Makefile`.
+Direct `scripts/build.sh` execution uses the same default Docker image,
+`bbb-builder`. Override `DOCKER_IMAGE` only for custom tags.
 
 ## References
 

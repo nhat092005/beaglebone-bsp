@@ -242,12 +242,9 @@ ARM boards have different hardware:
     status = "okay";
 };
 
-&i2c1 {
+&i2c2 {
+    status = "okay";
     clock-frequency = <100000>;
-    tmp102@48 {
-        compatible = "ti,tmp102";
-        reg = <0x48>;
-    };
 };
 ```
 
@@ -260,7 +257,7 @@ Kernel boots
     ↓
 Kernel parses dtb
     ↓
-Kernel knows: "I have UART1, I2C1 with TMP102 sensor at 0x48"
+Kernel knows: "I have UART1, I2C2, SPI1, EHRPWM1A, GPIO button"
     ↓
 Kernel loads appropriate drivers
 ```
@@ -891,8 +888,8 @@ done
 "${REPO_ROOT}"/drivers/*/
 # Expands to:
 /workspace/drivers/led-gpio/
-/workspace/drivers/i2c-sensor/
-/workspace/drivers/pwm-fan/
+/workspace/drivers/sht3x/
+/workspace/drivers/pwm-led/
 ```
 
 **`[[ -d "${driver_dir}" ]] || continue`:**
@@ -937,13 +934,13 @@ bash scripts/build.sh all
   LD [M]  /workspace/drivers/led-gpio/led-gpio.ko
 [build] driver led-gpio done → /workspace/build/drivers/led-gpio/
 
-[build] driver i2c-sensor
-  LD [M]  /workspace/drivers/i2c-sensor/i2c-sensor.ko
-[build] driver i2c-sensor done → /workspace/build/drivers/i2c-sensor/
+[build] driver sht3x
+  LD [M]  /workspace/drivers/sht3x/sht3x.ko
+[build] driver sht3x done → /workspace/build/drivers/sht3x/
 
-[build] driver pwm-fan
-  LD [M]  /workspace/drivers/pwm-fan/pwm-fan.ko
-[build] driver pwm-fan done → /workspace/build/drivers/pwm-fan/
+[build] driver pwm-led
+  LD [M]  /workspace/drivers/pwm-led/pwm-led.ko
+[build] driver pwm-led done → /workspace/build/drivers/pwm-led/
 ```
 
 **Time:** ~5-7 minutes (first build), ~1 minute (incremental)

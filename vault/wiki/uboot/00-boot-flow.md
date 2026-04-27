@@ -1,6 +1,6 @@
 ---
 title: Boot Flow
-last_updated: 2026-04-26
+last_updated: 2026-04-28
 ---
 
 # Boot Flow - BeagleBone Black
@@ -23,8 +23,11 @@ ROM (0x00020000)
 2. MLO (SPL) initialises DDR3, loads `u-boot.img` to `0x80800000`.
 3. U-Boot relocates, imports `uEnv.txt` from FAT p1 when present, then runs
    `bootcmd` or `uenvcmd`.
-4. `bootz 0x82000000 - 0x88000000` hands off to kernel.
-5. Kernel decompresses, mounts rootfs, runs `/sbin/init`.
+4. U-Boot prepares the Linux handoff contract: kernel image address,
+   optional initrd address, DTB address, and `bootargs` kernel command line.
+5. `bootz 0x82000000 - 0x88000000` hands off to kernel.
+6. Kernel decompresses, reads `bootargs`, initializes the console, mounts
+   rootfs, and runs `/sbin/init`.
 
 ## Memory Map
 
@@ -63,6 +66,20 @@ Hold **S2 (BOOT button)** on power-on. ROM checks SD before eMMC. SD layout mirr
 | `fdtaddr`  | DTB load address            |
 | `uenvcmd`  | Overrides default `bootcmd` |
 
+`bootargs` is not a storage or load command. It is the Linux kernel command
+line. For this BSP it must at least tell Linux:
+
+| Argument | Why it matters |
+| -------- | -------------- |
+| `console=ttyO0,115200n8` | Selects BBB UART0 so kernel logs appear after `Starting kernel ...`. |
+| `root=/dev/mmcblk0p2` | Points Linux at the ext4 root filesystem partition created by `flash_sd.sh`. |
+| `rw rootfstype=ext4` | Mounts that root filesystem read-write as ext4. |
+| `rootwait` | Waits for MMC/SD enumeration before mounting rootfs. |
+
+If U-Boot loads `zImage` and the DTB but omits `bootargs`, the handoff can
+look like a hang at `Starting kernel ...`: U-Boot has jumped to Linux, but Linux
+may not print on the expected UART or may fail later while finding rootfs.
+
 ### MMC boot
 
 ```
@@ -76,7 +93,20 @@ Requires the `tftp_boot` variable from the current U-Boot patch queue in
 `patches/u-boot/v2022.07/`. The current defaults are host/server
 `192.168.7.1` and board `192.168.7.2`.
 
+The compiled-in `tftp_boot` script is intentionally self-contained. It does
+four separate jobs:
+
+1. Select USB RNDIS networking: `ethact=usb_ether`, `ethrotate=no`.
+2. Set Linux `bootargs` for BBB UART0 and SD-card rootfs.
+3. Download `zImage` and `am335x-boneblack-custom.dtb` into RAM.
+4. Hand off with `bootz ${loadaddr} - ${fdtaddr}`.
+
+This is why adding `setenv bootargs ...` fixes the apparent `Starting kernel ...`
+stop: the kernel and DTB were already present, but Linux did not receive the
+complete command line needed for visible serial output and rootfs discovery.
+
 ```
+bootargs=console=ttyO0,115200n8 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
 serverip=192.168.7.1
 ipaddr=192.168.7.2
 uenvcmd=run tftp_boot

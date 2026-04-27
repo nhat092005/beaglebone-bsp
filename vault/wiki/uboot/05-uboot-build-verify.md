@@ -63,8 +63,8 @@ the image name with the Makefile default:
 DOCKER_IMAGE=bbb-builder bash scripts/build.sh uboot
 ```
 
-Without `DOCKER_IMAGE=bbb-builder`, direct script execution defaults to
-`beaglebone-bsp-builder:1.0`.
+Direct script execution defaults to `bbb-builder`; set `DOCKER_IMAGE` only for a
+custom image tag.
 
 ## Step 9 — Re-apply Patches After Clean Clone
 

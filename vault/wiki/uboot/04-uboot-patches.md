@@ -1,6 +1,6 @@
 ---
 title: U-Boot Patch Queue
-last_updated: 2026-04-26
+last_updated: 2026-04-28
 category: bootloader
 ---
 
@@ -43,6 +43,20 @@ if (!CONFIG_IS_ENABLED(DM_ETH))
 
 Modify `include/configs/am335x_evm.h` to add a `tftp_boot` env variable. Load addresses `0x82000000` (`zImage`) and `0x88000000` (`dtb`) are inside the BeagleBone Black DDR range.
 
+The important detail is that `tftp_boot` must be a complete Linux handoff, not
+only a pair of TFTP downloads. TFTP only places bytes in RAM; it does not tell
+Linux which UART to use or which root filesystem to mount. Therefore the script
+sets `bootargs` immediately before `bootz`:
+
+```text
+console=ttyO0,115200n8 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
+```
+
+That command line matches this BSP's SD layout: UART0 console and ext4 rootfs on
+partition 2. Without it, a valid kernel and DTB can still appear to stop at
+`Starting kernel ...` because Linux was entered without the expected console/root
+configuration.
+
 Add before the `#define CONFIG_EXTRA_ENV_SETTINGS` block:
 
 ```c
@@ -52,6 +66,8 @@ Add before the `#define CONFIG_EXTRA_ENV_SETTINGS` block:
 	"tftp_boot="                                        \
 	"setenv ethact usb_ether; "                         \
 	"setenv ethrotate no; "                             \
+	"setenv bootargs console=ttyO0,115200n8 "           \
+	"root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait; " \
 	"tftpboot ${loadaddr} zImage; "                     \
 	"tftpboot ${fdtaddr} am335x-boneblack-custom.dtb; " \
 	"bootz ${loadaddr} - ${fdtaddr}\0"

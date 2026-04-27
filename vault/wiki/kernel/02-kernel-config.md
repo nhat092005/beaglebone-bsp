@@ -72,7 +72,7 @@ an empty placeholder in this checkout.
 
 **Enables:** the I2C core framework — bus registration, adapter API, and `i2c_client` lifecycle.
 
-**Required by:** `CONFIG_I2C_OMAP`, `CONFIG_I2C_CHARDEV`, and `CONFIG_SENSORS_TMP102`.
+**Required by:** `CONFIG_I2C_OMAP`, `CONFIG_I2C_CHARDEV`, and any I2C sensor driver (e.g. SHT3x).
 
 **Without it:** none of the I2C drivers compile.
 
@@ -93,7 +93,7 @@ empty placeholder in this checkout.
 
 **Enables:** the AM335x I2C host controller driver. This driver binds to I2C1 (`0x4802A000`) and I2C2 (`0x4819C000`).
 
-**Required by:** TMP102 sensor on I2C1.
+**Required by:** SHT3x sensor on I2C2.
 
 **Without it:** `dmesg | grep i2c` shows no OMAP I2C registrations.
 
@@ -107,26 +107,30 @@ empty placeholder in this checkout.
 
 **Enables:** the hwmon core — `/sys/class/hwmon/` bus, `hwmon_device_register()`.
 
-**Required by:** `CONFIG_SENSORS_TMP102`.
+**Required by:** SHT3x hwmon driver (out-of-tree `sht3x` module).
 
-**Without it:** TMP102 driver compiles but `hwmon_device_register_with_info()` returns `-ENODEV`.
+**Without it:** SHT3x driver `hwmon_device_register_with_info()` returns `-ENODEV`.
 
 ---
 
-#### `CONFIG_SENSORS_TMP102=m`
+#### `CONFIG_SENSORS_SHT3X=m` (planned)
 
-**Enables:** the TI TMP102 temperature sensor driver, built as a **loadable module**.
+**Enables:** the Sensirion SHT3x temperature/humidity sensor driver, built as a **loadable module**.
 
 **Why `=m` not `=y`?** Building as a module demonstrates the full `insmod`/`modprobe` workflow.
 
-**Compatible string:** `ti,tmp102`
+**Compatible string:** `sensirion,sht3x`
+
+**Note:** The project uses an out-of-tree `sht3x` driver under `drivers/sht3x/`. The in-tree `sht3x` hwmon driver exists but the project implements a custom version for learning purposes.
 
 **On-target:**
 
 ```bash
-modprobe tmp102
-cat /sys/bus/i2c/devices/1-0048/hwmon/hwmon*/temp1_input
-# expect: integer in millidegrees (e.g. 27000 = 27 °C)
+modprobe sht3x
+cat /sys/class/hwmon/hwmon*/temp1_input
+# expect: integer in millidegrees (e.g. 27000 = 27 C)
+cat /sys/class/hwmon/hwmon*/humidity1_input
+# expect: integer in milli-percent (e.g. 55000 = 55%)
 ```
 
 ---
@@ -153,7 +157,7 @@ cat /sys/bus/i2c/devices/1-0048/hwmon/hwmon*/temp1_input
 
 **Enables:** the AM335x eHRPWM driver. This driver binds to `ehrpwm1` node (base `0x48302200`).
 
-**Required by:** `pwm-fan` out-of-tree driver and EHRPWM1A output on P9.14 (GPIO1_18, MUX_MODE6).
+**Required by:** `pwm-led` out-of-tree driver and EHRPWM1A output on P9.14 (GPIO1_18, MUX_MODE6).
 
 **Compatible string in DTS:** `ti,am33xx-ehrpwm`
 
@@ -224,8 +228,8 @@ echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable
 | `CONFIG_HWMON`          | `y`   | hwmon     | hwmon core         |
 | `CONFIG_PWM`            | `y`   | PWM       | PWM core           |
 | `CONFIG_PWM_TIECAP`     | `y`   | PWM       | AM335x eCAP        |
-| `CONFIG_PWM_TIEHRPWM`   | `y`   | PWM       | eHRPWM, pwm-fan    |
-| `CONFIG_SENSORS_TMP102` | `m`   | hwmon     | TMP102 sensor      |
+| `CONFIG_PWM_TIEHRPWM`   | `y`   | PWM       | eHRPWM, pwm-led    |
+| `CONFIG_SENSORS_SHT3X`  | `m`   | hwmon     | SHT3x sensor (planned) |
 | `CONFIG_DEBUG_FS`       | `y`   | debug     | debugfs            |
 | `CONFIG_DEBUG_KERNEL`   | `y`   | debug     | Gate for debug     |
 | `CONFIG_PROVE_LOCKING`  | `y`   | debug     | Lockdep            |
@@ -238,13 +242,9 @@ echo 1 > /sys/class/pwm/pwmchip0/pwm0/enable
 ```bash
 cd linux
 
-# All 14 symbols present
-grep -E '^CONFIG_(GPIOLIB|GPIO_SYSFS|I2C|I2C_CHARDEV|I2C_OMAP|HWMON|PWM|PWM_TIECAP|PWM_TIEHRPWM|SENSORS_TMP102|DEBUG_FS|DEBUG_KERNEL|PROVE_LOCKING|KASAN)=' .config | wc -l
-# expect: 14
-
-# TMP102 is module
-grep 'SENSORS_TMP102' .config
-# expect: CONFIG_SENSORS_TMP102=m
+# All 13 symbols present (SHT3x not yet in fragment)
+grep -E '^CONFIG_(GPIOLIB|GPIO_SYSFS|I2C|I2C_CHARDEV|I2C_OMAP|HWMON|PWM|PWM_TIECAP|PWM_TIEHRPWM|DEBUG_FS|DEBUG_KERNEL|PROVE_LOCKING|KASAN)=' .config | wc -l
+# expect: 13
 ```
 
 ---

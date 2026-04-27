@@ -91,10 +91,10 @@ build/
 └── drivers/
     ├── led-gpio/
     │   └── led-gpio.ko
-    ├── i2c-sensor/
-    │   └── i2c-sensor.ko
-    └── pwm-fan/
-        └── pwm-fan.ko
+    ├── sht3x/
+    │   └── sht3x.ko
+    └── pwm-led/
+        └── pwm-led.ko
 ```
 
 ---
@@ -229,7 +229,7 @@ bash scripts/build.sh all
 
 1. Kernel (zImage + dtbs + modules)
 2. U-Boot (MLO + u-boot.img)
-3. All drivers (led-gpio, i2c-sensor, pwm-fan)
+3. All drivers (led-gpio, sht3x, pwm-led)
 
 **Total time:** ~5 minutes (in Docker), ~3 minutes (on host)
 
@@ -342,7 +342,7 @@ make kernel
 DOCKER_IMAGE=my-custom-builder:2.0 bash scripts/build.sh kernel
 ```
 
-**Default:** `beaglebone-bsp-builder:1.0`
+**Default:** `bbb-builder`
 
 ---
 

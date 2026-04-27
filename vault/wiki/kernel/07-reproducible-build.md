@@ -43,14 +43,22 @@ Applied via `scripts/kconfig/merge_config.sh` after `omap2plus_defconfig`.
 
 #### 2. Build Environment Variables
 
-Set in `scripts/build.sh`:
+Set by `scripts/build.sh` when running the reproducible kernel mode:
 
 ```bash
-export KBUILD_BUILD_TIMESTAMP="2026-04-21"
-export KBUILD_BUILD_USER="builder"
-export KBUILD_BUILD_HOST="bsp-build"
-export SOURCE_DATE_EPOCH="1713715200"  # 2024-04-21 00:00:00 UTC
-export KBUILD_BUILD_VERSION="1"        # Fixed version number
+KBUILD_BUILD_TIMESTAMP="<UTC timestamp from kernel git commit>"
+KBUILD_BUILD_USER="builder"
+KBUILD_BUILD_HOST="bsp-build"
+SOURCE_DATE_EPOCH="<kernel git commit timestamp>"
+KBUILD_BUILD_VERSION="1"
+KCONFIG_NOTIMESTAMP="1"
+LC_ALL="C"
+```
+
+Run it explicitly:
+
+```bash
+bash scripts/build.sh kernel reproducible
 ```
 
 ## Verification
@@ -72,13 +80,11 @@ Expected output:
 
 ```bash
 # Build 1
-make kernel-clean
-make kernel
+bash scripts/build.sh kernel reproducible
 sha256sum build/kernel/zImage
 
 # Build 2
-make kernel-clean
-make kernel
+bash scripts/build.sh kernel reproducible
 sha256sum build/kernel/zImage
 
 # Compare - should be identical
