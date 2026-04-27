@@ -1,0 +1,4 @@
+# Runtime deps for scripts/bbb-uart.py (board-runner pipeline)
+# Install: pip install -r scripts/requirements-debug.txt
+pyserial==3.5
+PyYAML>=6.0
