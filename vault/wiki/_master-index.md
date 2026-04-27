@@ -1,6 +1,6 @@
 ---
 title: Master Index
-last_updated: 2026-04-20
+last_updated: 2026-04-27
 category: wiki
 ---
 
@@ -13,6 +13,7 @@ category: wiki
 | AM335x SoC                | Stable      | [[wiki/am335x/_index.md]]                   |
 | ARM Architecture          | Stable      | [[wiki/arm-arch/_index.md]]                 |
 | Debugging                 | —           | [[wiki/debugging/_index.md]]                |
+| Device Tree (DTS)         | Complete    | [[wiki/dts/_index.md]]                      |
 | Docker                    | Stable      | [[wiki/docker/_index.md]]                   |
 | Drivers                   | In Progress | [[wiki/drivers/_index.md]]                  |
 | BeagleBone Black Hardware | Stable      | [[wiki/hardware-beagleboneblack/_index.md]] |

@@ -18,8 +18,7 @@ By the end you will have `MLO` and `u-boot.img` in `build/uboot/` built from `am
 - Preferred current path: build through the top-level `Makefile`
   (`make docker`, then `make uboot`).
 - `Makefile` defaults to Docker image `bbb-builder`.
-- Direct `scripts/build.sh` defaults to `beaglebone-bsp-builder:1.0`; override
-  `DOCKER_IMAGE=bbb-builder` if running the script directly.
+- Direct `scripts/build.sh` defaults to the same Docker image, `bbb-builder`.
 - Repo root at `$BSP_ROOT` (e.g. `/home/user/beaglebone-bsp`)
 
 ## Current Project Path

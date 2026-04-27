@@ -2,7 +2,7 @@ diff --git a/include/configs/am335x_evm.h b/include/configs/am335x_evm.h
 index fd5b209a..572f0977 100644
 --- a/include/configs/am335x_evm.h
 +++ b/include/configs/am335x_evm.h
-@@ -82,8 +82,26 @@
+@@ -82,8 +82,29 @@
  #ifndef CONFIG_SPL_BUILD
  #include <environment/ti/dfu.h>
  
@@ -10,7 +10,9 @@ index fd5b209a..572f0977 100644
 + * TFTP dev-boot env — addresses from DEFAULT_LINUX_BOOT_ENV (ti_armv7_common.h
 + * (u-boot/include/configs/ti_armv7_common.h)): loadaddr=0x82000000,
 + * fdtaddr=0x88000000 (DDR3 0x80000000–0x9FFFFFFF. serverip default: host USB
-+ * gadget IP (192.168.7.1). Override via uEnv.txt.
++ * gadget IP (192.168.7.1). Override via uEnv.txt. Keep tftp_boot
++ * self-contained so an empty/corrupt saved environment still passes a valid
++ * console/rootfs cmdline to Linux before bootz.
 + */
 +#define TFTP_BOOT_ENV                                       \
 +	"serverip=192.168.7.1\0"                            \
@@ -18,10 +20,11 @@ index fd5b209a..572f0977 100644
 +	"tftp_boot="                                        \
 +	"setenv ethact usb_ether; "                         \
 +	"setenv ethrotate no; "                             \
++	"setenv bootargs console=ttyO0,115200n8 "           \
++	"root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait; " \
 +	"tftpboot ${loadaddr} zImage; "                     \
 +	"tftpboot ${fdtaddr} am335x-boneblack-custom.dtb; " \
 +	"bootz ${loadaddr} - ${fdtaddr}\0"
-+
 +
  #define CONFIG_EXTRA_ENV_SETTINGS \
  	DEFAULT_LINUX_BOOT_ENV \
@@ -29,3 +32,6 @@ index fd5b209a..572f0977 100644
  	"fdtfile=undefined\0" \
  	"finduuid=part uuid mmc 0:2 uuid\0" \
  	"console=ttyO0,115200n8\0" \
+ 	"partitions=" \
+ 		"uuid_disk=${uuid_gpt_disk};" \
+ 		"name=bootloader,start=384K,size=1792K," \

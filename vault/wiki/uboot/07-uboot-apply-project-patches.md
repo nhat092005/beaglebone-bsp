@@ -56,7 +56,7 @@ Apply order lives in:
 beaglebone-bsp/patches/u-boot/v2022.07/series
 ```
 
-Patch contents are documented in [[04-uboot-patches.md]].
+Patch contents are documented in 04-uboot-patches.md.
 
 These are raw `git diff` patches, so use:
 
@@ -170,7 +170,7 @@ build/uboot/u-boot.img
 ## Runtime Smoke Test
 
 Runtime TFTP/RNDIS environment checks and expected log lines are maintained in
-[[06-uboot-tftp-rndis-boot.md]].
+06-uboot-tftp-rndis-boot.md.
 
 ## Roll Back
 

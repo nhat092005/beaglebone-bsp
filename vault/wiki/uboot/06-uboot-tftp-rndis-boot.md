@@ -1,6 +1,6 @@
 ---
 title: U-Boot TFTP/RNDIS Boot Notes
-last_updated: 2026-04-26
+last_updated: 2026-04-28
 category: bootloader
 ---
 
@@ -8,7 +8,23 @@ category: bootloader
 
 This page records the practical behavior of the BeagleBone Black U-Boot TFTP development boot path used by this BSP.
 
-The current custom flow is a RAM boot: U-Boot downloads `zImage` and `am335x-boneblack-custom.dtb` from the host TFTP server into RAM, then starts Linux with `bootz`. It does not write the kernel or DTB to the SD card.
+The current custom flow is a RAM boot: U-Boot downloads `zImage` and `am335x-boneblack-custom.dtb` from the host TFTP server into RAM, prepares `bootargs`, then starts Linux with `bootz`. It does not write the kernel or DTB to the SD card.
+
+The core rule: **loading files is not the same as booting Linux correctly**.
+For a visible and mountable Linux boot, U-Boot must provide all three parts:
+
+1. `zImage` address: `${loadaddr}`.
+2. DTB address: `${fdtaddr}`.
+3. Kernel command line: `bootargs`.
+
+For this BSP, `bootargs` is:
+
+```text
+console=ttyO0,115200n8 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
+```
+
+This tells Linux to print logs on BBB UART0 and mount the SD-card ext4 rootfs on
+partition 2.
 
 ## Key Files
 
@@ -47,6 +63,8 @@ The `tftp_boot` variable is provided by `TFTP_BOOT_ENV` in `include/configs/am33
 	"tftp_boot="                                        \
 	"setenv ethact usb_ether; "                         \
 	"setenv ethrotate no; "                             \
+	"setenv bootargs console=ttyO0,115200n8 "           \
+	"root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait; " \
 	"tftpboot ${loadaddr} zImage; "                     \
 	"tftpboot ${fdtaddr} am335x-boneblack-custom.dtb; " \
 	"bootz ${loadaddr} - ${fdtaddr}\0"
@@ -58,10 +76,22 @@ Runtime chain:
 CONFIG_BOOTCOMMAND
   -> bootcmd=run tftp_boot
   -> tftp_boot=...
+  -> setenv bootargs console=ttyO0,115200n8 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
   -> tftpboot ${loadaddr} zImage
   -> tftpboot ${fdtaddr} am335x-boneblack-custom.dtb
   -> bootz ${loadaddr} - ${fdtaddr}
 ```
+
+Think of the chain this way:
+
+| Step | Responsibility |
+| ---- | -------------- |
+| `setenv ethact usb_ether` | Use the mini-USB RNDIS network path. |
+| `setenv ethrotate no` | Do not rotate to another Ethernet interface. |
+| `setenv bootargs ...` | Tell Linux the console and rootfs. |
+| `tftpboot ${loadaddr} zImage` | Put the kernel image in RAM. |
+| `tftpboot ${fdtaddr} ...dtb` | Put the board description in RAM. |
+| `bootz ${loadaddr} - ${fdtaddr}` | Jump into Linux with no initrd and with the DTB. |
 
 ## `tftpboot` Does Not Write SD Card
 
@@ -128,6 +158,11 @@ Meaning:
 | `${fdtaddr}`  | RAM address containing the DTB  |
 
 For BeagleBone Black, the DTB is important. It tells Linux about board hardware such as UART, MMC, Ethernet, GPIO, I2C, and memory layout.
+
+`bootz` also uses the current U-Boot `bootargs` variable as the Linux command
+line. That is why the BSP's `tftp_boot` sets `bootargs` before `bootz`. The DTB
+describes the hardware, but `bootargs` still carries runtime policy such as
+which console and root filesystem Linux should use.
 
 Avoid using only:
 
@@ -240,7 +275,30 @@ The first line is `zImage`. The second line is the DTB.
 Starting kernel ...
 ```
 
-U-Boot has handed execution to Linux. After this line, missing output is usually a kernel console, device tree, or root filesystem issue rather than a U-Boot TFTP transfer issue.
+U-Boot has handed execution to Linux. After this line, missing output is usually
+a kernel console, device tree, or root filesystem issue rather than a U-Boot
+TFTP transfer issue.
+
+For this BSP, first check the handoff contract:
+
+```text
+printenv bootargs
+printenv tftp_boot
+```
+
+Expected `tftp_boot` must include both:
+
+```text
+setenv bootargs console=ttyO0,115200n8 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
+bootz ${loadaddr} - ${fdtaddr}
+```
+
+If the kernel banner appears after adding `bootargs`, the kernel and DTB were
+valid; the failure was the U-Boot-to-Linux command line, not a missing kernel.
+
+If an old valid `uboot.env` exists on FAT p1, it can override compiled-in
+defaults. In that case, a rebuilt `u-boot.img` may still appear to use the old
+`tftp_boot` until the stale saved environment is removed or updated.
 
 ### Bad zImage Magic
 
@@ -276,7 +334,7 @@ Expected values:
 bootcmd=run tftp_boot
 loadaddr=0x82000000
 fdtaddr=0x88000000
-tftp_boot=setenv ethact usb_ether; setenv ethrotate no; tftpboot ${loadaddr} zImage; tftpboot ${fdtaddr} am335x-boneblack-custom.dtb; bootz ${loadaddr} - ${fdtaddr}
+tftp_boot=setenv ethact usb_ether; setenv ethrotate no; setenv bootargs console=ttyO0,115200n8 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait; tftpboot ${loadaddr} zImage; tftpboot ${fdtaddr} am335x-boneblack-custom.dtb; bootz ${loadaddr} - ${fdtaddr}
 ```
 
 Long `printenv` lines can appear truncated or garbled on a noisy serial console. If the source and binary are correct, suspect serial capture first.
@@ -294,7 +352,7 @@ Expected output includes:
 
 ```text
 ipaddr=192.168.7.2
-tftp_boot=setenv ethact usb_ether; setenv ethrotate no; tftpboot ${loadaddr} zImage; tftpboot ${fdtaddr} am335x-boneblack-custom.dtb; bootz ${loadaddr} - ${fdtaddr}
+tftp_boot=setenv ethact usb_ether; setenv ethrotate no; setenv bootargs console=ttyO0,115200n8 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait; tftpboot ${loadaddr} zImage; tftpboot ${fdtaddr} am335x-boneblack-custom.dtb; bootz ${loadaddr} - ${fdtaddr}
 fdtfile=undefined
 ```
 
@@ -313,10 +371,13 @@ Then run:
 ```text
 tftpboot ${loadaddr} zImage
 tftpboot ${fdtaddr} am335x-boneblack-custom.dtb
+setenv bootargs console=ttyO0,115200n8 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
 bootz ${loadaddr} - ${fdtaddr}
 ```
 
-This separates transfer failure from kernel handoff failure.
+This separates transfer failure from kernel handoff failure. If these commands
+reach the Linux banner, persist the same behavior in the source-controlled
+`TFTP_BOOT_ENV` rather than relying on a one-off `saveenv`.
 
 ## Relationship to `make deploy`
 

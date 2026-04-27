@@ -5,6 +5,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 BUILD_DIR="${REPO_ROOT}/build"
 
+note() {
+    echo "[flash] $*"
+}
+
+die() {
+    echo "[flash] ERROR: $*" >&2
+    exit 1
+}
+
+refuse() {
+    echo "[flash] refusing: $*" >&2
+    exit 1
+}
+
 usage() {
     echo "Usage: $0 <device> [rootfs.tar.gz]"
     echo ""
@@ -19,33 +33,46 @@ usage() {
 
 DEV="$1"
 ROOTFS="${2:-}"
+readonly SCRIPT_DIR REPO_ROOT BUILD_DIR DEV ROOTFS
+
+require_file() {
+    local path="$1"
+
+    [[ -f "${path}" ]] || die "${path} not found"
+}
+
+boot_artifact_path() {
+    local name="$1"
+
+    case "${name}" in
+        MLO|u-boot.img) echo "${BUILD_DIR}/uboot/${name}" ;;
+        zImage|*.dtb) echo "${BUILD_DIR}/kernel/${name}" ;;
+        *) die "unknown boot artifact: ${name}" ;;
+    esac
+}
 
 # Must start with /dev/sd — reject everything else (nvme, mmcblk, null, etc.)
 if [[ "${DEV}" != /dev/sd* ]]; then
-    echo "[flash] refusing: ${DEV} does not start with /dev/sd" >&2
-    exit 1
+    refuse "${DEV} does not start with /dev/sd"
 fi
 
 # Refuse if device backs / or /home (check all partitions of DEV)
 if grep -qE "^${DEV}[0-9]* +(/|/home) " /proc/mounts 2>/dev/null; then
-    echo "[flash] refusing: ${DEV} is mounted at / or /home" >&2
-    exit 1
+    refuse "${DEV} is mounted at / or /home"
 fi
 
 # Require root
 if [[ "$(id -u)" -ne 0 ]]; then
-    echo "[flash] ERROR: must run as root" >&2
-    exit 1
+    die "must run as root"
 fi
 
 # Require block device
 if [[ ! -b "${DEV}" ]]; then
-    echo "[flash] ERROR: ${DEV} is not a block device" >&2
-    exit 1
+    die "${DEV} is not a block device"
 fi
 
-echo "[flash] target: ${DEV}"
-echo "[flash] WARNING: all data on ${DEV} will be erased"
+note "target: ${DEV}"
+note "WARNING: all data on ${DEV} will be erased"
 read -r -p "[flash] type 'yes' to continue: " CONFIRM
 [[ "${CONFIRM}" == "yes" ]] || { echo "[flash] aborted"; exit 1; }
 
@@ -55,7 +82,7 @@ for part in "${DEV}"?*; do
 done
 
 # Partition: p1 FAT32 100 MiB with boot flag, p2 ext4 remainder
-echo "[flash] partitioning ${DEV}"
+note "partitioning ${DEV}"
 sfdisk "${DEV}" <<EOF
 label: dos
 ,100M,c,*
@@ -74,10 +101,10 @@ if [[ ! -b "${P1}" ]]; then
     P2="${DEV}p2"
 fi
 
-echo "[flash] formatting ${P1} as FAT32"
+note "formatting ${P1} as FAT32"
 mkfs.vfat -F 32 "${P1}"
 
-echo "[flash] formatting ${P2} as ext4"
+note "formatting ${P2} as ext4"
 mkfs.ext4 -F "${P2}"
 
 MNT_BOOT="$(mktemp -d)"
@@ -93,32 +120,43 @@ trap cleanup EXIT
 mount "${P1}" "${MNT_BOOT}"
 mount "${P2}" "${MNT_ROOT}"
 
-echo "[flash] copying boot files"
-for f in MLO u-boot.img zImage am335x-boneblack-custom.dtb; do
-    src="${BUILD_DIR}/kernel/${f}"
-    # MLO and u-boot.img come from uboot subdir
-    case "${f}" in
-        MLO|u-boot.img) src="${BUILD_DIR}/uboot/${f}" ;;
-        zImage|*.dtb)   src="${BUILD_DIR}/kernel/${f}" ;;
-    esac
-    [[ -f "${src}" ]] || { echo "[flash] ERROR: ${src} not found" >&2; exit 1; }
-    cp "${src}" "${MNT_BOOT}/"
-done
+copy_boot_files() {
+    local name src
 
-cat > "${MNT_BOOT}/uEnv.txt" <<'UENV'
+    note "copying boot files"
+    for name in MLO u-boot.img zImage am335x-boneblack-custom.dtb; do
+        src="$(boot_artifact_path "${name}")"
+        require_file "${src}"
+        cp "${src}" "${MNT_BOOT}/"
+    done
+}
+
+write_uenv() {
+    cat > "${MNT_BOOT}/uEnv.txt" <<'UENV'
 bootargs=console=ttyO0,115200n8 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait
 serverip=192.168.7.1
 ipaddr=192.168.7.2
 uenvcmd=run tftp_boot
 UENV
 
-echo "[flash] uEnv.txt written"
+    note "uEnv.txt written"
+}
 
-if [[ -n "${ROOTFS}" ]]; then
-    [[ -f "${ROOTFS}" ]] || { echo "[flash] ERROR: rootfs ${ROOTFS} not found" >&2; exit 1; }
-    echo "[flash] extracting rootfs"
+copy_rootfs() {
+    if [[ -z "${ROOTFS}" ]]; then
+        return
+    fi
+
+    require_file "${ROOTFS}"
+    note "extracting rootfs"
     tar -xf "${ROOTFS}" -C "${MNT_ROOT}"
-fi
+}
+
+copy_boot_files
+
+write_uenv
+
+copy_rootfs
 
 sync
-echo "[flash] done — safely remove ${DEV}"
+note "done — safely remove ${DEV}"

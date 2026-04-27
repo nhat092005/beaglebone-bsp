@@ -34,8 +34,11 @@ The `scripts/` directory contains shell scripts that automate the entire BSP wor
 # Build everything
 bash scripts/build.sh all
 
-# Build kernel only
-bash scripts/build.sh kernel
+# Fast development kernel build
+bash scripts/build.sh kernel dev
+
+# Reproducible kernel build
+bash scripts/build.sh kernel reproducible
 
 # Build U-Boot only
 bash scripts/build.sh uboot

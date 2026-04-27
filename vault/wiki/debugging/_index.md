@@ -18,7 +18,7 @@ Debugging knowledge base for BeagleBone BSP bring-up, UART capture, log triage, 
 ## What This Section Covers
 
 - Serial-console based boot capture and post-boot probing
-- Structured error scanning using `config/error-patterns.yaml`
+- Structured error scanning using `scripts/error-patterns.yaml`
 - Root-cause reporting with evidence chain and actionable next steps
 - Replay workflow for offline/CI debugging without live hardware
 
@@ -63,5 +63,5 @@ Recommended report schema:
 - `vault/wiki/debugging/00-debug-agent.md` - architecture and usage of the automated UART debug pipeline
 - `docs/09-debug-agent.md` - project-level command and agent behavior reference
 - `scripts/bbb-uart.py` - UART capture/send/scan CLI
-- `config/error-patterns.yaml` - boot-log regex patterns and severities
+- `scripts/error-patterns.yaml` - boot-log regex patterns and severities
 - `tests/fixtures/boot-log-*.log` - replay fixtures for CI and local analysis

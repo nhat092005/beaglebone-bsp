@@ -19,7 +19,7 @@ Before spawning the subagent, confirm live-debug prerequisites (skip if `--repla
 ls /dev/ttyUSB0 || { echo "fatal: /dev/ttyUSB0 not present — connect FTDI cable"; exit 1; }
 groups | tr ' ' '\n' | grep -xq dialout || { echo "fatal: user not in dialout group — run 'sudo usermod -a -G dialout $USER' then re-login"; exit 1; }
 python3 -c "import serial, yaml" 2>&1 || { echo "fatal: missing deps — run 'pip install -r scripts/requirements-debug.txt'"; exit 1; }
-test -f config/error-patterns.yaml || { echo "fatal: error-patterns.yaml missing"; exit 1; }
+test -f scripts/error-patterns.yaml || { echo "fatal: error-patterns.yaml missing"; exit 1; }
 test -x scripts/bbb-uart.py || { echo "fatal: scripts/bbb-uart.py missing or not executable"; exit 1; }
 ```
 

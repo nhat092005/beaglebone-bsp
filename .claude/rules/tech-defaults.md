@@ -95,7 +95,7 @@ Hold BOOT button on power-up to force SD boot.
 | Setting              | Value                               |
 | -------------------- | ----------------------------------- |
 | CLI                  | `scripts/bbb-uart.py`               |
-| Regex DB             | `config/error-patterns.yaml`        |
+| Regex DB             | `scripts/error-patterns.yaml`       |
 | Boot capture timeout | `60` seconds                        |
 | Send command timeout | `5` seconds                         |
 | Report dir           | `vault/wiki/debugging/reports/`     |

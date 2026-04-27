@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     binutils-arm-linux-gnueabihf \
     libssl-dev \
     libelf-dev \
+    libyaml-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Layer 2 — kernel & buildroot tools
@@ -50,12 +51,16 @@ RUN apt-get update && apt-get install -y \
     shellcheck \
     cppcheck \
     diffoscope \
+    swig \
     && rm -rf /var/lib/apt/lists/*
 
 # Layer 4 — locale (required by Yocto sanity checker)
 RUN apt-get update && apt-get install -y locales \
     && locale-gen en_US.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
+
+# Layer 5 — dtschema for Device Tree validation
+RUN pip3 install --no-cache-dir dtschema
 
 ENV CROSS_COMPILE=arm-linux-gnueabihf- \
     ARCH=arm \

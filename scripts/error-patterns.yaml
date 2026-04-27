@@ -1,0 +1,185 @@
+# BeagleBone BSP — error pattern database for bbb-uart.py scan/replay
+#
+# Each pattern: name, regex, severity, category, description
+# Severity: critical | high | medium | low | info
+# Regex is Python re syntax, compiled with re.IGNORECASE at load time.
+#
+# Kept narrow + specific to AM335x driver names (omap_i2c, omap_uart, omap-gpio,
+# tiehrpwm) to reduce false positives on unrelated kernel chatter.
+
+schema_version: 1
+
+patterns:
+  # ------------------------------------------------------------------
+  # Kernel-level fatal — CRITICAL
+  # ------------------------------------------------------------------
+  - name: kernel_panic
+    regex: 'Kernel panic - not syncing:|kernel BUG at |Unable to handle kernel (NULL pointer|paging request)'
+    severity: critical
+    category: kernel_fatal
+    description: Kernel panic or BUG — system halted. Look at frames below for fault site.
+
+  - name: kernel_oops
+    regex: 'Oops:\s+[0-9a-fA-F]+\s+\[#[0-9]+\]'
+    severity: critical
+    category: kernel_fatal
+    description: Kernel oops — dereferenced bad pointer or triggered fault. Decode PC with addr2line.
+
+  - name: hard_lockup
+    regex: 'NMI watchdog: BUG: soft lockup|Hard LOCKUP'
+    severity: critical
+    category: kernel_fatal
+    description: CPU stuck in kernel context — likely infinite loop with IRQs disabled.
+
+  # ------------------------------------------------------------------
+  # Driver probe — mixed severity
+  # ------------------------------------------------------------------
+  - name: probe_defer
+    regex: 'probe.*(returned|failed with error) -517|EPROBE_DEFER|deferred probe'
+    severity: info
+    category: probe_defer
+    description: Driver deferred — waiting on a dependency (clk/regulator/gpio). Benign unless stuck.
+
+  - name: probe_enodev
+    regex: 'probe.*failed with error -19|probe of .* failed with error -ENODEV'
+    severity: high
+    category: probe_failure
+    description: Device not found (-ENODEV) — driver cannot bind; check DT compatible + reg.
+
+  - name: probe_einval
+    regex: 'probe.*failed with error -22|probe of .* failed with error -EINVAL'
+    severity: high
+    category: probe_failure
+    description: Invalid argument (-EINVAL) — malformed DT property or bad driver init param.
+
+  - name: probe_enomem
+    regex: 'probe.*failed with error -12|Out of memory|page allocation failure'
+    severity: high
+    category: probe_failure
+    description: Out of memory (-ENOMEM) — allocation in probe failed; check heap pressure.
+
+  - name: probe_ebusy
+    regex: 'probe.*failed with error -16|Device or resource busy'
+    severity: medium
+    category: probe_failure
+    description: Resource in use (-EBUSY) — conflicting driver bound or pinmux already claimed.
+
+  - name: probe_eio
+    regex: 'probe.*failed with error -5|probe of .* failed with error -EIO'
+    severity: high
+    category: probe_failure
+    description: I/O error during probe — hardware not responding or MMIO region wrong.
+
+  # ------------------------------------------------------------------
+  # Device tree
+  # ------------------------------------------------------------------
+  - name: dt_missing_property
+    regex: 'OF:.*missing.*property|Failed to get.*from device tree|of_property_read.*failed'
+    severity: high
+    category: device_tree
+    description: DT property missing or malformed — driver expected a node value that is absent.
+
+  - name: dt_phandle
+    regex: 'could not find phandle|phandle.*not found|OF: ERROR: could not find phandle'
+    severity: high
+    category: device_tree
+    description: DT phandle unresolved — referenced node does not exist or has wrong label.
+
+  - name: dt_compatible_mismatch
+    regex: "No matching driver|no compatible driver|compatible string .* didn't match"
+    severity: medium
+    category: device_tree
+    description: No driver matched DT compatible string — check of_match_table spelling.
+
+  # ------------------------------------------------------------------
+  # I2C (omap_i2c on AM335x)
+  # ------------------------------------------------------------------
+  - name: i2c_timeout
+    regex: 'omap_i2c.*timeout|i2c-.*timed out|i2c-transfer timed out|Timed out in wait_for_event'
+    severity: high
+    category: i2c
+    description: I2C bus timeout — check pullups (2.2k–4.7k), clock config, slave power.
+
+  - name: i2c_nack
+    regex: 'omap_i2c.*NACK|i2c.*NAK|sendbytes: NAK bailout'
+    severity: high
+    category: i2c
+    description: I2C NACK — slave not responding at addressed location.
+
+  - name: i2c_adapter_fail
+    regex: 'omap_i2c.*failure adding adapter|i2c-core:.*adapter.*failed'
+    severity: critical
+    category: i2c
+    description: I2C adapter registration failed — controller init aborted.
+
+  # ------------------------------------------------------------------
+  # SPI
+  # ------------------------------------------------------------------
+  - name: spi_transfer_fail
+    regex: 'spi_master.*transfer.*failed|spi_sync failed|omap2_mcspi.*transfer error'
+    severity: high
+    category: spi
+    description: SPI transfer failure — check CS gpio, mode (CPOL/CPHA), bus speed.
+
+  # ------------------------------------------------------------------
+  # GPIO (omap-gpio / gpio-omap)
+  # ------------------------------------------------------------------
+  - name: gpio_busy
+    regex: 'gpio-[0-9]+ \(.*\): Device or resource busy|gpiod_request.*-16'
+    severity: medium
+    category: gpio
+    description: GPIO already claimed — duplicate request or pinctrl conflict.
+
+  - name: gpio_invalid
+    regex: 'gpio-[0-9]+ .*invalid|invalid GPIO [0-9]+|gpio_request.*-EINVAL'
+    severity: high
+    category: gpio
+    description: GPIO line number out of range or not exported.
+
+  # ------------------------------------------------------------------
+  # Clock (TI CLKCTRL / clk-prcm)
+  # ------------------------------------------------------------------
+  - name: clk_get_fail
+    regex: "clk_get.*failed|could not get clock|clk_get_parent.*returned error"
+    severity: high
+    category: clock
+    description: Clock lookup failed — DT 'clocks' phandle wrong or provider not ready.
+
+  - name: clk_enable_fail
+    regex: 'clk_prepare_enable failed|clk_enable.*failed to enable'
+    severity: high
+    category: clock
+    description: Clock enable failed — PRCM gate refused or parent not enabled.
+
+  # ------------------------------------------------------------------
+  # Power management
+  # ------------------------------------------------------------------
+  - name: pm_suspend_fail
+    regex: 'pm_runtime.*suspend failed|runtime PM suspend failed|omap_device.*suspend.*-[0-9]+'
+    severity: medium
+    category: power_mgmt
+    description: Runtime PM suspend failed — device busy or driver refused transition.
+
+  # ------------------------------------------------------------------
+  # Module loading
+  # ------------------------------------------------------------------
+  - name: insmod_fail
+    regex: 'insmod: ERROR|could not insert module|Unknown symbol in module'
+    severity: high
+    category: module
+    description: Module load failure — missing symbol, bad format, or version mismatch.
+
+  - name: module_version_magic
+    regex: "version magic '.*' should be '.*'|disagrees about version of symbol"
+    severity: high
+    category: module
+    description: Module built against a different kernel — rebuild against current tree.
+
+  # ------------------------------------------------------------------
+  # PWM (tiehrpwm on AM335x)
+  # ------------------------------------------------------------------
+  - name: pwm_request_fail
+    regex: 'pwm_request.*failed|tiehrpwm.*failed to request'
+    severity: medium
+    category: pwm
+    description: PWM channel request failed — already claimed or DT pinctrl wrong.
