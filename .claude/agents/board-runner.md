@@ -57,7 +57,7 @@ Scan the captured log against the regex DB. Emit JSON to a file you can re-read:
 
 ```bash
 python3 scripts/bbb-uart.py scan "$BOOT_LOG" \
-  --patterns config/error-patterns.yaml > /tmp/bbb-${TAG}-scan.json
+  --patterns scripts/error-patterns.yaml > /tmp/bbb-${TAG}-scan.json
 ```
 
 Read `/tmp/bbb-${TAG}-scan.json`. Regex hits are evidence, not conclusions. Reason over them:
@@ -182,5 +182,5 @@ Never proceed past the report-write step. Never `git commit` the report. Never a
 - Command: `commands/debug-board.md` — slash-command wrapper that spawns this agent.
 - Doc: `docs/09-debug-agent.md` — architecture, execution path, limits, extension.
 - CLI: `scripts/bbb-uart.py` — the only path to the board.
-- Pattern DB: `config/error-patterns.yaml` — regex knowledge base.
+- Pattern DB: `scripts/error-patterns.yaml` — regex knowledge base.
 - Output dir: `vault/wiki/debugging/reports/` — AI-written reports land here.
