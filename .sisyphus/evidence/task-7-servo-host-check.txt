@@ -1,0 +1,5 @@
+--- PWM Servo Software Validation ---
+NOTE: This script performs software-only checks.
+NOTE: No real servo motion or electrical timing is verified.
+FAIL: No pwm-servo device found in /sys/bus/platform/devices/
+HINT: Ensure 'pwm-servo' module is loaded and DTS node is enabled.

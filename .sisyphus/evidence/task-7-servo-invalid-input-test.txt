@@ -1,0 +1,4 @@
+76: echo "Testing Invalid Input: Below Min (${VAL_BELOW_MIN})..."
+77: if echo "${VAL_BELOW_MIN}" > "${SERVO_DEVICE_DIR}/position_us" 2>/dev/null; then
+86: echo "Testing Invalid Input: Above Max (${VAL_ABOVE_MAX})..."
+87: if echo "${VAL_ABOVE_MAX}" > "${SERVO_DEVICE_DIR}/position_us" 2>/dev/null; then
