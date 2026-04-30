@@ -3,7 +3,7 @@
 # Contract Ref: .sisyphus/evidence/task-2-servo-contract.md
 # Hardware Ref: P9.14 / EHRPWM1A
 
-set -uo pipefail
+set -euo pipefail
 
 # Environment Overrides
 SERVO_DEVICE_DIR="${SERVO_DEVICE_DIR:-}"
