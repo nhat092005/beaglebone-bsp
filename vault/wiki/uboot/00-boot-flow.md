@@ -90,7 +90,7 @@ uenvcmd=load mmc 0:1 ${loadaddr} zImage; load mmc 0:1 ${fdtaddr} am335x-boneblac
 ### TFTP boot (current dev workflow)
 
 Requires the `tftp_boot` variable from the current U-Boot patch queue in
-`patches/u-boot/v2022.07/`. The current defaults are host/server
+`meta-bbb/recipes-bsp/u-boot/files/`. The current defaults are host/server
 `192.168.7.1` and board `192.168.7.2`.
 
 The compiled-in `tftp_boot` script is intentionally self-contained. It does

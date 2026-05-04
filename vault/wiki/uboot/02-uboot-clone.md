@@ -30,9 +30,8 @@ git log -1 --format=%H v2022.07
 
 ## Step 2 — Create working branch
 
-The current project U-Boot patch queue is stored as raw `git diff` patches under
-`patches/u-boot/v2022.07/`. You do not need commits in the vendor U-Boot tree
-for the normal apply/build workflow.
+The current project U-Boot patch queue is managed by Yocto — patches live under
+`meta-bbb/recipes-bsp/u-boot/files/` and are applied automatically by BitBake.
 
 ```bash
 git checkout -b boneblack-dev v2022.07
@@ -40,9 +39,8 @@ git config user.name "BeagleBone BSP"
 git config user.email "bsp@example.com"
 ```
 
-Apply project patches to the working tree with `git apply`, not `git am`.
-The patch archive stays in `beaglebone-bsp/patches/u-boot/v2022.07/`; the
-vendor U-Boot tree remains disposable.
+Patches are applied automatically by BitBake during `bitbake u-boot-bbb`.
+The vendor U-Boot tree remains disposable.
 
 ## Verify state
 

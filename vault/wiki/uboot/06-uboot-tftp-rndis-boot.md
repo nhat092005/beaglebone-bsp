@@ -32,7 +32,7 @@ partition 2.
 | -------------------------------------------------- | ---------------------------------------------------------------- |
 | `u-boot/include/configs/am335x_evm.h`              | Defines `TFTP_BOOT_ENV` and the `tftp_boot` environment variable |
 | `u-boot/configs/am335x_boneblack_custom_defconfig` | Selects the custom boot command                                  |
-| `patches/u-boot/v2022.07/*.patch`                  | Re-applicable U-Boot changes against upstream                    |
+| `meta-bbb/recipes-bsp/u-boot/files/*.patch`        | U-Boot patches applied by Yocto (BitBake)                        |
 | `build/uboot/MLO`                                  | SPL image copied to the boot medium                              |
 | `build/uboot/u-boot.img`                           | Full U-Boot image copied to the boot medium                      |
 | `/srv/tftp/zImage`                                 | Kernel served by the host TFTP server                            |
@@ -295,6 +295,11 @@ bootz ${loadaddr} - ${fdtaddr}
 
 If the kernel banner appears after adding `bootargs`, the kernel and DTB were
 valid; the failure was the U-Boot-to-Linux command line, not a missing kernel.
+
+If the log goes even further and shows the Linux banner but later panics with
+messages such as `No working init found`, treat that as a rootfs/userspace/init
+failure. At that point, the TFTP transfer and the U-Boot → kernel handoff have
+already succeeded.
 
 If an old valid `uboot.env` exists on FAT p1, it can override compiled-in
 defaults. In that case, a rebuilt `u-boot.img` may still appear to use the old

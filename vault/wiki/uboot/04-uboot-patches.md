@@ -8,20 +8,19 @@ category: bootloader
 
 Step 4-6 of U-Boot workflow.
 
-Current project patch archive lives outside the vendor U-Boot tree:
+Project U-Boot patches live in the Yocto recipe and are applied automatically by BitBake:
 
 ```text
-patches/u-boot/v2022.07/
+meta-bbb/recipes-bsp/u-boot/files/
+├── 0001-usb-gadget-ether-avoid-udc-release-with-dm-eth.patch
+├── 0002-am335x-evm-add-usb-rndis-tftp-boot-env.patch
+└── 0003-am335x-board-set-usbnet-devaddr-from-efuse.patch
 ```
 
-Apply order is stored in:
+Wired into `meta-bbb/recipes-bsp/u-boot/u-boot-bbb_2022.07.bb` via `SRC_URI`.
+BitBake applies them in order during `do_patch` using quilt.
 
-```text
-patches/u-boot/v2022.07/series
-```
-
-This page records what each project patch changes. For the command sequence to
-apply the queue to a clean U-Boot tree, use [[07-uboot-apply-project-patches.md]].
+This page records what each project patch changes.
 
 ## Patch 0001: USB gadget Ethernet DM_ETH teardown fix
 
@@ -82,24 +81,23 @@ Add `TFTP_BOOT_ENV \` to `CONFIG_EXTRA_ENV_SETTINGS`:
 	...
 ```
 
-## Regenerate Patch Files
+## Add or Regenerate a Patch
 
 From `beaglebone-bsp/u-boot` after editing source:
 
 ```bash
-mkdir -p ../patches/u-boot/v2022.07
+# Stage the change, commit temporarily, generate patch
+git add <changed-file>
+git commit -m "description of fix"
+git format-patch HEAD~1 --stdout > /tmp/NNNN-description.patch
 
-git diff -- drivers/usb/gadget/ether.c \
-  > ../patches/u-boot/v2022.07/0001-usb-gadget-ether-avoid-udc-release-with-dm-eth.patch
-
-git diff -- include/configs/am335x_evm.h \
-  > ../patches/u-boot/v2022.07/0002-am335x-evm-add-usb-rndis-tftp-boot-env.patch
-
-printf '%s\n' \
-  0001-usb-gadget-ether-avoid-udc-release-with-dm-eth.patch \
-  0002-am335x-evm-add-usb-rndis-tftp-boot-env.patch \
-  > ../patches/u-boot/v2022.07/series
+# Reset temp commit, copy patch to recipe
+git reset HEAD~1
+git checkout -- <changed-file>
+cp /tmp/NNNN-description.patch ../meta-bbb/recipes-bsp/u-boot/files/
 ```
+
+Then add the filename to `SRC_URI` in `u-boot-bbb_2022.07.bb`.
 
 ## Verify
 

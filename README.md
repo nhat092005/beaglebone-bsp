@@ -16,19 +16,51 @@
 | Area                   | Status  | Notes                                                                                                             |
 | ---------------------- | ------- | ----------------------------------------------------------------------------------------------------------------- |
 | Foundation / Toolchain | Done    | Docker build image and top-level Makefile targets are present.                                                    |
-| U-Boot                 | Done    | U-Boot 2022.07 tree includes `am335x_boneblack_custom_defconfig`; BSP patches live under `patches/u-boot/`.       |
+| U-Boot                 | Done    | U-Boot 2022.07 tree includes `am335x_boneblack_custom_defconfig`; BSP patches managed by Yocto in `meta-bbb/recipes-bsp/u-boot/files/`. |
 | Linux Kernel / DTS     | Planned | Linux tree includes custom config fragments and `am335x-boneblack-custom.dts`; BSP patches live under `patches/`. |
 | Drivers                | Planned | Driver workspace is in place for BSP modules, with implementation and source completion in progress..             |
 | Yocto BSP Layer        | Planned | `meta-bbb` has machine, image, kernel bbappend, driver recipes, and app recipes; some recipe sources are empty.   |
-| Userspace Apps         | Planned | `apps/` exists as a workspace; no app source is currently populated.                                              |
+| Userspace Apps         | In Progress | `apps/` now contains `sensor-monitor`, `qt-hmi`, and `gstreamer-demo`; target-side validation still remains. |
 | FreeRTOS               | Planned | `freertos/` exists as a firmware workspace; no source is currently populated.                                     |
 | Tests / Debugging      | Planned | Debug helper files are present; `tests/` is currently reserved.                                                   |
 | Wiki                   | Planned | `vault/wiki/` is the maintained project knowledge base.                                                           |
 
+## README Demo Assets
+
+| Demo             | File                                | Status  |
+| ---------------- | ----------------------------------- | ------- |
+| Boot flow        | `assets/readme/01-boot-flow.gif`    | Planned |
+| Docker build     | `assets/readme/02-docker-build.gif` | Done    |
+| U-Boot TFTP boot | `assets/readme/03-uboot-tftp.gif`   | Done    |
+| Kernel handoff   | `assets/readme/04-kernel-boot.gif`  | Planned |
+| Driver probe     | `assets/readme/05-driver-demo.gif`  | Planned |
+| Yocto build      | `assets/readme/06-yocto-build.gif`  | Planned |
+
+### 1. Docker build
+
+![Docker build](assets/readme/02-docker-build.gif)
+
+### 2. U-Boot TFTP boot
+
+![U-Boot TFTP boot](assets/readme/03-uboot-tftp.gif)
+
+## Engineering Vault
+
+The `vault/wiki/` directory is an Obsidian-compatible knowledge base for this BSP.
+
+It stores:
+
+- Boot flow explanations.
+- U-Boot notes.
+- Kernel and device tree references.
+- Debugging reports.
+- Build procedures.
+- Hardware references.
+
 ## Prerequisites
 
 - Docker installed on the host.
-- A Yocto `poky` checkout under `$(HOME)/Working_Space/poky` for `make yocto-shell` and `make bitbake`.
+- A Yocto `poky` checkout inside this repo (`./poky`) or set `POKY_DIR=/path/to/poky` for `make yocto-shell` and `make bitbake`.
 - Optional host tools for manual work: `arm-linux-gnueabihf-*`, `cppcheck`, `shellcheck`, `minicom`, `tftpd-hpa`.
 
 ## Boot Flow
@@ -84,7 +116,7 @@ and target device are intentionally connected.
 
 | Path             | Purpose                                         |
 | ---------------- | ----------------------------------------------- |
-| `apps/`          | Userspace app workspace, currently reserved     |
+| `apps/`          | Userspace app sources for Phase 6 artifacts     |
 | `drivers/`       | Out-of-tree kernel modules                      |
 | `freertos/`      | FreeRTOS firmware scaffold                      |
 | `linux/`         | Linux kernel source, configs, DTS, and patches  |
@@ -97,40 +129,6 @@ and target device are intentionally connected.
 | `docker/`        | Reproducible build container                    |
 | `assets/readme/` | README demo GIFs and screenshots                |
 | `vault/wiki/`    | Obsidian-compatible engineering knowledge base  |
-
-## README Demo Assets
-
-| Demo             | File                                | Status  |
-| ---------------- | ----------------------------------- | ------- |
-| Boot flow        | `assets/readme/01-boot-flow.gif`    | Planned |
-| Docker build     | `assets/readme/02-docker-build.gif` | Done    |
-| U-Boot TFTP boot | `assets/readme/03-uboot-tftp.gif`   | Done    |
-| Kernel handoff   | `assets/readme/04-kernel-boot.gif`  | Planned |
-| Driver probe     | `assets/readme/05-driver-demo.gif`  | Planned |
-| Yocto build      | `assets/readme/06-yocto-build.gif`  | Planned |
-
-Example embed:
-
-2. Docker build
-
-![Docker build](assets/readme/02-docker-build.gif)
-
-3. U-Boot TFTP boot
-
-![U-Boot TFTP boot](assets/readme/03-uboot-tftp.gif)
-
-## Engineering Vault
-
-The `vault/wiki/` directory is an Obsidian-compatible knowledge base for this BSP.
-
-It stores:
-
-- Boot flow explanations.
-- U-Boot notes.
-- Kernel and device tree references.
-- Debugging reports.
-- Build procedures.
-- Hardware references.
 
 ## References
 

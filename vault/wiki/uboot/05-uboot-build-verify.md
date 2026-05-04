@@ -68,13 +68,10 @@ custom image tag.
 
 ## Step 9 — Re-apply Patches After Clean Clone
 
-If `u-boot/` is re-cloned:
+If `u-boot/` is re-cloned, patches are re-applied automatically by Yocto:
 
 ```bash
-cd u-boot
-while read patch; do
-  git apply "../patches/u-boot/v2022.07/${patch}"
-done < ../patches/u-boot/v2022.07/series
+make yocto-stage-image STORAGE_BASE=/mnt/data/beaglebone-bsp
 ```
 
 Then build as in Step 7.

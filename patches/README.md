@@ -1,27 +1,20 @@
 # BSP Patch Archive
 
-This directory stores BSP-owned patches outside vendor source trees.
+Standalone kernel patches for non-Yocto builds live here.
+U-Boot patches live in `meta-bbb/recipes-bsp/u-boot/files/` and are applied by BitBake.
 
 Layout:
 
 ```text
 patches/
-├── u-boot/
-│   └── <upstream-version>/
-│       ├── series
-│       └── 0001-example.patch
 ├── linux/
-│   └── <upstream-version>/
-│       ├── series
-│       └── 0001-example.patch
+│   └── README.md
 └── yocto/
     └── README.md
 ```
 
 Rules:
 
-- Keep vendor trees disposable.
-- Keep long-lived project patches here.
-- Add a `series` file when patch order matters.
-- Use raw `git diff` patches with `git apply`.
-- Use `git format-patch` patches with `git am`.
+- Linux patches: used by `make kernel` standalone build via `git apply`.
+- U-Boot patches: managed by Yocto recipe — do not duplicate here.
+- Use `git format-patch` to generate patches.

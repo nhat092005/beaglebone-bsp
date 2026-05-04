@@ -26,9 +26,9 @@ U-Boot boot chain: ROM → SPL (MLO) → U-Boot → Kernel.
 | Path/File                                          | Purpose                                 |
 | -------------------------------------------------- | --------------------------------------- |
 | `u-boot/configs/am335x_boneblack_custom_defconfig` | Custom defconfig (BOOTDELAY=1, TFTP)    |
-| `patches/u-boot/v2022.07/series`                   | U-Boot patch apply order                |
-| `patches/u-boot/v2022.07/0001-*.patch`             | USB gadget Ethernet DM_ETH teardown fix |
-| `patches/u-boot/v2022.07/0002-*.patch`             | USB RNDIS TFTP boot environment         |
+| `meta-bbb/recipes-bsp/u-boot/files/0001-*.patch`   | USB gadget Ethernet DM_ETH teardown fix |
+| `meta-bbb/recipes-bsp/u-boot/files/0002-*.patch`   | USB RNDIS TFTP boot environment         |
+| `meta-bbb/recipes-bsp/u-boot/files/0003-*.patch`   | USB gadget MAC from eFuse               |
 | `scripts/build.sh`                                 | Build helper used by `make uboot`       |
 | `scripts/deploy.sh`                                | Deploy via TFTP                         |
 | `scripts/flash_sd.sh`                              | Flash SD card (MLO, u-boot.img)         |
