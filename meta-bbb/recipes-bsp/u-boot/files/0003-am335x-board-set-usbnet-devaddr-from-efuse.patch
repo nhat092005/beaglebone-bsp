@@ -17,20 +17,18 @@ works).
  1 file changed, 5 insertions(+)
 
 diff --git a/board/ti/am335x/board.c b/board/ti/am335x/board.c
-index xxxxxxx..xxxxxxx 100644
+index 2cb5b1cb..43f2728a 100644
 --- a/board/ti/am335x/board.c
 +++ b/board/ti/am335x/board.c
-@@ -863,6 +863,11 @@ int board_late_init(void)
- 	if (!env_get("ethaddr")) {
- 		printf("<ethaddr> not set. Validating first E-fuse MAC\n");
-
- 		if (is_valid_ethaddr(mac_addr))
+@@ -867,6 +867,11 @@ int board_late_init(void)
  			eth_env_set_enetaddr("ethaddr", mac_addr);
  	}
-+
+
 +	if (!env_get("usbnet_devaddr")) {
 +		if (is_valid_ethaddr(mac_addr))
 +			eth_env_set_enetaddr("usbnet_devaddr", mac_addr);
 +	}
 +
  	mac_lo = readl(&cdev->macid1l);
+ 	mac_hi = readl(&cdev->macid1h);
+ 	mac_addr[0] = mac_hi & 0xFF;
