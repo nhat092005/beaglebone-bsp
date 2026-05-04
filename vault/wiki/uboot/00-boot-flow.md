@@ -1,6 +1,6 @@
 ---
 title: Boot Flow
-last_updated: 2026-04-28
+last_updated: 2026-04-30
 ---
 
 # Boot Flow - BeagleBone Black
@@ -112,9 +112,30 @@ ipaddr=192.168.7.2
 uenvcmd=run tftp_boot
 ```
 
-Current `scripts/flash_sd.sh` writes `uenvcmd=run tftp_boot`, so the generated
-SD card still expects the TFTP development path for kernel handoff even though
-`zImage` and the DTB are also copied to the FAT partition.
+The BSP now keeps this file canonical at
+`meta-bbb/recipes-bsp/u-boot/files/uEnv.txt`.
+
+- Yocto images include it via `IMAGE_BOOT_FILES`.
+- `scripts/flash_sd.sh` copies the same file onto FAT p1.
+
+That makes manual flash and Yocto flash use the same `uEnv.txt` contents, while
+compiled-in `tftp_boot` remains the fallback path if the file is missing or not
+imported.
+
+## MMC Numbering Convention
+
+Two separate numbering schemes exist — do not confuse them:
+
+| SPL log (ROM-based, 1-indexed) | Full U-Boot DM (0-indexed) | Hardware |
+|-------------------------------|---------------------------|----------|
+| `Trying to boot from MMC1` | `OMAP SD/MMC: 0` / `mmc 0` | microSD card |
+| `Trying to boot from MMC2` | `OMAP SD/MMC: 1` / `mmc 1` | eMMC on-board 4 GB |
+
+SPL inherits the AM335x ROM boot spec numbering (offset +1). Full U-Boot uses
+Driver Model enumeration (0-based). Same hardware, two names — cosmetic only.
+
+Normal boot (no BOOT button): SPL prints `MMC2` → booting from eMMC.
+SD override (hold S2): SPL prints `MMC1` → booting from SD card.
 
 ## Console
 

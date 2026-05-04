@@ -1,0 +1,36 @@
+From e092e3250270a1016c877da7bdd9384f14b1321e Mon Sep 17 00:00:00 2001
+From: BeagleBone BSP <bsp@example.com>
+Date: Mon, 01 Jan 2024 00:00:00 +0000
+Subject: [PATCH] arm: am335x: derive usbnet_devaddr from eFuse MAC
+
+USB RNDIS gadget defaults to the compile-time placeholder MAC
+de:ad:be:ef:00:01 (CONFIG_USBNET_DEVADDR Kconfig default).
+Derive usbnet_devaddr from the board's CPSW macid0 eFuse register
+instead, giving each board a unique USB gadget MAC without requiring
+manual env configuration.
+
+Follows the same pattern as board/tcl/sl50/board.c. Only set when
+usbnet_devaddr is not already in the environment (env override still
+works).
+---
+ board/ti/am335x/board.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/board/ti/am335x/board.c b/board/ti/am335x/board.c
+index xxxxxxx..xxxxxxx 100644
+--- a/board/ti/am335x/board.c
++++ b/board/ti/am335x/board.c
+@@ -863,6 +863,11 @@ int board_late_init(void)
+ 	if (!env_get("ethaddr")) {
+ 		printf("<ethaddr> not set. Validating first E-fuse MAC\n");
+
+ 		if (is_valid_ethaddr(mac_addr))
+ 			eth_env_set_enetaddr("ethaddr", mac_addr);
+ 	}
++
++	if (!env_get("usbnet_devaddr")) {
++		if (is_valid_ethaddr(mac_addr))
++			eth_env_set_enetaddr("usbnet_devaddr", mac_addr);
++	}
++
+ 	mac_lo = readl(&cdev->macid1l);
