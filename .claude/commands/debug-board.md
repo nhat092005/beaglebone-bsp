@@ -93,4 +93,4 @@ Skips UART; analyzer runs against captured log. Useful for CI and iterating on t
 - Agent: `agents/debugger.md` — use directly for post-mortem analysis without live UART.
 - Agent: `agents/doc-updater.md` — invoked by board-runner after report write.
 - Skill: `skills/bsp-debugging/SKILL.md` — command reference.
-- Doc: `docs/09-debug-agent.md` — architecture + limits.
+- Doc: `vault/wiki/debugging/00-debug-agent.md` — architecture + limits.

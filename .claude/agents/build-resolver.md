@@ -112,4 +112,4 @@ Build Status: SUCCESS | Errors Fixed: 1 | Files Modified: 1
 - Agent: `agents/cpp-reviewer.md` -- review the fix after build passes
 - Wiki: `vault/wiki/yocto/_index.md` -- Yocto layer patterns and known issues
 - Wiki: `vault/wiki/kernel/_index.md` -- kernel build config and patches
-- Wiki: `vault/wiki/bootloader/_index.md` -- U-Boot build notes
+- Wiki: `vault/wiki/uboot/_index.md` -- U-Boot build notes

@@ -30,7 +30,7 @@ Map changed paths to wiki sections:
 | `linux/dts/`     | `vault/wiki/kernel/`     |
 | `linux/configs/` | `vault/wiki/kernel/`     |
 | `linux/patches/` | `vault/wiki/kernel/`     |
-| `u-boot/`        | `vault/wiki/bootloader/` |
+| `u-boot/`        | `vault/wiki/uboot/`      |
 | `freertos/`      | `vault/wiki/rtos/`       |
 | `meta-bbb/`      | `vault/wiki/yocto/`      |
 | `scripts/`       | `vault/wiki/debugging/`  |

@@ -6,7 +6,7 @@ origin: custom-bsp
 
 # U-Boot Reasoning — AM335x / BeagleBone Black
 
-A reasoning scaffold. For detailed sequences see `vault/wiki/bootloader/` + `docs/02-boot-flow.md` + `docs/03-uboot-workflow.md`.
+A reasoning scaffold. For detailed sequences see `vault/wiki/uboot/00-boot-flow.md`, `vault/wiki/uboot/01-uboot-workflow.md`, and `vault/wiki/uboot/_index.md`.
 
 ## Boot stages
 
@@ -105,7 +105,7 @@ ls mmc 0:1 /
 
 - `.claude/rules/bsp-context.md` — boot sequence summary.
 - `.claude/rules/tech-defaults.md` — U-Boot defconfig name.
-- `docs/02-boot-flow.md` — stage-by-stage detail.
-- `docs/03-uboot-workflow.md` — how to build / patch U-Boot.
-- `vault/wiki/bootloader/_index.md` — boot-env knowledge base.
+- `vault/wiki/uboot/00-boot-flow.md` — stage-by-stage boot detail.
+- `vault/wiki/uboot/01-uboot-workflow.md` — how to build / patch U-Boot.
+- `vault/wiki/uboot/_index.md` — boot-env knowledge base.
 - `skills/karpathy-discipline/` — think-before-patching scaffold.

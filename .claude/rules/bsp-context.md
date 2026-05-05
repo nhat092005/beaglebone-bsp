@@ -14,13 +14,13 @@ All peripheral base addresses, interrupt numbers, clock domains, and pinmux deta
 are in the vault wiki -- not in this file.
 
 Read vault/wiki/kernel/\_index.md for kernel and DTS reference.
-Read vault/wiki/bootloader/\_index.md for U-Boot and boot sequence details.
+Read vault/wiki/uboot/\_index.md for U-Boot and boot sequence details.
 Read vault/wiki/debugging/\_index.md for hardware debug techniques.
 
 If a specific address or register is needed and not in the wiki, consult the
 AM335x Technical Reference Manual (TRM): https://www.ti.com/lit/ug/spruh73q/spruh73q.pdf
 
-Read `docs/09-debug-agent.md` for the automated UART debug pipeline and `/dev/ttyUSB0` access requirements.
+Read `vault/wiki/debugging/00-debug-agent.md` for the automated UART debug pipeline and `/dev/ttyUSB0` access requirements.
 
 ## Linux Kernel Device Tree Files
 

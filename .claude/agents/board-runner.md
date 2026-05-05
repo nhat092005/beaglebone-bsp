@@ -180,7 +180,7 @@ Never proceed past the report-write step. Never `git commit` the report. Never a
 - Agent: `agents/debugger.md` — post-mortem analyzer; use when no live UART is available.
 - Skill: `skills/bsp-debugging/SKILL.md` — command reference consulted during Phase 4.
 - Command: `commands/debug-board.md` — slash-command wrapper that spawns this agent.
-- Doc: `docs/09-debug-agent.md` — architecture, execution path, limits, extension.
+- Doc: `vault/wiki/debugging/00-debug-agent.md` — architecture, execution path, limits, extension.
 - CLI: `scripts/bbb-uart.py` — the only path to the board.
 - Pattern DB: `scripts/error-patterns.yaml` — regex knowledge base.
 - Output dir: `vault/wiki/debugging/reports/` — AI-written reports land here.

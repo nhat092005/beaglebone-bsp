@@ -36,7 +36,7 @@ Stop and ask user which topic to sync first if >20 files changed.
 | `linux/arch/arm/configs/`  | `vault/wiki/kernel/_index.md`     |
 | `linux/`                   | `vault/wiki/kernel/_index.md`     |
 | `meta-bbb/`                | `vault/wiki/yocto/_index.md`      |
-| `u-boot/`                  | `vault/wiki/bootloader/_index.md` |
+| `u-boot/`                  | `vault/wiki/uboot/_index.md`      |
 | `freertos/`                | `vault/wiki/rtos/_index.md`       |
 | `scripts/`                 | `vault/wiki/scripts/_index.md`    |
 
