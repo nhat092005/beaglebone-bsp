@@ -1,0 +1,72 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+model = "gpt-5.5"
+model_provider = "openai"
+personality = "pragmatic"
+model_reasoning_effort = "high"
+model_verbosity = "medium"
+
+approval_policy = "on-request"
+approvals_reviewer = "user"
+sandbox_mode = "workspace-write"
+web_search = "cached"
+project_doc_max_bytes = 65536
+
+developer_instructions = """
+Codex-only policy for beaglebone-bsp:
+- Read AGENTS.md and vault/wiki/_master-index.md before project work.
+- For C, DTS, Yocto, shell, or BSP edits, also read relevant .claude/rules/*.md files as project guidance.
+- Use rtk prefix for shell commands.
+- Before non-trivial edits, state success criteria.
+- Keep changes surgical; do not modify .claude/ or .opencode/ unless explicitly asked.
+- Do not run flash, deploy, live board, SSH, serial console, or hardware commands without explicit user approval.
+- Never store secrets, tokens, board credentials, or host-specific paths in tracked .codex files.
+"""
+
+[sandbox_workspace_write]
+network_access = false
+exclude_tmpdir_env_var = true
+exclude_slash_tmp = true
+
+[features]
+multi_agent = true
+
+[agents]
+max_threads = 4
+max_depth = 1
+job_max_runtime_seconds = 1800
+
+[agents.researcher]
+description = "Research AM335x, BeagleBone Black, kernel, U-Boot, Yocto, or FreeRTOS context before implementation. Read-only."
+config_file = "agents/researcher.toml"
+nickname_candidates = ["Researcher", "Scout"]
+
+[agents.architect]
+description = "Plan BSP design, driver architecture, DTS changes, boot flow, or ADR-level tradeoffs. Read-only."
+config_file = "agents/architect.toml"
+nickname_candidates = ["Architect", "Planner"]
+
+[agents.cpp-reviewer]
+description = "Review C/C++ changes in kernel drivers, FreeRTOS, or U-Boot for correctness, safety, and missing checks. Read-only."
+config_file = "agents/cpp-reviewer.toml"
+nickname_candidates = ["CppReviewer", "CReviewer"]
+
+[agents.reviewer]
+description = "Review non-C changes such as DTS, Makefile, shell, Yocto recipes, docs, and config. Read-only."
+config_file = "agents/reviewer.toml"
+nickname_candidates = ["Reviewer", "Audit"]
+
+[agents.build-resolver]
+description = "Analyze and fix kernel, U-Boot, Yocto, driver, or script build failures with scoped edits."
+config_file = "agents/build-resolver.toml"
+nickname_candidates = ["BuildResolver", "Builder"]
+
+[agents.debugger]
+description = "Analyze runtime logs, probe failures, oopses, DT binding issues, and board debug reports. Read-only unless explicitly asked to patch."
+config_file = "agents/debugger.toml"
+nickname_candidates = ["Debugger", "Trace"]
+
+[agents.doc-updater]
+description = "Update impacted vault/wiki documentation after BSP features or behavior changes land."
+config_file = "agents/doc-updater.toml"
+nickname_candidates = ["DocUpdater", "Docs"]

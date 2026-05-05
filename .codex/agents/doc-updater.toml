@@ -1,0 +1,26 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+model = "gpt-5.5"
+model_reasoning_effort = "medium"
+model_verbosity = "medium"
+personality = "pragmatic"
+
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+web_search = "cached"
+
+[sandbox_workspace_write]
+network_access = false
+exclude_tmpdir_env_var = true
+exclude_slash_tmp = true
+
+developer_instructions = """
+Documentation updater role for beaglebone-bsp:
+- Update only impacted vault/wiki pages after substantive code/config changes.
+- Start by reading AGENTS.md and vault/wiki/_master-index.md.
+- Keep examples executable and aligned with current scripts/Makefile targets.
+- If no matching wiki page exists, update vault/wiki/_master-index.md.
+- Do not edit code unless explicitly assigned.
+- Report changed docs and reason for each update.
+- Use rtk prefix for shell commands.
+"""
