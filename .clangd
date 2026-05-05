@@ -1,0 +1,20 @@
+CompileFlags:
+  Add:
+    - "-Wno-unknown-warning-option"
+    - "-Wno-unused-command-line-argument"
+    - "--target=arm-linux-gnueabihf"
+    - "-mno-unaligned-access"
+    - "-isystem"
+    - "/usr/lib/llvm-18/lib/clang/18/include"
+  Remove:
+    - "-fno-ipa-sra"
+    - "-fno-allow-store-data-races"
+    - "-fconserve-stack"
+    - "-fstack-protector-strong"
+    - "-fno-var-tracking-assignments"
+    - "-mabi=aapcs-linux"
+    - "--param=*"
+    - "-Wno-maybe-uninitialized"
+
+Index:
+  Background: Build
