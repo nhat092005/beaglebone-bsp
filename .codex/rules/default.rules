@@ -1,268 +1,81 @@
-# Safe repo inspection can run without an extra approval prompt.
+# Block broad staging in this dirty BSP workspace.
 prefix_rule(
-    pattern = ["rtk", "rg"],
-    decision = "allow",
-    justification = "Read-only repository search is safe for routine inspection.",
-    match = ["rtk rg -n \"probe\" drivers"],
+    pattern = ["git", "add", [".", "-A"]],
+    decision = "forbidden",
+    justification = "Use exact-path staging; broad staging can capture build artifacts and local files.",
+    match = ["git add .", "git add -A"],
+    not_match = ["git add AGENTS.md"],
 )
 
 prefix_rule(
-    pattern = ["rtk", "sed"],
-    decision = "allow",
-    justification = "Read-only file excerpts are safe for routine inspection.",
-    match = ["rtk sed -n '1,120p' AGENTS.md"],
+    pattern = ["rtk", "git", "add", [".", "-A"]],
+    decision = "forbidden",
+    justification = "Use exact-path staging; broad staging can capture build artifacts and local files.",
+    match = ["rtk git add .", "rtk git add -A"],
+    not_match = ["rtk git add AGENTS.md"],
+)
+
+# Block direct disk-mutating tools; use reviewed project flash workflows instead.
+prefix_rule(
+    pattern = [["dd", "fdisk", "sfdisk", "parted", "wipefs", "mkfs", "mkfs.ext4", "mkfs.vfat", "mkfs.fat"]],
+    decision = "forbidden",
+    justification = "Direct disk mutation is destructive; use the reviewed project flash workflow with explicit approval.",
+    match = ["dd if=image of=/dev/sdb", "sfdisk /dev/sdb", "mkfs.ext4 /dev/sdb2"],
 )
 
 prefix_rule(
-    pattern = ["rtk", "find"],
-    decision = "allow",
-    justification = "Read-only repository discovery is safe for routine inspection.",
-    match = ["rtk find . -maxdepth 2 -type f"],
+    pattern = ["rtk", ["dd", "fdisk", "sfdisk", "parted", "wipefs", "mkfs", "mkfs.ext4", "mkfs.vfat", "mkfs.fat"]],
+    decision = "forbidden",
+    justification = "Direct disk mutation is destructive; use the reviewed project flash workflow with explicit approval.",
+    match = ["rtk dd if=image of=/dev/sdb", "rtk sfdisk /dev/sdb", "rtk mkfs.ext4 /dev/sdb2"],
 )
 
-prefix_rule(
-    pattern = ["rtk", "git", "status"],
-    decision = "allow",
-    justification = "Git status is read-only and useful before edits.",
-    match = ["rtk git status --short"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "git", "diff"],
-    decision = "allow",
-    justification = "Git diff is read-only and useful for review.",
-    match = ["rtk git diff -- .codex"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "git", "show"],
-    decision = "allow",
-    justification = "Git show is read-only and useful for history inspection.",
-    match = ["rtk git show --stat HEAD"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "git", "log"],
-    decision = "allow",
-    justification = "Git log is read-only and useful for history inspection.",
-    match = ["rtk git log --oneline -5"],
-)
-
-# Build, static-analysis, and live-board commands can mutate artifacts or touch hardware.
+# Prompt before expensive builds, live-board access, or privilege escalation.
 prefix_rule(
     pattern = ["rtk", "make"],
     decision = "prompt",
-    justification = "Build and flash targets may write artifacts or touch hardware.",
+    justification = "Build, deploy, flash, and clean targets may write artifacts or touch hardware.",
     match = ["rtk make kernel", "rtk make flash DEV=/dev/sdb"],
 )
 
 prefix_rule(
-    pattern = ["rtk", "cppcheck"],
+    pattern = ["rtk", "docker"],
     decision = "prompt",
-    justification = "Static analysis is usually safe but can be expensive on this BSP tree.",
-    match = ["rtk cppcheck --enable=all drivers/led-gpio/led-gpio.c"],
+    justification = "Docker commands can be expensive and may write build artifacts.",
+    match = ["rtk docker ps", "rtk docker build -t bbb-builder ."],
 )
 
 prefix_rule(
-    pattern = ["rtk", "python3", "scripts/bbb-uart.py"],
+    pattern = ["rtk", ["ssh", "scp", "rsync"]],
     decision = "prompt",
-    justification = "UART debug commands interact with live board state.",
-    match = ["rtk python3 scripts/bbb-uart.py capture --timeout 60"],
+    justification = "Remote board access can mutate live target state.",
+    match = ["rtk ssh root@192.168.7.2", "rtk scp zImage root@192.168.7.2:/boot/", "rtk rsync -av build/ root@192.168.7.2:/boot/"],
 )
 
 prefix_rule(
-    pattern = ["rtk", "./scripts/bbb-uart.py"],
-    decision = "prompt",
-    justification = "UART debug commands interact with live board state.",
-    match = ["rtk ./scripts/bbb-uart.py capture --timeout 60"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "minicom"],
+    pattern = ["rtk", ["minicom", "screen"]],
     decision = "prompt",
     justification = "Serial console commands interact with live board state.",
-    match = ["rtk minicom -D /dev/ttyUSB0 -b 115200"],
+    match = ["rtk minicom -D /dev/ttyUSB0 -b 115200", "rtk screen /dev/ttyUSB0 115200"],
 )
 
 prefix_rule(
-    pattern = ["rtk", "screen"],
+    pattern = ["rtk", "python3", "scripts/debug/bbb-uart.py"],
     decision = "prompt",
-    justification = "Serial console commands interact with live board state.",
-    match = ["rtk screen /dev/ttyUSB0 115200"],
+    justification = "UART debug commands interact with live board state.",
+    match = ["rtk python3 scripts/debug/bbb-uart.py capture-boot --timeout 60"],
 )
 
 prefix_rule(
-    pattern = ["rtk", "ssh"],
+    pattern = ["rtk", "./scripts/debug/bbb-uart.py"],
     decision = "prompt",
-    justification = "Remote target access can change board state.",
-    match = ["rtk ssh root@192.168.7.2 uname -a"],
+    justification = "UART debug commands interact with live board state.",
+    match = ["rtk ./scripts/debug/bbb-uart.py capture-boot --timeout 60"],
 )
 
 prefix_rule(
-    pattern = ["rtk", "scp"],
+    pattern = ["sudo"],
     decision = "prompt",
-    justification = "Remote file copy can change board state.",
-    match = ["rtk scp build/kernel/zImage root@192.168.7.2:/boot/"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "rsync"],
-    decision = "prompt",
-    justification = "Remote sync can change board or host state.",
-    match = ["rtk rsync -av build/ root@192.168.7.2:/boot/"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "./scripts/flash_sd.sh"],
-    decision = "prompt",
-    justification = "Flash script repartitions disks and is destructive.",
-    match = ["rtk ./scripts/flash_sd.sh /dev/sdb"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "scripts/flash_sd.sh"],
-    decision = "prompt",
-    justification = "Flash script repartitions disks and is destructive.",
-    match = ["rtk scripts/flash_sd.sh /dev/sdb"],
-)
-
-# Raw disk tools stay blocked even if requested without project wrappers.
-prefix_rule(
-    pattern = ["dd"],
-    decision = "forbidden",
-    justification = "Raw disk writes are destructive; use reviewed project flash workflow instead.",
-    match = ["dd if=/dev/zero of=/dev/sdb"],
-)
-
-prefix_rule(
-    pattern = ["mkfs"],
-    decision = "forbidden",
-    justification = "Filesystem creation is destructive; use reviewed project flash workflow instead.",
-    match = ["mkfs /dev/sdb2"],
-)
-
-prefix_rule(
-    pattern = ["mkfs.ext4"],
-    decision = "forbidden",
-    justification = "Filesystem creation is destructive; use reviewed project flash workflow instead.",
-    match = ["mkfs.ext4 /dev/sdb2"],
-)
-
-prefix_rule(
-    pattern = ["mkfs.vfat"],
-    decision = "forbidden",
-    justification = "Filesystem creation is destructive; use reviewed project flash workflow instead.",
-    match = ["mkfs.vfat /dev/sdb1"],
-)
-
-prefix_rule(
-    pattern = ["mkfs.fat"],
-    decision = "forbidden",
-    justification = "Filesystem creation is destructive; use reviewed project flash workflow instead.",
-    match = ["mkfs.fat /dev/sdb1"],
-)
-
-prefix_rule(
-    pattern = ["fdisk"],
-    decision = "forbidden",
-    justification = "Partition editing is destructive; use reviewed project flash workflow instead.",
-    match = ["fdisk /dev/sdb"],
-)
-
-prefix_rule(
-    pattern = ["sfdisk"],
-    decision = "forbidden",
-    justification = "Partition editing is destructive; use reviewed project flash workflow instead.",
-    match = ["sfdisk /dev/sdb"],
-)
-
-prefix_rule(
-    pattern = ["parted"],
-    decision = "forbidden",
-    justification = "Partition editing is destructive; use reviewed project flash workflow instead.",
-    match = ["parted /dev/sdb print"],
-)
-
-prefix_rule(
-    pattern = ["wipefs"],
-    decision = "forbidden",
-    justification = "Filesystem signature wiping is destructive; use reviewed project flash workflow instead.",
-    match = ["wipefs -a /dev/sdb"],
-)
-
-prefix_rule(
-    pattern = ["blkdiscard"],
-    decision = "forbidden",
-    justification = "Block discard is destructive; use reviewed project flash workflow instead.",
-    match = ["blkdiscard /dev/sdb"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "dd"],
-    decision = "forbidden",
-    justification = "Raw disk writes are destructive; use reviewed project flash workflow instead.",
-    match = ["rtk dd if=/dev/zero of=/dev/sdb"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "mkfs"],
-    decision = "forbidden",
-    justification = "Filesystem creation is destructive; use reviewed project flash workflow instead.",
-    match = ["rtk mkfs /dev/sdb2"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "mkfs.ext4"],
-    decision = "forbidden",
-    justification = "Filesystem creation is destructive; use reviewed project flash workflow instead.",
-    match = ["rtk mkfs.ext4 /dev/sdb2"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "mkfs.vfat"],
-    decision = "forbidden",
-    justification = "Filesystem creation is destructive; use reviewed project flash workflow instead.",
-    match = ["rtk mkfs.vfat /dev/sdb1"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "mkfs.fat"],
-    decision = "forbidden",
-    justification = "Filesystem creation is destructive; use reviewed project flash workflow instead.",
-    match = ["rtk mkfs.fat /dev/sdb1"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "fdisk"],
-    decision = "forbidden",
-    justification = "Partition editing is destructive; use reviewed project flash workflow instead.",
-    match = ["rtk fdisk /dev/sdb"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "sfdisk"],
-    decision = "forbidden",
-    justification = "Partition editing is destructive; use reviewed project flash workflow instead.",
-    match = ["rtk sfdisk /dev/sdb"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "parted"],
-    decision = "forbidden",
-    justification = "Partition editing is destructive; use reviewed project flash workflow instead.",
-    match = ["rtk parted /dev/sdb print"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "wipefs"],
-    decision = "forbidden",
-    justification = "Filesystem signature wiping is destructive; use reviewed project flash workflow instead.",
-    match = ["rtk wipefs -a /dev/sdb"],
-)
-
-prefix_rule(
-    pattern = ["rtk", "blkdiscard"],
-    decision = "forbidden",
-    justification = "Block discard is destructive; use reviewed project flash workflow instead.",
-    match = ["rtk blkdiscard /dev/sdb"],
+    justification = "sudo can bypass sandbox protections and run destructive media operations.",
+    match = ["sudo bash scripts/control/flash_sd.sh /dev/sdb"],
 )

@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; \"$ROOT/.codex/hooks/block-git-add-all.sh\"'",
+            "timeout": 5,
+            "statusMessage": "Checking git staging command"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -lc 'ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null || pwd)\"; \"$ROOT/.codex/hooks/notify.sh\"'",
+            "timeout": 5,
+            "statusMessage": "Sending completion notification"
+          }
+        ]
+      }
+    ]
+  }
+}

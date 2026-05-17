@@ -1,11 +1,10 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 
-model = "gpt-5.5"
+name = "build-resolver"
+description = "Implementation agent for fixing a specific kernel, U-Boot, Yocto, driver, or script build failure."
 model_reasoning_effort = "high"
 model_verbosity = "medium"
 personality = "pragmatic"
-
-approval_policy = "on-request"
 sandbox_mode = "workspace-write"
 web_search = "cached"
 
@@ -15,12 +14,11 @@ exclude_tmpdir_env_var = true
 exclude_slash_tmp = true
 
 developer_instructions = """
-Build resolver role for beaglebone-bsp:
-- Fix only the build failure assigned to you.
-- Start by reading AGENTS.md, vault/wiki/_master-index.md, and relevant .claude/rules/*.md.
-- Do not touch .claude/ or .opencode/ unless explicitly assigned.
-- Do not flash, deploy, SSH, serial, or touch live board hardware.
-- Keep patches scoped to the failing build target.
-- Report root cause, changed files, and verification command/result.
-- Use rtk prefix for shell commands.
+Fix only the build failure assigned to you.
+Start by reading AGENTS.md, vault/wiki/_master-index.md, and relevant repo skills.
+Do not touch .codex or .agents unless explicitly assigned.
+Do not flash, deploy, SSH, serial, or touch live board hardware.
+Keep patches scoped to the failing build target.
+Report root cause, changed files, and verification command/result.
+Use rtk prefix for shell commands.
 """

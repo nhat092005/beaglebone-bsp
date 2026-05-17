@@ -1,7 +1,5 @@
 #:schema https://developers.openai.com/codex/config-schema.json
 
-model = "gpt-5.5"
-model_provider = "openai"
 personality = "pragmatic"
 model_reasoning_effort = "high"
 model_verbosity = "medium"
@@ -14,13 +12,12 @@ project_doc_max_bytes = 65536
 
 developer_instructions = """
 Codex-only policy for beaglebone-bsp:
-- Read AGENTS.md and vault/wiki/_master-index.md before project work.
-- For C, DTS, Yocto, shell, or BSP edits, also read relevant .claude/rules/*.md files as project guidance.
+- Treat AGENTS.md as the canonical project instruction file.
+- Start project work by reading AGENTS.md and vault/wiki/_master-index.md.
 - Use rtk prefix for shell commands.
-- Before non-trivial edits, state success criteria.
-- Keep changes surgical; do not modify .claude/ or .opencode/ unless explicitly asked.
-- Do not run flash, deploy, live board, SSH, serial console, or hardware commands without explicit user approval.
-- Never store secrets, tokens, board credentials, or host-specific paths in tracked .codex files.
+- Keep changes surgical and preserve unrelated dirty work.
+- Do not flash, deploy, SSH, serial-console, or touch live board hardware without explicit user approval.
+- Do not store secrets, board credentials, or host-specific paths in tracked .codex or .agents files.
 """
 
 [sandbox_workspace_write]
@@ -29,6 +26,7 @@ exclude_tmpdir_env_var = true
 exclude_slash_tmp = true
 
 [features]
+hooks = true
 multi_agent = true
 
 [agents]
@@ -37,36 +35,41 @@ max_depth = 1
 job_max_runtime_seconds = 1800
 
 [agents.researcher]
-description = "Research AM335x, BeagleBone Black, kernel, U-Boot, Yocto, or FreeRTOS context before implementation. Read-only."
+description = "Read-only researcher for AM335x, BeagleBone Black, kernel, U-Boot, Yocto, FreeRTOS, and BSP context."
 config_file = "agents/researcher.toml"
 nickname_candidates = ["Researcher", "Scout"]
 
 [agents.architect]
-description = "Plan BSP design, driver architecture, DTS changes, boot flow, or ADR-level tradeoffs. Read-only."
+description = "Read-only BSP architect for driver architecture, DTS design, boot flow, Yocto integration, and ADR-level tradeoffs."
 config_file = "agents/architect.toml"
 nickname_candidates = ["Architect", "Planner"]
 
 [agents.cpp-reviewer]
-description = "Review C/C++ changes in kernel drivers, FreeRTOS, or U-Boot for correctness, safety, and missing checks. Read-only."
+description = "Read-only C/C++ reviewer for kernel, FreeRTOS, U-Boot, DTS-adjacent C, and embedded safety issues."
 config_file = "agents/cpp-reviewer.toml"
-nickname_candidates = ["CppReviewer", "CReviewer"]
+nickname_candidates = ["C Reviewer", "Safety Reviewer"]
 
 [agents.reviewer]
-description = "Review non-C changes such as DTS, Makefile, shell, Yocto recipes, docs, and config. Read-only."
+description = "Read-only general reviewer for DTS, Makefiles, shell, Yocto recipes, docs, and Codex project config."
 config_file = "agents/reviewer.toml"
-nickname_candidates = ["Reviewer", "Audit"]
+nickname_candidates = ["Reviewer", "Inspector"]
 
 [agents.build-resolver]
-description = "Analyze and fix kernel, U-Boot, Yocto, driver, or script build failures with scoped edits."
+description = "Implementation agent for fixing a specific kernel, U-Boot, Yocto, driver, or script build failure."
 config_file = "agents/build-resolver.toml"
-nickname_candidates = ["BuildResolver", "Builder"]
+nickname_candidates = ["Builder", "Fixer"]
 
 [agents.debugger]
-description = "Analyze runtime logs, probe failures, oopses, DT binding issues, and board debug reports. Read-only unless explicitly asked to patch."
+description = "Read-only post-mortem debugger for oops, probe failure, DT bind issues, Yocto runtime issues, and logs."
 config_file = "agents/debugger.toml"
-nickname_candidates = ["Debugger", "Trace"]
+nickname_candidates = ["Debugger", "Triage"]
+
+[agents.board-runner]
+description = "Live UART debug agent for BeagleBone board sessions. Requires explicit user approval before hardware access."
+config_file = "agents/board-runner.toml"
+nickname_candidates = ["Board Runner", "UART"]
 
 [agents.doc-updater]
-description = "Update impacted vault/wiki documentation after BSP features or behavior changes land."
+description = "Documentation updater for keeping vault/wiki synchronized with implemented BSP changes."
 config_file = "agents/doc-updater.toml"
-nickname_candidates = ["DocUpdater", "Docs"]
+nickname_candidates = ["Doc Updater", "Wiki"]
